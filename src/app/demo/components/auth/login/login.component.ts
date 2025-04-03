@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/demo/services/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 
 @Component({
@@ -28,20 +29,46 @@ export class LoginComponent {
 
     valCheck: string[] = ['remember'];
 
-    password!: string;
+  //  password!: string;
 
-    constructor(public layoutService: LayoutService, private router: Router) { }
+    name: string = '';
+    password: string = '';
+    token: string = "";
+    error: string | null = null;
+
+  constructor(private authService: AuthService, public layoutService: LayoutService, private router: Router) {}
+
+  onSignIn(): void {
+    this.authService.login(this.name, this.password).subscribe({
+      next: (response) => {
+
+        if (response.jwtToken) {
+          this.token = response.jwtToken; 
+          this.authService.storeToken(this.token); 
+          console.log('Token received:', this.token);
+          this.router.navigate(['/mydashboard']);
+        } else {
+          console.error('JWT token is not in the response');
+        }
+      },
+      error: (err) => {
+        this.error = 'Login failed';
+        console.error('Error during login:', err);
+      }
+    });
+  }
+
 
     // Mock sign-in method
-    onSignIn() {
+//    onSignIn() {
         // Perform your sign-in logic here
 
         // Example sign-in success
-        const isSignInSuccessful = true;  // Replace this logic with real authentication
+  //      const isSignInSuccessful = true;  // Replace this logic with real authentication
 
-        if (isSignInSuccessful) {
+    //    if (isSignInSuccessful) {
             // Navigate to the 'mydashboard' route upon successful sign-in
-            this.router.navigate(['/mydashboard']);
-        }
-    }
+      //      this.router.navigate(['/mydashboard']);
+       // }
+   // }
 }
