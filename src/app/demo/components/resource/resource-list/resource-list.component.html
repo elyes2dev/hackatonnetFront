@@ -49,8 +49,31 @@
           <p>{{ resource.description }}</p>
           <p>Skill Level: {{ resource.niveau }}</p>
           
-          <div *ngIf="imageUrls[resource.id]" class="resource-image">
-            <img [src]="imageUrls[resource.id]" alt="Resource image">
+          <div *ngIf="filePreviews[resource.id]" class="resource-files">
+            <!-- Display Images -->
+            <div *ngFor="let image of filePreviews[resource.id].images" class="file-preview">
+              <img [src]="image.url" alt="Resource image" class="preview-image">
+            </div>
+            
+            <!-- Display PDFs -->
+            <div *ngFor="let pdf of filePreviews[resource.id].pdfs" class="file-preview">
+              <button pButton 
+                      [icon]="'pi ' + getFileIcon(pdf.type)" 
+                      class="p-button-rounded file-button pdf"
+                      (click)="viewFile(pdf)">
+              </button>
+              <span class="file-name">{{ pdf.path }}</span>
+            </div>
+            
+            <!-- Display Other Files -->
+            <div *ngFor="let file of filePreviews[resource.id].otherFiles" class="file-preview">
+              <button pButton 
+                      [icon]="'pi ' + getFileIcon(file.type)" 
+                      class="p-button-rounded file-button"
+                      (click)="viewFile(file)">
+              </button>
+              <span class="file-name">{{ file.path }}</span>
+            </div>
           </div>
         </div>
       </div>

@@ -15,3 +15,8 @@ export interface Resources {
     resourceImages: ImageModel[];
 }
 
+interface ResourceFile {
+  id_image: number;
+  type: string;
+}
+

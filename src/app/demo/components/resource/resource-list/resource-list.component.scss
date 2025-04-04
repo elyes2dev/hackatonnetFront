@@ -37,10 +37,10 @@
   
   .resource-card {
     transition: transform 0.2s;
-  }
-  
-  .resource-card:hover {
-    transform: translateY(-5px);
+    
+    &:hover {
+      transform: translateY(-5px);
+    }
   }
   
   .card-header {
@@ -58,12 +58,54 @@
     padding-top: 10px;
   }
   
-  .resource-image {
+  .resource-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     margin-top: 15px;
   }
   
-  .resource-image img {
-    max-width: 100%;
-    max-height: 200px;
+  .file-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .preview-image {
+    max-width: 100px;
+    max-height: 100px;
     border-radius: 4px;
+    object-fit: cover;
+  }
+  
+  .file-button {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    
+    &.pdf {
+      background-color: #e74c3c;
+      border-color: #e74c3c;
+      
+      &:hover {
+        background-color: #c0392b !important;
+        border-color: #c0392b !important;
+      }
+    }
+  }
+  
+  .file-name {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-align: center;
+    max-width: 80px;
+    word-break: break-all;
+  }
+  
+  /* Add this to your global styles or component styles */
+  .truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
