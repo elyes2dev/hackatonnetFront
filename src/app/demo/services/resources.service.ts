@@ -79,4 +79,10 @@ export class ResourceService {
       formData
     );
   }
+
+  deleteResourceFile(workshopId: number, resourceId: number, fileId: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseUrl}/${workshopId}/resources/${resourceId}/files/${fileId}`
+    );
+  }
 }
