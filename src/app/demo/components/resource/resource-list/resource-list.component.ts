@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Resources } from 'src/app/demo/models/resources.model';
-import { ResourcesService } from 'src/app/demo/services/resources.service';
+import { ImageService } from 'src/app/demo/services/image.service';
+import { ResourceService } from 'src/app/demo/services/resources.service';
 
 @Component({
   selector: 'app-resource-list',
@@ -9,57 +11,72 @@ import { ResourcesService } from 'src/app/demo/services/resources.service';
   styleUrls: ['./resource-list.component.scss']
 })
 export class ResourceListComponent implements OnInit {
+  workshopId: number = 0;
   resources: Resources[] = [];
-  workshopId!: number;  // Ensures that the workshopId is set when the component loads
-  isLoading: boolean = false;  // Loading state for UI
-  errorMessage: string = '';    // To store error messages
+  loading = true;
+  error: string | null = null;
+  imageUrls: { [key: number]: SafeUrl } = {};
 
   constructor(
     private route: ActivatedRoute,
-    private resourcesService: ResourcesService
-  ) {}
+    private resourceService: ResourceService,
+    private imageService: ImageService,
+    private sanitizer: DomSanitizer
+  ) { }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const workshopIdParam = params.get('workshopId');
-      console.log('Workshop ID from route:', workshopIdParam);
-  
-      if (workshopIdParam) {
-        this.workshopId = +workshopIdParam;
-        this.fetchResources();
-      } else {
-        console.error('workshopId is null or undefined');
-      }
-    });
+    this.workshopId = +this.route.snapshot.params['workshopId'];
+    this.loadResources();
   }
-  
-  fetchResources(): void {
-    this.isLoading = true;
+
+  loadResources(): void {
+    this.loading = true;
+    this.error = null;
     
-    this.resourcesService.getAllResources(this.workshopId).subscribe({
-      next: (data) => {
-        console.log('Fetched Resources:', data);
-        this.resources = data;
-        this.isLoading = false;
+    this.resourceService.getAllWorkshopResources(this.workshopId).subscribe({
+      next: (resources) => {
+        this.resources = resources;
+        this.loadImagesForResources();
+        this.loading = false;
       },
       error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = 'Error fetching resources. Please try again later.';
-        console.error('Error fetching resources:', err);
+        this.error = 'Failed to load resources';
+        this.loading = false;
+        console.error('Error loading resources:', err);
       }
     });
   }
-  
-  // Delete a resource by its ID
+
+  loadImagesForResources(): void {
+    this.resources.forEach(resource => {
+      if (resource.resourceImages && resource.resourceImages.length > 0) {
+        const firstImage = resource.resourceImages[0];
+        this.loadImage(firstImage.id_image, resource.id);
+      }
+    });
+  }
+
+  loadImage(imageId: number, resourceId: number): void {
+    this.imageService.getImage(imageId).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        this.imageUrls[resourceId] = this.sanitizer.bypassSecurityTrustUrl(url);
+      },
+      error: (err) => {
+        console.error('Error loading image:', err);
+      }
+    });
+  }
+
   deleteResource(resourceId: number): void {
     if (confirm('Are you sure you want to delete this resource?')) {
-      this.resourcesService.deleteResource(this.workshopId, resourceId).subscribe({
+      this.resourceService.deleteResource(this.workshopId, resourceId).subscribe({
         next: () => {
-          // After successful deletion, remove the resource from the list
-          this.resources = this.resources.filter((resource) => resource.id !== resourceId);
+          this.resources = this.resources.filter(r => r.id !== resourceId);
         },
         error: (err) => {
           console.error('Error deleting resource:', err);
+          alert('Failed to delete resource');
         }
       });
     }

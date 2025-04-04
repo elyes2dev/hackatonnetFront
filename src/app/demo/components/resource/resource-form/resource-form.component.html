@@ -1,48 +1,39 @@
-<div class="container mt-4">
-    <h2>Add Resource</h2>
-  
-    <form (submit)="onSubmit()">
-      <!-- Name -->
-      <div class="mb-3">
-        <label class="form-label">Resource Name:</label>
-        <input type="text" class="form-control" [(ngModel)]="resource.name" name="name" required>
-      </div>
-  
-      <!-- Description -->
-      <div class="mb-3">
-        <label class="form-label">Description:</label>
-        <textarea class="form-control" [(ngModel)]="resource.description" name="description" required></textarea>
-      </div>
-  
-      <!-- Documents Upload -->
-      <div class="mb-3">
-        <label class="form-label">Upload Documents (PDF, ZIP):</label>
-        <input type="file" class="form-control" (change)="onFileSelect($event, 'document')" multiple>
-      </div>
-  
-      <!-- Images Upload -->
-      <div class="mb-3">
-        <label class="form-label">Upload Images (JPG, PNG):</label>
-        <input type="file" class="form-control" (change)="onFileSelect($event, 'image')" multiple>
-      </div>
-  
-      <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary" [disabled]="loading">
-        {{ loading ? 'Submitting...' : 'Add Resource' }}
-      </button>
-  
-      <!-- Cancel Button -->
-      <button type="button" class="btn btn-secondary ms-2" (click)="goBack()">Cancel</button>
-    </form>
-  
-    <!-- Error Message -->
-    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
-      {{ errorMessage }}
+<div class="resource-form-container">
+  <h2 *ngIf="!isEditMode">Add Resource</h2>
+  <h2 *ngIf="isEditMode">Edit Resource</h2>
+
+  <form [formGroup]="resourceForm" (ngSubmit)="onSubmit()">
+    <div class="p-field">
+      <label for="name">Resource Name</label>
+      <input id="name" type="text" pInputText formControlName="name" />
+      <small class="p-error" *ngIf="resourceForm.get('name')?.invalid && resourceForm.get('name')?.touched">
+        Resource name is required.
+      </small>
     </div>
-  
-    <!-- Success Message -->
-    <div *ngIf="successMessage" class="alert alert-success mt-3">
-      {{ successMessage }}
+
+    <div class="p-field">
+      <label for="description">Description</label>
+      <textarea id="description" rows="3" pInputTextarea formControlName="description"></textarea>
     </div>
-  </div>
-  
+
+    <div class="p-field">
+      <label for="niveau">Skill Level</label>
+      <input id="niveau" type="number" pInputText formControlName="niveau" />
+    </div>
+
+    <div class="p-field">
+      <label for="files">Upload Files</label>
+      <input id="files" type="file" (change)="onFileSelected($event)" multiple />
+      <div *ngIf="selectedFiles.length > 0">
+        <ul>
+          <li *ngFor="let file of selectedFiles">{{ file.name }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button pButton type="submit" label="Save" [disabled]="resourceForm.invalid"></button>
+      <button pButton type="button" label="Cancel" class="p-button-secondary" (click)="onCancel()"></button>
+    </div>
+  </form>
+</div>

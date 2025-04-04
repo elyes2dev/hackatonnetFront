@@ -9,6 +9,6 @@ export interface Workshop {
     photo: string;
     theme: ThemeEnum;  // Assume ThemeEnum is defined elsewhere
     user: User;  // Relation to the User who created the workshop
-    resources: Resources[];  // Assume Resource is another defined interface
+    resources?: Resources[];  // Assume Resource is another defined interface
     // Additional properties can be added as needed
 }

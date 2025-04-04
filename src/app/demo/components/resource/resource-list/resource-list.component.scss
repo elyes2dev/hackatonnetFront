@@ -1,0 +1,69 @@
+.resource-list-container {
+    padding: 20px;
+  }
+  
+  .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+  }
+  
+  .error-message {
+    margin: 20px 0;
+    padding: 15px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .no-resources {
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+  }
+  
+  .resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .resource-card {
+    transition: transform 0.2s;
+  }
+  
+  .resource-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .actions button {
+    margin-left: 5px;
+  }
+  
+  .card-content {
+    padding-top: 10px;
+  }
+  
+  .resource-image {
+    margin-top: 15px;
+  }
+  
+  .resource-image img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 4px;
+  }

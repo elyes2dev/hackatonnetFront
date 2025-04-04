@@ -8,78 +8,75 @@ import { ImageModel } from '../models/image.model';
 @Injectable({
   providedIn: 'root'
 })
-export class ResourcesService {
+export class ResourceService {
+  private baseUrl = 'http://localhost:9100/pi/workshops';
 
-  private baseUrl = 'http://localhost:9100/pi/workshops';  // Base URL for Resources API
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Get all resources for a specific workshop
-  getAllResources(workshopId: number): Observable<Resources[]> {
-    console.log(`Making API request to: /api/workshops/${workshopId}/resources`);
+  getAllWorkshopResources(workshopId: number): Observable<Resources[]> {
     return this.http.get<Resources[]>(`${this.baseUrl}/${workshopId}/resources`);
   }
 
-  // Get a specific resource by its ID
-  getResource(workshopId: number, resourceId: number): Observable<Resources> {
+  // Get a specific resource by ID within a workshop
+  getResourceById(workshopId: number, resourceId: number): Observable<Resources> {
     return this.http.get<Resources>(`${this.baseUrl}/${workshopId}/resources/${resourceId}`);
   }
 
-  createResource(workshopId: number, resource: Resources, documents: File[], images: File[]): Observable<any> {
+  // Create a new resource with optional files
+  createResource(
+    workshopId: number, 
+    resource: Resources, 
+    files?: File[]
+  ): Observable<Resources> {
     const formData = new FormData();
-
-    // ✅ Add JSON stringified resource object
     formData.append('resource', JSON.stringify(resource));
 
-    // ✅ Ensure documents array is not empty before appending
-    if (documents && documents.length > 0) {
-        documents.forEach(doc => {
-            formData.append('documents', doc);
-        });
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+      }
     }
 
-    // ✅ Ensure images array is not empty before appending
-    if (images && images.length > 0) {
-        images.forEach(img => {
-            formData.append('images', img);
-        });
-    }
+    return this.http.post<Resources>(
+      `${this.baseUrl}/${workshopId}/resources`,
+      formData
+    );
+  }
 
-    // ✅ Make the POST request with FormData
-    return this.http.post(`${this.baseUrl}/${workshopId}/resources`, formData);
-}
-
-  // Update an existing resource
-  updateResource(workshopId: number, resourceId: number, resource: Resources): Observable<Resources> {
-    return this.http.put<Resources>(`${this.baseUrl}/${workshopId}/resources/${resourceId}`, resource);
+  // Update a resource
+  updateResource(
+    workshopId: number, 
+    resourceId: number, 
+    resourceDetails: Resources
+  ): Observable<Resources> {
+    return this.http.put<Resources>(
+      `${this.baseUrl}/${workshopId}/resources/${resourceId}`,
+      resourceDetails
+    );
   }
 
   // Delete a resource
   deleteResource(workshopId: number, resourceId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${workshopId}/resources/${resourceId}`);
+    return this.http.delete<void>(
+      `${this.baseUrl}/${workshopId}/resources/${resourceId}`
+    );
   }
 
-  // Upload a document to a resource
-  uploadDocument(workshopId: number, resourceId: number, file: File): Observable<Document> {
+  // Upload images to an existing resource
+  uploadImagesToResource(
+    workshopId: number, 
+    resourceId: number, 
+    files: File[]
+  ): Observable<Resources> {
     const formData = new FormData();
-    formData.append('file', file);
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
 
-    return this.http.post<Document>(`${this.baseUrl}/${workshopId}/resources/${resourceId}/documents`, formData);
-  }
-
-  // Upload an image to a resource
-  uploadImage(workshopId: number, resourceId: number, file: File): Observable<ImageModel> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    return this.http.post<ImageModel>(`${this.baseUrl}/${workshopId}/resources/${resourceId}/images`, formData);
-  }
-
-  // Download a document
-  downloadDocument(workshopId: number, resourceId: number, documentId: number): Observable<Blob> {
-    return this.http.get<Blob>(`${this.baseUrl}/${workshopId}/resources/${resourceId}/documents/${documentId}/download`, {
-      responseType: 'blob' as 'json',
-      headers: new HttpHeaders().set('Accept', 'application/octet-stream')
-    });
+    return this.http.post<Resources>(
+      `${this.baseUrl}/${workshopId}/resources/${resourceId}/images`,
+      formData
+    );
   }
 }

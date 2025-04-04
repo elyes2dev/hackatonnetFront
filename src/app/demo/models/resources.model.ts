@@ -11,7 +11,7 @@ export interface Resources {
     description: string;
     niveau: SkillEnum;  // Enum representing skill level
     workshop: Workshop;
-    documents: Document[];
-    images: ImageModel[];
+    documents?: Document[];
+    resourceImages: ImageModel[];
 }
 
