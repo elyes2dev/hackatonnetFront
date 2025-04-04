@@ -26,11 +26,30 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SponsorApplicationFormComponent } from './demo/components/sponsor/sponsor-application-form/sponsor-application-form.component';
+import { SponsorApplicationDetailComponent } from './demo/components/sponsor/sponsor-application-detail/sponsor-application-detail.component';
+import { SponsorApplicationListComponent } from './demo/components/sponsor/sponsor-application-list/sponsor-application-list.component';
+import { PrizeFormComponent } from './demo/components/prize/prize-form/prize-form.component';
+import { PrizeListComponent } from './demo/components/prize/prize-list/prize-list.component';
+import { PrizeDetailComponent } from './demo/components/prize/prize-detail/prize-detail.component';
+import { SponsorLeaderboardComponent } from './demo/components/sponsor/sponsor-leaderboard/sponsor-leaderboard.component';
+import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/sponsor-prizes.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent
+        AppComponent,
+        NotfoundComponent,
+        MydashboardComponent,
+        SponsorApplicationFormComponent,
+        SponsorApplicationListComponent,
+        SponsorApplicationDetailComponent,
+        PrizeFormComponent,
+        PrizeListComponent,
+        PrizeDetailComponent,
+        SponsorLeaderboardComponent,
+        SponsorPrizesComponent,
+
     ],
     imports: [
         AppRoutingModule,
@@ -47,7 +66,8 @@ import { FormsModule } from '@angular/forms';
         DropdownModule,
         ProgressBarModule,
         ToastModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule,
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

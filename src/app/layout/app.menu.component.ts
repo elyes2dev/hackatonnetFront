@@ -39,7 +39,9 @@ export class AppMenuComponent implements OnInit {
                     { label: 'File', icon: 'pi pi-fw pi-file', routerLink: ['/uikit/file'] },
                     { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/uikit/charts'] },
                     { label: 'Misc', icon: 'pi pi-fw pi-circle', routerLink: ['/uikit/misc'] },
-                    { label: 'MyDashBoard', icon: 'pi pi-fw pi-id-card', routerLink: ['/mydashboard'] }
+                    { label: 'MyDashBoard', icon: 'pi pi-fw pi-id-card', routerLink: ['/mydashboard'] },
+                    { label: 'SponsorApplications', icon: 'pi pi-fw pi-id-card', routerLink: ['/sponsor-application'] },
+                    { label: 'Prizes', icon: 'pi pi-fw pi-id-card', routerLink: ['/prizes'] }
                 ]
             },
             {

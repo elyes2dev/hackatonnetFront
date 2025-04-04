@@ -1,0 +1,229 @@
+/* Sponsor Application Form Styling */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 2em;
+    padding-right: 2em;
+    padding-bottom: 0.4em;
+    background-color: #171717;
+    border-radius: 25px;
+    transition: 0.4s ease-in-out;
+  }
+  
+  .card {
+    background-image: linear-gradient(163deg, #00ff75 0%, #3700ff 100%);
+    border-radius: 22px;
+    transition: all 0.3s;
+    width: 100%;
+    max-width: 600px;
+    margin: 2em auto;
+  }
+  
+  .card2 {
+    border-radius: 0;
+    transition: all 0.2s;
+  }
+  
+  .card2:hover {
+    transform: scale(0.98);
+    border-radius: 20px;
+  }
+  
+  .card:hover {
+    box-shadow: 0px 0px 30px 1px rgba(0, 255, 117, 0.3);
+  }
+  
+  #heading {
+    text-align: center;
+    margin: 1.5em 0;
+    color: rgb(255, 255, 255);
+    font-size: 1.5em;
+  }
+  
+  .field {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    border-radius: 25px;
+    padding: 0.6em;
+    border: none;
+    outline: none;
+    color: white;
+    background-color: #171717;
+    box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+  }
+  
+  .input-icon {
+    height: 1.3em;
+    width: 1.3em;
+    fill: white;
+  }
+  
+  .input-field {
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
+    color: #d3d3d3;
+  }
+  
+  .form .btn {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+  }
+  
+  .button1 {
+    padding: 0.8em 2em;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    transition: 0.4s ease-in-out;
+    background-color: #252525;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .button1:hover:not([disabled]) {
+    background-color: black;
+    color: white;
+  }
+  
+  .button1[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .invalid-input {
+    border: 1px solid #ff4d4d;
+  }
+  
+  .error-message {
+    color: #ff4d4d;
+    font-size: 0.8em;
+    margin-top: -5px;
+    margin-left: 10px;
+  }
+  
+  .file-info {
+    background-color: #252525;
+    padding: 0.5em;
+    border-radius: 5px;
+    margin-top: 5px;
+  }
+  
+  .file-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    font-size: 0.9em;
+  }
+  
+  .preview-image {
+    max-height: 100px;
+    margin-top: 10px;
+    border-radius: 5px;
+  }
+  
+  .delete-btn {
+    background: none;
+    border: none;
+    color: #ff4d4d;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0 5px;
+  }
+  
+  .progress-container {
+    width: 100%;
+    height: 10px;
+    background-color: #252525;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 5px;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-image: linear-gradient(90deg, #00ff75 0%, #3700ff 100%);
+    color: white;
+    font-size: 0.7em;
+    text-align: center;
+    line-height: 10px;
+    transition: width 0.2s;
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .alert-success, .alert-danger {
+    padding: 0.75em;
+    border-radius: 5px;
+    margin-bottom: 1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .alert-success {
+    background-color: rgba(0, 255, 117, 0.2);
+    color: #00ff75;
+  }
+  
+  .alert-danger {
+    background-color: rgba(255, 77, 77, 0.2);
+    color: #ff4d4d;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+  
+  .file-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: rgba(0, 255, 117, 0.2);
+    color: #00ff75;
+    padding: 0.2em 0.5em;
+    border-radius: 3px;
+    margin-right: 10px;
+  }
+  
+  .file-icon {
+    margin-right: 5px;
+  }
+  
+  /* Make form responsive */
+  @media (max-width: 768px) {
+    .card {
+      max-width: 90%;
+    }
+    
+    .form {
+      padding-left: 1em;
+      padding-right: 1em;
+    }
+  }

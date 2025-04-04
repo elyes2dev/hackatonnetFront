@@ -1,0 +1,164 @@
+<!-- src/app/sponsor-application-form/sponsor-application-form.component.html -->
+<div class="card">
+    <div class="card2">
+      <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="form">
+        <p id="heading">Sponsor Application Form</p>
+        
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="alert-success" role="alert">
+          {{successMessage}}
+          <button type="button" class="close-btn" data-bs-dismiss="alert" aria-label="Close">×</button>
+        </div>
+        
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert-danger" role="alert">
+          {{errorMessage}}
+          <button type="button" class="close-btn" data-bs-dismiss="alert" aria-label="Close">×</button>
+        </div>
+  
+        <!-- Company Name -->
+        <div class="field">
+          <svg viewBox="0 0 16 16" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" class="input-icon">
+            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2z"></path>
+            <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V4z"></path>
+          </svg>
+          <input
+            type="text"
+            class="input-field"
+            id="companyName"
+            formControlName="companyName"
+            placeholder="Company Name*"
+            [ngClass]="{'invalid-input': applicationForm.get('companyName')?.invalid && applicationForm.get('companyName')?.touched}">
+        </div>
+        <div 
+          *ngIf="applicationForm.get('companyName')?.invalid && applicationForm.get('companyName')?.touched" 
+          class="error-message">
+          <span *ngIf="applicationForm.get('companyName')?.errors?.['required']">Company name is required</span>
+          <span *ngIf="applicationForm.get('companyName')?.errors?.['minlength']">Company name must be at least 2 characters</span>
+          <span *ngIf="applicationForm.get('companyName')?.errors?.['maxlength']">Company name cannot exceed 100 characters</span>
+        </div>
+        
+        <!-- Registration Number -->
+        <div class="field">
+          <svg viewBox="0 0 16 16" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" class="input-icon">
+            <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"></path>
+          </svg>
+          <input
+            type="text"
+            class="input-field"
+            id="registrationNumber"
+            formControlName="registrationNumber"
+            placeholder="Business Registration Number*"
+            [ngClass]="{'invalid-input': applicationForm.get('registrationNumber')?.invalid && applicationForm.get('registrationNumber')?.touched}">
+        </div>
+        <div 
+          *ngIf="applicationForm.get('registrationNumber')?.invalid && applicationForm.get('registrationNumber')?.touched" 
+          class="error-message">
+          <span *ngIf="applicationForm.get('registrationNumber')?.errors?.['required']">Registration number is required</span>
+          <span *ngIf="applicationForm.get('registrationNumber')?.errors?.['pattern']">Registration number must contain only digits</span>
+        </div>
+        
+        <!-- Website URL -->
+        <div class="field">
+          <svg viewBox="0 0 16 16" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" class="input-icon">
+            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"></path>
+          </svg>
+          <input
+            type="url"
+            class="input-field"
+            id="websiteUrl"
+            formControlName="websiteUrl"
+            placeholder="Website URL (https://www.example.com)"
+            [ngClass]="{'invalid-input': applicationForm.get('websiteUrl')?.invalid && applicationForm.get('websiteUrl')?.touched}">
+        </div>
+        <div 
+          *ngIf="applicationForm.get('websiteUrl')?.invalid && applicationForm.get('websiteUrl')?.touched" 
+          class="error-message">
+          Please enter a valid URL
+        </div>
+        
+        <!-- Company Logo -->
+        <div class="field">
+          <svg viewBox="0 0 16 16" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" class="input-icon">
+            <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"></path>
+            <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z"></path>
+          </svg>
+          <input
+            type="file"
+            class="input-field"
+            id="companyLogo"
+            (change)="onLogoSelected($event)"
+            accept="image/jpeg,image/png,image/gif">
+        </div>
+        <div *ngIf="selectedLogo" class="file-info">
+          <div class="file-preview">
+            <span>{{selectedLogo.name}} ({{(selectedLogo.size / 1024).toFixed(2)}} KB)</span>
+            <button type="button" class="delete-btn" (click)="selectedLogo = null; logoPreview = null">
+              ×
+            </button>
+          </div>
+          <img [src]="logoPreview" class="preview-image">
+        </div>
+        
+        <!-- Upload progress for logo -->
+        <div *ngIf="isSubmitting && selectedLogo && logoUploadProgress > 0" class="progress-container">
+          <div class="progress-bar" [style.width.%]="logoUploadProgress">
+            {{logoUploadProgress}}%
+          </div>
+        </div>
+        
+        <!-- Business Document -->
+        <div class="field">
+          <svg viewBox="0 0 16 16" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" class="input-icon">
+            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"></path>
+            <path d="M4.603 12.087a.81.81 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.68 7.68 0 0 1 1.482-.645 19.701 19.701 0 0 0 1.062-2.227 7.269 7.269 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a10.954 10.954 0 0 0 .98 1.686 5.753 5.753 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.856.856 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.716 5.716 0 0 1-.911-.95 11.642 11.642 0 0 0-1.997.406 11.311 11.311 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.793.793 0 0 1-.58.029zm1.379-1.901c-.166.076-.32.156-.459.238-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361.01.022.02.036.026.044a.27.27 0 0 0 .035-.012c.137-.056.355-.235.635-.572a8.18 8.18 0 0 0 .45-.606zm1.64-1.33a12.647 12.647 0 0 1 1.01-.193 11.666 11.666 0 0 1-.51-.858 20.741 20.741 0 0 1-.5 1.05zm2.446.45c.15.162.296.3.435.41.24.19.407.253.498.256a.107.107 0 0 0 .07-.015.307.307 0 0 0 .094-.125.436.436 0 0 0 .059-.2.095.095 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a3.881 3.881 0 0 0-.612-.053zM8.078 5.8a6.7 6.7 0 0 0 .2-.828c.031-.188.043-.343.038-.465a.613.613 0 0 0-.032-.198.517.517 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822.024.111.054.227.09.346z"></path>
+          </svg>
+          <input
+            type="file"
+            class="input-field"
+            id="documentPath"
+            (change)="onDocumentSelected($event)"
+            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+        </div>
+        <div 
+          *ngIf="isDocumentRequired && !selectedDocument && applicationForm.touched" 
+          class="error-message">
+          Business document is required
+        </div>
+        <div *ngIf="selectedDocument" class="file-info">
+          <div class="file-preview">
+            <span class="file-badge">
+              <svg viewBox="0 0 16 16" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" class="file-icon">
+                <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"></path>
+                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2z"></path>
+                <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V4z"></path>
+              </svg>
+              Document Selected
+            </span>
+            <span>{{selectedDocument.name}} ({{(selectedDocument.size / 1024).toFixed(2)}} KB)</span>
+            <button type="button" class="delete-btn" (click)="selectedDocument = null">
+              ×
+            </button>
+          </div>
+        </div>
+        
+        <!-- Upload progress for document -->
+        <div *ngIf="isSubmitting && selectedDocument && documentUploadProgress > 0" class="progress-container">
+          <div class="progress-bar" [style.width.%]="documentUploadProgress">
+            {{documentUploadProgress}}%
+          </div>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="btn">
+          <button 
+            type="submit" 
+            class="button1"
+            [disabled]="applicationForm.invalid || isSubmitting || !selectedDocument">
+            <span *ngIf="isSubmitting" class="spinner" role="status" aria-hidden="true"></span>
+            {{isSubmitting ? 'Submitting...' : 'Submit Application'}}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

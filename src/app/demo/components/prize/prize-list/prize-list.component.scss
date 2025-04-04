@@ -1,0 +1,36 @@
+:host ::ng-deep {
+    .customer-badge {
+      border-radius: 2px;
+      padding: 0.25em 0.5em;
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      
+      &.status-approved {
+        background: #C8E6C9;
+        color: #256029;
+      }
+      
+      &.status-pending {
+        background: #FEEDAF;
+        color: #8A5340;
+      }
+      
+      &.status-rejected {
+        background: #FFCDD2;
+        color: #C63737;
+      }
+      
+      &.status-canceled {
+        background: #DEDEDE;
+        color: #444444;
+      }
+      
+      &.status-secondary {
+        background: #DEDEDE;
+        color: #444444;
+      }
+    }
+    
+  }
