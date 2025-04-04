@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/demo/services/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
+import { jwtDecode } from 'jwt-decode';
+
 
 @Component({
     selector: 'app-login',
@@ -38,27 +40,35 @@ export class LoginComponent {
 
   constructor(private authService: AuthService, public layoutService: LayoutService, private router: Router) {}
 
- onSignIn(): void {
-  this.authService.login(this.name, this.password).subscribe({
-    next: (response) => {
-      if (response.jwtToken) {
-        this.token = response.jwtToken; 
-        this.authService.storeToken(this.token); 
-        console.log('Token received:', this.token);
-        
-        const userId = response.userId; // Now, userId should be available if sent from backend
-        console.log('User ID:', userId);
 
-        this.router.navigate(['/mydashboard', { id: userId }]);
-      } else {
-        console.error('JWT token is not in the response');
+  onSignIn(): void {
+    this.authService.login(this.name, this.password).subscribe({
+      next: (response) => {
+        if (response.jwtToken) {
+          this.token = response.jwtToken;
+          this.authService.storeToken(this.token);
+          console.log('Token received:', this.token);
+  
+          
+          const decodedToken: any = jwtDecode(this.token);
+          const userId = decodedToken.userid;
+          localStorage.setItem('loggedid', userId);
+  
+          console.log('Decoded User ID:', userId);
+  
+          this.router.navigate(['/mydashboard', { id: userId }]);
+        } else {
+          console.error('JWT token is not in the response');
+        }
+      },
+      error: (err) => {
+        this.error = 'Login failed';
+        console.error('Error during login:', err);
       }
-    },
-    error: (err) => {
-      this.error = 'Login failed';
-      console.error('Error during login:', err);
-    }
-  });
+    });
+  }
+  
+
 }
 
 
@@ -74,4 +84,4 @@ export class LoginComponent {
       //      this.router.navigate(['/mydashboard']);
        // }
    // }
-}
+
