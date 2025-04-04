@@ -31,7 +31,7 @@ export class LoginComponent {
 
     valCheck: string[] = ['remember'];
 
-  //  password!: string;
+  
 
     name: string = '';
     password: string = '';
@@ -47,14 +47,13 @@ export class LoginComponent {
         if (response.jwtToken) {
           this.token = response.jwtToken;
           this.authService.storeToken(this.token);
-          console.log('Token received:', this.token);
+          
   
           
           const decodedToken: any = jwtDecode(this.token);
           const userId = decodedToken.userid;
           localStorage.setItem('loggedid', userId);
   
-          console.log('Decoded User ID:', userId);
   
           this.router.navigate(['/mydashboard', { id: userId }]);
         } else {
@@ -67,21 +66,10 @@ export class LoginComponent {
       }
     });
   }
+
+  forgetpassword(): void {
+    this.router.navigate(['/forgetpassword']);
+  }
   
-
 }
-
-
-    // Mock sign-in method
-//    onSignIn() {
-        // Perform your sign-in logic here
-
-        // Example sign-in success
-  //      const isSignInSuccessful = true;  // Replace this logic with real authentication
-
-    //    if (isSignInSuccessful) {
-            // Navigate to the 'mydashboard' route upon successful sign-in
-      //      this.router.navigate(['/mydashboard']);
-       // }
-   // }
 

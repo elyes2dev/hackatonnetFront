@@ -33,6 +33,7 @@ import { WorkshopService } from './demo/services/workshop.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
+import { RegisterComponent } from './demo/components/auth/register/register.component';
 
 
 @NgModule({
