@@ -30,10 +30,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
+import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
+import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
+import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
+import { RouterModule } from '@angular/router';
+import { CardModule } from 'primeng/card';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent
     ],
     imports: [
         AppRoutingModule,
@@ -51,7 +56,11 @@ import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-de
         ProgressBarModule,
         ToastModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        RouterModule,
+        CardModule,
+        ButtonModule,
+        InputTextModule,
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

@@ -10,8 +10,8 @@ export interface Resources {
     name: string;
     description: string;
     niveau: SkillEnum;  // Enum representing skill level
-    image: string;
     workshop: Workshop;
-    documents: Array<Document>;
-    images: Array<ImageModel>;
+    documents: Document[];
+    images: ImageModel[];
 }
+

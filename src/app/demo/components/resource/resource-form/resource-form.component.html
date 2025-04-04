@@ -1,0 +1,50 @@
+<div class="p-card">
+    <div class="p-card-header">
+      <h2>Create Resource</h2>
+    </div>
+    
+    <div class="p-card-body">
+      <div class="p-field p-grid">
+        <label for="name" class="p-col-fixed" style="width: 150px;">Resource Name:</label>
+        <div class="p-col">
+          <input id="name" [(ngModel)]="resource.name" type="text" pInputText placeholder="Enter resource name" />
+        </div>
+      </div>
+  
+      <div class="p-field p-grid">
+        <label for="description" class="p-col-fixed" style="width: 150px;">Description:</label>
+        <div class="p-col">
+          <textarea id="description" [(ngModel)]="resource.description" pInputTextarea placeholder="Enter resource description"></textarea>
+        </div>
+      </div>
+  
+      <div class="p-field p-grid">
+        <label for="documents" class="p-col-fixed" style="width: 150px;">Upload Documents (PDF, ZIP):</label>
+        <div class="p-col">
+          <input type="file" id="documents" (change)="onDocumentSelect($event)" multiple />
+        </div>
+      </div>
+  
+      <div class="p-field p-grid">
+        <label for="images" class="p-col-fixed" style="width: 150px;">Upload Images:</label>
+        <div class="p-col">
+          <input type="file" id="images" (change)="onImageSelect($event)" multiple />
+        </div>
+      </div>
+  
+      <div class="p-d-flex p-jc-end p-mt-3">
+        <button pButton 
+                label="Submit" 
+                icon="pi pi-check" 
+                class="p-button-success p-mr-2"
+                (click)="onSubmit()">
+        </button>
+      </div>
+    </div>
+  
+    <div class="p-card-footer p-text-center">
+      <p *ngIf="loading">Uploading resource...</p>
+      <p *ngIf="errorMessage" class="p-error">{{ errorMessage }}</p>
+    </div>
+  </div>
+  

@@ -6,6 +6,9 @@ import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
+import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
+import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
+import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
 
 @NgModule({
     imports: [
@@ -19,19 +22,29 @@ import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-de
                     { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },
                     { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
-                    // New Update Template
+                    
+                    // Dashboard
                     { path: 'mydashboard', component: MydashboardComponent },
 
+                    // Workshops Routes
                     { path: 'workshops', 
                         children: [
-                            { path: '', component: WorkshoplistComponent },
-                            { path: 'new', component: WorkshopFormComponent },
-                            { path: ':id/edit', component: WorkshopFormComponent },
-                            { path: ':id', component: WorkshopDetailsComponent }
+                            { path: '', component: WorkshoplistComponent },  // List Workshops
+                            { path: 'new', component: WorkshopFormComponent },  // Add New Workshop
+                            { path: ':id/edit', component: WorkshopFormComponent },  // Edit Workshop
+                            { path: ':id', component: WorkshopDetailsComponent }  // Workshop Details
                         ]
-                    }
+                    },
+
+                    // Resources Routes inside Workshops
+                    { path: 'workshops/:workshopId/resources', component: ResourceListComponent },  // List Resources
+                    { path: 'workshops/:workshopId/resources/new', component: ResourceFormComponent },  // Add Resource
+                    { path: 'workshops/:workshopId/resources/:resourceId/edit', component: ResourceFormComponent },  // Edit Resource
+                    { path: 'workshops/:workshopId/resources/:resourceId', component: ResourceDetailsComponent },  // Resource Details
                 ],
             },
+
+            // Authentication & Other Routes
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
             { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
             { path: 'pages/notfound', component: NotfoundComponent },
@@ -40,5 +53,4 @@ import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-de
     ],
     exports: [RouterModule]
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule { }

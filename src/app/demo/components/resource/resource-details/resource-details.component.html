@@ -1,0 +1,45 @@
+<div class="card">
+    <h3>{{ resource.name }}</h3>
+  
+    <p><strong>Description:</strong> {{ resource.description }}</p>
+    <p><strong>Skill Level:</strong> {{ resource.niveau }}</p>
+  
+    <h4>Documents</h4>
+    <ul>
+      <li *ngFor="let document of resource.documents">
+        <a [href]="document.path" target="_blank">{{ document.name }}</a>
+      </li>
+    </ul>
+  
+    <h4>Images</h4>
+    <div *ngFor="let image of resource.images">
+      <img [src]="image.path" alt="Resource Image" class="resource-image"/>
+    </div>
+  
+    <div *ngIf="loading">Loading resource details...</div>
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  
+    <div class="buttons">
+      <button pButton
+              label="Edit"
+              icon="pi pi-pencil"
+              class="p-button-success"
+              [routerLink]="['/workshops', workshopId, 'resources', resource.id, 'edit']">
+      </button>
+  
+      <button pButton
+              label="Delete"
+              icon="pi pi-trash"
+              class="p-button-danger"
+              (click)="deleteResource()">
+      </button>
+  
+      <button pButton
+              label="Back to List"
+              icon="pi pi-arrow-left"
+              class="p-button-secondary"
+              [routerLink]="['/workshops', workshopId, 'resources']">
+      </button>
+    </div>
+  </div>
+  
