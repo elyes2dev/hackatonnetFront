@@ -1,50 +1,48 @@
-<div class="p-card">
-    <div class="p-card-header">
-      <h2>Create Resource</h2>
-    </div>
-    
-    <div class="p-card-body">
-      <div class="p-field p-grid">
-        <label for="name" class="p-col-fixed" style="width: 150px;">Resource Name:</label>
-        <div class="p-col">
-          <input id="name" [(ngModel)]="resource.name" type="text" pInputText placeholder="Enter resource name" />
-        </div>
+<div class="container mt-4">
+    <h2>Add Resource</h2>
+  
+    <form (submit)="onSubmit()">
+      <!-- Name -->
+      <div class="mb-3">
+        <label class="form-label">Resource Name:</label>
+        <input type="text" class="form-control" [(ngModel)]="resource.name" name="name" required>
       </div>
   
-      <div class="p-field p-grid">
-        <label for="description" class="p-col-fixed" style="width: 150px;">Description:</label>
-        <div class="p-col">
-          <textarea id="description" [(ngModel)]="resource.description" pInputTextarea placeholder="Enter resource description"></textarea>
-        </div>
+      <!-- Description -->
+      <div class="mb-3">
+        <label class="form-label">Description:</label>
+        <textarea class="form-control" [(ngModel)]="resource.description" name="description" required></textarea>
       </div>
   
-      <div class="p-field p-grid">
-        <label for="documents" class="p-col-fixed" style="width: 150px;">Upload Documents (PDF, ZIP):</label>
-        <div class="p-col">
-          <input type="file" id="documents" (change)="onDocumentSelect($event)" multiple />
-        </div>
+      <!-- Documents Upload -->
+      <div class="mb-3">
+        <label class="form-label">Upload Documents (PDF, ZIP):</label>
+        <input type="file" class="form-control" (change)="onFileSelect($event, 'document')" multiple>
       </div>
   
-      <div class="p-field p-grid">
-        <label for="images" class="p-col-fixed" style="width: 150px;">Upload Images:</label>
-        <div class="p-col">
-          <input type="file" id="images" (change)="onImageSelect($event)" multiple />
-        </div>
+      <!-- Images Upload -->
+      <div class="mb-3">
+        <label class="form-label">Upload Images (JPG, PNG):</label>
+        <input type="file" class="form-control" (change)="onFileSelect($event, 'image')" multiple>
       </div>
   
-      <div class="p-d-flex p-jc-end p-mt-3">
-        <button pButton 
-                label="Submit" 
-                icon="pi pi-check" 
-                class="p-button-success p-mr-2"
-                (click)="onSubmit()">
-        </button>
-      </div>
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        {{ loading ? 'Submitting...' : 'Add Resource' }}
+      </button>
+  
+      <!-- Cancel Button -->
+      <button type="button" class="btn btn-secondary ms-2" (click)="goBack()">Cancel</button>
+    </form>
+  
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
     </div>
   
-    <div class="p-card-footer p-text-center">
-      <p *ngIf="loading">Uploading resource...</p>
-      <p *ngIf="errorMessage" class="p-error">{{ errorMessage }}</p>
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success mt-3">
+      {{ successMessage }}
     </div>
   </div>
   

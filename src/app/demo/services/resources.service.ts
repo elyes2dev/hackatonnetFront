@@ -25,25 +25,29 @@ export class ResourcesService {
     return this.http.get<Resources>(`${this.baseUrl}/${workshopId}/resources/${resourceId}`);
   }
 
-  // Create a new resource
   createResource(workshopId: number, resource: Resources, documents: File[], images: File[]): Observable<any> {
     const formData = new FormData();
-  
+
     // ✅ Add JSON stringified resource object
     formData.append('resource', JSON.stringify(resource));
-  
-    // ✅ Add each document file
-    documents.forEach(doc => {
-      formData.append('documents', doc);
-    });
-  
-    // ✅ Add each image file
-    images.forEach(img => {
-      formData.append('images', img);
-    });
-  
-    return this.http.post(`http://localhost:9100/pi/workshops/${workshopId}/resources`, formData);
-  }
+
+    // ✅ Ensure documents array is not empty before appending
+    if (documents && documents.length > 0) {
+        documents.forEach(doc => {
+            formData.append('documents', doc);
+        });
+    }
+
+    // ✅ Ensure images array is not empty before appending
+    if (images && images.length > 0) {
+        images.forEach(img => {
+            formData.append('images', img);
+        });
+    }
+
+    // ✅ Make the POST request with FormData
+    return this.http.post(`${this.baseUrl}/${workshopId}/resources`, formData);
+}
 
   // Update an existing resource
   updateResource(workshopId: number, resourceId: number, resource: Resources): Observable<Resources> {

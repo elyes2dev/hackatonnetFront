@@ -5,14 +5,15 @@ import { Resources } from 'src/app/demo/models/resources.model';
 import { SkillEnum } from 'src/app/demo/models/skill.enum';
 import { ThemeEnum } from 'src/app/demo/models/theme.enum';
 import { User } from 'src/app/demo/models/user.model';
+import { ResourcesService } from 'src/app/demo/services/resources.service';
 
 @Component({
   selector: 'app-resource-form',
   templateUrl: './resource-form.component.html',
   styleUrls: ['./resource-form.component.scss']
 })
-export class ResourceFormComponent {
-  // Default user data
+export class ResourceFormComponent implements OnInit {
+  workshopId!: number;
   dummyUser: User = {
     id: 1,
     name: 'admin',
@@ -28,17 +29,16 @@ export class ResourceFormComponent {
     workshops: []
   };
 
-  // Resource with all required fields
   resource: Resources = {
     id: 0,
     name: '',
     description: '',
-    niveau: SkillEnum.Beginner, // Default to beginner
+    niveau: SkillEnum.Beginner,
     workshop: {
-      id: 1,
-      name: 'Workshop Name',
-      description: 'Workshop Description',
-      photo: 'default.jpg',
+      id: 0,
+      name: '',
+      description: '',
+      photo: '',
       theme: ThemeEnum.Default,
       user: this.dummyUser,
       resources: []
@@ -50,103 +50,97 @@ export class ResourceFormComponent {
   documents: File[] = [];
   images: File[] = [];
   errorMessage: string | null = null;
+  successMessage: string | null = null;
   loading: boolean = false;
-  skillLevels = Object.values(SkillEnum); // For dropdown
+  skillLevels = Object.values(SkillEnum);
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private resourceService: ResourcesService
   ) {}
 
-  onDocumentSelect(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.documents = Array.from(input.files);
-    }
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('workshopId');
+      if (id) {
+        this.workshopId = +id;
+        this.resource.workshop.id = this.workshopId;
+      }
+    });
   }
 
-  onImageSelect(event: Event): void {
+  onFileSelect(event: Event, type: 'document' | 'image'): void {
     const input = event.target as HTMLInputElement;
     if (input.files) {
-      this.images = Array.from(input.files);
+      if (type === 'document') {
+        this.documents = Array.from(input.files);
+      } else {
+        this.images = Array.from(input.files);
+      }
     }
   }
 
   onSubmit(): void {
-    // Validate required fields
     if (!this.resource.name || !this.resource.description) {
       this.errorMessage = 'Please fill in all required fields.';
       return;
     }
-
-    // Validate file types
+  
     if (!this.validateFiles()) {
       return;
     }
-
+  
     this.loading = true;
     this.errorMessage = null;
-
-    const formData = this.createFormData();
-
-    this.http.post<any>('http://localhost:9100/pi/workshops/1/resources', formData)
-      .subscribe({
-        next: (data) => this.handleSuccess(data),
-        error: (err) => this.handleError(err)
-      });
+  
+    // Pass the required parameters directly to the service method
+    this.resourceService.createResource(this.workshopId, this.resource, this.documents, this.images).subscribe({
+      next: (data) => this.handleSuccess(data),
+      error: (err) => this.handleError(err)
+    });
   }
 
   private validateFiles(): boolean {
-    // Validate document types (PDF, ZIP)
     const invalidDocs = this.documents.filter(file => 
       !['application/pdf', 'application/zip'].includes(file.type)
     );
-    
-    // Validate image types
     const invalidImages = this.images.filter(file => 
       !file.type.startsWith('image/')
     );
 
     if (invalidDocs.length > 0 || invalidImages.length > 0) {
-      this.errorMessage = 
-        `Invalid file types. 
-        Documents must be PDF/ZIP. 
-        Images must be JPG/PNG.`;
+      this.errorMessage = 'Invalid file types. Documents must be PDF/ZIP. Images must be JPG/PNG.';
       return false;
     }
-
     return true;
   }
 
   private createFormData(): FormData {
     const formData = new FormData();
-    
-    // Remove circular references before stringifying
     const { workshop, documents, images, ...resourceData } = this.resource;
     formData.append('resource', JSON.stringify({
       ...resourceData,
       workshopId: workshop.id
     }));
 
-    // Add documents
-    this.documents.forEach(doc => 
-      formData.append('documents', doc, doc.name)
-    );
-
-    // Add images
-    this.images.forEach(img => 
-      formData.append('images', img, img.name)
-    );
-
+    this.documents.forEach(doc => formData.append('documents', doc, doc.name));
+    this.images.forEach(img => formData.append('images', img, img.name));
     return formData;
   }
 
   private handleSuccess(data: any): void {
     console.log('Resource created successfully', data);
+    this.successMessage = 'Resource was added successfully!';
     this.loading = false;
-    this.router.navigate(['/workshops', 1, 'resources']); // Redirect to resources list
+    this.router.navigate([`/workshops/${this.workshopId}/resources`]);
   }
 
+  navigateToResources(): void {
+    this.router.navigate(['/workshops', this.workshopId, 'resources']);
+  }
+  
   private handleError(error: HttpErrorResponse): void {
     console.error('Error creating resource:', error);
     this.loading = false;
@@ -159,4 +153,14 @@ export class ResourceFormComponent {
       this.errorMessage = 'An unexpected error occurred. Please try again.';
     }
   }
+
+  goBack(): void {
+    this.router.navigate(['/workshops', this.workshopId, 'resources']);
+  }
 }
+
+
+
+
+
+
