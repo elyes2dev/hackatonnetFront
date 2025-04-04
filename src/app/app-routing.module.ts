@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
 import { AppLayoutComponent } from "./layout/app.layout.component";
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
+import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
+import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
+import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
 
 @NgModule({
     imports: [
@@ -18,6 +21,15 @@ import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
                     // New Update Template
                     { path: 'mydashboard', component: MydashboardComponent },
+
+                    { path: 'workshops', 
+                        children: [
+                            { path: '', component: WorkshoplistComponent },
+                            { path: 'new', component: WorkshopFormComponent },
+                            { path: ':id/edit', component: WorkshopFormComponent },
+                            { path: ':id', component: WorkshopDetailsComponent }
+                        ]
+                    }
                 ],
             },
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },

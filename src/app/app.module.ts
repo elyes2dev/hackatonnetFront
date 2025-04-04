@@ -26,11 +26,14 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
+import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
+import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent
     ],
     imports: [
         AppRoutingModule,
@@ -47,7 +50,8 @@ import { FormsModule } from '@angular/forms';
         DropdownModule,
         ProgressBarModule,
         ToastModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
