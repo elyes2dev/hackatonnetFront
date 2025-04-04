@@ -27,4 +27,9 @@ export class WorkshopService {
   deleteWorkshop(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+    // ✅ New: Update an existing workshop
+    updateWorkshop(id: number, workshop: Workshop): Observable<Workshop> {
+      return this.http.put<Workshop>(`${this.apiUrl}/${id}`, workshop);
+    }
 }

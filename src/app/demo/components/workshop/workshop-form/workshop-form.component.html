@@ -1,0 +1,30 @@
+<div class="card">
+    <form [formGroup]="workshopForm" (ngSubmit)="onSubmit()">
+      <div class="p-field">
+        <label for="name">Name</label>
+        <input pInputText id="name" formControlName="name" required>
+      </div>
+  
+      <div class="p-field">
+        <label for="theme">Theme</label>
+        <p-dropdown [options]="themes" formControlName="theme"></p-dropdown>
+      </div>
+  
+      <div class="p-field">
+        <label for="description">Description</label>
+        <textarea pInputTextarea id="description" formControlName="description"></textarea>
+      </div>
+  
+      <div class="p-field">
+        <label for="photo">Photo</label>
+        <input type="file" (change)="onFileSelected($event)">
+      </div>
+  
+      <div *ngIf="imagePreview">
+        <img [src]="imagePreview" alt="Image Preview" style="width: 150px; height: auto;">
+      </div>
+  
+      <button pButton type="submit" label="Save" [disabled]="!workshopForm.valid"></button>
+    </form>
+  </div>
+  

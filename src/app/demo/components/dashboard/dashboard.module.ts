@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardsRoutingModule } from './dashboard-routing.module';
 
@@ -25,6 +25,7 @@ import { TableModule } from 'primeng/table';
         PanelMenuModule,
         StyleClassModule,
         TableModule,
+        ReactiveFormsModule,
         
         // Routing
         DashboardsRoutingModule

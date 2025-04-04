@@ -26,11 +26,20 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
+import { HttpClientModule } from '@angular/common/http';
+import { WorkshopService } from './demo/services/workshop.service';
+import { BrowserModule } from '@angular/platform-browser';
+import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
+import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
+import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
+import { ResourceFormComponent } from './demo/components/resource/components/resource-form/resource-form.component';
+import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent
     ],
     imports: [
         AppRoutingModule,
@@ -47,12 +56,15 @@ import { FormsModule } from '@angular/forms';
         DropdownModule,
         ProgressBarModule,
         ToastModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        BrowserModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
+        PhotoService, ProductService, WorkshopService
     ],
     bootstrap: [AppComponent]
 })
