@@ -30,4 +30,12 @@ export class QuestionService {
   deleteQuestion(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+   // Method to get questions by quizId
+   getQuestionsByQuizId(quizId: number): Observable<Question[]> {
+    const url = `${this.baseUrl}/quiz/${quizId}`;
+    return this.http.get<Question[]>(url);
+  }
+
+
 }

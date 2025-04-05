@@ -101,9 +101,10 @@ export class QuizFormComponent implements OnInit {
   }
 
   loadQuestions(quizId: number): void {
-    this.questionService.getAllQuestions().subscribe({
+    this.questionService.getQuestionsByQuizId(quizId).subscribe({
       next: (questions) => {
-        questions.filter(q => q.quiz?.id_quiz === quizId).forEach(q => this.addQuestion(q));
+        // Filter questions by quizId, then add each question to the form
+        questions.forEach(q => this.addQuestion(q));
       },
       error: (err) => {
         this.error = 'Failed to load questions.';
@@ -165,9 +166,15 @@ export class QuizFormComponent implements OnInit {
       return;
     }
 
-    const saveObservables = questions.map((question: any) => 
-      this.questionService.createQuestion(question)
-    );
+    const saveObservables = questions.map((question: any) => {
+      if (question.id) {
+        // Update existing questions
+        return this.questionService.updateQuestion(question.id, question);
+      } else {
+        // Create new questions
+        return this.questionService.createQuestion(question);
+      }
+    });
 
     Promise.all(saveObservables.map((obs: Observable<any>) => obs.toPromise()))
       .then(() => {
