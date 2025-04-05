@@ -1,86 +1,96 @@
-<div *ngIf="loading" class="loading">Loading...</div>
-
-<form [formGroup]="quizForm" (ngSubmit)="onSubmit()">
-  <div class="form-group">
-    <label for="title">Quiz Title</label>
-    <input
-      id="title"
-      formControlName="title"
-      class="form-control"
-      [ngClass]="{'is-invalid': quizForm.get('title')?.invalid && quizForm.get('title')?.touched}"
-    />
-    <div *ngIf="quizForm.get('title')?.invalid && quizForm.get('title')?.touched" class="invalid-feedback">
-      <div *ngIf="quizForm.get('title')?.hasError('required')">Title is required.</div>
-      <div *ngIf="quizForm.get('title')?.hasError('minlength')">Title must be at least 3 characters long.</div>
-    </div>
+<div *ngIf="loading" class="loading-overlay">
+    <div class="loading-spinner">Loading...</div>
   </div>
-
-  <div class="form-check">
-    <input
-      id="isPublished"
-      formControlName="isPublished"
-      type="checkbox"
-      class="form-check-input"
-    />
-    <label for="isPublished" class="form-check-label">Published</label>
-  </div>
-
-  <div formArrayName="questions">
-    <div *ngFor="let questionControl of questionsArray.controls; let i = index" [formGroupName]="i" class="question-group">
-      <div class="form-group">
-        <label for="questionText-{{ i }}">Question Text</label>
-        <input
-          id="questionText-{{ i }}"
-          formControlName="questionText"
-          class="form-control"
-          [ngClass]="{'is-invalid': questionControl.get('questionText')?.invalid && questionControl.get('questionText')?.touched}"
-        />
-        <div *ngIf="questionControl.get('questionText')?.invalid && questionControl.get('questionText')?.touched" class="invalid-feedback">
-          <div *ngIf="questionControl.get('questionText')?.hasError('required')">Question text is required.</div>
-        </div>
+  
+  <form [formGroup]="quizForm" (ngSubmit)="onSubmit()" class="quiz-form">
+    <div class="form-group">
+      <label for="title" class="form-label">Quiz Title</label>
+      <input
+        id="title"
+        formControlName="title"
+        class="form-control"
+        [ngClass]="{'invalid': quizForm.get('title')?.invalid && quizForm.get('title')?.touched}"
+        placeholder="Enter quiz title"
+      />
+      <div *ngIf="quizForm.get('title')?.invalid && quizForm.get('title')?.touched" class="validation-error">
+        <div *ngIf="quizForm.get('title')?.hasError('required')">Title is required.</div>
+        <div *ngIf="quizForm.get('title')?.hasError('minlength')">Title must be at least 3 characters long.</div>
       </div>
-
-      <div formArrayName="answers">
-        <div *ngFor="let answerControl of getAnswers(i).controls; let j = index" class="answer-group">
-          <div class="form-group">
-            <label for="answer-{{ i }}-{{ j }}">Answer {{ j + 1 }}</label>
-            <input
-              id="answer-{{ i }}-{{ j }}"
-              [formControlName]="j"
-              class="form-control"
-              [ngClass]="{'is-invalid': answerControl.invalid && answerControl.touched}"
-            />
-            <div *ngIf="answerControl.invalid && answerControl.touched" class="invalid-feedback">
-              Answer is required.
-            </div>
+    </div>
+  
+    <div class="form-check form-switch">
+      <input
+        id="isPublished"
+        formControlName="isPublished"
+        type="checkbox"
+        class="form-check-input"
+      />
+      <label for="isPublished" class="form-check-label">Published</label>
+    </div>
+  
+    <div formArrayName="questions">
+      <div *ngFor="let questionControl of questionsArray.controls; let i = index" [formGroupName]="i" class="question">
+        <div class="question-header">
+          <h4>Question {{ i + 1 }}</h4>
+          <button type="button" (click)="removeQuestion(i)" class="delete-button">Delete</button>
+        </div>
+  
+        <div class="form-group">
+          <label for="questionText-{{ i }}" class="form-label">Question Text</label>
+          <input
+            id="questionText-{{ i }}"
+            formControlName="questionText"
+            class="form-control"
+            [ngClass]="{'invalid': questionControl.get('questionText')?.invalid && questionControl.get('questionText')?.touched}"
+            placeholder="Enter the question text"
+          />
+          <div *ngIf="questionControl.get('questionText')?.invalid && questionControl.get('questionText')?.touched" class="validation-error">
+            <div *ngIf="questionControl.get('questionText')?.hasError('required')">Question text is required.</div>
           </div>
         </div>
-        <button type="button" (click)="addAnswer(i)" class="btn btn-primary">Add Answer</button>
-      </div>
-
-      <div class="form-group">
-        <label for="correctAnswerIndex-{{ i }}">Correct Answer Index</label>
-        <input
-          id="correctAnswerIndex-{{ i }}"
-          formControlName="correctAnswerIndex"
-          type="number"
-          class="form-control"
-          [ngClass]="{'is-invalid': questionControl.get('correctAnswerIndex')?.invalid && questionControl.get('correctAnswerIndex')?.touched}"
-        />
-        <div *ngIf="questionControl.get('correctAnswerIndex')?.invalid && questionControl.get('correctAnswerIndex')?.touched" class="invalid-feedback">
-          <div *ngIf="questionControl.get('correctAnswerIndex')?.hasError('required')">Correct answer index is required.</div>
+  
+        <div formArrayName="answers">
+          <div *ngFor="let answerControl of getAnswers(i).controls; let j = index" class="answer-row">
+            <div class="form-group">
+              <label for="answer-{{ i }}-{{ j }}" class="form-label">Answer {{ j + 1 }}</label>
+              <input
+                id="answer-{{ i }}-{{ j }}"
+                [formControlName]="j"
+                class="form-control"
+                [ngClass]="{'invalid': answerControl.invalid && answerControl.touched}"
+                placeholder="Enter answer option"
+              />
+              <div *ngIf="answerControl.invalid && answerControl.touched" class="validation-error">
+                Answer is required.
+              </div>
+            </div>
+          </div>
+          <button type="button" (click)="addAnswer(i)" class="add-answer">+ Add Answer</button>
+        </div>
+  
+        <div class="form-group">
+          <label for="correctAnswerIndex-{{ i }}" class="form-label">Correct Answer Index</label>
+          <input
+            id="correctAnswerIndex-{{ i }}"
+            formControlName="correctAnswerIndex"
+            type="number"
+            class="form-control"
+            [ngClass]="{'invalid': questionControl.get('correctAnswerIndex')?.invalid && questionControl.get('correctAnswerIndex')?.touched}"
+            placeholder="Enter the correct answer index"
+          />
+          <div *ngIf="questionControl.get('correctAnswerIndex')?.invalid && questionControl.get('correctAnswerIndex')?.touched" class="validation-error">
+            <div *ngIf="questionControl.get('correctAnswerIndex')?.hasError('required')">Correct answer index is required.</div>
+          </div>
         </div>
       </div>
-
-      <button type="button" (click)="removeQuestion(i)" class="btn btn-danger">Remove Question</button>
     </div>
-  </div>
-
-  <button type="button" (click)="addQuestion()" class="btn btn-success">Add Question</button>
-
-  <button type="submit" [disabled]="loading" class="btn btn-primary mt-4">
-    {{ isEditMode ? 'Update' : 'Create' }} Quiz
-  </button>
-</form>
-
-<div *ngIf="error" class="alert alert-danger mt-4">{{ error }}</div>
+  
+    <button type="button" (click)="addQuestion()" class="add-question">+ Add Question</button>
+  
+    <button type="submit" [disabled]="loading" class="submit-button">
+      {{ isEditMode ? 'Update' : 'Create' }} Quiz
+    </button>
+  </form>
+  
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  
