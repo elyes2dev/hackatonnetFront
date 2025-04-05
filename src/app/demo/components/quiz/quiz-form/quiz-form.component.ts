@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizService } from 'src/app/demo/services/quiz.service';
 import { QuestionService } from 'src/app/demo/services/question.service';
@@ -73,15 +73,14 @@ export class QuizFormComponent implements OnInit {
     const answers = this.questionsArray.at(questionIndex).get('answers') as FormArray;
     answers.push(this.fb.control('')); // Add an empty answer control
   }
-  
-  getAnswers(questionIndex: number): FormArray {
-    return this.questionsArray.at(questionIndex).get('answers') as FormArray;
-  }
-  
 
   removeAnswer(questionIndex: number, answerIndex: number): void {
     const answers = this.getAnswers(questionIndex);
     answers.removeAt(answerIndex);
+  }
+
+  getAnswers(questionIndex: number): FormArray {
+    return this.questionsArray.at(questionIndex).get('answers') as FormArray;
   }
 
   loadQuiz(quizId: number): void {

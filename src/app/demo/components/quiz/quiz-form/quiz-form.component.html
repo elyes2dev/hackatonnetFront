@@ -39,14 +39,14 @@
           <div *ngIf="questionControl.get('questionText')?.hasError('required')">Question text is required.</div>
         </div>
       </div>
-  
+
       <div formArrayName="answers">
-        <div *ngFor="let answerControl of getAnswers(i).controls; let j = index" [formGroupName]="j" class="answer-group">
+        <div *ngFor="let answerControl of getAnswers(i).controls; let j = index" class="answer-group">
           <div class="form-group">
             <label for="answer-{{ i }}-{{ j }}">Answer {{ j + 1 }}</label>
             <input
               id="answer-{{ i }}-{{ j }}"
-              formControlName="answers"
+              [formControlName]="j"
               class="form-control"
               [ngClass]="{'is-invalid': answerControl.invalid && answerControl.touched}"
             />
@@ -57,7 +57,7 @@
         </div>
         <button type="button" (click)="addAnswer(i)" class="btn btn-primary">Add Answer</button>
       </div>
-  
+
       <div class="form-group">
         <label for="correctAnswerIndex-{{ i }}">Correct Answer Index</label>
         <input
@@ -71,20 +71,16 @@
           <div *ngIf="questionControl.get('correctAnswerIndex')?.hasError('required')">Correct answer index is required.</div>
         </div>
       </div>
-  
+
       <button type="button" (click)="removeQuestion(i)" class="btn btn-danger">Remove Question</button>
     </div>
   </div>
-  
 
   <button type="button" (click)="addQuestion()" class="btn btn-success">Add Question</button>
-  <br /><br />
 
-  <button type="submit" [disabled]="quizForm.invalid || loading" class="btn btn-primary">
-    {{ isEditMode ? 'Update Quiz' : 'Create Quiz' }}
+  <button type="submit" [disabled]="loading" class="btn btn-primary mt-4">
+    {{ isEditMode ? 'Update' : 'Create' }} Quiz
   </button>
 </form>
 
-<div *ngIf="error" class="alert alert-danger mt-3">
-  {{ error }}
-</div>
+<div *ngIf="error" class="alert alert-danger mt-4">{{ error }}</div>
