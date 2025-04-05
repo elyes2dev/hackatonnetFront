@@ -38,10 +38,11 @@ import { CardModule } from 'primeng/card';
 import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.component';
 import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
 import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
+import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent
     ],
     imports: [
         

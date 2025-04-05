@@ -12,6 +12,7 @@ import { ResourceDetailsComponent } from './demo/components/resource/resource-de
 import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.component';
 import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
 import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
+import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
 
 @NgModule({
     imports: [
@@ -61,6 +62,10 @@ import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-d
                       {
                         path: 'workshops/:workshopId/quizzes/:quizId/details',
                         component: QuizDetailsComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/:quizId/score-add',
+                        component: QuizScoreAddComponent // Replace with your actual component
                       }
                       
                 ],

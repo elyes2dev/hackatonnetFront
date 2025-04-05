@@ -25,7 +25,8 @@
         <button pButton icon="pi pi-eye" class="p-button-text" (click)="goToDetails(quiz.id_quiz!)" pTooltip="View Details"></button>
         <button pButton icon="pi pi-pencil" class="p-button-text" (click)="goToEdit(quiz.id_quiz!)" pTooltip="Edit Quiz"></button>
         <button pButton icon="pi pi-trash" class="p-button-text p-button-danger" (click)="deleteQuiz(quiz.id_quiz!)" pTooltip="Delete Quiz"></button>
-      </td>
+        <button pButton icon="pi pi-plus" class="p-button-text" (click)="goToQuizScoreAdd(quiz.id_quiz!)" pTooltip="Add Score"></button> <!-- New Button -->
+    </td>
     </tr>
   </tbody>
 </table>

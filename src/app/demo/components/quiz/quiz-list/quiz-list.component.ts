@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizService } from 'src/app/demo/services/quiz.service';
 import { Quiz } from 'src/app/demo/models/quiz.model';
+import { UserQuizScoreService } from 'src/app/demo/services/user-quiz-score.service'; // Import the UserQuizScoreService
+import { User } from 'src/app/demo/models/user.model'; // Import User model
 
 @Component({
   selector: 'app-quiz-list',
@@ -13,27 +15,25 @@ export class QuizListComponent implements OnInit {
   workshopId!: number;
   loading: boolean = true;
   error: string = '';
+  currentUser!: User; // Store the current user
 
   constructor(
     private quizService: QuizService,
+    private userQuizScoreService: UserQuizScoreService, // Inject the UserQuizScoreService
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.workshopId = +this.route.snapshot.paramMap.get('workshopId')!;
-    console.log("Workshop ID:", this.workshopId);
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}'); // Get the current user from localStorage (or any other source)
     this.fetchQuizzes();
   }
 
   fetchQuizzes(): void {
     this.quizService.getQuizzesByWorkshop(this.workshopId).subscribe({
       next: (quizzes) => {
-        console.log("Fetched quizzes:", quizzes); // Log the quizzes structure
-        this.quizzes = quizzes; // Directly assign quizzes without filtering
-        this.quizzes.forEach(quiz => {
-          console.log("Workshop for quiz:", quiz.workshop); // Log the workshop object for each quiz
-        });
+        this.quizzes = quizzes;
         this.loading = false;
       },
       error: () => {
@@ -61,5 +61,10 @@ export class QuizListComponent implements OnInit {
 
   goToAdd(): void {
     this.router.navigate(['/workshops', this.workshopId, 'quizzes', 'new']);
+  }
+
+  goToQuizScoreAdd(quizId: number): void {
+    // Directly navigate to quiz-score-add without checking if the user has already taken the quiz
+    this.router.navigate(['/workshops', this.workshopId, 'quizzes', quizId, 'score-add']);
   }
 }
