@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizService } from 'src/app/demo/services/quiz.service';
 import { QuestionService } from 'src/app/demo/services/question.service';
@@ -19,7 +19,6 @@ export class QuizFormComponent implements OnInit {
   quizId?: number;
   loading = false;
   error = '';
-  currentQuestionIndex: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -31,7 +30,7 @@ export class QuizFormComponent implements OnInit {
     this.quizForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       isPublished: [false],
-      questions: this.fb.array([])
+      questions: this.fb.array([])  // Initialize an empty form array for questions
     });
   }
 
@@ -50,51 +49,39 @@ export class QuizFormComponent implements OnInit {
     return this.quizForm.get('questions') as FormArray;
   }
 
-  getQuestionFormGroup(control: AbstractControl): FormGroup {
-    return control as FormGroup;
-  }
-
-  getAnswers(formGroup: FormGroup): FormArray {
-    return formGroup.get('answers') as FormArray;
-  }
-
-  createQuestionForm(): FormGroup {
+  createQuestionForm(question?: Question): FormGroup {
     return this.fb.group({
-      questionText: ['', Validators.required],
-      answers: this.fb.array([this.fb.control('', Validators.required), this.fb.control('', Validators.required)]),
-      correctAnswerIndex: [0, Validators.required]
+      questionText: [question?.questionText || '', Validators.required],
+      correctAnswerIndex: [question?.correctAnswerIndex || 0, Validators.required],
+      answers: this.fb.array((question?.answers || []).map(answer => this.fb.control(answer, Validators.required)))
     });
   }
 
-  addQuestion(): void {
-    this.questionsArray.push(this.createQuestionForm());
-    this.currentQuestionIndex = this.questionsArray.length - 1;
+  addQuestion(question?: Question): void {
+    this.questionsArray.push(this.createQuestionForm(question));
   }
 
   removeQuestion(index: number): void {
     this.questionsArray.removeAt(index);
-    if (this.currentQuestionIndex === index) {
-      this.currentQuestionIndex = null;
-    } else if (this.currentQuestionIndex && this.currentQuestionIndex > index) {
-      this.currentQuestionIndex--;
-    }
   }
 
-  addAnswer(questionIndex: number): void {
-    const questionGroup = this.getQuestionFormGroup(this.questionsArray.at(questionIndex));
-    const answers = this.getAnswers(questionGroup);
-    answers.push(this.fb.control('', Validators.required));
+  getQuestionFormGroup(index: number): FormGroup {
+    return this.questionsArray.at(index) as FormGroup;
   }
+
+  addAnswer(questionIndex: number) {
+    const answers = this.questionsArray.at(questionIndex).get('answers') as FormArray;
+    answers.push(this.fb.control('')); // Add an empty answer control
+  }
+  
+  getAnswers(questionIndex: number): FormArray {
+    return this.questionsArray.at(questionIndex).get('answers') as FormArray;
+  }
+  
 
   removeAnswer(questionIndex: number, answerIndex: number): void {
-    const questionGroup = this.getQuestionFormGroup(this.questionsArray.at(questionIndex));
-    const answers = this.getAnswers(questionGroup);
+    const answers = this.getAnswers(questionIndex);
     answers.removeAt(answerIndex);
-    
-    const currentCorrectIndex = questionGroup.get('correctAnswerIndex')?.value;
-    if (currentCorrectIndex >= answerIndex) {
-      questionGroup.get('correctAnswerIndex')?.setValue(Math.max(0, currentCorrectIndex - 1));
-    }
   }
 
   loadQuiz(quizId: number): void {
@@ -110,7 +97,6 @@ export class QuizFormComponent implements OnInit {
       error: (err) => {
         this.error = 'Failed to load quiz data.';
         this.loading = false;
-        console.error('Error loading quiz:', err);
       }
     });
   }
@@ -118,7 +104,7 @@ export class QuizFormComponent implements OnInit {
   loadQuestions(quizId: number): void {
     this.questionService.getAllQuestions().subscribe({
       next: (questions) => {
-        questions.filter(q => q.quiz?.id_quiz === quizId).forEach(q => this.addQuestion());
+        questions.filter(q => q.quiz?.id_quiz === quizId).forEach(q => this.addQuestion(q));
       },
       error: (err) => {
         this.error = 'Failed to load questions.';
@@ -147,8 +133,7 @@ export class QuizFormComponent implements OnInit {
 
     operation.subscribe({
       next: (quiz) => {
-        // Replace saveQuestions with saveQuestionsBatch
-        this.saveQuestionsBatch(this.quizForm.value.questions, quiz.id_quiz!); 
+        this.saveQuestionsBatch(this.quizForm.value.questions, quiz.id_quiz!);
         if (!this.isEditMode) {
           this.router.navigate(['/workshops', this.workshopId, 'quizzes', quiz.id_quiz, 'edit']);
         } else {
@@ -156,11 +141,10 @@ export class QuizFormComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.error = this.isEditMode 
-          ? 'Failed to update quiz. Please try again.' 
+        this.error = this.isEditMode
+          ? 'Failed to update quiz. Please try again.'
           : 'Failed to create quiz. Please try again.';
         this.loading = false;
-        console.error('Error saving quiz:', err);
       }
     });
   }
@@ -171,12 +155,10 @@ export class QuizFormComponent implements OnInit {
       return;
     }
 
-    // Type the 'question' parameter as 'Question' or 'any'
     const saveObservables = questions.map((question: any) => 
       this.questionService.createQuestion(question)
     );
 
-    // Type the 'obs' parameter as 'Observable<any>' or more specific type if needed
     Promise.all(saveObservables.map((obs: Observable<any>) => obs.toPromise()))
       .then(() => {
         this.loading = false;
@@ -187,7 +169,6 @@ export class QuizFormComponent implements OnInit {
       .catch(err => {
         this.error = 'Error saving some questions.';
         this.loading = false;
-        console.error('Error saving questions:', err);
       });
   }
 }
