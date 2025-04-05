@@ -47,15 +47,21 @@ export class LoginComponent {
         if (response.jwtToken) {
           this.token = response.jwtToken;
           this.authService.storeToken(this.token);
+          console.log(this.token)
           
   
           
           const decodedToken: any = jwtDecode(this.token);
           const userId = decodedToken.userid;
+          const roles: string[] = decodedToken.roles || [];
           localStorage.setItem('loggedid', userId);
-  
-  
-          this.router.navigate(['/mydashboard', { id: userId }]);
+          console.log(roles)
+
+          if (roles.includes('admin')) {
+              this.router.navigate(['/']);
+          } else {
+              this.router.navigate(['/landing']);
+          }
         } else {
           console.error('JWT token is not in the response');
         }
