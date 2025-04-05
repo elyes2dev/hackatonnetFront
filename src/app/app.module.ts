@@ -26,7 +26,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
@@ -35,12 +35,16 @@ import { ResourceFormComponent } from './demo/components/resource/resource-form/
 import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
 import { RouterModule } from '@angular/router';
 import { CardModule } from 'primeng/card';
+import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.component';
+import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
+import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent
     ],
     imports: [
+        
         AppRoutingModule,
         AppLayoutModule,
         TableModule,

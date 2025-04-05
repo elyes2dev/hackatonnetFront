@@ -1,0 +1,46 @@
+<div class="quiz-list-container">
+    <h2>Quizzes for Workshop</h2>
+  
+    <div *ngIf="loading" class="loading-message">Loading quizzes...</div>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+  
+    <div *ngIf="!loading && quizzes.length === 0" class="empty-message">
+      No quizzes found for this workshop
+    </div>
+  
+    <div *ngIf="!loading && quizzes.length > 0" class="quiz-table">
+      <div class="quiz-table-header">
+        <div class="header-cell">Title</div>
+        <div class="header-cell">Status</div>
+        <div class="header-cell">Questions</div>
+        <div class="header-cell">Actions</div>
+      </div>
+  
+      <div *ngFor="let quiz of quizzes" class="quiz-table-row">
+        <div class="table-cell">{{ quiz.title }}</div>
+        <div class="table-cell">
+          <span [class.published]="quiz.isPublished" [class.draft]="!quiz.isPublished">
+            {{ quiz.isPublished ? 'Published' : 'Draft' }}
+          </span>
+        </div>
+        <div class="table-cell">{{ quiz.questions?.length || 0 }}</div>
+        <div class="table-cell actions">
+          <button (click)="navigateToQuestions(quiz.id_quiz!)" class="action-button">
+            Questions
+          </button>
+          <button (click)="navigateToScores(quiz.id_quiz!)" class="action-button">
+            Scores
+          </button>
+          <button (click)="deleteQuiz(quiz.id_quiz!)" class="action-button delete">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <button 
+      class="add-button"
+      [routerLink]="['/workshops', workshopId, 'quizzes', 'new']">
+      Add New Quiz
+    </button>
+  </div>

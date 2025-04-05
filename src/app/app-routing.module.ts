@@ -9,6 +9,8 @@ import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-de
 import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
 import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
 import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
+import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.component';
+import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
 
 @NgModule({
     imports: [
@@ -41,6 +43,20 @@ import { ResourceDetailsComponent } from './demo/components/resource/resource-de
                     { path: 'workshops/:workshopId/resources/new', component: ResourceFormComponent },  // Add Resource
                     { path: 'workshops/:workshopId/resources/:resourceId/edit', component: ResourceFormComponent },  // Edit Resource
                     { path: 'workshops/:workshopId/resources/:resourceId', component: ResourceDetailsComponent },  // Resource Details
+
+
+                    {
+                        path: 'workshops/:workshopId/quizzes',
+                        component: QuizListComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/new',
+                        component: QuizFormComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/:quizId/edit',
+                        component: QuizFormComponent,
+                      }
                 ],
             },
 
