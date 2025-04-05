@@ -1,5 +1,5 @@
-// src/app/components/sponsor-prizes/sponsor-prizes.component.ts
 import { Component, OnInit } from '@angular/core';
+import { ApplicationStatus } from 'src/app/demo/models/application-status';
 import { Hackathon } from 'src/app/demo/models/hackathon';
 import { Prize, PrizeType, SponsorInfoDTO } from 'src/app/demo/models/prize';
 import { PrizeService } from 'src/app/demo/services/prize.service';
@@ -18,6 +18,7 @@ export class SponsorPrizesComponent implements OnInit {
   
   // Enum references for template usage
   PrizeType = PrizeType;
+  ApplicationStatus = ApplicationStatus;
 
   constructor(private prizeService: PrizeService) { }
 
@@ -61,25 +62,55 @@ export class SponsorPrizesComponent implements OnInit {
   }
 
   cancelPrize(prizeId: number): void {
+    // Find the prize in our local array first
+    const prize = this.prizes.find(p => p.id === prizeId);
+    if (!prize) return;
+    
+    // Check if hackathon has already started
+    const now = new Date();
+    if (prize.hackathon && prize.hackathon.startDate && new Date(prize.hackathon.startDate) < now) {
+      alert('Cannot cancel prize: The hackathon has already started.');
+      return;
+    }
+
     if (confirm('Are you sure you want to cancel this prize?')) {
       this.prizeService.cancelPrize(prizeId).subscribe({
         next: () => {
-          // Update the prize status in the local array
-          const index = this.prizes.findIndex(p => p.id === prizeId);
-          if (index !== -1) {
-            // Refresh prizes list after cancellation
-            this.loadPrizes();
-          }
+          // Refresh prizes list after cancellation
+          this.loadPrizes();
         },
         error: (err) => {
           console.error('Error cancelling prize:', err);
-          alert('Failed to cancel prize. Please try again.');
+          // Display the specific error message from the backend if available
+          if (err.error && err.error.message) {
+            alert(err.error.message);
+          } else {
+            alert('Failed to cancel prize. Please try again.');
+          }
         }
       });
     }
   }
 
   getCategoryLabel(category: string): string {
-    return category.replace('_', ' ');
+    return category ? category.replace('_', ' ') : '';
+  }
+
+  // Helper method to check if cancel button should be disabled
+  isCancelDisabled(prize: Prize): boolean {
+    // Disable if status is CANCELED or REJECTED
+    if (prize.status === 'CANCELED' || prize.status === 'REJECTED') {
+      return true;
+    }
+    
+    // Disable if hackathon has already started
+    if (prize.hackathon && prize.hackathon.startDate) {
+      const now = new Date();
+      if (new Date(prize.hackathon.startDate) < now) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 }
