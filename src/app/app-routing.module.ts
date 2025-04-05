@@ -11,6 +11,7 @@ import { ResourceFormComponent } from './demo/components/resource/resource-form/
 import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
 import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.component';
 import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
+import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
 
 @NgModule({
     imports: [
@@ -56,7 +57,12 @@ import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.co
                       {
                         path: 'workshops/:workshopId/quizzes/:quizId/edit',
                         component: QuizFormComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/:quizId/details',
+                        component: QuizDetailsComponent,
                       }
+                      
                 ],
             },
 

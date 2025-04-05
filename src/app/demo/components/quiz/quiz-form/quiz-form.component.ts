@@ -117,25 +117,35 @@ export class QuizFormComponent implements OnInit {
       this.error = 'Please fill all required fields correctly.';
       return;
     }
-
+  
     this.loading = true;
     this.error = '';
-
+  
     const quizData: Quiz = {
       ...this.quizForm.value,
       workshop: { id: this.workshopId }
     };
-
+  
     const operation = this.isEditMode
       ? this.quizService.updateQuiz(this.quizId!, quizData)
       : this.quizService.createQuiz(quizData);
-
+  
     operation.subscribe({
       next: (quiz) => {
+        // Save questions if necessary (this function is called after quiz creation or update)
         this.saveQuestionsBatch(this.quizForm.value.questions, quiz.id_quiz!);
-        if (!this.isEditMode) {
-          this.router.navigate(['/workshops', this.workshopId, 'quizzes', quiz.id_quiz, 'edit']);
-        } else {
+  
+        // Redirect to the quiz details page after creation or update
+        this.router.navigate([
+          '/workshops', 
+          this.workshopId, 
+          'quizzes', 
+          quiz.id_quiz, 
+          'details'
+        ]);
+  
+        // If it's an edit operation, stop loading
+        if (this.isEditMode) {
           this.loading = false;
         }
       },
@@ -147,6 +157,7 @@ export class QuizFormComponent implements OnInit {
       }
     });
   }
+  
 
   private saveQuestionsBatch(questions: any[], quizId: number): void {
     if (questions.length === 0) {

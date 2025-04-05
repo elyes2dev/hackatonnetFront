@@ -30,4 +30,9 @@ export class QuizService {
   deleteQuiz(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+    // 🆕 Get quizzes by workshop
+    getQuizzesByWorkshop(workshopId: number): Observable<Quiz[]> {
+        return this.http.get<Quiz[]>(`${this.baseUrl}/workshops/${workshopId}/quizzes`);
+      }
 }
