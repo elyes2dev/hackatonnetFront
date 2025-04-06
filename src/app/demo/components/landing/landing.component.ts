@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
     selector: 'app-landing',
@@ -59,5 +60,11 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
     `]
 })
 export class LandingComponent {
-    constructor(public layoutService: LayoutService, public router: Router) { }
+    userId: string | null = null;
+
+    constructor(private storageService: StorageService,public layoutService: LayoutService, public router: Router) {
+      this.userId = this.storageService.getUserId();
+      console.log('User ID:', this.userId);
+    }
+    
 }

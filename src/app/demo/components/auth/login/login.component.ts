@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/demo/services/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { jwtDecode } from 'jwt-decode';
+import { StorageService } from 'src/app/demo/services/storage.service';
 
 
 @Component({
@@ -38,7 +39,7 @@ export class LoginComponent {
     token: string = "";
     error: string | null = null;
 
-  constructor(private authService: AuthService, public layoutService: LayoutService, private router: Router) {}
+  constructor(private authService: AuthService, public layoutService: LayoutService, private router: Router,private storageService : StorageService) {}
 
 
   onSignIn(): void {
@@ -47,20 +48,18 @@ export class LoginComponent {
         if (response.jwtToken) {
           this.token = response.jwtToken;
           this.authService.storeToken(this.token);
-          console.log(this.token)
-          
-  
-          
+
           const decodedToken: any = jwtDecode(this.token);
           const userId = decodedToken.userid;
           const roles: string[] = decodedToken.roles || [];
-          localStorage.setItem('loggedid', userId);
-          console.log(roles)
+
+          // Use the service to set the user ID in local storage
+          this.storageService.setUserId(userId);
 
           if (roles.includes('admin')) {
-              this.router.navigate(['/']);
+            this.router.navigate(['/']);
           } else {
-              this.router.navigate(['/landing']);
+            this.router.navigate(['/landing']);
           }
         } else {
           console.error('JWT token is not in the response');
@@ -69,12 +68,12 @@ export class LoginComponent {
       error: (err) => {
         this.error = 'Login failed';
         console.error('Error during login:', err);
-      }
+      },
     });
   }
 
   forgetpassword(): void {
-    this.router.navigate(['/forgetpassword']);
+    this.router.navigate(['/auth/reset-password']);
   }
   
 }
