@@ -6,7 +6,13 @@ import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
-
+import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
+import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
+import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
+import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.component';
+import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
+import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
+import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
 
 @NgModule({
     imports: [
@@ -34,7 +40,34 @@ import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-de
                         ]
                     },
 
-                    
+                    // Resources Routes inside Workshops
+                    { path: 'workshops/:workshopId/resources', component: ResourceListComponent },  // List Resources
+                    { path: 'workshops/:workshopId/resources/new', component: ResourceFormComponent },  // Add Resource
+                    { path: 'workshops/:workshopId/resources/:resourceId/edit', component: ResourceFormComponent },  // Edit Resource
+                    { path: 'workshops/:workshopId/resources/:resourceId', component: ResourceDetailsComponent },  // Resource Details
+
+
+                    {
+                        path: 'workshops/:workshopId/quizzes',
+                        component: QuizListComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/new',
+                        component: QuizFormComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/:quizId/edit',
+                        component: QuizFormComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/:quizId/details',
+                        component: QuizDetailsComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/:quizId/score-add',
+                        component: QuizScoreAddComponent // Replace with your actual component
+                      }
+                      
                 ],
             },
 

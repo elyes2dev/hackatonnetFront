@@ -1,0 +1,63 @@
+<div class="resource-form-container">
+  <h2 *ngIf="!isEditMode">Add Resource</h2>
+  <h2 *ngIf="isEditMode">Edit Resource</h2>
+
+  <form [formGroup]="resourceForm" (ngSubmit)="onSubmit()">
+    <div class="form-field">
+      <label for="name">Resource Name</label>
+      <input id="name" type="text" formControlName="name" />
+      <small class="error-message" *ngIf="resourceForm.get('name')?.invalid && resourceForm.get('name')?.touched">
+        Resource name is required.
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="description">Description</label>
+      <textarea id="description" rows="3" formControlName="description"></textarea>
+    </div>
+
+    <div class="form-field">
+      <label for="niveau">Skill Level</label>
+      <select id="niveau" formControlName="niveau">
+        <option value="">Select skill level</option>
+        <option *ngFor="let level of skillLevels" [value]="level">{{level}}</option>
+      </select>
+      <small class="error-message" *ngIf="resourceForm.get('niveau')?.invalid && resourceForm.get('niveau')?.touched">
+        Skill level is required.
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="files">Upload Files</label>
+      <input id="files" type="file" (change)="onFileSelected($event)" multiple 
+             accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" />
+      
+      <div class="file-preview-container">
+        <!-- Selected files -->
+        <div *ngIf="selectedFiles.length > 0" class="file-list">
+          <h4>New Files</h4>
+          <div *ngFor="let file of selectedFiles; let i = index" class="file-item">
+            <span [class]="getFileIcon(file.type)"></span>
+            <span class="file-name">{{ file.name }}</span>
+            <button type="button" class="remove-btn" (click)="removeSelectedFile(i)">×</button>
+          </div>
+        </div>
+
+        <!-- Existing files (edit mode) -->
+        <div *ngIf="isEditMode && existingFiles.length > 0" class="file-list">
+          <h4>Existing Files</h4>
+          <div *ngFor="let file of existingFiles; let i = index" class="file-item">
+            <span [class]="getFileIcon(file.type)"></span>
+            <span class="file-name">{{ file.path }}</span>
+            <button type="button" class="remove-btn" (click)="removeExistingFile(i)">×</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="resourceForm.invalid">Save</button>
+      <button type="button" class="cancel-btn" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div>

@@ -1,4 +1,5 @@
 export enum ThemeEnum {
+    Default = 'Default',  // Add this default value
     Cloud = 'Cloud',
     AI = 'AI',
     Machine_Learning = 'Machine_Learning',
