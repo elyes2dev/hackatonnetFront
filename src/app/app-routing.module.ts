@@ -6,6 +6,7 @@ import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
+import { UserComponent } from './demo/components/user/user.component';  // Import UserComponent
 
 
 @NgModule({
@@ -23,6 +24,9 @@ import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-de
                     
                     // Dashboard
                     { path: 'mydashboard', component: MydashboardComponent },
+
+                    // User Management Route
+                    { path: 'users', component: UserComponent },  // Add UserComponent Route
 
                     // Workshops Routes
                     { path: 'workshops', 

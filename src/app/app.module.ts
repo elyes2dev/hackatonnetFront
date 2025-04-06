@@ -34,11 +34,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
 import { RegisterComponent } from './demo/components/auth/register/register.component';
+import { UserComponent } from './demo/components/user/user.component';
 
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent
     ],
     imports: [
         AppRoutingModule,
