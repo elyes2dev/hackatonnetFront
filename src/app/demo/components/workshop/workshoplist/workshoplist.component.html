@@ -23,11 +23,11 @@
         <td>
           <img [src]="workshop.photo || 'assets/images/placeholder-workshop.png'" 
                class="workshop-image"
-               alt="{{workshop.name}} thumbnail">
+               alt="{{ workshop.name }} thumbnail">
         </td>
-        <td>{{workshop.name}}</td>
-        <td>{{workshop.theme}}</td>
-        <td>{{workshop.description}}</td>
+        <td>{{ workshop.name }}</td>
+        <td>{{ workshop.theme }}</td>
+        <td>{{ workshop.description }}</td>
         <td>
           <div class="flex gap-2">
             <button pButton 
@@ -39,7 +39,27 @@
                     icon="pi pi-trash" 
                     class="p-button-rounded p-button-danger" 
                     (click)="deleteWorkshop(workshop.id)"></button>
+            
+            <!-- Button to redirect to the resource list for a specific workshop -->
+            <button pButton 
+                    icon="pi pi-list" 
+                    class="p-button-rounded p-button-info" 
+                    [routerLink]="['/workshops', workshop.id, 'resources']"></button>
           </div>
+            <!-- New Quiz buttons -->
+  <button pButton 
+  icon="pi pi-question-circle" 
+  class="p-button-rounded p-button-help" 
+  [routerLink]="['/workshops', workshop.id, 'quizzes']"
+  pTooltip="View quizzes" 
+  tooltipPosition="top"></button>
+
+<button pButton 
+  icon="pi pi-plus" 
+  class="p-button-rounded p-button-warning" 
+  [routerLink]="['/workshops', workshop.id, 'quizzes', 'new']"
+  pTooltip="Add new quiz" 
+  tooltipPosition="top"></button>
         </td>
       </tr>
     </ng-template>

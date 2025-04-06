@@ -1,0 +1,92 @@
+<div class="resource-details-container">
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading resource details...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+    <button (click)="loadResource()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !error && resource" class="resource-content">
+    <div class="resource-header">
+      <h2>{{ resource.name }}</h2>
+
+      <div class="workshop-info" *ngIf="resource.workshop">
+        <div class="workshop-image" *ngIf="resource.workshop.photo">
+          <img [src]="resource.workshop.photo" alt="Workshop image">
+        </div>
+        <div class="workshop-details">
+          <h3>From Workshop: {{ resource.workshop.name }}</h3>
+          <p>aa</p>
+          <p *ngIf="resource.workshop.user">Created by: {{ resource.workshop.user.username }}</p>
+          <p>Theme: {{ resource.workshop.theme }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="resource-body">
+      <div class="resource-description">
+        <h3>Description</h3>
+        <p>{{ resource.description }}</p>
+      </div>
+
+      <div class="skill-level">
+        <h3>Skill Level</h3>
+        <span class="skill-tag" [class]="getSkillLevelClass(resource.niveau)">
+          {{ resource.niveau }}
+        </span>
+      </div>
+
+      <div class="resource-files">
+        <!-- Images Section -->
+        <div *ngIf="resource.resourceImages?.length" class="files-section">
+          <h3>Images</h3>
+          <div class="image-gallery">
+            <div *ngFor="let file of resource.resourceImages" class="image-item">
+              <img *ngIf="file.type?.startsWith('image/') && imageUrls[file.id_image]" 
+                   [src]="imageUrls[file.id_image]" 
+                   alt="Resource image">
+
+              <!-- Download Button for Image -->
+              <button class="download-btn" (click)="downloadImage(file.id_image, file.path)">
+                <i class="fas fa-download"></i> Download
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PDFs Section -->
+        <div *ngIf="pdfFiles.length" class="files-section">
+          <h3>Documents</h3>
+          <div class="pdf-list">
+            <div *ngFor="let pdf of pdfFiles" class="pdf-item" (click)="viewPdf(pdf)">
+              <i [class]="getFileIcon(pdf.type)"></i>
+              <span>{{ pdf.path }}</span>
+              <button class="view-btn">View</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Other Files Section -->
+        <div *ngIf="otherFiles.length" class="files-section">
+          <h3>Additional Files</h3>
+          <div class="file-list">
+            <div *ngFor="let file of otherFiles" class="file-item" (click)="downloadFile(file)">
+              <i [class]="getFileIcon(file.type)"></i>
+              <span>{{ file.path }}</span>
+              <button class="download-btn">Download</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="resource-footer">
+      <button (click)="goBack()" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Resources
+      </button>
+    </div>
+  </div>
+</div>

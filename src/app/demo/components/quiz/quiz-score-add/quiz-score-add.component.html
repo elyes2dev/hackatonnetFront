@@ -1,0 +1,30 @@
+<div *ngIf="quiz">
+    <h2>Quiz: {{ quiz.title }}</h2>
+  
+    <form (ngSubmit)="onSubmit()">
+      <div *ngFor="let question of quiz.questions">
+        <div class="question-container">
+          <h4>{{ question.questionText }}</h4>
+  
+          <div *ngFor="let answer of question.answers; let i = index">
+            <label>
+              <input
+                type="radio"
+                [name]="question.id_question ? question.id_question.toString() : ''" 
+                [value]="i"
+                [(ngModel)]="userAnswers[question.id_question!]"/>
+              {{ answer }}
+            </label>
+          </div>
+        </div>
+      </div>
+  
+      <button type="submit" pButton label="Submit" class="p-button-success mt-3"></button>
+    </form>
+  </div>
+  
+  <!-- Loading state -->
+  <div *ngIf="!quiz">
+    Loading quiz...
+  </div>
+  

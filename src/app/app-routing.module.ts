@@ -6,7 +6,6 @@ import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
-import { UserComponent } from './demo/components/user/user.component';  // Import UserComponent
 
 
 @NgModule({
@@ -38,7 +37,34 @@ import { UserComponent } from './demo/components/user/user.component';  // Impor
                         ]
                     },
 
-                    
+                    // Resources Routes inside Workshops
+                    { path: 'workshops/:workshopId/resources', component: ResourceListComponent },  // List Resources
+                    { path: 'workshops/:workshopId/resources/new', component: ResourceFormComponent },  // Add Resource
+                    { path: 'workshops/:workshopId/resources/:resourceId/edit', component: ResourceFormComponent },  // Edit Resource
+                    { path: 'workshops/:workshopId/resources/:resourceId', component: ResourceDetailsComponent },  // Resource Details
+
+
+                    {
+                        path: 'workshops/:workshopId/quizzes',
+                        component: QuizListComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/new',
+                        component: QuizFormComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/:quizId/edit',
+                        component: QuizFormComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/:quizId/details',
+                        component: QuizDetailsComponent,
+                      },
+                      {
+                        path: 'workshops/:workshopId/quizzes/:quizId/score-add',
+                        component: QuizScoreAddComponent // Replace with your actual component
+                      }
+                      
                 ],
             },
 
