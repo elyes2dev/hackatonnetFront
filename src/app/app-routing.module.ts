@@ -6,6 +6,14 @@ import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
+import { UserComponent } from './demo/components/user/user.component';
+import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
+import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
+import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
+import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.component';
+import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
+import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
+import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
 
 
 @NgModule({

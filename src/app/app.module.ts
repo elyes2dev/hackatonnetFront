@@ -35,11 +35,21 @@ import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
 import { RegisterComponent } from './demo/components/auth/register/register.component';
 import { UserComponent } from './demo/components/user/user.component';
+import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
+import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
+import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.component';
+import { QuizResultDialogComponent } from './demo/components/quiz/quiz-result-dialog/quiz-result-dialog.component';
+import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
+import { RouterModule } from '@angular/router';
+import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
+import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
+import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
 
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent, QuizDetailsComponent, QuizFormComponent, QuizListComponent, QuizResultDialogComponent, QuizScoreAddComponent ,
+        ResourceDetailsComponent, WorkshoplistComponent,ResourceListComponent,ResourceFormComponent
     ],
     imports: [
         AppRoutingModule,
@@ -57,8 +67,9 @@ import { UserComponent } from './demo/components/user/user.component';
         ProgressBarModule,
         ToastModule,
         FormsModule,
-        ReactiveFormsModule,
         HttpClientModule,
+        ReactiveFormsModule,
+        RouterModule,
         BrowserModule
     ],
     providers: [

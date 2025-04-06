@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { StorageService } from '../../services/storage.service';
+import { AuthService } from '../../services/auth.service'; // Import AuthService
 
 @Component({
     selector: 'app-landing',
@@ -61,10 +62,23 @@ import { StorageService } from '../../services/storage.service';
 })
 export class LandingComponent {
     userId: string | null = null;
+    isAuthenticated: boolean = false;
 
-    constructor(private storageService: StorageService,public layoutService: LayoutService, public router: Router) {
+    constructor(
+      private storageService: StorageService,
+      public layoutService: LayoutService,
+      public router: Router,
+      private authService: AuthService  // Inject AuthService
+    ) {
       this.userId = this.storageService.getUserId();
+      this.isAuthenticated = this.authService.isAuthenticated(); // Use AuthService to determine authentication state
       console.log('User ID:', this.userId);
+    }
+
+    logout()
+    {
+        this.authService.logout()
+        window.location.reload();
     }
     
 }

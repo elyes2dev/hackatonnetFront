@@ -30,9 +30,13 @@
                         </a>
                     </li>
                 </ul>
-                <div class="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
-                    <button pButton pRipple label="Login" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></button>
-                    <button pButton pRipple label="Register" class="p-button-rounded border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></button>
+                <div *ngIf="isAuthenticated">
+                    <p>Welcome back, user!</p>
+                    <button (click)="logout()" class="p-button-rounded border-none font-light line-height-2 bg-red-500 text-white">Logout</button>
+                </div>
+                <div *ngIf="!isAuthenticated" class="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
+                    <button pButton pRipple label="Login" [routerLink]="['/auth/login']" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></button>
+                    <button pButton pRipple label="Register" [routerLink]="['/auth/register']" class="p-button-rounded border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></button>
                 </div>
             </div>
         </div>
