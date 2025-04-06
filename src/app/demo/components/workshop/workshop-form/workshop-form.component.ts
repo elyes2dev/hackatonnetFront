@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ThemeEnum } from 'src/app/demo/models/theme.enum';
 import { Workshop } from 'src/app/demo/models/workshop.model';
+import { StorageService } from 'src/app/demo/services/storage.service';
+import { UserService } from 'src/app/demo/services/user.service';
 import { WorkshopService } from 'src/app/demo/services/workshop.service';
 
 @Component({
@@ -21,15 +22,27 @@ export class WorkshopFormComponent implements OnInit {
 
   workshopId: number | null = null; // Holds workshop ID for edit mode
   imagePreview: string | null = null; // Preview for image
+  userId: string | null = null; // User ID from localStorage
+  
 
   constructor(
     private fb: FormBuilder,
     private workshopService: WorkshopService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private storageService: StorageService,
+    private userService: UserService // Add the UserService to retrieve user details
   ) {}
 
   ngOnInit() {
+    this.userId = this.storageService.getUserId(); // Get user ID from localStorage
+
+    if (!this.userId) {
+      console.error('User is not logged in.');
+      this.router.navigate(['/login']); // Redirect if no user is logged in
+      return;
+    }
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -70,36 +83,58 @@ export class WorkshopFormComponent implements OnInit {
     if (this.workshopForm.valid) {
       const workshop = this.workshopForm.value as Workshop;
   
-      console.log('Submitting Workshop:', workshop); // Debugging log
+      // Ensure userId is a number before assigning
+      const userId = this.userId ? parseInt(this.userId, 10) : undefined;
   
-      if (this.workshopId) {
-        // Update existing workshop
-        this.workshopService.updateWorkshop(this.workshopId, workshop).subscribe({
-          next: () => {
-            console.log('Workshop updated successfully!');
-            alert('Workshop updated!');
-            this.router.navigate(['/workshops']); // Redirect after update
+      if (userId) {
+        this.userService.getUserById(userId).subscribe({
+          next: (user) => {
+            // Now we have the complete user object
+            workshop.user = user;  // Assign the full user object to the workshop
+  
+            console.log('Workshop before submit:', workshop); // Log the payload for debugging
+  
+            if (this.workshopId) {
+              // Update existing workshop
+              this.workshopService.updateWorkshop(this.workshopId, workshop).subscribe({
+                next: () => {
+                  console.log('Workshop updated successfully!');
+                  alert('Workshop updated!');
+                  this.router.navigate(['/workshops']); // Redirect after update
+                },
+                error: (err) => {
+                  console.error('Error updating:', err);
+                }
+              });
+            } else {
+              // Create new workshop
+              this.workshopService.addWorkshop(workshop).subscribe({
+                next: () => {
+                  console.log('Workshop added successfully!');
+                  alert('Workshop added!');
+                  this.router.navigate(['/workshops']); // Redirect after creation
+                },
+                error: (err) => {
+                  console.error('Error saving:', err);
+                  alert('Error saving workshop.');
+                }
+              });
+            }
           },
           error: (err) => {
-            console.error('Error updating:', err);
+            console.error('Error fetching user:', err);
+            alert('Error fetching user.');
           }
         });
       } else {
-        // Create new workshop
-        this.workshopService.addWorkshop(workshop).subscribe({
-          next: () => {
-            console.log('Workshop added successfully!');
-            alert('Workshop added!');
-            this.router.navigate(['/workshops']); // Redirect after creation
-          },
-          error: (err) => {
-            console.error('Error saving:', err);
-          }
-        });
+        console.error('Invalid user ID');
+        alert('Invalid user ID.');
       }
     } else {
       console.warn('Form is invalid:', this.workshopForm.errors);
+      alert('Form is invalid.');
     }
   }
+  
   
 }
