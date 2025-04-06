@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ResourcefComponent } from './resourcef.component';
+import { QuizfFormComponent } from './quizf-form.component';
 
-describe('ResourcefComponent', () => {
-  let component: ResourcefComponent;
-  let fixture: ComponentFixture<ResourcefComponent>;
+describe('QuizfFormComponent', () => {
+  let component: QuizfFormComponent;
+  let fixture: ComponentFixture<QuizfFormComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ResourcefComponent]
+      declarations: [QuizfFormComponent]
     });
-    fixture = TestBed.createComponent(ResourcefComponent);
+    fixture = TestBed.createComponent(QuizfFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

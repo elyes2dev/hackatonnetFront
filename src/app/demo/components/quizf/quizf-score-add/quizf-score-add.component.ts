@@ -7,11 +7,11 @@ import { UserQuizScoreRequest } from 'src/app/demo/models/user-quiz-score-reques
 import { StorageService } from 'src/app/demo/services/storage.service'; // Import StorageService
 
 @Component({
-  selector: 'app-quiz-score-add',
-  templateUrl: './quiz-score-add.component.html',
-  styleUrls: ['./quiz-score-add.component.scss']
+  selector: 'app-quizf-score-add',
+  templateUrl: './quizf-score-add.component.html',
+  styleUrls: ['./quizf-score-add.component.scss']
 })
-export class QuizScoreAddComponent implements OnInit {
+export class QuizfScoreAddComponent implements OnInit {
   quizId!: number;
   workshopId!: number;
   quiz!: Quiz;

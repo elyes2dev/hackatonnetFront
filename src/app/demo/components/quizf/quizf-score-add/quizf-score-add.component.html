@@ -1,5 +1,5 @@
-<app
-  <div *ngIf="quiz">
+<app-navbar></app-navbar>
+<div *ngIf="quiz">
     <h2 class="quiz-title">Quiz: {{ quiz.title }}</h2>
   
     <form (ngSubmit)="onSubmit()" class="quiz-form">
@@ -29,5 +29,4 @@
     Loading quiz...
   </div>
   <app-footer></app-footer>
-  
   

@@ -45,11 +45,18 @@ import { NavbarComponent } from './demo/components/landing/navbar/navbar.compone
 import { FooterComponent } from './demo/components/landing/footer/footer.component';
 import { WorkshopfFormComponent } from './demo/components/workshopf/workshopf-form/workshopf-form.component';
 import { WorkshopfDetailsComponent } from './demo/components/workshopf/workshopf-details/workshopf-details.component';
-import { ResourcefComponent } from './demo/components/resourcef/resourcef.component';
+import { ResourcefListComponent } from './demo/components/resourcef/resourcef-list/resourcef-list.component';
+import { ResourcefFormComponent } from './demo/components/resourcef/resourcef-form/resourcef-form.component';
+import { ResourcefDetailsComponent } from './demo/components/resourcef/resourcef-details/resourcef-details.component';
+import { QuizfListComponent } from './demo/components/quizf/quizf-list/quizf-list.component';
+import { QuizfFormComponent } from './demo/components/quizf/quizf-form/quizf-form.component';
+import { QuizfDetailsComponent } from './demo/components/quizf/quizf-details/quizf-details.component';
+import { QuizfResultDialogComponent } from './demo/components/quizf/quizf-result-dialog/quizf-result-dialog.component';
+import { QuizfScoreAddComponent } from './demo/components/quizf/quizf-score-add/quizf-score-add.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent
     ],
     imports: [
         AppRoutingModule,

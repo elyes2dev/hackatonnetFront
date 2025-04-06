@@ -9,4 +9,8 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
 })
 export class NavbarComponent {
   constructor(public router: Router, public layoutService: LayoutService) {}
+
+  navigateToLanding() {
+    this.router.navigate(['/landing']);  // Redirect to '/landings'
+  }
 }

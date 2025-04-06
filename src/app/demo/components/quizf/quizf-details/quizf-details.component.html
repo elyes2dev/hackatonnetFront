@@ -1,0 +1,35 @@
+<app-navbar></app-navbar>
+<div *ngIf="loading" class="loading-overlay">
+    <div class="loading-spinner">Loading...</div>
+  </div>
+  
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  
+  <div *ngIf="quiz" class="quiz-details">
+    <h2>{{ quiz.title }}</h2>
+  
+    <div *ngIf="quiz.isPublished" class="badge badge-success">Published</div>
+    <div *ngIf="!quiz.isPublished" class="badge badge-warning">Not Published</div>
+  
+    <div class="questions">
+      <div *ngFor="let question of quiz.questions; let i = index" class="question">
+        <h3>Question {{ i + 1 }}: {{ question.questionText }}</h3>
+  
+        <div *ngFor="let answer of question.answers; let j = index" class="answer">
+          <p [ngClass]="getAnswerClass(j, question.correctAnswerIndex)">
+            Answer {{ j + 1 }}: {{ answer }}
+          </p>
+        </div>
+  
+        <div class="correct-answer">
+          Correct Answer: {{ question.answers[question.correctAnswerIndex] }}
+        </div>
+      </div>
+    </div>
+    <button [routerLink]="['/workshopsf']" class="back-button">
+        Back to All Workshops
+      </button>
+      
+
+  </div>
+  <app-footer></app-footer>

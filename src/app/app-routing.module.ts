@@ -16,6 +16,13 @@ import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/qui
 import { WorkshoplistfComponent } from './demo/components/workshopf/workshoplistf/workshoplistf.component';
 import { WorkshopfFormComponent } from './demo/components/workshopf/workshopf-form/workshopf-form.component';
 import { WorkshopfDetailsComponent } from './demo/components/workshopf/workshopf-details/workshopf-details.component';
+import { ResourcefFormComponent } from './demo/components/resourcef/resourcef-form/resourcef-form.component';
+import { ResourcefListComponent } from './demo/components/resourcef/resourcef-list/resourcef-list.component';
+import { ResourcefDetailsComponent } from './demo/components/resourcef/resourcef-details/resourcef-details.component';
+import { QuizfListComponent } from './demo/components/quizf/quizf-list/quizf-list.component';
+import { QuizfFormComponent } from './demo/components/quizf/quizf-form/quizf-form.component';
+import { QuizfDetailsComponent } from './demo/components/quizf/quizf-details/quizf-details.component';
+import { QuizfScoreAddComponent } from './demo/components/quizf/quizf-score-add/quizf-score-add.component';
 
 @NgModule({
     imports: [
@@ -95,21 +102,21 @@ import { WorkshopfDetailsComponent } from './demo/components/workshopf/workshopf
   {
     path: 'workshopsf/:workshopId/resources', 
     children: [
-    //  { path: '', component: ResourceListFComponent },  // List Resources
-    //  { path: 'new', component: ResourceFormFComponent },  // Add Resource
-    //  { path: ':resourceId/edit', component: ResourceFormFComponent },  // Edit Resource
-    //  { path: ':resourceId', component: ResourceDetailsFComponent },  // Resource Details
+      { path: '', component: ResourcefListComponent },  // List Resources
+      { path: 'new', component: ResourcefFormComponent },  // Add Resource
+      { path: ':resourceId/edit', component: ResourcefFormComponent },  // Edit Resource
+      { path: ':resourceId', component: ResourcefDetailsComponent },  // Resource Details
     ]
   },
   
   {
     path: 'workshopsf/:workshopId/quizzes',
     children: [
-    //  { path: '', component: QuizListFComponent },  // List Quizzes
-    //  { path: 'new', component: QuizFormFComponent },  // Add Quiz
-    //  { path: ':quizId/edit', component: QuizFormFComponent },  // Edit Quiz
-    //  { path: ':quizId/details', component: QuizDetailsFComponent },  // Quiz Details
-     // { path: ':quizId/score-add', component: QuizScoreAddFComponent }, // Add Score
+      { path: '', component: QuizfListComponent },  // List Quizzes
+      { path: 'new', component: QuizfFormComponent },  // Add Quiz
+      { path: ':quizId/edit', component: QuizfFormComponent },  // Edit Quiz
+      { path: ':quizId/details', component: QuizfDetailsComponent },  // Quiz Details
+      { path: ':quizId/score-add', component: QuizfScoreAddComponent }, // Add Score
     ]
   }
   ,

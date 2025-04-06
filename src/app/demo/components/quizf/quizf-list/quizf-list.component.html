@@ -1,0 +1,106 @@
+<app-navbar></app-navbar>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+<div *ngIf="loading">Loading quizzes...</div>
+<div *ngIf="error" class="error-message">{{ error }}</div>
+
+<h2>Quizzes for Workshop #{{ workshopId }}</h2>
+
+<button (click)="goToAdd()" class="btn btn-add">
+  <i class="fas fa-plus"></i> Add New Quiz
+</button>
+
+<table *ngIf="quizzes.length > 0" class="quiz-table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let quiz of quizzes">
+      <td>{{ quiz.title }}</td>
+      <td>
+        <span [class.published]="quiz.isPublished" [class.unpublished]="!quiz.isPublished">
+          {{ quiz.isPublished ? 'Published' : 'Not Published' }}
+        </span>
+      </td>
+      <td class="actions">
+        <button (click)="goToDetails(quiz.id_quiz!)" class="btn btn-view" title="View Details">
+          <i class="fas fa-eye"></i>
+        </button>
+        
+        <button (click)="goToEdit(quiz.id_quiz!)" class="btn btn-edit" 
+                [title]="quizStatusMap[quiz.id_quiz!] ? 'View Results' : 'Edit Quiz'">
+          <i [class]="quizStatusMap[quiz.id_quiz!] ? 'fas fa-trophy' : 'fas fa-edit'"></i>
+        </button>
+        
+        <button (click)="deleteQuiz(quiz.id_quiz!)" class="btn btn-delete" title="Delete Quiz">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        
+        <button *ngIf="!quizStatusMap[quiz.id_quiz!]" 
+                (click)="goToTakeQuiz(quiz.id_quiz!)" 
+                class="btn btn-take" title="Take Quiz">
+          <i class="fas fa-pen"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="!loading && quizzes.length === 0" class="no-quizzes">
+  No quizzes found for this workshop.
+</div>
+
+<!-- Results Dialog -->
+<div *ngIf="showResultsDialog" class="results-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Quiz Results</h3>
+      <button (click)="closeResultsDialog()" class="close-btn">&times;</button>
+    </div>
+    
+    <div class="score-summary">
+      <div class="score-display">
+        <span class="score">{{ currentQuizResults.correctAnswers }}</span>
+        <span class="score-separator">/</span>
+        <span class="total">{{ currentQuizResults.totalQuestions }}</span>
+      </div>
+      <div class="percentage">
+        {{ currentQuizResults.score }}% Correct
+      </div>
+    </div>
+
+    <div class="questions-results">
+      <div *ngFor="let question of currentQuizResults.questions; let i = index" 
+           class="question-result" [class.correct]="question.isCorrect">
+        <div class="question-header">
+          <span class="question-number">Question {{ i + 1 }}</span>
+          <span class="result-indicator">
+            <i *ngIf="question.isCorrect" class="fas fa-check-circle correct"></i>
+            <i *ngIf="!question.isCorrect" class="fas fa-times-circle incorrect"></i>
+          </span>
+        </div>
+        <div class="question-text">{{ question.questionText }}</div>
+        
+        <div class="answers">
+          <div *ngFor="let answer of question.answers; let j = index" 
+               class="answer" 
+               [class.correct-answer]="j === question.correctAnswerIndex"
+               [class.user-answer]="j === question.userAnswer">
+            {{ answer }}
+            <span *ngIf="j === question.correctAnswerIndex" class="correct-mark">✓ Correct</span>
+            <span *ngIf="j === question.userAnswer && !question.isCorrect" class="incorrect-mark">✗ Your Answer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button (click)="closeResultsDialog()" class="btn btn-close">Close</button>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

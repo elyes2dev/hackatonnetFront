@@ -1,0 +1,164 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { QuizService } from 'src/app/demo/services/quiz.service';
+import { UserQuizScoreService } from 'src/app/demo/services/user-quiz-score.service';
+import { Quiz } from 'src/app/demo/models/quiz.model';
+import { QuestionService } from 'src/app/demo/services/question.service';
+import { Question } from 'src/app/demo/models/question.model';
+import { StorageService } from 'src/app/demo/services/storage.service'; // Import StorageService
+
+@Component({
+  selector: 'app-quizf-list',
+  templateUrl: './quizf-list.component.html',
+  styleUrls: ['./quizf-list.component.scss']
+})
+export class QuizfListComponent implements OnInit {
+  quizzes: Quiz[] = [];
+  workshopId!: number;
+  loading: boolean = true;
+  error: string = '';
+  currentUserId: string | null = null; // Store user ID here
+  quizStatusMap: { [key: number]: boolean } = {};
+  showResultsDialog = false;
+  currentQuizResults: any = {
+    score: 0,
+    totalQuestions: 0,
+    correctAnswers: 0,
+    questions: []
+  };
+
+  constructor(
+    private quizService: QuizService,
+    private userQuizScoreService: UserQuizScoreService,
+    private questionService: QuestionService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private storageService: StorageService // Inject StorageService
+  ) {}
+
+  ngOnInit(): void {
+    // Get the current userId dynamically from StorageService
+    this.currentUserId = this.storageService.getUserId(); // Method to get userId from localStorage or other source
+
+    if (!this.currentUserId) {
+      alert('You must be logged in to access quizzes!');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.workshopId = +this.route.snapshot.params['workshopId'];
+    this.fetchQuizzes();
+  }
+
+  fetchQuizzes(): void {
+    this.quizService.getQuizzesByWorkshop(this.workshopId).subscribe({
+      next: (quizzes) => {
+        this.quizzes = quizzes;
+        this.checkQuizStatuses();
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Failed to load quizzes.';
+        this.loading = false;
+      }
+    });
+  }
+
+  checkQuizStatuses(): void {
+    this.quizzes.forEach(quiz => {
+      this.userQuizScoreService.hasUserTakenQuiz(+this.currentUserId!, quiz.id_quiz!).subscribe({
+        next: (hasTaken) => {
+          this.quizStatusMap[quiz.id_quiz!] = hasTaken;
+        },
+        error: () => {
+          this.quizStatusMap[quiz.id_quiz!] = false;
+        }
+      });
+    });
+  }
+
+  deleteQuiz(id: number): void {
+    if (confirm('Are you sure you want to delete this quiz?')) {
+      this.quizService.deleteQuiz(id).subscribe({
+        next: () => {
+          this.quizzes = this.quizzes.filter(q => q.id_quiz !== id);
+          alert('Quiz deleted successfully');
+        },
+        error: () => {
+          alert('Failed to delete quiz');
+        }
+      });
+    }
+  }
+
+  goToEdit(quizId: number): void {
+    if (this.quizStatusMap[quizId]) {
+      this.showQuizResults(quizId);
+    } else {
+      this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', quizId, 'edit']);
+    }
+  }
+
+  showQuizResults(quizId: number): void {
+    this.loading = true;
+    this.questionService.getQuestionsByQuizId(quizId).subscribe({
+      next: (questions) => {
+        this.userQuizScoreService.getUserScoreForQuiz(+this.currentUserId!, quizId).subscribe({
+          next: (score) => {
+            // Simulate user answers - replace with actual data from your backend
+            const userAnswers = this.simulateUserAnswers(questions);
+            const correctCount = questions.filter((q, i) => 
+              userAnswers[i] === q.correctAnswerIndex).length;
+
+            this.currentQuizResults = {
+              quizId: quizId,
+              score: score,
+              totalQuestions: questions.length,
+              correctAnswers: correctCount,
+              questions: questions.map((q, i) => ({
+                ...q,
+                userAnswer: userAnswers[i],
+                isCorrect: userAnswers[i] === q.correctAnswerIndex
+              }))
+            };
+            this.showResultsDialog = true;
+            this.loading = false;
+          },
+          error: () => {
+            alert('Failed to load score details');
+            this.loading = false;
+          }
+        });
+      },
+      error: () => {
+        alert('Failed to load questions');
+        this.loading = false;
+      }
+    });
+  }
+
+  // Simulate user answers - replace with actual data from your backend
+  private simulateUserAnswers(questions: Question[]): number[] {
+    return questions.map(q => {
+      // 70% chance to answer correctly
+      return Math.random() > 0.3 ? q.correctAnswerIndex : 
+             Math.floor(Math.random() * q.answers.length);
+    });
+  }
+
+  closeResultsDialog(): void {
+    this.showResultsDialog = false;
+  }
+
+  goToDetails(quizId: number): void {
+    this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', quizId, 'details']);
+  }
+
+  goToAdd(): void {
+    this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', 'new']);
+  }
+
+  goToTakeQuiz(quizId: number): void {
+    this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', quizId, 'score-add']);
+  }
+}
