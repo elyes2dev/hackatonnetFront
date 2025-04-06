@@ -1,0 +1,38 @@
+<div class="user-container">
+  <h2>User Management</h2>
+
+  <form (submit)="createUser()">
+    <h3>Create New User</h3>
+    <input type="text" [(ngModel)]="newUser.name" placeholder="First Name" name="name" required />
+    <input type="text" [(ngModel)]="newUser.lastname" placeholder="Last Name" name="lastname" required />
+    <input type="email" [(ngModel)]="newUser.email" placeholder="Email" name="email" required />
+    <input type="text" [(ngModel)]="newUser.username" placeholder="Username" name="username" required />
+    <input type="password" [(ngModel)]="newUser.password" placeholder="Password" name="password" required />
+    <input type="date" [(ngModel)]="newUser.birthdate" placeholder="Birthdate" name="birthdate" />
+    <input type="text" [(ngModel)]="newUser.picture" placeholder="Picture URL" name="picture" />
+    <textarea [(ngModel)]="newUser.description" placeholder="Description" name="description"></textarea>
+    <button type="submit">Create User</button>
+  </form>
+
+  <form *ngIf="selectedUser" (submit)="updateUser()">
+    <h3>Edit User</h3>
+    <input type="text" [(ngModel)]="selectedUser.name" placeholder="First Name" name="name" required />
+    <input type="text" [(ngModel)]="selectedUser.lastname" placeholder="Last Name" name="lastname" required />
+    <input type="email" [(ngModel)]="selectedUser.email" placeholder="Email" name="email" required />
+    <input type="text" [(ngModel)]="selectedUser.username" placeholder="Username" name="username" required />
+    <input type="password" [(ngModel)]="selectedUser.password" placeholder="Password" name="password" required />
+    <input type="date" [(ngModel)]="selectedUser.birthdate" placeholder="Birthdate" name="birthdate" />
+    <input type="text" [(ngModel)]="selectedUser.picture" placeholder="Picture URL" name="picture" />
+    <textarea [(ngModel)]="selectedUser.description" placeholder="Description" name="description"></textarea>
+    <button type="submit">Update User</button>
+    <button type="button" (click)="selectedUser = null">Cancel</button>
+  </form>
+
+  <ul class="user-list">
+    <li *ngFor="let user of users">
+      <span>{{ user.name }} {{ user.lastname }}</span>
+      <button (click)="selectUser(user)">Edit</button>
+      <button (click)="deleteUser(user.id)">Delete</button>
+    </li>
+  </ul>
+</div>
