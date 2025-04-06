@@ -78,6 +78,11 @@ export class AppMenuComponent implements OnInit {
                                 routerLink: ['/auth/login']
                             },
                             {
+                                label: 'Register',
+                                icon: 'pi pi-fw pi-user-plus',
+                                routerLink: ['/auth/register']
+                            },
+                            {
                                 label: 'Error',
                                 icon: 'pi pi-fw pi-times-circle',
                                 routerLink: ['/auth/error']

@@ -35,4 +35,17 @@ export class UserService {
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getLoggedUserId(): string | null {
+    const token = sessionStorage.getItem("token"); // Get JWT from storage
+    if (!token) return null; // No token, no user
+
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1])); // Decode payload
+      return payload.userid; // Extract user ID from the claims
+    } catch (error) {
+      console.error("Error decoding JWT:", error);
+      return null;
+    }
+  }
 }

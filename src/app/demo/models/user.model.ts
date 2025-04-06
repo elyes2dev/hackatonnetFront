@@ -3,7 +3,7 @@ import { Workshop } from "./workshop.model";
 
 
 export interface Role {
-    id: number;
+    id?: number;
     name: string;
   }
 
@@ -13,18 +13,18 @@ export interface Role {
   }
   
 export interface User {
-    id: number;
+    id?: number;
     name: string;
     lastname: string;
     email: string;
     username: string;
     password: string;
-    birthdate: Date;
+    birthdate: Date | null;
     picture: string;
     description: string;
-    score: number;
-    createdAt: Date;
-    workshops: Workshop[];  // Assume Workshop is another defined interface
+    score?: number;
+    createdAt?: Date;
+    workshops?: Workshop[];
     skills?: Skill[];
     roles?: Role[];
     // Additional properties can be added as needed
