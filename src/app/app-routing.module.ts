@@ -13,6 +13,9 @@ import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.co
 import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
 import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
 import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
+import { WorkshoplistfComponent } from './demo/components/workshopf/workshoplistf/workshoplistf.component';
+import { WorkshopfFormComponent } from './demo/components/workshopf/workshopf-form/workshopf-form.component';
+import { WorkshopfDetailsComponent } from './demo/components/workshopf/workshopf-details/workshopf-details.component';
 
 @NgModule({
     imports: [
@@ -70,6 +73,46 @@ import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/qui
                       
                 ],
             },
+
+
+
+
+
+
+            // Workshops Routes
+// Workshops Routes
+{
+    path: 'workshopsf', 
+    children: [
+      { path: '', component: WorkshoplistfComponent },  // List Workshops
+      { path: 'new', component: WorkshopfFormComponent },  // Add New Workshop
+      { path: ':id/edit', component: WorkshopfFormComponent },  // Edit Workshop
+      { path: ':id', component: WorkshopfDetailsComponent }  // Workshop Details
+    ]
+  },
+  
+  // Resources Routes inside Workshops
+  {
+    path: 'workshopsf/:workshopId/resources', 
+    children: [
+    //  { path: '', component: ResourceListFComponent },  // List Resources
+    //  { path: 'new', component: ResourceFormFComponent },  // Add Resource
+    //  { path: ':resourceId/edit', component: ResourceFormFComponent },  // Edit Resource
+    //  { path: ':resourceId', component: ResourceDetailsFComponent },  // Resource Details
+    ]
+  },
+  
+  {
+    path: 'workshopsf/:workshopId/quizzes',
+    children: [
+    //  { path: '', component: QuizListFComponent },  // List Quizzes
+    //  { path: 'new', component: QuizFormFComponent },  // Add Quiz
+    //  { path: ':quizId/edit', component: QuizFormFComponent },  // Edit Quiz
+    //  { path: ':quizId/details', component: QuizDetailsFComponent },  // Quiz Details
+     // { path: ':quizId/score-add', component: QuizScoreAddFComponent }, // Add Score
+    ]
+  }
+  ,
 
             // Authentication & Other Routes
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },

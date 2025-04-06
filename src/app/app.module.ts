@@ -40,13 +40,18 @@ import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.co
 import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
 import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
 import { QuizResultDialogComponent } from './demo/components/quiz/quiz-result-dialog/quiz-result-dialog.component';
+import { WorkshoplistfComponent } from './demo/components/workshopf/workshoplistf/workshoplistf.component';
+import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
+import { FooterComponent } from './demo/components/landing/footer/footer.component';
+import { WorkshopfFormComponent } from './demo/components/workshopf/workshopf-form/workshopf-form.component';
+import { WorkshopfDetailsComponent } from './demo/components/workshopf/workshopf-details/workshopf-details.component';
+import { ResourcefComponent } from './demo/components/resourcef/resourcef.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefComponent
     ],
     imports: [
-        
         AppRoutingModule,
         AppLayoutModule,
         TableModule,
