@@ -8,6 +8,8 @@ import { User } from '../models/user.model';  // Ensure the path to the User mod
 })
 export class AuthService {
   private apiUrl = 'http://localhost:9100/pi/auth'; 
+  private userRole: string = 'admin'; // This should be set based on the logged-in user
+
 
   constructor(private http: HttpClient) {}
 
@@ -38,4 +40,12 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('authToken');
   }
+
+  getUserRole(): string {
+    return this.userRole;
+  }
+ // setUserRole(role: string): void {
+  //  this.userRole = role;
+ // }
+
 }

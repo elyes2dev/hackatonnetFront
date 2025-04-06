@@ -1,30 +1,49 @@
-<div class="card">
-    <form [formGroup]="workshopForm" (ngSubmit)="onSubmit()">
-      <div class="p-field">
-        <label for="name">Name</label>
-        <input pInputText id="name" formControlName="name" required>
-      </div>
-  
-      <div class="p-field">
-        <label for="theme">Theme</label>
-        <p-dropdown [options]="themes" formControlName="theme"></p-dropdown>
-      </div>
-  
-      <div class="p-field">
-        <label for="description">Description</label>
-        <textarea pInputTextarea id="description" formControlName="description"></textarea>
-      </div>
-  
-      <div class="p-field">
-        <label for="photo">Photo</label>
-        <input type="file" (change)="onFileSelected($event)">
-      </div>
-  
-      <div *ngIf="imagePreview">
-        <img [src]="imagePreview" alt="Image Preview" style="width: 150px; height: auto;">
-      </div>
-  
-      <button pButton type="submit" label="Save" [disabled]="!workshopForm.valid"></button>
-    </form>
-  </div>
-  
+
+
+  <div class="grid p-fluid">
+    <div class="col-12 md:col-6">
+        <div class="card">
+            <h5>Create Workshop</h5>
+            <form [formGroup]="workshopForm" (ngSubmit)="onSubmit()">
+                <!-- Workshop Name -->
+                <div class="p-field">
+                    <label for="name">Name</label>
+                    <input pInputText id="name" formControlName="name" placeholder="Enter Workshop Name" required />
+                </div>
+
+                <!-- Workshop Theme -->
+                <div class="p-field">
+                    <label for="theme">Theme</label>
+                    <p-dropdown [options]="themes" formControlName="theme" placeholder="Select Theme"></p-dropdown>
+                </div>
+
+                <!-- Workshop Description -->
+                <div class="p-field">
+                    <label for="description">Description</label>
+                    <textarea pInputTextarea id="description" formControlName="description" rows="5" placeholder="Enter Workshop Description"></textarea>
+                </div>
+
+                <!-- Photo Upload -->
+                <div class="p-field">
+                    <label for="photo">Photo</label>
+                    <input type="file" (change)="onFileSelected($event)" />
+                </div>
+
+                <!-- Image Preview -->
+                <div *ngIf="imagePreview" class="p-field">
+                    <img [src]="imagePreview" alt="Image Preview" style="width: 150px; height: auto;" />
+                </div>
+
+                <!-- Submit Button -->
+                <div class="p-field">
+                    <button pButton type="submit" label="Save" [disabled]="!workshopForm.valid"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+

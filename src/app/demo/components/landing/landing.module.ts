@@ -20,4 +20,6 @@ import { ButtonModule } from 'primeng/button';
     ],
     declarations: [LandingComponent]
 })
-export class LandingModule { }
+export class LandingModule { 
+    
+}

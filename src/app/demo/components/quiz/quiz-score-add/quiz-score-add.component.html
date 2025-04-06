@@ -1,30 +1,32 @@
-<div *ngIf="quiz">
-    <h2>Quiz: {{ quiz.title }}</h2>
+
+  <div *ngIf="quiz">
+    <h2 class="quiz-title">Quiz: {{ quiz.title }}</h2>
   
-    <form (ngSubmit)="onSubmit()">
-      <div *ngFor="let question of quiz.questions">
-        <div class="question-container">
-          <h4>{{ question.questionText }}</h4>
+    <form (ngSubmit)="onSubmit()" class="quiz-form">
+      <div *ngFor="let question of quiz.questions; let qIndex = index" class="question-container">
+        <h4 class="question-number">Question {{ qIndex + 1 }}:</h4>
+        <p class="question-text">{{ question.questionText }}</p>
   
-          <div *ngFor="let answer of question.answers; let i = index">
-            <label>
-              <input
-                type="radio"
-                [name]="question.id_question ? question.id_question.toString() : ''" 
-                [value]="i"
-                [(ngModel)]="userAnswers[question.id_question!]"/>
-              {{ answer }}
-            </label>
-          </div>
+        <div *ngFor="let answer of question.answers; let i = index" class="answer-option">
+          <label>
+            <input
+              type="radio"
+              [name]="question.id_question ? question.id_question.toString() : ''"
+              [value]="i"
+              [(ngModel)]="userAnswers[question.id_question!]"/>
+            <span class="answer-text">{{ answer }}</span>
+          </label>
         </div>
+  
       </div>
   
-      <button type="submit" pButton label="Submit" class="p-button-success mt-3"></button>
+      <button type="submit" pButton label="Submit" class="p-button-success mt-3 submit-button"></button>
     </form>
   </div>
   
   <!-- Loading state -->
-  <div *ngIf="!quiz">
+  <div *ngIf="!quiz" class="loading-state">
     Loading quiz...
   </div>
+  
   

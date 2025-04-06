@@ -5,6 +5,7 @@ import { UserQuizScoreService } from 'src/app/demo/services/user-quiz-score.serv
 import { Quiz } from 'src/app/demo/models/quiz.model';
 import { QuestionService } from 'src/app/demo/services/question.service';
 import { Question } from 'src/app/demo/models/question.model';
+import { StorageService } from 'src/app/demo/services/storage.service'; // Import StorageService
 
 @Component({
   selector: 'app-quiz-list',
@@ -16,8 +17,8 @@ export class QuizListComponent implements OnInit {
   workshopId!: number;
   loading: boolean = true;
   error: string = '';
-  currentUserId = 1;
-  quizStatusMap: {[key: number]: boolean} = {};
+  currentUserId: string | null = null; // Store user ID here
+  quizStatusMap: { [key: number]: boolean } = {};
   showResultsDialog = false;
   currentQuizResults: any = {
     score: 0,
@@ -26,16 +27,25 @@ export class QuizListComponent implements OnInit {
     questions: []
   };
 
-
   constructor(
     private quizService: QuizService,
     private userQuizScoreService: UserQuizScoreService,
     private questionService: QuestionService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private storageService: StorageService // Inject StorageService
   ) {}
 
   ngOnInit(): void {
+    // Get the current userId dynamically from StorageService
+    this.currentUserId = this.storageService.getUserId(); // Method to get userId from localStorage or other source
+
+    if (!this.currentUserId) {
+      alert('You must be logged in to access quizzes!');
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.workshopId = +this.route.snapshot.params['workshopId'];
     this.fetchQuizzes();
   }
@@ -56,15 +66,14 @@ export class QuizListComponent implements OnInit {
 
   checkQuizStatuses(): void {
     this.quizzes.forEach(quiz => {
-      this.userQuizScoreService.hasUserTakenQuiz(this.currentUserId, quiz.id_quiz!)
-        .subscribe({
-          next: (hasTaken) => {
-            this.quizStatusMap[quiz.id_quiz!] = hasTaken;
-          },
-          error: () => {
-            this.quizStatusMap[quiz.id_quiz!] = false;
-          }
-        });
+      this.userQuizScoreService.hasUserTakenQuiz(+this.currentUserId!, quiz.id_quiz!).subscribe({
+        next: (hasTaken) => {
+          this.quizStatusMap[quiz.id_quiz!] = hasTaken;
+        },
+        error: () => {
+          this.quizStatusMap[quiz.id_quiz!] = false;
+        }
+      });
     });
   }
 
@@ -94,7 +103,7 @@ export class QuizListComponent implements OnInit {
     this.loading = true;
     this.questionService.getQuestionsByQuizId(quizId).subscribe({
       next: (questions) => {
-        this.userQuizScoreService.getUserScoreForQuiz(this.currentUserId, quizId).subscribe({
+        this.userQuizScoreService.getUserScoreForQuiz(+this.currentUserId!, quizId).subscribe({
           next: (score) => {
             // Simulate user answers - replace with actual data from your backend
             const userAnswers = this.simulateUserAnswers(questions);
@@ -136,7 +145,6 @@ export class QuizListComponent implements OnInit {
              Math.floor(Math.random() * q.answers.length);
     });
   }
-
 
   closeResultsDialog(): void {
     this.showResultsDialog = false;

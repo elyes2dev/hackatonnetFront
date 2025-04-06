@@ -1,7 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { StorageService } from '../../services/storage.service';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user.model';
+
 
 @Component({
     selector: 'app-landing',
@@ -59,12 +63,63 @@ import { StorageService } from '../../services/storage.service';
         }
     `]
 })
-export class LandingComponent {
+export class LandingComponent implements OnInit {
     userId: string | null = null;
+    isAdmin: boolean = false;
+    isStudent: boolean = false;
 
-    constructor(private storageService: StorageService,public layoutService: LayoutService, public router: Router) {
+    constructor(private storageService: StorageService,public layoutService: LayoutService, public router: Router,   private userService: UserService,
+        private authService: AuthService ) {
       this.userId = this.storageService.getUserId();
       console.log('User ID:', this.userId);
     }
+
+    ngOnInit() {
+        this.getUserRole(); // Call method to fetch and log user role
+        const userRole = this.authService.getUserRole(); // Assuming you get user role from the service
+        console.log('test', userRole)
+    
+        if (userRole === 'admin') {
+          this.isAdmin = true;
+        } else if (userRole === 'student') {
+          this.isStudent = true;
+        }
+        console.log(this.isStudent)
+    
+      }
+
+       // Fetch and log user role
+       getUserRole() {
+        const userId = localStorage.getItem('loggedid'); // Assuming user ID is stored in localStorage
+        console.log(userId);
+        if (userId) {
+          this.userService.getUserById(parseInt(userId)).subscribe({
+            next: (user: User) => {
+              if (user.roles && user.roles.length > 0) {
+                console.log('User roles:', user.roles.map(role => role.name)); // Log roles
+    
+                // Check if user has an admin role
+                this.isAdmin = user.roles.some(role => role.name === 'admin');
+                // Check if user has a student role
+                this.isStudent = user.roles.some(role => role.name === 'student');
+    
+                console.log('Is Admin:', this.isAdmin);
+                console.log('Is Student:', this.isStudent);
+              } else {
+                console.log('No roles found for the user');
+              }
+            },
+            error: (err) => console.error('Error fetching user roles:', err)
+          });
+        } else {
+          console.error('User ID not found in localStorage');
+        }
+      }
+      
+    
+
+
+      
+
     
 }
