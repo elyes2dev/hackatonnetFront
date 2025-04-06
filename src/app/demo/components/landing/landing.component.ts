@@ -74,24 +74,14 @@ export class LandingComponent implements OnInit {
       console.log('User ID:', this.userId);
     }
 
-    ngOnInit() {
-        this.getUserRole(); // Call method to fetch and log user role
-        const userRole = this.authService.getUserRole(); // Assuming you get user role from the service
-        console.log('test', userRole)
-    
-        if (userRole === 'admin') {
-          this.isAdmin = true;
-        } else if (userRole === 'student') {
-          this.isStudent = true;
-        }
-        console.log(this.isStudent)
-    
+    ngOnInit(): void {
+        this.getUserRole();
       }
-
-       // Fetch and log user role
-       getUserRole() {
+    
+      // Fetch and log user role
+      getUserRole() {
         const userId = localStorage.getItem('loggedid'); // Assuming user ID is stored in localStorage
-        console.log(userId);
+        console.log('UserID from localStorage:', userId);
         if (userId) {
           this.userService.getUserById(parseInt(userId)).subscribe({
             next: (user: User) => {
@@ -103,8 +93,8 @@ export class LandingComponent implements OnInit {
                 // Check if user has a student role
                 this.isStudent = user.roles.some(role => role.name === 'student');
     
-                console.log('Is Admin:', this.isAdmin);
-                console.log('Is Student:', this.isStudent);
+                console.log('Is Admin:', this.isAdmin);  // Log isAdmin after setting
+                console.log('Is Student:', this.isStudent);  // Log isStudent after setting
               } else {
                 console.log('No roles found for the user');
               }
@@ -115,7 +105,6 @@ export class LandingComponent implements OnInit {
           console.error('User ID not found in localStorage');
         }
       }
-      
     
 
 
