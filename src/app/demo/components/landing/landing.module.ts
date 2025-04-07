@@ -7,6 +7,8 @@ import { DividerModule } from 'primeng/divider';
 import { ChartModule } from 'primeng/chart';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
+import { FooterComponent } from './footer/footer.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
     imports: [
@@ -18,6 +20,6 @@ import { ButtonModule } from 'primeng/button';
         PanelModule,
         ButtonModule
     ],
-    declarations: [LandingComponent]
+    declarations: [LandingComponent, FooterComponent, NavbarComponent]
 })
 export class LandingModule { }
