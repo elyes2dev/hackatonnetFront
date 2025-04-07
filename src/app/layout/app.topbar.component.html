@@ -14,11 +14,11 @@
 
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
         <!-- Notification button -->
-        <button class="p-link layout-topbar-button notification-button" (click)="toggleNotifications($event)">
-            <i class="pi pi-bell"></i>
-            <span class="notification-badge" *ngIf="unreadNotifications.length > 0">{{unreadNotifications.length}}</span>
-            <span>Notifications</span>
-        </button>
+<button class="p-link layout-topbar-button notification-button" (click)="toggleNotifications($event)">
+    <i class="pi pi-bell" [ngClass]="{'active-notification': unreadNotifications.length > 0}"></i>
+    <span class="notification-badge" *ngIf="unreadNotifications.length > 0">{{unreadNotifications.length}}</span>
+    <span>Notifications</span>
+</button>
 
         <!-- Notification dropdown -->
         <div #notificationMenu class="notification-dropdown" [ngClass]="{'show-notifications': showNotifications}" (click)="$event.stopPropagation()">

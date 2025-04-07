@@ -1,9 +1,9 @@
-// src/app/components/prize-list/prize-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Table } from 'primeng/table';
 import { ApplicationStatus } from 'src/app/demo/models/application-status';
 import { Prize } from 'src/app/demo/models/prize';
 import { PrizeService } from 'src/app/demo/services/prize.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-prize-list',
@@ -16,7 +16,11 @@ export class PrizeListComponent implements OnInit {
   error = '';
   statusOptions: any[] = [];
 
-  constructor(private prizeService: PrizeService) { }
+  constructor(
+    private prizeService: PrizeService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
+  ) { }
 
   ngOnInit(): void {
     this.loadPrizes();
@@ -74,5 +78,32 @@ export class PrizeListComponent implements OnInit {
       default:
         return 'status-secondary';
     }
+  }
+
+  deletePrize(id: number | undefined): void {
+    if (!id) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid prize ID' });
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this prize?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.loading = true;
+        this.prizeService.deletePrize(id).subscribe({
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Prize deleted successfully' });
+            this.loadPrizes(); // Reload the prizes after deletion
+          },
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete prize' });
+            console.error('Error deleting prize:', err);
+            this.loading = false;
+          }
+        });
+      }
+    });
   }
 }

@@ -11,6 +11,7 @@ import { EventService } from './demo/service/event.service';
 import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 //New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
@@ -23,6 +24,7 @@ import { RippleModule } from 'primeng/ripple';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
@@ -65,6 +67,7 @@ import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/s
         MultiSelectModule,
         DropdownModule,
         ProgressBarModule,
+        ConfirmDialogModule,
         ToastModule,
         FormsModule,
         ReactiveFormsModule,
@@ -72,7 +75,7 @@ import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/s
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
+        PhotoService, ProductService, ConfirmationService, MessageService
     ],
     bootstrap: [AppComponent]
 })

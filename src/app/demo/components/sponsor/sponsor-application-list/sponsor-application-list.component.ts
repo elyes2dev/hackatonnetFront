@@ -4,6 +4,7 @@ import { SponsorApplication } from 'src/app/demo/models/sponsor-application';
 import { FileUploadService } from 'src/app/demo/services/file-upload.service';
 import { SponsorApplicationService } from 'src/app/demo/services/sponsor-application.service';
 import { Table } from 'primeng/table';
+import { ConfirmationService, MessageService } from 'primeng/api'; // Import these services
 
 @Component({
   selector: 'app-sponsor-applications-list',
@@ -27,7 +28,9 @@ export class SponsorApplicationListComponent implements OnInit {
   constructor(
     private sponsorService: SponsorApplicationService,
     private fileUploadService: FileUploadService,
-    private router: Router
+    private router: Router,
+    private confirmationService: ConfirmationService, // Add these services
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -96,8 +99,36 @@ export class SponsorApplicationListComponent implements OnInit {
 
   getLogoUrl(filename: string | null | undefined): string {
     if (!filename) {
-      return 'assets/images/logo-placeholder.png';
+      return 'assets/demo/images/galleria/galleria1.jpg';
     }
     return this.fileUploadService.getFileUrl(filename);
+  }
+  // Add this new method
+  deleteApplication(id: number): void {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this sponsor application?',
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.sponsorService.deleteApplication(id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Sponsor application deleted successfully'
+            });
+            this.refreshApplications(); // Reload the applications list
+          },
+          error: (error) => {
+            console.error('Error deleting application', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to delete sponsor application'
+            });
+          }
+        });
+      }
+    });
   }
 }

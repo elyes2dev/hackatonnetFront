@@ -1,112 +1,130 @@
 <!-- src/app/components/prize-list/prize-list.component.html -->
 <div class="col-12">
-    <div class="card">
-      <h5>Prize List</h5>
-      <p-table #dt1 [value]="prizes" dataKey="id" [rows]="10" [loading]="loading" [rowHover]="true" 
-          styleClass="p-datatable-gridlines" [paginator]="true" 
-          [globalFilterFields]="['id', 'prizeType', 'productName', 'amount', 'prizeCategory', 'status']" 
-          responsiveLayout="scroll">
-        <ng-template pTemplate="caption">
-          <div class="flex justify-content-between flex-column sm:flex-row">
-            <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
-            <span class="p-input-icon-left mb-2">
-              <i class="pi pi-search"></i>
-              <input pInputText type="text" #filter (input)="onGlobalFilter(dt1, $event)" placeholder="Search Keyword" class="w-full"/>
-            </span>
-          </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-          <tr>
-            <th>
-              <div class="flex justify-content-between align-items-center">
-                ID
-                <p-columnFilter type="text" field="id" display="menu" placeholder="Search by ID"></p-columnFilter>
-              </div>
-            </th>
-            <th>
-              <div class="flex justify-content-between align-items-center">
-                Prize Type
-                <p-columnFilter type="text" field="prizeType" display="menu" placeholder="Search by type"></p-columnFilter>
-              </div>
-            </th>
-            <th>
-              <div class="flex justify-content-between align-items-center">
-                Details
-                <p-columnFilter type="text" field="productName" display="menu" placeholder="Search details"></p-columnFilter>
-              </div>
-            </th>
-            <th>
-              <div class="flex justify-content-between align-items-center">
-                Category
-                <p-columnFilter type="text" field="prizeCategory" display="menu" placeholder="Search by category"></p-columnFilter>
-              </div>
-            </th>
-            <th>
-              <div class="flex justify-content-between align-items-center">
-                Status
-                <p-columnFilter field="status" matchMode="equals" display="menu">
-                  <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                    <p-dropdown [ngModel]="value" [options]="statusOptions" (onChange)="filter($event.value)" placeholder="Any" [style]="{'min-width': '12rem'}">
-                      <ng-template let-option pTemplate="item">
-                        <span [class]="'customer-badge ' + getStatusClass(option.value)">{{option.label}}</span>
-                      </ng-template>
-                    </p-dropdown>
-                  </ng-template>
-                </p-columnFilter>
-              </div>
-            </th>
-            <th>
-              <div class="flex justify-content-between align-items-center">
-                Submitted
-                <p-columnFilter type="date" field="submittedAt" display="menu" placeholder="mm/dd/yyyy"></p-columnFilter>
-              </div>
-            </th>
-            <th>
-              Actions
-            </th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-prize>
-          <tr>
-            <td style="min-width: 6rem;">
-              {{prize.id}}
-            </td>
-            <td style="min-width: 8rem;">
-              {{prize.prizeType}}
-            </td>
-            <td style="min-width: 10rem;">
-              <ng-container *ngIf="prize.prizeType === 'MONEY'">
-                ${{prize.amount}}
-              </ng-container>
-              <ng-container *ngIf="prize.prizeType === 'PRODUCT'">
-                {{prize.productName}}
-              </ng-container>
-            </td>
-            <td style="min-width: 10rem;">
-              {{prize.prizeCategory ? prize.prizeCategory.replace('_', ' ') : ''}}
-            </td>
-            <td style="min-width: 10rem;">
-              <span [class]="'customer-badge ' + getStatusClass(prize.status)">{{prize.status}}</span>
-            </td>
-            <td style="min-width: 10rem;">
-              {{prize.submittedAt | date: 'MM/dd/yyyy'}}
-            </td>
-            <td style="min-width: 8rem;">
+  <div class="card">
+    <h5>Prize List</h5>
+
+    <!-- Add these components for notifications -->
+    <p-toast></p-toast>
+    <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+    
+    <p-table #dt1 [value]="prizes" dataKey="id" [rows]="10" [loading]="loading" [rowHover]="true" 
+        styleClass="p-datatable-gridlines" [paginator]="true" 
+        [globalFilterFields]="['id', 'prizeType', 'productName', 'amount', 'prizeCategory', 'status']" 
+        responsiveLayout="scroll">
+      <ng-template pTemplate="caption">
+        <div class="flex justify-content-between flex-column sm:flex-row">
+          <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+          <span class="p-input-icon-left mb-2">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" #filter (input)="onGlobalFilter(dt1, $event)" placeholder="Search Keyword" class="w-full"/>
+          </span>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>
+            <div class="flex justify-content-between align-items-center">
+              ID
+              <p-columnFilter type="text" field="id" display="menu" placeholder="Search by ID"></p-columnFilter>
+            </div>
+          </th>
+          <th>
+            <div class="flex justify-content-between align-items-center">
+              Prize Type
+              <p-columnFilter type="text" field="prizeType" display="menu" placeholder="Search by type"></p-columnFilter>
+            </div>
+          </th>
+          <th>
+            <div class="flex justify-content-between align-items-center">
+              Details
+              <p-columnFilter type="text" field="productName" display="menu" placeholder="Search details"></p-columnFilter>
+            </div>
+          </th>
+          <th>
+            <div class="flex justify-content-between align-items-center">
+              Category
+              <p-columnFilter type="text" field="prizeCategory" display="menu" placeholder="Search by category"></p-columnFilter>
+            </div>
+          </th>
+          <th>
+            <div class="flex justify-content-between align-items-center">
+              Status
+              <p-columnFilter field="status" matchMode="equals" display="menu">
+                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                  <p-dropdown [ngModel]="value" [options]="statusOptions" (onChange)="filter($event.value)" placeholder="Any" [style]="{'min-width': '12rem'}">
+                    <ng-template let-option pTemplate="item">
+                      <span [class]="'customer-badge ' + getStatusClass(option.value)">{{option.label}}</span>
+                    </ng-template>
+                  </p-dropdown>
+                </ng-template>
+              </p-columnFilter>
+            </div>
+          </th>
+          <th>
+            <div class="flex justify-content-between align-items-center">
+              Submitted
+              <p-columnFilter type="date" field="submittedAt" display="menu" placeholder="mm/dd/yyyy"></p-columnFilter>
+            </div>
+          </th>
+          <th>
+            <div class="flex justify-content-between align-items-center">
+              Reviewed
+              <p-columnFilter type="date" field="reviewedAt" display="menu" placeholder="mm/dd/yyyy"></p-columnFilter>
+            </div>
+          </th>
+          <th>
+            Actions
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-prize>
+        <tr>
+          <td style="min-width: 6rem;">
+            {{prize.id}}
+          </td>
+          <td style="min-width: 8rem;">
+            {{prize.prizeType}}
+          </td>
+          <td style="min-width: 10rem;">
+            <ng-container *ngIf="prize.prizeType === 'MONEY'">
+              ${{prize.amount}}
+            </ng-container>
+            <ng-container *ngIf="prize.prizeType === 'PRODUCT'">
+              {{prize.productName}}
+            </ng-container>
+          </td>
+          <td style="min-width: 10rem;">
+            {{prize.prizeCategory ? prize.prizeCategory.replace('_', ' ') : ''}}
+          </td>
+          <td style="min-width: 10rem;">
+            <span [class]="'customer-badge ' + getStatusClass(prize.status)">{{prize.status}}</span>
+          </td>
+          <td style="min-width: 10rem;">
+            {{prize.submittedAt | date: 'MM/dd/yyyy'}}
+          </td>
+          <td style="min-width: 10rem;">
+            {{prize.reviewedAt | date: 'MM/dd/yyyy'}}
+          </td>
+          <td style="min-width: 14rem;">
+            <div class="flex gap-2">
               <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-info p-button-outlined" 
                   [routerLink]="['/prizes', prize.id]"></button>
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="7">No prizes found.</td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="loadingbody">
-          <tr>
-            <td colspan="7">Loading prizes data. Please wait.</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-outlined" 
+                  (click)="deletePrize(prize.id)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8">No prizes found.</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="loadingbody">
+        <tr>
+          <td colspan="8">Loading prizes data. Please wait.</td>
+        </tr>
+      </ng-template>
+    </p-table>
   </div>
+</div>
