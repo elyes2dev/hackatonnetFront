@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+import { CustomJwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +29,7 @@ export class StorageService {
 
     try {
         // Decode the token
-        const decodedToken = jwtDecode<JwtPayload>(token);
+        const decodedToken = jwtDecode<CustomJwtPayload>(token);
         // Extract the roles
         const roles: string[] = decodedToken.roles || [];
         return roles;
