@@ -2,10 +2,19 @@
   <div class="col-12">
     <div class="card">
       <h5>Resource List</h5>
-            <!-- Back to Workshop List Button -->
-            <div class="flex justify-content-start mb-4">
-              <button pButton label="Back to Workshop List" class="p-button-outlined" icon="pi pi-arrow-left" [routerLink]="['/workshops']"></button>
-            </div>
+
+      <!-- Back to Workshop List Button -->
+      <div class="flex justify-content-start mb-4">
+        <button pButton label="Back to Workshop List" class="p-button-outlined" icon="pi pi-arrow-left" [routerLink]="['/workshops']"></button>
+      </div>
+
+      <!-- Add Resource Button (aligned to the right) -->
+      <div class="flex justify-content-end mb-4">
+        <button pButton label="Add Resource" class="p-button-outlined" icon="pi pi-plus-circle" 
+          [routerLink]="['/workshops', workshopId, 'resources', 'new']">
+        </button>
+      </div>
+
       <p-table #dt1 [value]="resources" dataKey="id" [rows]="10" [loading]="loading" [rowHover]="true" styleClass="p-datatable-gridlines" [paginator]="true" [globalFilterFields]="['name','description','niveau']" responsiveLayout="scroll">
         <ng-template pTemplate="caption">
           <div class="flex justify-content-between flex-column sm:flex-row">
@@ -51,15 +60,9 @@
         </ng-template>
         <ng-template pTemplate="body" let-resource>
           <tr>
-            <td>
-              {{ resource.name }}
-            </td>
-            <td>
-              {{ resource.description }}
-            </td>
-            <td>
-              {{ resource.niveau }}
-            </td>
+            <td>{{ resource.name }}</td>
+            <td>{{ resource.description }}</td>
+            <td>{{ resource.niveau }}</td>
             <td>
               <div *ngIf="filePreviews[resource.id]" class="resource-files">
                 <!-- Display Images -->

@@ -267,4 +267,65 @@
       height: 16px;
     }
   }
+
+  .btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .btn-view {
+    background-color: #1976d2;
+    color: white;
+  }
+  
+  .btn-edit {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .btn-delete {
+    background-color: #d32f2f;
+    color: white;
+  }
+  
+  .btn-take {
+    background-color: #f57c00;
+    color: white;
+  }
+  
+  /* Add Quiz Button */
+  .btn-add {
+    background-color: #1976d2;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+  }
+  
+  .btn-add:hover {
+    background-color: #1565c0;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(25, 118, 210, 0.3);
+  }
   

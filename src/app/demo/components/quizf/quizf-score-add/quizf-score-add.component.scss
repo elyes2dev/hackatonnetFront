@@ -71,3 +71,37 @@
     color: #888;
   }
   
+  /* Style for the "Return to Quizzes" button */
+  .p-button-secondary {
+    background-color: #28a745; /* Green background, similar to submit button */
+    color: #fff; /* White text */
+    border: 1px solid #218838; /* Darker green border */
+    padding: 10px 20px; /* Padding */
+    border-radius: 8px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Bold text */
+    display: flex;
+    align-items: center; /* Vertically align text and icon */
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+    cursor: pointer;
+    align-self: center;
+    width: 100%;
+    max-width: 150px;
+    
+    &:hover {
+      background-color: #218838; /* Darker green background on hover */
+      border-color: #1e7e34; /* Darker border on hover */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect on hover */
+    }
+  
+    .pi {
+      margin-right: 10px; /* Space between icon and text */
+      font-size: 18px; /* Icon size */
+    }
+  
+    &:active {
+      background-color: #1e7e34; /* Dark green background on click */
+      border-color: #1e7e34; /* Darker border on click */
+    }
+  }
+  

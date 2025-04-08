@@ -1,4 +1,5 @@
 <app-navbar></app-navbar>
+<br>
 <div *ngIf="quiz">
     <h2 class="quiz-title">Quiz: {{ quiz.title }}</h2>
   
@@ -21,6 +22,8 @@
       </div>
   
       <button type="submit" pButton label="Submit" class="p-button-success mt-3 submit-button"></button>
+      <button pButton label="Return" class="p-button-failed mt-3 submit-button" (click)="onReturn()"></button>
+
     </form>
   </div>
   
@@ -28,5 +31,7 @@
   <div *ngIf="!quiz" class="loading-state">
     Loading quiz...
   </div>
+
+  <br><br><br><br>
   <app-footer></app-footer>
   

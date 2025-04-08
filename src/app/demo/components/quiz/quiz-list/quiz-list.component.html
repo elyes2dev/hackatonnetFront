@@ -5,6 +5,13 @@
 
 <h2>Quizzes for Workshop #{{ workshopId }}</h2>
 
+
+        <!-- Go Back to Workshop Button -->
+        <button (click)="goBackToWorkshopList()" class="btn btn-back">
+            <i class="fas fa-arrow-left"></i> Go Back to Workshop
+          </button>
+          
+
 <button *ngIf="!hasQuiz" (click)="goToAdd()" class="btn btn-add">
     <i class="fas fa-plus"></i> Add New Quiz
   </button>

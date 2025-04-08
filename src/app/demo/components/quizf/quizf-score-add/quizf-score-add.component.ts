@@ -96,5 +96,10 @@ export class QuizfScoreAddComponent implements OnInit {
       }
     });
   }
+
+  onReturn(): void {
+    // Navigate back to the quizzes list page
+    this.router.navigate(['/workshopsf', this.workshopId, 'quizzes']);
+  }
 }
 

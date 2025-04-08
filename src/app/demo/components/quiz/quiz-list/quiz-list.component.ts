@@ -165,4 +165,8 @@ export class QuizListComponent implements OnInit {
   goToTakeQuiz(quizId: number): void {
     this.router.navigate(['/workshops', this.workshopId, 'quizzes', quizId, 'score-add']);
   }
+  goBackToWorkshopList() {
+    // Navigate back to the workshop list
+    this.router.navigate(['/workshops']);  // Adjust the route as needed
+  }
 }

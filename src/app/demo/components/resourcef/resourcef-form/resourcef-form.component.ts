@@ -45,6 +45,8 @@ export class ResourcefFormComponent implements OnInit {
   loadResource(): void {
     this.resourceService.getResourceById(this.workshopId, this.resourceId).subscribe({
       next: (resource) => {
+        console.log(resource.resourceImages);
+
         this.resourceForm.patchValue(resource);
         if (resource.resourceImages) {
           this.existingFiles = resource.resourceImages.map(file => ({
@@ -70,9 +72,22 @@ export class ResourcefFormComponent implements OnInit {
   }
 
   removeExistingFile(index: number): void {
-    this.existingFiles.splice(index, 1);
+    const fileToRemove = this.existingFiles[index];
+    console.log('Deleting file:', fileToRemove);
+  
+    // Make the delete request to the backend
+    this.resourceService.removeImage(this.workshopId, fileToRemove.id_image).subscribe({
+      next: (response) => {
+        // On success, remove the file from the existing files array
+        console.log('Image deleted successfully');
+        this.existingFiles.splice(index, 1);  // Remove the image from the UI list
+      },
+      error: (err) => {
+        console.error('Error deleting image:', err);
+      }
+    });
   }
-
+  
   onSubmit(): void {
     if (this.resourceForm.invalid) return;
 

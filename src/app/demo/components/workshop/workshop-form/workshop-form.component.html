@@ -38,6 +38,11 @@
                 <div class="p-field">
                     <button pButton type="submit" label="Save" [disabled]="!workshopForm.valid"></button>
                 </div>
+                <!-- Return Button -->
+<div class="p-field">
+  <button pButton type="button" label="Return" class="p-button-lg p-button-secondary" (click)="cancel()"></button>
+</div>
+
             </form>
         </div>
     </div>

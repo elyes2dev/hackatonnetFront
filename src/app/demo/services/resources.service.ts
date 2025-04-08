@@ -98,4 +98,10 @@ downloadImage(workshopId: number, resourceId: number, imageId: number): Observab
   });
 }
 
+  // Method to remove an image by its ID
+  removeImage(workshopId: number, imageId: number): Observable<any> {
+    const url = `${this.baseUrl}/${workshopId}/resources/images/${imageId}`;
+    return this.http.delete(url);
+  }
+
 }

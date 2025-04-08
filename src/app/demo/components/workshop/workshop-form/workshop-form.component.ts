@@ -140,7 +140,6 @@ export class WorkshopFormComponent implements OnInit {
       cancel() {
         this.router.navigate(['/workshops']);
       }
-
-      
+ 
   
 }

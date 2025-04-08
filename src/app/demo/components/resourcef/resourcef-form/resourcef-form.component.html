@@ -50,7 +50,8 @@
             <div *ngFor="let file of existingFiles; let i = index" class="file-item">
               <span [class]="getFileIcon(file.type)"></span>
               <span class="file-name">{{ file.path }}</span>
-              <button type="button" class="remove-btn" (click)="removeExistingFile(i)">×</button>
+            <!--      <button type="button" class="remove-btn" (click)="removeExistingFile(i)">×</button> -->
+  
             </div>
           </div>
         </div>

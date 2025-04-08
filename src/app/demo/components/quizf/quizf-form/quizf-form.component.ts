@@ -188,5 +188,13 @@ export class QuizfFormComponent implements OnInit {
         this.loading = false;
       });
   }
+
+      // Method to navigate back to the Quiz List for the specific workshop
+      navigateBackToQuizList(): void {
+        const workshopId = this.route.snapshot.paramMap.get('workshopId');
+        if (workshopId) {
+          this.router.navigate([`/workshopsf/${workshopId}/quizzes`]);
+        }
+      }
 }
 

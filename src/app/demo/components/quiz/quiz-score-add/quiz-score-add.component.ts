@@ -78,7 +78,7 @@ export class QuizScoreAddComponent implements OnInit {
     this.userQuizScoreService.saveScore(request).subscribe({
       next: () => {
         alert('Your score has been saved!');
-        this.router.navigate(['/workshopsf', this.workshopId, 'quizzes']);
+        this.router.navigate(['/workshops', this.workshopId, 'quizzes']);
       },
       error: () => {
         alert('Failed to save score.');
@@ -95,6 +95,11 @@ export class QuizScoreAddComponent implements OnInit {
         this.score++; // Award 1 point for correct answer
       }
     });
+  }
+
+  onReturn(): void {
+    // Navigate back to the quizzes list page
+    this.router.navigate(['/workshops', this.workshopId, 'quizzes']);
   }
 }
 
