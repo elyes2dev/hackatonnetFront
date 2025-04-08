@@ -16,7 +16,7 @@ export interface MentorApplication {
 
   export enum ApplicationStatus {
     PENDING = 'PENDING',
-    APPROVED = 'APPROSVED',
+    APPROVED = 'APPROVED',
     REJECTED = 'REJECTED'
   }
   

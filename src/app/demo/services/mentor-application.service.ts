@@ -33,9 +33,31 @@ export class MentorApplicationService {
     )
   }
 
-  createApplication(application: MentorApplication): Observable<MentorApplication> {
-    return this.http.post<MentorApplication>(this.apiUrl, application)
+  createApplication(application: any, cvFile: File | null, uploadPaperFile: File | null): Observable<any> {
+    const formData = new FormData();
+    
+    // Stringify the application object and add it to FormData
+    formData.append('application', new Blob([JSON.stringify(application)], {
+      type: 'application/json'
+    }));
+    
+    if (cvFile) {
+      formData.append('cvFile', cvFile);
+    }
+    
+    if (uploadPaperFile) {
+      formData.append('uploadPaperFile', uploadPaperFile);
+    }
+
+    return this.http.post(this.apiUrl, formData);
   }
+
+  downloadFile(filename: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/files/${filename}`, {
+      responseType: 'blob'
+    });
+  }
+
 
   updateApplication(id: number, application: MentorApplication): Observable<MentorApplication> {
     return this.http.put<MentorApplication>(`${this.apiUrl}/${id}`, application)

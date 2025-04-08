@@ -17,6 +17,12 @@ import { AppFooterComponent } from './app.footer.component';
 import { AppConfigModule } from './config/config.module';
 import { AppSidebarComponent } from "./app.sidebar.component";
 import { AppLayoutComponent } from "./app.layout.component";
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+
 
 @NgModule({
     declarations: [
@@ -39,7 +45,12 @@ import { AppLayoutComponent } from "./app.layout.component";
         InputSwitchModule,
         RippleModule,
         RouterModule,
-        AppConfigModule
+        AppConfigModule,
+        CardModule,
+        TagModule,
+        ProgressSpinnerModule,
+        ButtonModule,
+        TableModule
     ],
     exports: [AppLayoutComponent]
 })

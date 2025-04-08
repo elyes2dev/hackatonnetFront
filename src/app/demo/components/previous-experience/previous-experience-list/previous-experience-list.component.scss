@@ -1,0 +1,16 @@
+:host ::ng-deep {
+    .p-rowgroup-header {
+      background-color: #f8f9fa;
+      font-weight: bold;
+      
+      td {
+        padding: 1rem;
+      }
+    }
+    
+    .p-datatable {
+      .p-datatable-thead > tr > th {
+        background-color: #f8f9fa;
+      }
+    }
+  }

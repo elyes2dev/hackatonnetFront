@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
 import { AppLayoutComponent } from "./layout/app.layout.component";
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
+import { MentorApplicationDetailsComponent } from './demo/components/mentor-application/mentor-application-details/mentor-application-details.component';
+import { MentorApplicationFormComponent } from './demo/components/mentor-application/mentor-application-form/mentor-application-form.component';
+import { MentorApplicationListComponent } from './demo/components/mentor-application/mentor-application-list/mentor-application-list.component';
 
 @NgModule({
     imports: [
@@ -18,6 +21,11 @@ import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
                     // New Update Template
                     { path: 'mydashboard', component: MydashboardComponent },
+
+                    { path: 'mentor-applications', component: MentorApplicationListComponent },
+                    { path: 'mentor-applications/create', component: MentorApplicationFormComponent },
+                    { path: 'mentor-applications/:id', component: MentorApplicationDetailsComponent },
+                    { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },
                 ],
             },
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },

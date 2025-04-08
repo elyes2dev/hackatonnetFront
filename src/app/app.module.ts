@@ -37,7 +37,9 @@ import { MentorEvaluationListComponent } from './demo/components/mentor-evaluati
 import { MentorEvaluationFormComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form/mentor-evaluation-form.component';
 import { ListMentorListComponent } from './demo/components/list-mentor/list-mentor-list/list-mentor-list.component';
 import { ListMentorFormComponent } from './demo/components/list-mentor/list-mentor-form/list-mentor-form.component';
-
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @NgModule({
     declarations: [
@@ -59,8 +61,10 @@ import { ListMentorFormComponent } from './demo/components/list-mentor/list-ment
         ProgressBarModule,
         ToastModule,
         FormsModule,
-        HttpClientModule
-
+        HttpClientModule,
+        CardModule,
+        TagModule,
+        ProgressSpinnerModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
