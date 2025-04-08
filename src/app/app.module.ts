@@ -53,10 +53,11 @@ import { QuizfFormComponent } from './demo/components/quizf/quizf-form/quizf-for
 import { QuizfDetailsComponent } from './demo/components/quizf/quizf-details/quizf-details.component';
 import { QuizfResultDialogComponent } from './demo/components/quizf/quizf-result-dialog/quizf-result-dialog.component';
 import { QuizfScoreAddComponent } from './demo/components/quizf/quizf-score-add/quizf-score-add.component';
+import { FilterByNameAndThemePipe } from './demo/components/workshopf/workshoplistf/filter-by-name-and-theme.pipe';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent, FilterByNameAndThemePipe
     ],
     imports: [
         AppRoutingModule,

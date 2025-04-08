@@ -136,5 +136,11 @@ export class WorkshopFormComponent implements OnInit {
     }
   }
   
+      // Redirect to the workshop list route
+      cancel() {
+        this.router.navigate(['/workshops']);
+      }
+
+      
   
 }

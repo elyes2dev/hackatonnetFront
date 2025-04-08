@@ -1,73 +1,231 @@
 <app-navbar></app-navbar>
 
-<div class="card">
-    <div class="p-mb-4">
-      <button pButton 
-              label="Add New Workshop" 
-              icon="pi pi-plus"
-              class="p-button-primary"
-              routerLink="/workshopsf/new"></button>
+<!-- New IT Quotes Section -->
+<div class="quotes-container">
+  <div class="container">
+    <div class="item">
+      <div class="quote">
+        <p>Stay hungry, stay foolish.<span>Steve Jobs</span></p>
+      </div>
     </div>
-  
-    <p-table [value]="workshops" [paginator]="true" [rows]="10" responsiveLayout="scroll">
-      <ng-template pTemplate="header">
-        <tr>
-          <th style="width: 100px">Image</th>
-          <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
-          <th pSortableColumn="theme">Theme <p-sortIcon field="theme"></p-sortIcon></th>
-          <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
-      
-      <ng-template pTemplate="body" let-workshop>
-        <tr>
-          <td>
-            <img [src]="workshop.photo || 'assets/images/placeholder-workshop.png'" 
-                 class="workshop-image"
-                 alt="{{ workshop.name }} thumbnail">
-          </td>
-          <td>{{ workshop.name }}</td>
-          <td>{{ workshop.theme }}</td>
-          <td>{{ workshop.description }}</td>
-          <td>
-            <div class="flex gap-2">
-              <button pButton 
-                      icon="pi pi-pencil" 
-                      class="p-button-rounded p-button-success" 
-                      [routerLink]="['/workshopsf', workshop.id, 'edit']"></button>
-              
-              <button pButton 
-                      icon="pi pi-trash" 
-                      class="p-button-rounded p-button-danger" 
-                      (click)="deleteWorkshop(workshop.id)"></button>
-              
-              <!-- Button to redirect to the resource list for a specific workshop -->
-              <button pButton 
-                      icon="pi pi-list" 
-                      class="p-button-rounded p-button-info" 
-                      [routerLink]="['/workshopsf', workshop.id, 'resources']"></button>
-            </div>
-              <!-- New Quiz buttons -->
-    <button pButton 
-    icon="pi pi-question-circle" 
-    class="p-button-rounded p-button-help" 
-    [routerLink]="['/workshopsf', workshop.id, 'quizzes']"
-    pTooltip="View quizzes" 
-    tooltipPosition="top"></button>
-  
-  <button pButton 
-    icon="pi pi-plus" 
-    class="p-button-rounded p-button-warning" 
-    [routerLink]="['/workshopsf', workshop.id, 'quizzes', 'new']"
-    pTooltip="Add new quiz" 
-    tooltipPosition="top"></button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+    <div class="item">
+      <div class="quote">
+        <p>Your most unhappy customers are your greatest source of learning.<span>Bill Gates</span></p>
+      </div>
+    </div>
+    <div class="item">
+      <div class="quote">
+        <p>Move fast and break things. Unless you are breaking stuff, you are not moving fast enough.<span>Mark Zuckerberg</span></p>
+      </div>
+    </div>
+    <div class="item">
+      <div class="quote">
+        <p>The best way to predict the future is to invent it.<span>Alan Kay</span></p>
+      </div>
+    </div>
+    <div class="item">
+      <div class="quote">
+        <p>First, solve the problem. Then, write the code.<span>Elon Musk</span></p>
+      </div>
+    </div>
+    <div class="item">
+      <div class="quote">
+        <p>Programs must be written for people to read, and only incidentally for machines to execute.<span>Jeff Bezos</span></p>
+      </div>
+    </div>
   </div>
-  
+</div>
 
+<!-- Workshop Section -->
+<div class="workshop-wrapper">
+  <div class="intro-section">
+    <div class="header">
+      <h2>Discover the World of Innovation with Kiberbash Workshops</h2>
+    </div>
+    <div class="intro-text">
+      <p>Welcome to Kiberbash! A place where knowledge meets creativity. Here, you'll find workshops designed to ignite your passion, enhance your skills, and inspire innovative thinking.</p>
+      <p>Browse through various themes, topics, and difficulty levels, and embark on a journey of learning. Whether you're an expert or just starting, there’s something to challenge everyone!</p>
+    </div>
+    
+    <!-- Search and Filters Section -->
+    <div class="search-container">
+      <input
+        type="text"
+        [(ngModel)]="searchName"
+        placeholder="🔍 Search by name"
+        class="search-input"
+      />
+      <select [(ngModel)]="selectedTheme" class="theme-select">
+        <option value="">🎨 All Themes</option>
+        <option *ngFor="let theme of uniqueThemes" [value]="theme">
+          {{ theme }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Add New Workshop Button -->
+    <div class="add-button-wrapper">
+      <button
+        pButton
+        label="Add New Workshop"
+        icon="pi pi-plus"
+        class="p-button-primary"
+        routerLink="/workshopsf/new"
+      ></button>
+    </div>
+  </div>
+
+  <style>
+    .intro-section {
+      background-color: #f4f7fb;
+      padding: 40px;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header h2 {
+      font-size: 2.5rem;
+      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .intro-text {
+      font-size: 1.1rem;
+      color: #34495e;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .intro-text p {
+      margin: 10px 0;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .search-input {
+      padding: 12px 20px;
+      font-size: 1rem;
+      width: 300px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-input:focus {
+      border-color: #3498db;
+    }
+
+    .theme-select {
+      padding: 12px 20px;
+      font-size: 1rem;
+      width: 250px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    .add-button-wrapper {
+      margin-top: 20px;
+    }
+
+    .add-button-wrapper button {
+      width: 200px;
+      padding: 12px;
+      font-size: 1.1rem;
+    }
+  </style>
+
+  <!-- Workshops Cards -->
+  <div class="cards-container">
+    <div
+      class="nft"
+      *ngFor="let workshop of workshops | filterByNameAndTheme:searchName:selectedTheme"
+    >
+      <div class="main">
+        <img
+          class="tokenImage"
+          [src]="workshop.photo || 'assets/images/placeholder-workshop.png'"
+          alt="Workshop"
+        />
+        <h2>{{ workshop.name }}</h2>
+        <p class="description">
+          {{ workshop.description || 'No description provided.' }}
+        </p>
+
+        <div class="tokenInfo">
+          <div class="price">
+            <ins>🎯</ins>
+            <p>{{ workshop.theme || 'No Theme' }}</p>
+          </div>
+          <div class="duration">
+            <ins>📅</ins>
+            <p>{{ workshop.date || 'Unknown Date' }}</p>
+          </div>
+        </div>
+
+        <hr />
+
+        <div class="creator">
+          <div class="wrapper">
+            <img
+              [src]="workshop.user.photo || 'assets/images/default-user.png'"
+              alt="Creator"
+            />
+          </div>
+          <p><ins>Hosted by</ins> {{ workshop.user.name || 'Unknown' }}</p>
+        </div>
+
+        <div class="card-buttons">
+          <button
+            pButton
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-success"
+            [routerLink]="['/workshopsf', workshop.id, 'edit']"
+          ></button>
+
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-danger"
+            (click)="deleteWorkshop(workshop.id)"
+          ></button>
+
+          <button
+            pButton
+            icon="pi pi-list"
+            class="p-button-rounded p-button-info"
+            [routerLink]="['/workshopsf', workshop.id, 'resources']"
+          ></button>
+
+          <button
+            pButton
+            icon="pi pi-question-circle"
+            class="p-button-rounded p-button-help"
+            [routerLink]="['/workshopsf', workshop.id, 'quizzes']"
+            pTooltip="View quizzes"
+            tooltipPosition="top"
+          ></button>
+
+          <button
+            pButton
+            icon="pi pi-plus"
+            class="p-button-rounded p-button-warning"
+            [routerLink]="['/workshopsf', workshop.id, 'quizzes', 'new']"
+            pTooltip="Add new quiz"
+            tooltipPosition="top"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <app-footer></app-footer>

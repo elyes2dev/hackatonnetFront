@@ -1,0 +1,124 @@
+/* General container for the form */
+.form-container {
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    width: 100%;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+/* Title styling */
+.form-title {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Styling for the labels */
+.form-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* Input Fields */
+.form-input, .form-textarea, .form-dropdown {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* Custom file upload button */
+.file-upload-container {
+    position: relative;
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.custom-file-upload input[type="file"] {
+    display: none;
+}
+
+/* Image Preview */
+.image-preview {
+    width: 150px;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Submit Button */
+.p-button-lg {
+    font-size: 1.1rem;
+    padding: 12px 20px;
+    border-radius: 8px;
+}
+
+/* Save Button (Green) */
+.p-button-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* Cancel Button (Red) */
+.p-button-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 10px;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+    }
+
+    .form-label {
+        font-size: 1rem;
+    }
+
+    .form-input, .form-textarea {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .p-button-lg {
+        font-size: 1rem;
+        padding: 10px 18px;
+    }
+}

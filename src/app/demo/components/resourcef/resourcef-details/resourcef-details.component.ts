@@ -159,7 +159,7 @@ export class ResourcefDetailsComponent implements OnInit, OnDestroy {
   }
 
   getSkillLevelClass(level: string): string {
-    return level === 'Beginner' ? 'beginner' : level === 'Intermediate' ? 'intermediate' : 'advanced';
+    return level === 'Beginner' ? 'beginner' : level === 'Intermediate' ? 'intermediate' : 'expert';
   }
 
   getFileIcon(fileType: string): string {

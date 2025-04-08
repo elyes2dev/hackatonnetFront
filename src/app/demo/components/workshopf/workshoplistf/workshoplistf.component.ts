@@ -17,6 +17,10 @@ export class WorkshoplistfComponent implements OnInit {
   isLoading = true;
   isAdmin: boolean = false;
   isStudent: boolean = false;
+  searchName: string = '';
+selectedTheme: string = '';
+uniqueThemes: string[] = [];
+
   
   // Define columns for the table structure
   columns = [
@@ -67,11 +71,13 @@ export class WorkshoplistfComponent implements OnInit {
       console.error('User ID not found in localStorage');
     }
   }
-
   getAllWorkshops() {
     this.workshopService.getAllWorkshops().subscribe({
       next: (data: any[]) => {
         this.workshops = data;
+        this.uniqueThemes = Array.from(
+          new Set(data.map((w) => w.theme).filter((t) => !!t))
+        );
         this.isLoading = false;
       },
       error: (err: any) => {
@@ -80,7 +86,6 @@ export class WorkshoplistfComponent implements OnInit {
       }
     });
   }
-
   deleteWorkshop(id: number): void {
     if (confirm('Are you sure you want to delete this workshop?')) {
       this.workshopService.deleteWorkshop(id).subscribe({

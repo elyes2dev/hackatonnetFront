@@ -136,6 +136,12 @@ export class WorkshopfFormComponent implements OnInit {
       alert('Form is invalid.');
     }
   }
+
+    // Redirect to the workshop list route
+    cancel() {
+      this.router.navigate(['/workshopsf']);
+    }
+  
   
   
 }

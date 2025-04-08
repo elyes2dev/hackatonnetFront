@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ImageModel } from 'src/app/demo/models/image.model';
 import { Resources } from 'src/app/demo/models/resources.model';
@@ -24,6 +24,15 @@ export class ResourcefListComponent implements OnInit {
     }
   } = {};
 
+  // To track the visibility of files for each resource
+  fileVisibility: Map<number, boolean> = new Map();
+  
+  // Preview modal variables
+  showPreview: boolean = false;
+  previewUrl: SafeUrl | SafeResourceUrl | null = null;
+  previewType: 'image' | 'pdf' | null = null;
+  currentFile: ImageModel | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private resourceService: ResourceService,
@@ -43,6 +52,12 @@ export class ResourcefListComponent implements OnInit {
     this.resourceService.getAllWorkshopResources(this.workshopId).subscribe({
       next: (resources) => {
         this.resources = resources;
+        
+        // Initialize all resources with closed file sections
+        resources.forEach(resource => {
+          this.fileVisibility.set(resource.id, false);
+        });
+        
         this.loadFilesForResources();
         this.loading = false;
       },
@@ -99,23 +114,61 @@ export class ResourcefListComponent implements OnInit {
     return type === 'application/pdf';
   }
 
-  viewFile(file: ImageModel): void {
+  previewFile(file: any, type: 'image' | 'pdf'): void {
+    this.currentFile = file;
+    this.previewType = type;
+    
+    if (type === 'image') {
+      // For images, we already have the URL
+      this.previewUrl = file.url;
+      this.showPreview = true;
+    } else if (type === 'pdf') {
+      // For PDFs, we need to fetch and create a URL
+      this.imageService.getImage(file.id_image).subscribe(blob => {
+        const fileURL = URL.createObjectURL(blob);
+        this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(fileURL);
+        this.showPreview = true;
+      });
+    }
+  }
+  
+  downloadFile(file: ImageModel): void {
     this.imageService.getImage(file.id_image).subscribe(blob => {
       const fileURL = URL.createObjectURL(blob);
-      
-      if (this.isPdfFile(file.type)) {
-        // Open PDF in new tab
-        window.open(fileURL, '_blank');
-      } else {
-        // For other files, let browser handle it
-        const a = document.createElement('a');
-        a.href = fileURL;
-        a.download = file.path || 'download';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
+      const a = document.createElement('a');
+      a.href = fileURL;
+      a.download = file.path || 'download'; // Default filename is 'download' if none is provided
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     });
+  }
+  
+  
+  downloadCurrentFile(): void {
+    if (this.currentFile) {
+      this.downloadFile(this.currentFile);
+    }
+  }
+  
+  closePreview(event?: MouseEvent): void {
+    // Only close if clicking on the background, not the content
+    if (event && event.target !== event.currentTarget) {
+      return;
+    }
+    
+    this.showPreview = false;
+    this.previewUrl = null;
+    this.previewType = null;
+    this.currentFile = null;
+  }
+
+  viewFile(file: ImageModel): void {
+    if (this.isPdfFile(file.type)) {
+      this.previewFile(file, 'pdf');
+    } else {
+      this.downloadFile(file);
+    }
   }
 
   getFileIcon(type: string): string {
@@ -134,6 +187,7 @@ export class ResourcefListComponent implements OnInit {
         next: () => {
           this.resources = this.resources.filter(r => r.id !== resourceId);
           delete this.filePreviews[resourceId];
+          this.fileVisibility.delete(resourceId);
         },
         error: (err) => {
           console.error('Error deleting resource:', err);
@@ -141,5 +195,25 @@ export class ResourcefListComponent implements OnInit {
         }
       });
     }
+  }
+
+  getSkillClass(niveau: string): string {
+    switch (niveau.toLowerCase()) {
+      case 'beginner': return 'skill-beginner';
+      case 'intermediate': return 'skill-intermediate';
+      case 'advanced': return 'skill-advanced';
+      case 'expert': return 'skill-expert';
+      default: return 'bg-gray-400';
+    }
+  }
+
+  // Toggle files section for a specific resource
+  toggleFiles(resourceId: number): void {
+    const currentState = this.fileVisibility.get(resourceId) || false;
+    this.fileVisibility.set(resourceId, !currentState);
+  }
+
+  isFilesOpen(resourceId: number): boolean {
+    return !!this.fileVisibility.get(resourceId);
   }
 }

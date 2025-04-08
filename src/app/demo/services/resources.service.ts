@@ -85,4 +85,17 @@ export class ResourceService {
       `${this.baseUrl}/${workshopId}/resources/${resourceId}/files/${fileId}`
     );
   }
+
+// Method to download image
+downloadImage(workshopId: number, resourceId: number, imageId: number): Observable<Blob> {
+  const url = `${this.baseUrl}/${workshopId}/resources/${resourceId}/images/${imageId}/download`;
+
+  return this.http.get(url, {
+    headers: new HttpHeaders({
+      'Accept': 'application/octet-stream'  // or 'application/zip', 'application/pdf' depending on the file type
+    }),
+    responseType: 'blob'  // Set the response type to blob
+  });
+}
+
 }

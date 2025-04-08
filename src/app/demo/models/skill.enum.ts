@@ -1,6 +1,6 @@
 export enum SkillEnum {
     Beginner = 'Beginner',
     Intermediate = 'Intermediate',
-    Advanced = 'Advanced'
+    Expert = 'Expert'
     // Add additional levels as necessary
 }

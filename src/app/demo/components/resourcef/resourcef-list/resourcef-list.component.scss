@@ -1,111 +1,328 @@
-.resource-list-container {
-    padding: 20px;
+// Main container
+.resources-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
   }
   
-  .loading-spinner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 200px;
-  }
-  
-  .error-message {
-    margin: 20px 0;
-    padding: 15px;
-  }
-  
+  // Header styling
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .no-resources {
-    padding: 20px;
-    text-align: center;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-  }
-  
-  .resource-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-  }
-  
-  .resource-card {
-    transition: transform 0.2s;
+    margin-bottom: 2rem;
     
-    &:hover {
-      transform: translateY(-5px);
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
     }
   }
   
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+  .add-resource-btn {
+    padding: 0.7rem 1.2rem;
   }
   
-  .actions button {
-    margin-left: 5px;
+  // No resources message
+  .no-resources {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin: 3rem 0;
+    padding: 2rem;
+    background-color: #f5f5f5;
+    border-radius: 0.5rem;
   }
   
-  .card-content {
-    padding-top: 10px;
+  // Resource grid
+  .resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
   }
   
-  .resource-files {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 15px;
-  }
-  
-  .file-preview {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  .preview-image {
-    max-width: 100px;
-    max-height: 100px;
-    border-radius: 4px;
-    object-fit: cover;
-  }
-  
-  .file-button {
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
+  // Resource card
+  .resource-card {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #eaeaea;
     
-    &.pdf {
-      background-color: #e74c3c;
-      border-color: #e74c3c;
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
       
-      &:hover {
-        background-color: #c0392b !important;
-        border-color: #c0392b !important;
+      h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin: 0;
+        color: #2a2a2a;
+      }
+      
+      .actions {
+        display: flex;
+        gap: 0.5rem;
+        
+        button {
+          width: 2.2rem;
+          height: 2.2rem;
+        }
+      }
+    }
+    
+    .card-content {
+      p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #4a4a4a;
+        margin-bottom: 1rem;
+      }
+      
+      .skill-badge {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: white;
+        background: #6366f1;
+        margin-bottom: 1.2rem;
+      }
+      
+      .toggle-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        background-color: #f5f7fa;
+        transition: background-color 0.2s ease;
+        
+        &:hover {
+          background-color: #e9ecef;
+        }
+        
+        .toggle-text {
+          font-weight: 500;
+          font-size: 0.9rem;
+          color: #495057;
+        }
+        
+        i {
+          transition: transform 0.3s ease;
+        }
+      }
+      
+      .resource-files {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eaeaea;
+      }
+      
+      .file-section {
+        margin-bottom: 1.5rem;
+        
+        h4 {
+          font-size: 1rem;
+          margin-bottom: 0.8rem;
+          color: #333;
+        }
+        
+        .image-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+          gap: 0.75rem;
+          
+          .image-container {
+            cursor: pointer;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            transition: transform 0.2s ease;
+            
+            &:hover {
+              transform: scale(1.05);
+            }
+          }
+          .preview-image {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            border: 1px solid #e0e0e0;
+          }
+        }
+        
+        .file-preview {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-bottom: 0.8rem;
+          
+          .file-button {
+            width: 2.2rem;
+            height: 2.2rem;
+            
+            &.pdf {
+              background-color: #ef4444;
+            }
+          }
+          
+          .file-name {
+            font-size: 0.85rem;
+            color: #555;
+            word-break: break-all;
+          }
+        }
       }
     }
   }
   
-  .file-name {
-    font-size: 0.8rem;
-    color: #6c757d;
-    text-align: center;
-    max-width: 80px;
-    word-break: break-all;
+  // Preview Modal
+.preview-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    
+    .preview-content {
+      background-color: white;
+      border-radius: 0.75rem;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      
+      &.pdf-preview {
+        width: 90%;
+        max-width: 1000px;
+        height: 90vh;
+      }
+    }
+    
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background-color: #f5f7fa;
+      border-bottom: 1px solid #e0e0e0;
+      
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #333;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 70%;
+      }
+      
+      .preview-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+    }
+    
+    .preview-body {
+      padding: 1.5rem;
+      overflow: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+      
+      .preview-image-large {
+        max-width: 100%;
+        max-height: 70vh;
+        object-fit: contain;
+      }
+      
+      .pdf-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+    }
+  }
+
+  
+  // Utility classes
+  .transition-all {
+    transition: all 0.3s ease;
   }
   
-  /* Add this to your global styles or component styles */
-  .truncate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .rotate-180 {
+    transform: rotate(180deg);
   }
+  
+  // Skill badge colors
+  .skill-beginner {
+    background-color: #4ade80; // Green
+  }
+  
+  .skill-intermediate {
+    background-color: #3b82f6; // Blue
+  }
+  
+  .skill-advanced {
+    background-color: #a855f7; // Purple
+  }
+  
+  .skill-expert {
+    background-color: #ef4444; // Red
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .resources-container {
+      padding: 1.5rem 1rem;
+    }
+    
+    .header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+      
+      h2 {
+        text-align: center;
+      }
+      
+      .add-resource-btn {
+        width: 100%;
+      }
+    }
+    
+    .resource-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .resource-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  
