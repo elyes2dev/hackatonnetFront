@@ -1,1 +1,142 @@
-<p>mentor-application-form works!</p>
+<div class="grid">
+    <div class="col-12">
+      <div class="card">
+        <h5>Mentor Application Form</h5>
+        
+        <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()">
+          <!-- Application Text -->
+          <div class="field col-12">
+            <label htmlFor="applicationText">Application Text</label>
+            <textarea pInputTextarea id="applicationText" rows="6" formControlName="applicationText"></textarea>
+            <small *ngIf="applicationForm.get('applicationText')?.hasError('required') && applicationForm.get('applicationText')?.touched" class="p-error">
+              Application text is required.
+            </small>
+            <small *ngIf="applicationForm.get('applicationText')?.hasError('minlength') && applicationForm.get('applicationText')?.touched" class="p-error">
+              Application text must be at least 100 characters.
+            </small>
+          </div>
+  
+          <!-- File Uploads -->
+          <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-6">
+              <h6>CV Upload</h6>
+              <p-fileUpload mode="basic" 
+                          chooseLabel="Select CV" 
+                          accept=".pdf,.doc,.docx" 
+                          [maxFileSize]="5000000"
+                          (onSelect)="onCvFileChange($event)"></p-fileUpload>
+              <small>Allowed formats: PDF, DOC, DOCX. Maximum size: 5MB</small>
+            </div>
+            
+            <div class="field col-12 md:col-6">
+              <h6>Supporting Document Upload</h6>
+              <p-fileUpload mode="basic" 
+                          chooseLabel="Select Document" 
+                          accept=".pdf,.doc,.docx" 
+                          [maxFileSize]="5000000"
+                          (onSelect)="onUploadPaperFileChange($event)"></p-fileUpload>
+              <small>Allowed formats: PDF, DOC, DOCX. Maximum size: 5MB</small>
+            </div>
+          </div>
+  
+          <!-- Links Section -->
+          <div class="card p-fluid">
+            <h5>Links</h5>
+            <div formArrayName="links">
+              <div *ngFor="let link of links.controls; let i = index" class="field grid mb-2">
+                <div class="col-12 md:col-10">
+                  <input pInputText [formControlName]="i" placeholder="Enter link (e.g., portfolio, GitHub, LinkedIn)" />
+                </div>
+                <div class="col-12 md:col-2">
+                  <button pButton type="button" icon="pi pi-trash" class="p-button-danger" 
+                          (click)="removeLink(i)" *ngIf="links.length > 1"></button>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <button pButton type="button" label="Add another link" icon="pi pi-plus" 
+                      class="p-button-secondary" (click)="addLink()"></button>
+            </div>
+          </div>
+  
+          <!-- Previous Experience Section -->
+          <div class="card p-fluid">
+            <h5>Previous Experience</h5>
+            <div class="field-checkbox mb-3">
+              <p-checkbox [binary]="true" formControlName="hasPreviousExperience" inputId="hasPreviousExperience"></p-checkbox>
+              <label for="hasPreviousExperience" class="ml-2">I have previous experience in mentoring</label>
+            </div>
+  
+            <div *ngIf="applicationForm.get('hasPreviousExperience')?.value" formArrayName="previousExperiences">
+              <div *ngFor="let experience of previousExperiences.controls; let i = index" class="p-fluid p-formgrid grid mb-3" [formGroupName]="i">
+                <div class="col-12">
+                  <div class="p-card p-shadow-3 p-p-3">
+                    <div class="p-fluid p-formgrid grid">
+                      <div class="field col-12 md:col-6">
+                        <label [for]="'companyName' + i">Company Name</label>
+                        <input pInputText [id]="'companyName' + i" formControlName="companyName" />
+                        <small *ngIf="experience.get('companyName')?.hasError('required') && experience.get('companyName')?.touched" class="p-error">
+                          Company name is required.
+                        </small>
+                      </div>
+                      
+                      <div class="field col-12 md:col-6">
+                        <label [for]="'position' + i">Position</label>
+                        <input pInputText [id]="'position' + i" formControlName="position" />
+                        <small *ngIf="experience.get('position')?.hasError('required') && experience.get('position')?.touched" class="p-error">
+                          Position is required.
+                        </small>
+                      </div>
+                      
+                      <div class="field col-12 md:col-6">
+                        <label [for]="'startDate' + i">Start Date</label>
+                        <p-calendar [id]="'startDate' + i" formControlName="startDate" dateFormat="mm/dd/yy"></p-calendar>
+                        <small *ngIf="experience.get('startDate')?.hasError('required') && experience.get('startDate')?.touched" class="p-error">
+                          Start date is required.
+                        </small>
+                      </div>
+                      
+                      <div class="field col-12 md:col-6">
+                        <label [for]="'endDate' + i">End Date</label>
+                        <p-calendar [id]="'endDate' + i" formControlName="endDate" dateFormat="mm/dd/yy"></p-calendar>
+                      </div>
+                      
+                      <div class="field col-12">
+                        <label [for]="'description' + i">Description</label>
+                        <textarea pInputTextarea [id]="'description' + i" formControlName="description" rows="3"></textarea>
+                      </div>
+                      
+                      <div class="field col-12 text-right">
+                        <button pButton type="button" icon="pi pi-trash" class="p-button-danger" 
+                                (click)="removeExperience(i)" *ngIf="previousExperiences.length > 1"></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="field mt-3">
+                <button pButton type="button" label="Add Another Experience" icon="pi pi-plus" 
+                        class="p-button-secondary" (click)="addExperience()"></button>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Error Message -->
+          <div *ngIf="errorMessage" class="p-message p-message-error mb-3">
+            <div class="p-message-wrapper">
+              <span class="p-message-icon pi pi-times-circle"></span>
+              <span class="p-message-text">{{errorMessage}}</span>
+            </div>
+          </div>
+  
+          <!-- Submit Button -->
+          <div class="field">
+            <button pButton type="submit" label="Submit Application" icon="pi pi-check" 
+                    [disabled]="applicationForm.invalid || submitting" 
+                    [loading]="submitting"></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
