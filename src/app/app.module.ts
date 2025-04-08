@@ -37,6 +37,8 @@ import { PrizeListComponent } from './demo/components/prize/prize-list/prize-lis
 import { PrizeDetailComponent } from './demo/components/prize/prize-detail/prize-detail.component';
 import { SponsorLeaderboardComponent } from './demo/components/sponsor/sponsor-leaderboard/sponsor-leaderboard.component';
 import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/sponsor-prizes.component';
+import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
+import { FooterComponent } from './demo/components/landing/footer/footer.component';
 
 @NgModule({
     declarations: [
@@ -51,6 +53,8 @@ import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/s
         PrizeDetailComponent,
         SponsorLeaderboardComponent,
         SponsorPrizesComponent,
+        NavbarComponent,
+        FooterComponent
 
     ],
     imports: [

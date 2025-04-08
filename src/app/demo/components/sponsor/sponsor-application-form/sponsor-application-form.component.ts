@@ -181,7 +181,7 @@ export class SponsorApplicationFormComponent implements OnInit {
                 
                 // Reset form after successful submission
                 setTimeout(() => {
-                  this.router.navigate(['/sponsor-application']);
+                  this.router.navigate(['/sponsor-application-form']);
                 }, 2000);
               },
               error: (error: any) => {

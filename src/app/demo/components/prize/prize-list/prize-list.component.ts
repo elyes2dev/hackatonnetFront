@@ -56,6 +56,10 @@ export class PrizeListComponent implements OnInit {
     table.clear();
   }
 
+  refreshPrizes(): void {
+    this.loadPrizes();
+  }
+
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }

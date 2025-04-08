@@ -1,124 +1,80 @@
 <!-- src/app/sponsor-application-detail/sponsor-application-detail.component.html -->
 <div class="container mt-5">
-    <div class="p-card main-card">
-      <div class="p-card-header">
-        <h5>Sponsor Application Details</h5>
-        <p>Review and manage individual sponsor application</p>
+  <!-- Add PrimeNG Toast and Confirmation Dialog -->
+  <p-toast></p-toast>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+  
+  <div class="p-card main-card">
+    <div class="p-card-header">
+      <h5>Sponsor Application Details</h5>
+      <p>Review and manage individual sponsor application</p>
+    </div>
+    
+    <div class="p-card-body">
+      <div *ngIf="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading application details...</p>
       </div>
-      
-      <div class="p-card-body">
-        <div *ngIf="loading" class="text-center my-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <p class="mt-2">Loading application details...</p>
-        </div>
-  
-        <div *ngIf="!loading && !application" class="alert alert-danger" role="alert">
-          Application not found or has been deleted.
-        </div>
-  
-        <div *ngIf="!loading && application" class="row justify-content-center">
-          <div class="col-md-4 mb-4 d-flex justify-content-center">
-            <!-- Company Information Card with fixed width -->
-            <div class="card company-card">
-              <div class="card-img">
-                <img [src]="getCompanyLogoUrl()" alt="Company Logo" class="img-fluid" style="max-height: 100px;" onerror="this.src='assets/images/logo-placeholder.png'">
+
+      <div *ngIf="!loading && !application" class="alert alert-danger" role="alert">
+        Application not found or has been deleted.
+      </div>
+
+      <div *ngIf="!loading && application" class="row justify-content-center">
+        <div class="col-md-4 mb-4 d-flex justify-content-center">
+          <!-- Company Information Card with fixed width -->
+          <div class="card company-card">
+            <div class="card-img">
+              <img [src]="getCompanyLogoUrl()" alt="Company Logo" class="img-fluid" style="max-height: 100px;" onerror="this.src='assets/images/logo-placeholder.png'">
+            </div>
+            <div class="card-title">{{application.companyName}}</div>
+            <div class="card-subtitle">
+              <span class="badge" 
+                    [ngClass]="{
+                      'bg-warning': application.status === 'PENDING',
+                      'bg-success': application.status === 'APPROVED',
+                      'bg-danger': application.status === 'REJECTED'
+                    }">
+                {{application.status}}
+              </span>
+              <div class="mt-2">Registration: {{application.registrationNumber}}</div>
+              <div *ngIf="application.websiteUrl" class="mt-1">
+                <a [href]="application.websiteUrl" target="_blank">{{application.websiteUrl}}</a>
               </div>
-              <div class="card-title">{{application.companyName}}</div>
-              <div class="card-subtitle">
-                <span class="badge" 
-                      [ngClass]="{
-                        'bg-warning': application.status === 'PENDING',
-                        'bg-success': application.status === 'APPROVED',
-                        'bg-danger': application.status === 'REJECTED'
-                      }">
-                  {{application.status}}
-                </span>
-                <div class="mt-2">Registration: {{application.registrationNumber}}</div>
-                <div *ngIf="application.websiteUrl" class="mt-1">
-                  <a [href]="application.websiteUrl" target="_blank">{{application.websiteUrl}}</a>
-                </div>
-                <div *ngIf="!application.websiteUrl" class="mt-1">Website: Not provided</div>
+              <div *ngIf="!application.websiteUrl" class="mt-1">Website: Not provided</div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-footer">
+              <div class="card-price">
+                <small>Applied:</small>
+                <div>{{application.submittedAt | date:'shortDate'}}</div>
               </div>
-              <hr class="card-divider">
-              <div class="card-footer">
-                <div class="card-price">
-                  <small>Applied:</small>
-                  <div>{{application.submittedAt | date:'shortDate'}}</div>
-                </div>
-                <div *ngIf="application.reviewedAt" class="card-price">
-                  <small>Reviewed:</small>
-                  <div>{{application.reviewedAt | date:'shortDate'}}</div>
-                </div>
+              <div *ngIf="application.reviewedAt" class="card-price">
+                <small>Reviewed:</small>
+                <div>{{application.reviewedAt | date:'shortDate'}}</div>
               </div>
             </div>
           </div>
-          
-          <div class="col-md-8">
-            <div class="row justify-content-center">
-              <!-- Applicant Information with new card design -->
-              <div class="col-md-10 mb-4">
-                <div class="card second-card" id="card">
-                  <div class="content">
-                    <div>
-                      <h5 class="mb-3">Applicant Information</h5>
-                      <div class="row">
-                        <div class="col-md-6 mb-3">
-                          <h6 class="text-muted mb-2">Name</h6>
-                          <p>{{application.user?.name || 'Not available'}}</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <h6 class="text-muted mb-2">Email</h6>
-                          <p>{{application.user?.email || 'Not available'}}</p>
-                        </div>
+        </div>
+        
+        <div class="col-md-8">
+          <div class="row justify-content-center">
+            <!-- Applicant Information with new card design -->
+            <div class="col-md-10 mb-4">
+              <div class="card second-card" id="card">
+                <div class="content">
+                  <div>
+                    <h5 class="mb-3">Applicant Information</h5>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <h6 class="text-muted mb-2">Name</h6>
+                        <p>{{application.user?.name || 'Not available'}}</p>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Business Document with new card design -->
-              <div class="col-md-10 mb-4">
-                <div class="card second-card" id="card">
-                  <div class="content">
-                    <div>
-                      <h5 class="mb-3">Business Document</h5>
-                      <p *ngIf="!application.documentPath" class="text-muted">No document available</p>
-                      <div *ngIf="application.documentPath" class="mb-3">
-                        <div class="d-flex align-items-center">
-                          <i class="pi pi-file me-2 fs-1 text-primary"></i>
-                          <div>
-                            <p class="mb-0">Business Document</p>
-                            <small class="text-muted">{{application.documentPath}}</small>
-                          </div>
-                        </div>
-                        <!-- PrimeNG button -->
-                        <button pButton pRipple type="button" label="Download Document" icon="pi pi-download" 
-                               class="p-button-outlined p-button-info mt-2" (click)="downloadDocument()"></button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Application Review with new card design -->
-              <div *ngIf="application.status === 'PENDING'" class="col-md-10 mb-4">
-                <div class="card second-card" id="card">
-                  <div class="content">
-                    <div>
-                      <h5 class="mb-3">Application Review</h5>
-                      <p>This application is pending review. Please take action:</p>
-                      
-                      <div class="mt-4 d-flex justify-content-between">
-                        <!-- PrimeNG buttons -->
-                        <button pButton pRipple type="button" label="Reject Application" icon="pi pi-times-circle" 
-                               class="p-button-outlined p-button-danger" [disabled]="isProcessing" (click)="rejectApplication()">
-                        </button>
-                        
-                        <button pButton pRipple type="button" label="Approve Application" icon="pi pi-check-circle" 
-                               class="p-button-outlined p-button-success" [disabled]="isProcessing" (click)="approveApplication()">
-                        </button>
+                      <div class="col-md-6 mb-3">
+                        <h6 class="text-muted mb-2">Email</h6>
+                        <p>{{application.user?.email || 'Not available'}}</p>
                       </div>
                     </div>
                   </div>
@@ -126,13 +82,61 @@
               </div>
             </div>
             
-            <div class="mt-3 text-center">
-              <!-- PrimeNG button -->
-              <button pButton pRipple type="button" label="Back to List" icon="pi pi-arrow-left" 
-                    class="p-button-outlined p-button-secondary" (click)="goBack()"></button>
+            <!-- Business Document with new card design -->
+            <div class="col-md-10 mb-4">
+              <div class="card second-card" id="card">
+                <div class="content">
+                  <div>
+                    <h5 class="mb-3">Business Document</h5>
+                    <p *ngIf="!application.documentPath" class="text-muted">No document available</p>
+                    <div *ngIf="application.documentPath" class="mb-3">
+                      <div class="d-flex align-items-center">
+                        <i class="pi pi-file me-2 fs-1 text-primary"></i>
+                        <div>
+                          <p class="mb-0">Business Document</p>
+                          <small class="text-muted">{{application.documentPath}}</small>
+                        </div>
+                      </div>
+                      <!-- PrimeNG button -->
+                      <button pButton pRipple type="button" label="Download Document" icon="pi pi-download" 
+                             class="p-button-outlined p-button-info mt-2" (click)="downloadDocument()"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+            
+            <!-- Application Review with new card design -->
+            <div *ngIf="application.status === 'PENDING'" class="col-md-10 mb-4">
+              <div class="card second-card" id="card">
+                <div class="content">
+                  <div>
+                    <h5 class="mb-3">Application Review</h5>
+                    <p>This application is pending review. Please take action:</p>
+                    
+                    <div class="mt-4 d-flex justify-content-between">
+                      <!-- Updated to use confirmation dialog -->
+                      <button pButton pRipple type="button" label="Reject Application" icon="pi pi-times-circle" 
+                             class="p-button-outlined p-button-danger" [disabled]="isProcessing" (click)="confirmAction('reject')">
+                      </button>
+                      
+                      <button pButton pRipple type="button" label="Approve Application" icon="pi pi-check-circle" 
+                             class="p-button-outlined p-button-success" [disabled]="isProcessing" (click)="confirmAction('approve')">
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-3 text-center">
+            <!-- PrimeNG button -->
+            <button pButton pRipple type="button" label="Back to List" icon="pi pi-arrow-left" 
+                  class="p-button-outlined p-button-secondary" (click)="goBack()"></button>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>

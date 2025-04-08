@@ -127,7 +127,7 @@ export class PrizeFormComponent implements OnInit {
           console.log('Prize created successfully:', createdPrize);
           this.successMessage = 'Prize created successfully!';
           setTimeout(() => {
-            this.router.navigate(['/prizes']);
+            this.router.navigate(['/sponsor-prizes']);
           }, 2000);
         },
         (error) => {

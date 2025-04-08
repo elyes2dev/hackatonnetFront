@@ -1,10 +1,7 @@
-<!-- src/app/components/prize-detail/prize-detail.component.html -->
 <div class="container mt-5">
-  <!-- Alert Section -->
-  <div *ngFor="let alert of alerts" class="alert alert-{{ alert.type }} alert-dismissible fade show" role="alert">
-    {{ alert.message }}
-    <button type="button" class="btn-close" (click)="dismissAlert(alert.message)" aria-label="Close"></button>
-  </div>
+  <!-- Add PrimeNG Toast and Confirmation Dialog -->
+  <p-toast></p-toast>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
   <div *ngIf="loading" class="text-center my-5">
     <div class="spinner-border" role="status">
@@ -128,11 +125,11 @@
       <div class="card-footer">
         <!-- Action Buttons -->
         <div class="d-flex justify-content-between">
-          <button pButton pRipple type="button" label="Back to List" icon="bi bi-arrow-left" class="p-button-outlined p-button-secondary" (click)="goBack()"></button>
+          <button pButton pRipple type="button" label="Back to List" icon="pi pi-arrow-left" class="p-button-outlined p-button-secondary" (click)="goBack()"></button>
           
           <div *ngIf="isAdmin && canApproveOrReject()">
-            <button pButton pRipple type="button" label="Approve" icon="bi bi-check-circle" class="p-button-outlined p-button-success mr-2" (click)="confirmAction('approve')"></button>
-            <button pButton pRipple type="button" label="Reject" icon="bi bi-x-circle" class="p-button-outlined p-button-danger" (click)="confirmAction('reject')"></button>
+            <button pButton pRipple type="button" label="Approve" icon="pi pi-check-circle" class="p-button-outlined p-button-success mr-2" (click)="confirmAction('approve')"></button>
+            <button pButton pRipple type="button" label="Reject" icon="pi pi-x-circle" class="p-button-outlined p-button-danger" (click)="confirmAction('reject')"></button>
           </div>
         </div>
       </div>

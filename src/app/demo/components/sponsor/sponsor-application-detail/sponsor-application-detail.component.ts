@@ -1,9 +1,9 @@
-// src/app/sponsor-application-detail/sponsor-application-detail.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SponsorApplication } from 'src/app/demo/models/sponsor-application';
 import { FileUploadService } from 'src/app/demo/services/file-upload.service';
 import { SponsorApplicationService } from 'src/app/demo/services/sponsor-application.service';
+import { ConfirmationService, MessageService } from 'primeng/api'; // Import PrimeNG services
 
 @Component({
   selector: 'app-sponsor-application-detail',
@@ -20,7 +20,9 @@ export class SponsorApplicationDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private sponsorService: SponsorApplicationService,
-    private fileUploadService: FileUploadService
+    private fileUploadService: FileUploadService,
+    private confirmationService: ConfirmationService, // Add ConfirmationService
+    private messageService: MessageService // Add MessageService
   ) { }
 
   ngOnInit(): void {
@@ -44,45 +46,81 @@ export class SponsorApplicationDetailComponent implements OnInit {
       error: (error) => {
         console.error('Error loading application details', error);
         this.loading = false;
-        alert('Failed to load application details. Please try again later.');
+        // Replace alert with PrimeNG toast
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load application details. Please try again later.'
+        });
+      }
+    });
+  }
+
+  confirmAction(action: 'approve' | 'reject'): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to ${action} this sponsor application?`,
+      header: 'Confirm Action',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        if (action === 'approve') {
+          this.approveApplication();
+        } else {
+          this.rejectApplication();
+        }
       }
     });
   }
 
   approveApplication(): void {
-    if (confirm('Are you sure you want to approve this application?')) {
-      this.isProcessing = true;
-      this.sponsorService.approveApplication(this.applicationId).subscribe({
-        next: (data) => {
-          this.application = data;
-          this.isProcessing = false;
-          alert('Application approved successfully!');
-        },
-        error: (error) => {
-          console.error('Error approving application', error);
-          this.isProcessing = false;
-          alert('Failed to approve application. Please try again later.');
-        }
-      });
-    }
+    this.isProcessing = true;
+    this.sponsorService.approveApplication(this.applicationId).subscribe({
+      next: (data) => {
+        this.application = data;
+        this.isProcessing = false;
+        // Replace alert with PrimeNG toast
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Application approved successfully!'
+        });
+      },
+      error: (error) => {
+        console.error('Error approving application', error);
+        this.isProcessing = false;
+        // Replace alert with PrimeNG toast
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to approve application. Please try again later.'
+        });
+      }
+    });
   }
 
   rejectApplication(): void {
-    if (confirm('Are you sure you want to reject this application?')) {
-      this.isProcessing = true;
-      this.sponsorService.rejectApplication(this.applicationId).subscribe({
-        next: (data) => {
-          this.application = data;
-          this.isProcessing = false;
-          alert('Application rejected successfully!');
-        },
-        error: (error) => {
-          console.error('Error rejecting application', error);
-          this.isProcessing = false;
-          alert('Failed to reject application. Please try again later.');
-        }
-      });
-    }
+    this.isProcessing = true;
+    this.sponsorService.rejectApplication(this.applicationId).subscribe({
+      next: (data) => {
+        this.application = data;
+        this.isProcessing = false;
+        // Replace alert with PrimeNG toast
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Application rejected successfully!'
+        });
+      },
+      error: (error) => {
+        console.error('Error rejecting application', error);
+        this.isProcessing = false;
+        // Replace alert with PrimeNG toast
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to reject application. Please try again later.'
+        });
+      }
+    });
   }
 
   goBack(): void {
@@ -98,14 +136,24 @@ export class SponsorApplicationDetailComponent implements OnInit {
 
   downloadDocument(): void {
     if (!this.application?.documentPath) {
-      alert('No document available');
+      // Replace alert with PrimeNG toast
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'No document available'
+      });
       return;
     }
     
     // Extract the filename from the path
     const filename = this.application.documentPath.split('/').pop();
     if (!filename) {
-      alert('Invalid document path');
+      // Replace alert with PrimeNG toast
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Invalid document path'
+      });
       return;
     }
     this.fileUploadService.downloadFile(filename).subscribe({
@@ -123,10 +171,22 @@ export class SponsorApplicationDetailComponent implements OnInit {
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+        
+        // Show success message
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Success',
+          detail: 'Document download started'
+        });
       },
       error: (error) => {
         console.error('Error downloading document', error);
-        alert('Failed to download document. Please try again later.');
+        // Replace alert with PrimeNG toast
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to download document. Please try again later.'
+        });
       }
     });
   }

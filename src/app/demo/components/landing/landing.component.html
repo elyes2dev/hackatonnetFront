@@ -11,7 +11,7 @@
                 <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
                     <li>
                         <a (click)="router.navigate(['/pages/landing'], {fragment: 'home'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                           <span>Home</span>
+                            <span>Home</span>
                         </a>
                     </li>
                     <li>
@@ -20,13 +20,23 @@
                         </a>
                     </li>
                     <li>
-                        <a (click)="router.navigate(['/pages/landing'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                            <span>Highlights</span>
+                        <a (click)="router.navigate(['/prize-form'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>Add a prize</span>
                         </a>
                     </li>
                     <li>
-                        <a (click)="router.navigate(['/pages/landing'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                            <span>Pricing</span>
+                        <a (click)="router.navigate(['/sponsor-prizes'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>My prizes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a (click)="router.navigate(['/sponsor-application-form'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>Apply as a sponsor</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a (click)="router.navigate(['/sponsors-leaderboard'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>Sponsor Leaderboard</span>
                         </a>
                     </li>
                 </ul>

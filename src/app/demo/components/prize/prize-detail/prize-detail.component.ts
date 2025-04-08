@@ -3,11 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationStatus } from 'src/app/demo/models/application-status';
 import { Prize } from 'src/app/demo/models/prize';
 import { PrizeService } from 'src/app/demo/services/prize.service';
-
-interface Alert {
-  type: 'success' | 'danger' | 'warning' | 'info';
-  message: string;
-}
+import { ConfirmationService, MessageService } from 'primeng/api'; // Import these services
 
 @Component({
   selector: 'app-prize-detail',
@@ -19,16 +15,15 @@ export class PrizeDetailComponent implements OnInit {
   loading = true;
   error = '';
   
-  // For alerts
-  alerts: Alert[] = [];
-  
   // For Admin Actions
   isAdmin = true; // Since we're not using auth, we'll assume admin access
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private prizeService: PrizeService
+    private prizeService: PrizeService,
+    private confirmationService: ConfirmationService, // Add these services
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -45,65 +40,90 @@ export class PrizeDetailComponent implements OnInit {
       return;
     }
     
-    this.prizeService.getPrizeById(id).subscribe(
-      (data) => {
+    this.prizeService.getPrizeById(id).subscribe({
+      next: (data) => {
         this.prize = data;
         console.log('Prize data:', JSON.stringify(data, null, 2));
         this.loading = false;
       },
-      (error) => {
+      error: (error) => {
         this.error = 'Failed to load prize details. Please try again later.';
-        this.addAlert('danger', 'Failed to load prize details. Please try again later.');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load prize details. Please try again later.'
+        });
         console.error('Error loading prize:', error);
         this.loading = false;
       }
-    );
+    });
   }
 
   approvePrize(): void {
     if (!this.prize?.id) return;
     
     this.loading = true;
-    this.prizeService.approvePrize(this.prize.id).subscribe(
-      (updatedPrize) => {
+    this.prizeService.approvePrize(this.prize.id).subscribe({
+      next: (updatedPrize) => {
         this.prize = updatedPrize;
         this.loading = false;
-        this.addAlert('success', `Prize #${this.prize.id} has been successfully approved.`);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Prize #${this.prize.id} has been successfully approved.`
+        });
       },
-      (error) => {
+      error: (error) => {
         this.loading = false;
-        this.addAlert('danger', 'Failed to approve prize. Please try again later.');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to approve prize. Please try again later.'
+        });
         console.error('Error approving prize:', error);
       }
-    );
+    });
   }
 
   rejectPrize(): void {
     if (!this.prize?.id) return;
     
     this.loading = true;
-    this.prizeService.rejectPrize(this.prize.id).subscribe(
-      (updatedPrize) => {
+    this.prizeService.rejectPrize(this.prize.id).subscribe({
+      next: (updatedPrize) => {
         this.prize = updatedPrize;
         this.loading = false;
-        this.addAlert('success', `Prize #${this.prize.id} has been rejected.`);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Prize #${this.prize.id} has been rejected.`
+        });
       },
-      (error) => {
+      error: (error) => {
         this.loading = false;
-        this.addAlert('danger', 'Failed to reject prize. Please try again later.');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to reject prize. Please try again later.'
+        });
         console.error('Error rejecting prize:', error);
       }
-    );
+    });
   }
 
   confirmAction(action: 'approve' | 'reject'): void {
-    if (confirm(`Are you sure you want to ${action} this prize?`)) {
-      if (action === 'approve') {
-        this.approvePrize();
-      } else {
-        this.rejectPrize();
+    this.confirmationService.confirm({
+      message: `Are you sure you want to ${action} this prize?`,
+      header: 'Confirm Action',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        if (action === 'approve') {
+          this.approvePrize();
+        } else {
+          this.rejectPrize();
+        }
       }
-    }
+    });
   }
 
   getStatusBadgeClass(status: string | undefined): string {
@@ -129,19 +149,5 @@ export class PrizeDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/prizes']);
-  }
-  
-  // Alert methods
-  addAlert(type: 'success' | 'danger' | 'warning' | 'info', message: string): void {
-    this.alerts.push({ type, message });
-    
-    // Auto-dismiss success and info alerts after 5 seconds
-    if (type === 'success' || type === 'info') {
-      setTimeout(() => this.dismissAlert(message), 5000);
-    }
-  }
-  
-  dismissAlert(message: string): void {
-    this.alerts = this.alerts.filter(alert => alert.message !== message);
   }
 }
