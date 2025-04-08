@@ -29,40 +29,35 @@
     border-radius: 4px;
   }
   
-  .resource-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+  .resource-table {
+    width: 100%;
+    border-collapse: collapse;
   }
   
-  .resource-card {
-    transition: transform 0.2s;
-    
-    &:hover {
-      transform: translateY(-5px);
-    }
+  .resource-table table {
+    width: 100%;
+    border-spacing: 0;
   }
   
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+  .resource-table th, .resource-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .resource-table th {
+    background-color: #f8f9fa;
+    color: #333;
   }
   
   .actions button {
     margin-left: 5px;
   }
   
-  .card-content {
-    padding-top: 10px;
-  }
-  
-  .resource-files {
+  .file-previews {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 15px;
   }
   
   .file-preview {
@@ -103,9 +98,8 @@
     word-break: break-all;
   }
   
-  /* Add this to your global styles or component styles */
-  .truncate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .resource-table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
   }
+  

@@ -56,6 +56,12 @@ export class ResourcefListComponent implements OnInit {
         // Initialize all resources with closed file sections
         resources.forEach(resource => {
           this.fileVisibility.set(resource.id, false);
+          // Initialize filePreviews for each resource
+          this.filePreviews[resource.id] = {
+            images: [],
+            pdfs: [],
+            otherFiles: []
+          };
         });
         
         this.loadFilesForResources();
@@ -72,11 +78,14 @@ export class ResourcefListComponent implements OnInit {
   loadFilesForResources(): void {
     this.resources.forEach(resource => {
       if (resource.resourceImages && resource.resourceImages.length > 0) {
-        this.filePreviews[resource.id] = {
-          images: [],
-          pdfs: [],
-          otherFiles: []
-        };
+        // Ensure filePreviews is initialized for this resource
+        if (!this.filePreviews[resource.id]) {
+          this.filePreviews[resource.id] = {
+            images: [],
+            pdfs: [],
+            otherFiles: []
+          };
+        }
 
         resource.resourceImages.forEach(file => {
           if (this.isImageFile(file.type)) {
@@ -95,6 +104,14 @@ export class ResourcefListComponent implements OnInit {
     this.imageService.getImage(file.id_image).subscribe({
       next: (blob) => {
         const url = URL.createObjectURL(blob);
+        // Ensure filePreviews is initialized
+        if (!this.filePreviews[resourceId]) {
+          this.filePreviews[resourceId] = {
+            images: [],
+            pdfs: [],
+            otherFiles: []
+          };
+        }
         this.filePreviews[resourceId].images.push({
           id: file.id_image,
           url: this.sanitizer.bypassSecurityTrustUrl(url)
@@ -143,7 +160,6 @@ export class ResourcefListComponent implements OnInit {
       document.body.removeChild(a);
     });
   }
-  
   
   downloadCurrentFile(): void {
     if (this.currentFile) {

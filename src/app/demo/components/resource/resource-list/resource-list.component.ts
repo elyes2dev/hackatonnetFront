@@ -42,6 +42,7 @@ export class ResourceListComponent implements OnInit {
     
     this.resourceService.getAllWorkshopResources(this.workshopId).subscribe({
       next: (resources) => {
+        // Update resources in a way that avoids flicker
         this.resources = resources;
         this.loadFilesForResources();
         this.loading = false;
@@ -141,5 +142,26 @@ export class ResourceListComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Handle the global filter
+  onGlobalFilter(event: any): void {
+    const query = event.target.value.toLowerCase();
+    
+    if (query === '') {
+      this.loadResources();  // Reload all resources when query is empty
+    } else {
+      this.resources = this.resources.filter(resource =>
+        resource.name.toLowerCase().includes(query)
+      );
+    }
+  }
+
+  // Clear search and reset resources smoothly
+  clear(dt: any): void {
+    dt.clear();  // Clear the table filters
+    this.loading = true;  // Set loading state to true to prevent flicker
+    this.resources = [];  // Temporarily empty resources
+    this.loadResources();  // Reload resources after a short delay for smooth transition
   }
 }

@@ -3,8 +3,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from 'src/app/demo/services/resources.service';
 import { ImageService } from 'src/app/demo/services/image.service';
 import { Resources } from 'src/app/demo/models/resources.model';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
+
+interface FileWithUrl {
+  id_image: number;
+  path: string;
+  type: string;
+  url?: SafeUrl | SafeResourceUrl;
+}
 
 @Component({
   selector: 'app-resourcef-details',
@@ -17,12 +24,18 @@ export class ResourcefDetailsComponent implements OnInit, OnDestroy {
   resource!: Resources;
   loading = true;
   error: string | null = null;
-  imageUrls: { [key: number]: SafeUrl } = {};
-  pdfFiles: any[] = [];
-  otherFiles: any[] = [];
+  
+  // Organized file arrays
+  imageFiles: FileWithUrl[] = [];
+  pdfFiles: FileWithUrl[] = [];
+  otherFiles: FileWithUrl[] = [];
+  
   private subscriptions = new Subscription();
 
-  selectedImageUrl: SafeUrl | null = null; // For modal image
+  // Modal properties
+  showModal = false;
+  modalType: 'image' | 'pdf' | 'other' = 'image';
+  selectedFile: FileWithUrl | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -47,7 +60,6 @@ export class ResourcefDetailsComponent implements OnInit, OnDestroy {
         next: (resource) => {
           this.resource = resource;
           this.categorizeFiles();
-          this.loadImages();
           this.loading = false;
         },
         error: (err) => {
@@ -60,94 +72,107 @@ export class ResourcefDetailsComponent implements OnInit, OnDestroy {
   }
 
   categorizeFiles(): void {
+    // Reset arrays
+    this.imageFiles = [];
     this.pdfFiles = [];
     this.otherFiles = [];
+    
     if (this.resource?.resourceImages) {
       this.resource.resourceImages.forEach(file => {
-        if (file.type.includes('pdf')) {
-          this.pdfFiles.push(file);  // PDFs are added to pdfFiles
-        } else if (!file.type.startsWith('image/')) {
-          this.otherFiles.push(file); // Other types of files are categorized as "other"
+        const fileWithUrl: FileWithUrl = {
+          id_image: file.id_image,
+          path: file.path || `file-${file.id_image}`,
+          type: file.type || 'application/octet-stream'
+        };
+        
+        if (file.type?.startsWith('image/')) {
+          this.imageFiles.push(fileWithUrl);
+          this.loadFileContent(fileWithUrl);
+        } else if (file.type?.includes('pdf')) {
+          this.pdfFiles.push(fileWithUrl);
+          this.loadFileContent(fileWithUrl);
+        } else {
+          this.otherFiles.push(fileWithUrl);
+          // We'll load other file content on demand
         }
       });
     }
   }
 
-  loadImages(): void {
-    if (this.resource?.resourceImages) {
-      this.resource.resourceImages.forEach(file => {
-        if (file.type.startsWith('image/')) {
-          this.loadImage(file.id_image);
-        }
-      });
-    }
-  }
-
-  loadImage(imageId: number): void {
+  loadFileContent(file: FileWithUrl): void {
     this.subscriptions.add(
-      this.imageService.getImage(imageId).subscribe({
+      this.imageService.getImage(file.id_image).subscribe({
         next: (blob) => {
           const url = URL.createObjectURL(blob);
-          this.imageUrls[imageId] = this.sanitizer.bypassSecurityTrustUrl(url);
+          if (file.type.startsWith('image/')) {
+            file.url = this.sanitizer.bypassSecurityTrustUrl(url);
+          } else if (file.type.includes('pdf')) {
+            file.url = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+          } else {
+            file.url = this.sanitizer.bypassSecurityTrustUrl(url);
+          }
         },
         error: (err) => {
-          console.error('Error loading image:', err);
+          console.error(`Error loading file ${file.id_image}:`, err);
         }
       })
     );
   }
 
-  openImage(imageId: number): void {
-    this.selectedImageUrl = this.imageUrls[imageId] || null;
+  // Modal functions
+  openFileModal(file: FileWithUrl, type: 'image' | 'pdf' | 'other'): void {
+    this.selectedFile = file;
+    this.modalType = type;
+    
+    // If the file hasn't been loaded yet, load it now
+    if (!file.url) {
+      this.loadFileContent(file);
+    }
+    
+    this.showModal = true;
   }
 
-  closeImage(): void {
-    this.selectedImageUrl = null;
+  closeModal(): void {
+    this.showModal = false;
+    this.selectedFile = null;
   }
 
-  // Download Image (new method)
-  downloadImage(imageId: number, fileName: string = 'downloaded-image'): void {
+  downloadFile(file: FileWithUrl): void {
     this.subscriptions.add(
-      this.imageService.getImage(imageId).subscribe({
+      this.imageService.getImage(file.id_image).subscribe({
         next: (blob) => {
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = fileName + '.jpg'; // Default to .jpg
+          a.download = file.path || `file-${file.id_image}`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         },
         error: (err) => {
-          console.error('Error downloading image:', err);
+          console.error('Error downloading file:', err);
         }
       })
     );
   }
 
-  viewPdf(file: any): void {
-    this.subscriptions.add(
-      this.imageService.getImage(file.id_image).subscribe(blob => {
-        const fileURL = URL.createObjectURL(blob);
-        window.open(fileURL, '_blank');
-      })
-    );
-  }
-
-  downloadFile(file: any): void {
-    this.subscriptions.add(
-      this.imageService.getImage(file.id_image).subscribe(blob => {
-        const a = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        a.href = url;
-        a.download = file.path || 'download';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      })
-    );
+  viewPdf(file: FileWithUrl): void {
+    if (file.url) {
+      window.open(this.sanitizer.sanitize(4, file.url as SafeResourceUrl) || '', '_blank');
+    } else {
+      this.subscriptions.add(
+        this.imageService.getImage(file.id_image).subscribe({
+          next: (blob) => {
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+          },
+          error: (err) => {
+            console.error('Error viewing PDF:', err);
+          }
+        })
+      );
+    }
   }
 
   goBack(): void {
@@ -177,5 +202,8 @@ export class ResourcefDetailsComponent implements OnInit, OnDestroy {
       return 'fas fa-file text-gray-500'; // Generic file icon
     }
   }
-}
 
+  getFileName(path: string): string {
+    return path.split('/').pop() || path;
+  }
+}

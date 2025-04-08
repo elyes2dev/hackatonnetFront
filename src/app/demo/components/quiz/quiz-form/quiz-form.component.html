@@ -1,6 +1,8 @@
 <div *ngIf="loading" class="loading-overlay">
     <div class="loading-spinner">Loading...</div>
   </div>
+
+
   
   <form [formGroup]="quizForm" (ngSubmit)="onSubmit()" class="quiz-form">
     <div class="form-group">
@@ -90,6 +92,12 @@
     <button type="submit" [disabled]="loading" class="submit-button">
       {{ isEditMode ? 'Update' : 'Create' }} Quiz
     </button>
+
+      <!-- Button to navigate back to Quiz List -->
+  <button type="button" (click)="navigateBackToQuizList()" class="back-button">
+    Back to Quiz List
+  </button>
+  
   </form>
   
   <div *ngIf="error" class="alert alert-danger">{{ error }}</div>

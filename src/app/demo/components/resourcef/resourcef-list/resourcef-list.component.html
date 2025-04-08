@@ -3,11 +3,19 @@
 <div class="resources-container" *ngIf="!loading && !error">
   <div class="header">
     <h2>Resources for Workshop</h2>
+    
     <button pButton 
             icon="pi pi-plus" 
             label="Add Resource" 
             class="p-button-primary add-resource-btn"
             [routerLink]="['/workshopsf', workshopId, 'resources', 'new']">
+    </button>
+        <!-- New Back to Workshop List Button -->
+        <button pButton 
+        icon="pi pi-arrow-left" 
+        label="Back to Workshop List" 
+        class="p-button-secondary back-workshop-btn"
+        [routerLink]="['/workshopsf']">
     </button>
   </div>
 
@@ -53,7 +61,7 @@
 
         <div class="resource-files" *ngIf="isFilesOpen(resource.id)">
           <!-- Images -->
-          <div *ngIf="filePreviews[resource.id]?.images?.length > 0" class="file-section">
+          <div *ngIf="filePreviews[resource.id] && filePreviews[resource.id].images && filePreviews[resource.id].images.length > 0" class="file-section">
             <h4>Images</h4>
             <div class="image-grid">
               <img *ngFor="let image of filePreviews[resource.id].images"
@@ -65,7 +73,7 @@
           </div>
 
           <!-- PDFs -->
-          <div *ngIf="filePreviews[resource.id]?.pdfs?.length > 0" class="file-section">
+          <div *ngIf="filePreviews[resource.id] && filePreviews[resource.id].pdfs && filePreviews[resource.id].pdfs.length > 0" class="file-section">
             <h4>PDFs</h4>
             <div class="file-preview" *ngFor="let pdf of filePreviews[resource.id].pdfs">
               <button pButton 
@@ -78,7 +86,7 @@
           </div>
 
           <!-- Other Files -->
-          <div *ngIf="filePreviews[resource.id]?.otherFiles?.length > 0" class="file-section">
+          <div *ngIf="filePreviews[resource.id] && filePreviews[resource.id].otherFiles && filePreviews[resource.id].otherFiles.length > 0" class="file-section">
             <h4>Other Files</h4>
             <div class="file-preview" *ngFor="let file of filePreviews[resource.id].otherFiles">
               <button pButton 
@@ -128,4 +136,3 @@
   </div>
   
 <app-footer></app-footer>
-

@@ -1,82 +1,111 @@
-<div class="resource-list-container">
-  <div *ngIf="loading" class="loading-spinner">
-    <p>Loading resources...</p>
-  </div>
-
-  <div *ngIf="error" class="error-message p-message p-message-error">
-    {{ error }}
-    <button pButton label="Retry" (click)="loadResources()"></button>
-  </div>
-
-  <div *ngIf="!loading && !error">
-    <div class="header">
-      <h2>Resources for Workshop</h2>
-      <button pButton 
-              icon="pi pi-plus" 
-              label="Add Resource" 
-              [routerLink]="['/workshops', workshopId, 'resources', 'new']">
-      </button>
-    </div>
-
-    <div *ngIf="resources.length === 0" class="no-resources">
-      <p>No resources found for this workshop.</p>
-    </div>
-
-    <div class="resource-grid">
-      <div *ngFor="let resource of resources" class="resource-card p-card">
-        <div class="card-header">
-          <h3>{{ resource.name }}</h3>
-          <div class="actions">
-            <button pButton 
-                    icon="pi pi-eye" 
-                    class="p-button-rounded p-button-info" 
-                    [routerLink]="['/workshops', workshopId, 'resources', resource.id]">
-            </button>
-            <button pButton 
-                    icon="pi pi-pencil" 
-                    class="p-button-rounded p-button-warning" 
-                    [routerLink]="['/workshops', workshopId, 'resources', resource.id, 'edit']">
-            </button>
-            <button pButton 
-                    icon="pi pi-trash" 
-                    class="p-button-rounded p-button-danger" 
-                    (click)="deleteResource(resource.id)">
-            </button>
+<div class="grid">
+  <div class="col-12">
+    <div class="card">
+      <h5>Resource List</h5>
+            <!-- Back to Workshop List Button -->
+            <div class="flex justify-content-start mb-4">
+              <button pButton label="Back to Workshop List" class="p-button-outlined" icon="pi pi-arrow-left" [routerLink]="['/workshops']"></button>
+            </div>
+      <p-table #dt1 [value]="resources" dataKey="id" [rows]="10" [loading]="loading" [rowHover]="true" styleClass="p-datatable-gridlines" [paginator]="true" [globalFilterFields]="['name','description','niveau']" responsiveLayout="scroll">
+        <ng-template pTemplate="caption">
+          <div class="flex justify-content-between flex-column sm:flex-row">
+            <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+            <span class="p-input-icon-left mb-2">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" #filter (input)="onGlobalFilter($event)" placeholder="Search by name" class="w-full"/>
+            </span>
           </div>
-        </div>
+        </ng-template>
         
-        <div class="card-content">
-          <p>{{ resource.description }}</p>
-          <p>Skill Level: {{ resource.niveau }}</p>
-          
-          <div *ngIf="filePreviews[resource.id]" class="resource-files">
-            <!-- Display Images -->
-            <div *ngFor="let image of filePreviews[resource.id].images" class="file-preview">
-              <img [src]="image.url" alt="Resource image" class="preview-image">
-            </div>
-            
-            <!-- Display PDFs -->
-            <div *ngFor="let pdf of filePreviews[resource.id].pdfs" class="file-preview">
-              <button pButton 
-                      [icon]="'pi ' + getFileIcon(pdf.type)" 
-                      class="p-button-rounded file-button pdf"
-                      (click)="viewFile(pdf)">
-              </button>
-              <span class="file-name">{{ pdf.path }}</span>
-            </div>
-            
-            <!-- Display Other Files -->
-            <div *ngFor="let file of filePreviews[resource.id].otherFiles" class="file-preview">
-              <button pButton 
-                      [icon]="'pi ' + getFileIcon(file.type)" 
-                      class="p-button-rounded file-button"
-                      (click)="viewFile(file)">
-              </button>
-              <span class="file-name">{{ file.path }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              <div class="flex justify-content-between align-items-center">
+                Name
+                <p-columnFilter type="text" field="name" display="menu" placeholder="Search by name"></p-columnFilter>
+              </div>
+            </th>
+            <th>
+              <div class="flex justify-content-between align-items-center">
+                Description
+                <p-columnFilter type="text" field="description" display="menu" placeholder="Search by description"></p-columnFilter>
+              </div>
+            </th>
+            <th>
+              <div class="flex justify-content-between align-items-center">
+                Skill Level
+                <p-columnFilter type="text" field="niveau" display="menu" placeholder="Search by skill level"></p-columnFilter>
+              </div>
+            </th>
+            <th>
+              <div class="flex justify-content-between align-items-center">
+                Files
+              </div>
+            </th>
+            <th style="width: 8rem">
+              <div class="flex justify-content-between align-items-center">
+                Actions
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-resource>
+          <tr>
+            <td>
+              {{ resource.name }}
+            </td>
+            <td>
+              {{ resource.description }}
+            </td>
+            <td>
+              {{ resource.niveau }}
+            </td>
+            <td>
+              <div *ngIf="filePreviews[resource.id]" class="resource-files">
+                <!-- Display Images -->
+                <div *ngFor="let image of filePreviews[resource.id].images" class="file-preview">
+                  <img [src]="image.url" alt="Resource image" class="preview-image">
+                </div>
+
+                <!-- Display PDFs -->
+                <div *ngFor="let pdf of filePreviews[resource.id].pdfs" class="file-preview">
+                  <button pButton 
+                          [icon]="'pi ' + getFileIcon(pdf.type)" 
+                          class="p-button-rounded file-button pdf"
+                          (click)="viewFile(pdf)">
+                  </button>
+                  <span class="file-name">{{ pdf.path }}</span>
+                </div>
+
+                <!-- Display Other Files -->
+                <div *ngFor="let file of filePreviews[resource.id].otherFiles" class="file-preview">
+                  <button pButton 
+                          [icon]="'pi ' + getFileIcon(file.type)" 
+                          class="p-button-rounded file-button"
+                          (click)="viewFile(file)">
+                  </button>
+                  <span class="file-name">{{ file.path }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="text-center">
+              <button pButton icon="pi pi-eye" class="p-button-rounded p-button-info" [routerLink]="['/workshops', workshopId, 'resources', resource.id]"></button>
+              <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-warning" [routerLink]="['/workshops', workshopId, 'resources', resource.id, 'edit']"></button>
+              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteResource(resource.id)"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5">No resources found.</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+          <tr>
+            <td colspan="5">Loading resources. Please wait.</td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
   </div>
 </div>

@@ -5,9 +5,14 @@
 
 <h2>Quizzes for Workshop #{{ workshopId }}</h2>
 
-<button (click)="goToAdd()" class="btn btn-add">
-  <i class="fas fa-plus"></i> Add New Quiz
-</button>
+<button *ngIf="!hasQuiz" (click)="goToAdd()" class="btn btn-add">
+    <i class="fas fa-plus"></i> Add New Quiz
+  </button>
+  
+  <div *ngIf="hasQuiz" class="no-new-quiz-message">
+    You already have a quiz for this workshop.
+  </div>
+  
 
 <table *ngIf="quizzes.length > 0" class="quiz-table">
   <thead>

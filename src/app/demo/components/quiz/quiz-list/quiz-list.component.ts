@@ -26,6 +26,7 @@ export class QuizListComponent implements OnInit {
     correctAnswers: 0,
     questions: []
   };
+  hasQuiz: boolean = false; // Track if the user has a quiz
 
   constructor(
     private quizService: QuizService,
@@ -55,6 +56,7 @@ export class QuizListComponent implements OnInit {
       next: (quizzes) => {
         this.quizzes = quizzes;
         this.checkQuizStatuses();
+        this.hasQuiz = this.quizzes.length > 0; // Set whether the user has any quiz
         this.loading = false;
       },
       error: () => {
@@ -81,7 +83,9 @@ export class QuizListComponent implements OnInit {
     if (confirm('Are you sure you want to delete this quiz?')) {
       this.quizService.deleteQuiz(id).subscribe({
         next: () => {
+          // Remove the quiz from the list and update the hasQuiz state
           this.quizzes = this.quizzes.filter(q => q.id_quiz !== id);
+          this.hasQuiz = this.quizzes.length > 0; // Update the state
           alert('Quiz deleted successfully');
         },
         error: () => {

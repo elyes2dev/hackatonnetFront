@@ -20,7 +20,7 @@ import { FooterComponent } from './footer/footer.component';
         PanelModule,
         ButtonModule
     ],
-    declarations: [LandingComponent, FooterComponent]
+    declarations: [LandingComponent]
 })
 export class LandingModule { 
     

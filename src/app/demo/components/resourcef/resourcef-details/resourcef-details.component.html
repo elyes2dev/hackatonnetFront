@@ -1,94 +1,170 @@
+
 <app-navbar></app-navbar>
+
 <div class="resource-details-container">
-    <div *ngIf="loading" class="loading-spinner">
-      <div class="spinner"></div>
-      <p>Loading resource details...</p>
-    </div>
-  
-    <div *ngIf="error" class="error-message">
-      {{ error }}
-      <button (click)="loadResource()">Retry</button>
-    </div>
-  
-    <div *ngIf="!loading && !error && resource" class="resource-content">
-      <div class="resource-header">
-        <h2>{{ resource.name }}</h2>
-  
-        <div class="workshop-info" *ngIf="resource.workshop">
-          <div class="workshop-image" *ngIf="resource.workshop.photo">
-            <img [src]="resource.workshop.photo" alt="Workshop image">
-          </div>
-          <div class="workshop-details">
-            <h3>From Workshop: {{ resource.workshop.name }}</h3>
-            <p>aa</p>
-            <p *ngIf="resource.workshop.user">Created by: {{ resource.workshop.user.username }}</p>
-            <p>Theme: {{ resource.workshop.theme }}</p>
-          </div>
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading resource details...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+    <button (click)="loadResource()">Retry</button>
+  </div>
+
+  <!-- Resource Content -->
+  <div *ngIf="!loading && !error && resource" class="resource-content">
+    <!-- Resource Header -->
+    <div class="resource-header">
+      <h2>{{ resource.name }}</h2>
+
+      <div class="workshop-info" *ngIf="resource.workshop">
+        <div class="workshop-image" *ngIf="resource.workshop.photo">
+          <img [src]="resource.workshop.photo" alt="Workshop image">
+        </div>
+        <div class="workshop-details">
+          <h3>From Workshop: {{ resource.workshop.name }}</h3>
+          <p *ngIf="resource.workshop.user">Created by: {{ resource.workshop.user.username }}</p>
+          <p>Theme: {{ resource.workshop.theme }}</p>
         </div>
       </div>
-  
-      <div class="resource-body">
-        <div class="resource-description">
-          <h3>Description</h3>
-          <p>{{ resource.description }}</p>
-        </div>
-  
-        <div class="skill-level">
-          <h3>Skill Level</h3>
-          <span class="skill-tag" [class]="getSkillLevelClass(resource.niveau)">
-            {{ resource.niveau }}
-          </span>
-        </div>
-  
-        <div class="resource-files">
-          <!-- Images Section -->
-          <div *ngIf="resource.resourceImages?.length" class="files-section">
-            <h3>Images</h3>
-            <div class="image-gallery">
-              <div *ngFor="let file of resource.resourceImages" class="image-item">
-                <img *ngIf="file.type?.startsWith('image/') && imageUrls[file.id_image]" 
-                     [src]="imageUrls[file.id_image]" 
-                     alt="Resource image">
-  
-                <!-- Download Button for Image -->
-                <button class="download-btn" (click)="downloadImage(file.id_image, file.path)">
+    </div>
+
+    <!-- Resource Body -->
+    <div class="resource-body">
+      <!-- Description -->
+      <div class="resource-description">
+        <h3>Description</h3>
+        <p>{{ resource.description }}</p>
+      </div>
+
+      <!-- Skill Level -->
+      <div class="skill-level">
+        <h3>Skill Level</h3>
+        <span class="skill-tag" [class]="getSkillLevelClass(resource.niveau)">
+          {{ resource.niveau }}
+        </span>
+      </div>
+
+      <!-- Files Section -->
+      <div class="resource-files">
+        <!-- Images Section -->
+        <div *ngIf="imageFiles.length" class="files-section">
+          <h3>Images</h3>
+          <div class="image-gallery">
+            <div *ngFor="let file of imageFiles" class="image-item">
+              <div class="image-container" (click)="openFileModal(file, 'image')">
+                <img *ngIf="file.url" [src]="file.url" alt="Resource image">
+                <div *ngIf="!file.url" class="loading-placeholder">Loading...</div>
+              </div>
+              <div class="image-actions">
+                <button class="preview-btn" (click)="openFileModal(file, 'image')">
+                  <i class="fas fa-eye"></i> Preview
+                </button>
+                <button class="download-btn" (click)="downloadFile(file)">
                   <i class="fas fa-download"></i> Download
                 </button>
               </div>
+              <div class="image-name">{{ getFileName(file.path) }}</div>
             </div>
           </div>
-  
-          <!-- PDFs Section -->
-          <div *ngIf="pdfFiles.length" class="files-section">
-            <h3>Documents</h3>
-            <div class="pdf-list">
-              <div *ngFor="let pdf of pdfFiles" class="pdf-item" (click)="viewPdf(pdf)">
-                <i [class]="getFileIcon(pdf.type)"></i>
-                <span>{{ pdf.path }}</span>
-                <button class="view-btn">View</button>
+        </div>
+
+        <!-- PDFs Section -->
+        <div *ngIf="pdfFiles.length" class="files-section">
+          <h3>Documents</h3>
+          <div class="pdf-list">
+            <div *ngFor="let file of pdfFiles" class="pdf-item">
+              <div class="file-icon">
+                <i class="fas fa-file-pdf"></i>
+              </div>
+              <div class="file-details">
+                <span class="file-name">{{ getFileName(file.path) }}</span>
+                <div class="file-actions">
+                  <button class="preview-btn" (click)="openFileModal(file, 'pdf')">
+                    <i class="fas fa-eye"></i> Preview
+                  </button>
+                  <button class="download-btn" (click)="downloadFile(file)">
+                    <i class="fas fa-download"></i> Download
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-  
-          <!-- Other Files Section -->
-          <div *ngIf="otherFiles.length" class="files-section">
-            <h3>Additional Files</h3>
-            <div class="file-list">
-              <div *ngFor="let file of otherFiles" class="file-item" (click)="downloadFile(file)">
+        </div>
+
+        <!-- Other Files Section -->
+        <div *ngIf="otherFiles.length" class="files-section">
+          <h3>Additional Files</h3>
+          <div class="file-list">
+            <div *ngFor="let file of otherFiles" class="file-item">
+              <div class="file-icon">
                 <i [class]="getFileIcon(file.type)"></i>
-                <span>{{ file.path }}</span>
-                <button class="download-btn">Download</button>
+              </div>
+              <div class="file-details">
+                <span class="file-name">{{ getFileName(file.path) }}</span>
+                <div class="file-type">{{ file.type }}</div>
+                <div class="file-actions">
+                  <button class="download-btn" (click)="downloadFile(file)">
+                    <i class="fas fa-download"></i> Download
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-  
-      <div class="resource-footer">
-        <button (click)="goBack()" class="back-btn">
-          <i class="fas fa-arrow-left"></i> Back to Resources
+    </div>
+
+    <!-- Resource Footer -->
+    <div class="resource-footer">
+      <button (click)="goBack()" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Resources
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for file preview -->
+<div *ngIf="showModal" class="file-preview-modal">
+    <div class="modal-overlay" (click)="closeModal()"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 *ngIf="selectedFile">{{ getFileName(selectedFile.path) }}</h3>
+        <button class="close-btn" (click)="closeModal()">
+          <i class="fas fa-times"></i>
         </button>
+      </div>
+      <div class="modal-body">
+        <!-- Image Preview -->
+        <div *ngIf="modalType === 'image' && selectedFile?.url" class="image-preview">
+            <img [src]="selectedFile?.url" alt="Image preview">
+        </div>
+        
+        <!-- PDF Preview -->
+        <div *ngIf="modalType === 'pdf' && selectedFile?.url" class="pdf-preview">
+          <iframe [src]="selectedFile?.url" width="100%" height="600" frameborder="0"></iframe>
+        </div>
+        
+        <!-- Other File Preview (just show info) -->
+        <div *ngIf="modalType === 'other' && selectedFile" class="other-preview">
+          <div class="file-info">
+            <p><strong>File Name:</strong> {{ getFileName(selectedFile.path) }}</p>
+            <p><strong>File Type:</strong> {{ selectedFile.type }}</p>
+            <p>This file type cannot be previewed directly.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="download-btn" (click)="downloadFile(selectedFile!)">
+          <i class="fas fa-download"></i> Download
+        </button>
+        <button class="close-btn" (click)="closeModal()">Close</button>
       </div>
     </div>
   </div>
-  <app-footer></app-footer>
+
+<app-footer></app-footer>
+

@@ -12,6 +12,7 @@ export class QuizDetailsComponent implements OnInit {
   quiz: Quiz | null = null;
   loading: boolean = true;
   error: string = '';
+  workshopId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -19,7 +20,11 @@ export class QuizDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Get the workshopId and quizId from route parameters
+    this.workshopId = this.route.snapshot.paramMap.get('workshopId');
     const quizId = +this.route.snapshot.paramMap.get('quizId')!;
+
+    // Fetch quiz details
     this.quizService.getQuizById(quizId).subscribe({
       next: (quiz) => {
         console.log('Fetched quiz:', quiz); // 👈 Add this
@@ -32,7 +37,6 @@ export class QuizDetailsComponent implements OnInit {
       }
     });
   }
-  
 
   getAnswerClass(answerIndex: number, correctAnswerIndex: number): string {
     return answerIndex === correctAnswerIndex ? 'correct' : 'incorrect';
