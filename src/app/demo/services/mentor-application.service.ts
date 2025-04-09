@@ -34,29 +34,23 @@ export class MentorApplicationService {
   }
 
 
-  createApplication(application: MentorApplication, cvFile?: File, uploadPaperFile?: File): Observable<MentorApplication> {
+
+
+  createApplication(application: MentorApplication, cvFile: File, uploadPaperFile?: File): Observable<MentorApplication> {
     const formData = new FormData();
     
-    // Convert application to JSON string
-    const appBlob = new Blob([JSON.stringify(application)], {
+    // Append application data as JSON string
+    formData.append('application', new Blob([JSON.stringify(application)], {
       type: 'application/json'
-    });
-    formData.append('application', appBlob);
+    }));
     
-    if (cvFile) {
-      formData.append('cv', cvFile);
-    }
-    
+    // Append files
+    formData.append('cvFile', cvFile);
     if (uploadPaperFile) {
-      formData.append('uploadPaper', uploadPaperFile);
+      formData.append('uploadPaperFile', uploadPaperFile);
     }
-    
+
     return this.http.post<MentorApplication>(this.apiUrl, formData);
-  }
-
-
-  updateApplication(id: number, application: MentorApplication): Observable<MentorApplication> {
-    return this.http.put<MentorApplication>(`${this.apiUrl}/${id}`, application)
   }
 
   updateApplicationStatus(id: number, status: ApplicationStatus): Observable<MentorApplication> {
@@ -66,5 +60,35 @@ export class MentorApplicationService {
   deleteApplication(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`)
   }
+
+  updateApplication(id: number, application: MentorApplication, cvFile?: File, uploadPaperFile?: File): Observable<MentorApplication> {
+    const formData = new FormData();
+    
+    formData.append('application', new Blob([JSON.stringify(application)], {
+      type: 'application/json'
+    }));
+    
+    if (cvFile) {
+      formData.append('cvFile', cvFile);
+    }
+    if (uploadPaperFile) {
+      formData.append('uploadPaperFile', uploadPaperFile);
+    }
+
+    return this.http.put<MentorApplication>(`${this.apiUrl}/${id}`, formData);
+  }
+
+  downloadCv(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/cv`, {
+      responseType: 'blob'
+    });
+  }
+
+  downloadUploadPaper(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/upload-paper`, {
+      responseType: 'blob'
+    });
+  }
+
 }
 

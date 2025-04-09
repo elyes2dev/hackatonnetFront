@@ -26,7 +26,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MentorApplicationListComponent } from './demo/components/mentor-application/mentor-application-list/mentor-application-list.component';
 import { MentorApplicationDetailsComponent } from './demo/components/mentor-application/mentor-application-details/mentor-application-details.component';
@@ -40,6 +40,12 @@ import { ListMentorFormComponent } from './demo/components/list-mentor/list-ment
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+// PrimeNG Modules
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { CheckboxModule } from 'primeng/checkbox';
+import { FileUploadModule } from 'primeng/fileupload';
+import { CalendarModule } from 'primeng/calendar';
+
 
 @NgModule({
     declarations: [
@@ -64,7 +70,16 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
         HttpClientModule,
         CardModule,
         TagModule,
-        ProgressSpinnerModule
+        ProgressSpinnerModule,
+        ReactiveFormsModule,
+            // PrimeNG Modules
+        InputTextModule,
+        InputTextareaModule,
+        ButtonModule,
+        CheckboxModule,
+        FileUploadModule,
+        CalendarModule,
+        RippleModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
