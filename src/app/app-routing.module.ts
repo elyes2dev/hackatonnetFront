@@ -23,6 +23,7 @@ import { QuizfListComponent } from './demo/components/quizf/quizf-list/quizf-lis
 import { QuizfFormComponent } from './demo/components/quizf/quizf-form/quizf-form.component';
 import { QuizfDetailsComponent } from './demo/components/quizf/quizf-details/quizf-details.component';
 import { QuizfScoreAddComponent } from './demo/components/quizf/quizf-score-add/quizf-score-add.component';
+import { ChartsComponent } from './demo/components/charts/charts.component';
 
 @NgModule({
     imports: [
@@ -120,6 +121,8 @@ import { QuizfScoreAddComponent } from './demo/components/quizf/quizf-score-add/
     ]
   }
   ,
+  { path: 'charts', component: ChartsComponent },  // Resource Details
+
 
             // Authentication & Other Routes
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },

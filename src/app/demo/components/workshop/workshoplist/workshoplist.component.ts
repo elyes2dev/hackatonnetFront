@@ -10,6 +10,10 @@ import { AuthService } from 'src/app/demo/services/auth.service';
   styleUrls: ['./workshoplist.component.scss']
 })
 export class WorkshoplistComponent implements OnInit {
+
+  displayCharts: boolean = false;
+
+
   workshops: any[] = [];
   isLoading = true;
   isAdmin: boolean = false;
@@ -89,4 +93,8 @@ export class WorkshoplistComponent implements OnInit {
       });
     }
   }
+    // Method to close the modal
+    closeModal() {
+      this.displayCharts = false;
+    }
 }

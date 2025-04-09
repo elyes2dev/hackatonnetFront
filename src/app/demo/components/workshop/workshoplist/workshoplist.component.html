@@ -1,10 +1,34 @@
 <div class="card">
-  <div class="p-mb-4">
+  <!-- Wrapper for the buttons to be aligned on opposite sides -->
+  <div class="flex justify-between mb-6">
+    <!-- Add New Workshop Button on the left -->
     <button pButton 
             label="Add New Workshop" 
             icon="pi pi-plus"
             class="p-button-primary"
             routerLink="/workshops/new"></button>
+
+  
+  </div>
+
+    <!-- Charts Button on the right -->
+    <button pButton 
+            label="Charts" 
+            icon="pi pi-chart-bar" 
+            class="p-button bg-blue-500 text-white hover:bg-blue-600" 
+            (click)="displayCharts = true"></button>
+            
+  <!-- Custom Modal for displaying charts -->
+  <div class="custom-modal" *ngIf="displayCharts">
+    <div class="custom-modal-content">
+      <div class="custom-modal-header">
+        <span class="close-btn" (click)="closeModal()">&times;</span>
+        <h3>Workshop Charts</h3>
+      </div>
+      <div class="custom-modal-body">
+        <app-charts [visible]="displayCharts"></app-charts>
+      </div>
+    </div>
   </div>
 
   <p-table [value]="workshops" [paginator]="true" [rows]="10" responsiveLayout="scroll">
@@ -29,7 +53,7 @@
         <td>{{ workshop.theme }}</td>
         <td>{{ workshop.description }}</td>
         <td>
-          <div class="flex gap-2">
+          <div class="flex gap-4"> <!-- Increased gap between buttons -->
             <button pButton 
                     icon="pi pi-pencil" 
                     class="p-button-rounded p-button-success" 
@@ -46,20 +70,23 @@
                     class="p-button-rounded p-button-info" 
                     [routerLink]="['/workshops', workshop.id, 'resources']"></button>
           </div>
-            <!-- New Quiz buttons -->
-  <button pButton 
-  icon="pi pi-question-circle" 
-  class="p-button-rounded p-button-help" 
-  [routerLink]="['/workshops', workshop.id, 'quizzes']"
-  pTooltip="View quizzes" 
-  tooltipPosition="top"></button>
+          
+          <!-- New Quiz buttons -->
+          <div class="flex gap-4 mt-4"> <!-- Increased gap and margin-top for better spacing -->
+            <button pButton 
+                    icon="pi pi-question-circle" 
+                    class="p-button-rounded p-button-help" 
+                    [routerLink]="['/workshops', workshop.id, 'quizzes']"
+                    pTooltip="View quizzes" 
+                    tooltipPosition="top"></button>
 
-<button pButton 
-  icon="pi pi-plus" 
-  class="p-button-rounded p-button-warning" 
-  [routerLink]="['/workshops', workshop.id, 'quizzes', 'new']"
-  pTooltip="Add new quiz" 
-  tooltipPosition="top"></button>
+            <button pButton 
+                    icon="pi pi-plus" 
+                    class="p-button-rounded p-button-warning" 
+                    [routerLink]="['/workshops', workshop.id, 'quizzes', 'new']"
+                    pTooltip="Add new quiz" 
+                    tooltipPosition="top"></button>
+          </div>
         </td>
       </tr>
     </ng-template>

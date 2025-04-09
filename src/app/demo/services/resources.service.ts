@@ -9,7 +9,7 @@ import { ImageModel } from '../models/image.model';
   providedIn: 'root'
 })
 export class ResourceService {
-  private baseUrl = 'http://localhost:9100/pi/workshops';
+  private baseUrl = 'http://localhost:9100/pi/workshopsr';
 
   constructor(private http: HttpClient) { }
 
@@ -103,5 +103,9 @@ downloadImage(workshopId: number, resourceId: number, imageId: number): Observab
     const url = `${this.baseUrl}/${workshopId}/resources/images/${imageId}`;
     return this.http.delete(url);
   }
+
+    getAll(): Observable<Resources[]> {
+      return this.http.get<Resources[]>(`${this.baseUrl}/resources`);
+    }
 
 }
