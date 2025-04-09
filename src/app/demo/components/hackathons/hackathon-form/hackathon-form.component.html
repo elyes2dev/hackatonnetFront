@@ -1,0 +1,43 @@
+<form [formGroup]="hackathonForm" (ngSubmit)="onSubmit()">
+    <label>Title:
+      <input type="text" formControlName="title" />
+    </label>
+  
+    <label>Description:
+      <textarea formControlName="description"></textarea>
+    </label>
+  
+    <label>Location:
+      <input type="text" formControlName="location" />
+    </label>
+  
+    <label>Start Date:
+      <input type="datetime-local" formControlName="startDate" />
+    </label>
+  
+    <label>End Date:
+      <input type="datetime-local" formControlName="endDate" />
+    </label>
+  
+    <label>Max Members:
+      <input type="number" formControlName="maxMembers" min="1" />
+    </label>
+  
+    <label>Online Event:
+      <input type="checkbox" formControlName="isOnline" />
+    </label>
+  
+    <label>Logo URL:
+      <input type="text" formControlName="logo" placeholder="https://example.com/logo.png" />
+    </label>
+  
+    <div formGroupName="createdBy">
+        <label for="id">Created By ID:</label>
+        <input type="number" formControlName="id" />
+      </div>
+  
+      <button type="submit" [disabled]="hackathonForm.invalid">
+        {{ hackathon ? 'Update' : 'Create' }} Hackathon
+      </button>
+  </form>
+  

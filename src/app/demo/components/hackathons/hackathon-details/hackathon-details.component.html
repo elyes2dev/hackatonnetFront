@@ -1,0 +1,86 @@
+<div *ngIf="hackathon as h" class="hackathon-details-container">
+  <!-- Hero Section with Gradient Overlay -->
+  <div class="hero-section" [style.backgroundImage]="'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url(' + h.logo + ')'">
+    <div class="hero-content">
+      <div class="logo-container">
+        <img class="logo" [src]="h.logo" alt="Hackathon Logo" />
+      </div>
+      <div class="header-content">
+        <h1>{{ h.title }}</h1>
+        <div class="meta-info">
+          <span class="location">
+            <i class="pi pi-map-marker"></i> {{ h.location }} • {{ h.isOnline ? 'Online' : 'Onsite' }}
+          </span>
+          <span class="date">
+            <i class="pi pi-calendar"></i> {{ h.startDate | date:'MMM d' }} - {{ h.endDate | date:'MMM d, y' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Section -->
+  <div class="content-section">
+    <!-- Description Card -->
+    <div class="card description-card">
+      <h2>About This Hackathon</h2>
+      <p>{{ h.description }}</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">{{ h.maxMembers }}</div>
+        <div class="stat-label">Max Team Size</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ (h.prizes ?? []).length }}</div>
+        <div class="stat-label">Prizes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ h.teams.length }}</div>
+        <div class="stat-label">Teams</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">
+          <p-avatar [label]="h.createdBy.name.charAt(0) + h.createdBy.lastname.charAt(0)" 
+                   size="large" shape="circle"></p-avatar>
+        </div>
+        <div class="organizer-info">
+          <div class="stat-label">Organizer</div>
+          <div class="organizer-name">{{ h.createdBy.name }} {{ h.createdBy.lastname }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prizes Section -->
+    <div class="card prizes-section" *ngIf="h.prizes && h.prizes.length > 0">
+      <h2>Prizes</h2>
+      <div class="prizes-grid">
+        <div class="prize-card" *ngFor="let prize of h.prizes; let i = index">
+          <div class="prize-rank">{{ i + 1 }}</div>
+          <div class="prize-details">
+            <h3>{{ prize.productName }}</h3>
+            <p>{{ prize.productDescription }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teams Section -->
+    <div class="card teams-section" *ngIf="h.teams && h.teams.length > 0">
+      <h2>Participating Teams</h2>
+      <div class="teams-grid">
+        <div class="team-card" *ngFor="let team of h.teams">
+          <div class="team-avatar">
+            <p-avatar [label]="team.teamName.charAt(0)" size="large" shape="circle"></p-avatar>
+          </div>
+          <div class="team-info">
+            <h3>{{ team.teamName }}</h3>
+            <p>{{ team.teamMembers.length }} members</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

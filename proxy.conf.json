@@ -1,0 +1,9 @@
+{
+    "/pi": {
+      "target": "http://localhost:9100",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }
+  

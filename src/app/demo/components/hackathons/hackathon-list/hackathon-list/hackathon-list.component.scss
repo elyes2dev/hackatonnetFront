@@ -1,0 +1,134 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  justify-items: center;
+}
+
+.card {
+  background: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 1rem;
+  width: 100%;
+  max-width: 320px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.position-relative {
+  position: relative;
+}
+
+.card-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.card-actions i {
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 6px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.edit-icon {
+  color: #007bff;
+}
+
+.edit-icon:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.delete-icon {
+  color: #dc3545;
+}
+
+.delete-icon:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+
+img {
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Fixed Header for Add Hackathon Button */
+.fixed-header {
+  position: fixed;
+  top: 80px;
+  left: 355px;
+  right: 0;
+  border-radius: 8px;
+  background-color: white;
+  z-index: 1000; /* Make sure it's above other content */
+  padding: 10px 20px; /* Add padding to make the button look nice */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for separation */
+}
+
+/* Adjust the content below the fixed header */
+.col-12.md\:col-12 {
+  padding-top: 40px; /* Space for the fixed header */
+}
+
+.add-button-wrapper {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.add-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.add-button:hover {
+  background-color: #0056b3;
+}
+
+/* hackathon-list.component.scss */
+.p-sidebar.sidebar {
+  width: 400px !important; /* Customize this value to your desired width */
+}
+
+.hackathon-list-container {
+  background-color: white;
+  z-index: 999; /* Ensure it stays above the content */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 50px; /* Space for the fixed button + header (adjust as needed) */
+  max-height: 700px; /* Adjust the height as needed */
+  overflow-y: scroll; /* Allows scrolling */
+  padding-right: 20px; /* To prevent content from getting cut off */
+}

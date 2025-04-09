@@ -1,0 +1,287 @@
+/* Modern SCSS Styles */
+.hackathon-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #2d3748;
+  
+  .action-buttons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+
+    button {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+
+      &.edit-button {
+        color: var(--primary-color);
+      }
+
+      &.delete-button {
+        color: #f87171;
+      }
+    }
+  }
+
+  .hero-section {
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    .hero-content {
+      width: 100%;
+      padding: 40px;
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+
+      .logo-container {
+        .logo {
+          width: 120px;
+          height: 120px;
+          border-radius: 16px;
+          object-fit: cover;
+          border: 3px solid white;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+      }
+
+      .header-content {
+        flex: 1;
+        color: white;
+
+        h1 {
+          font-size: 2.5rem;
+          font-weight: 700;
+          margin: 0 0 12px 0;
+          line-height: 1.2;
+        }
+
+        .meta-info {
+          display: flex;
+          gap: 20px;
+          font-size: 1.1rem;
+
+          span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0.9;
+
+            i {
+              font-size: 1rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .content-section {
+    display: grid;
+    gap: 24px;
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+      h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #1a202c;
+      }
+    }
+
+    .description-card {
+      p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #4a5568;
+      }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    
+      .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+    
+        &.organizer-card {
+          text-align: left;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          
+          .stat-value {
+            margin-bottom: 0;
+          }
+          
+          .organizer-info {
+            display: flex;
+            flex-direction: column;
+            
+            .stat-label {
+              font-size: 0.9rem;
+              color: #718096;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+              margin-bottom: 4px;
+            }
+            
+            .organizer-name {
+              font-size: 1.1rem;
+              font-weight: 600;
+              color: #2d3748;
+            }
+          }
+        }
+    
+        &:not(.organizer-card) {
+          .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4299e1;
+            margin-bottom: 8px;
+          }
+    
+          .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+          }
+        }
+      }
+    }
+
+    .prizes-section, .teams-section {
+      .prizes-grid, .teams-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .prize-card, .team-card {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        border-radius: 8px;
+        background: #f7fafc;
+        transition: background 0.2s;
+
+        &:hover {
+          background: #edf2f7;
+        }
+      }
+
+      .prize-card {
+        gap: 16px;
+
+        .prize-rank {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #4299e1;
+          color: white;
+          border-radius: 50%;
+          font-weight: 700;
+        }
+
+        .prize-details {
+          h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+          }
+
+          p {
+            margin: 0;
+            color: #718096;
+            font-size: 0.9rem;
+          }
+        }
+      }
+
+      .team-card {
+        gap: 12px;
+
+        .team-info {
+          h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+          }
+
+          p {
+            margin: 0;
+            color: #718096;
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .hero-section {
+    height: 350px !important;
+
+    .hero-content {
+      flex-direction: column;
+      align-items: flex-start !important;
+      padding: 24px !important;
+
+      .logo {
+        width: 80px !important;
+        height: 80px !important;
+      }
+    }
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    height: 300px !important;
+
+    h1 {
+      font-size: 1.8rem !important;
+    }
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

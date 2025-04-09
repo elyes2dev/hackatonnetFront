@@ -1,0 +1,48 @@
+<!-- Add Hackathon Button -->
+<div class="fixed-header">
+  <div class="add-button-wrapper">
+    <button class="add-button" (click)="showAddHackathonForm()">
+      <i class="pi pi-plus mr-2"></i> Add Hackathon
+    </button>
+  </div>
+</div>
+
+<!-- Display the Hackathons -->
+<div class="hackathon-list-container">
+  <div class="col-12 md:col-12">
+    <div class="grid">
+      <div class="col-12" *ngFor="let hackathon of hackathons">
+        <div class="card position-relative">
+          <!-- Edit/Delete Buttons -->
+          <div class="card-actions">
+            <i class="pi pi-pencil edit-icon" (click)="showAddHackathonForm(hackathon)"></i>
+            <i class="pi pi-trash delete-icon" 
+               (click)="deleteHackathon(hackathon.id); $event.stopPropagation()"></i>
+          </div>
+
+          <!-- Hackathon Info -->
+          <div class="flex flex-column align-items-center p-3" [routerLink]="['/hackathon', hackathon.id]">
+            <img [src]="hackathon.logo" alt="Hackathon Logo" class="my-3 w-6rem h-6rem shadow-2">
+            <div class="font-bold text-xl text-center">{{ hackathon.title }}</div>
+            <div class="text-center mb-2">
+              <span class="font-semibold">{{ hackathon.location }}</span> |
+              <span>{{ hackathon.startDate | date: 'short' }} - {{ hackathon.endDate | date: 'short' }}</span>
+            </div>
+            <div class="text-center">
+              <p>{{ hackathon.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar for Adding or Editing Hackathon -->
+<p-sidebar [(visible)]="visibleSidebar2" position="right">
+  <app-hackathon-form 
+    *ngIf="visibleSidebar2"
+    [hackathon]="selectedHackathon" 
+    (hideSidebar)="hideSidebar()">
+  </app-hackathon-form>
+</p-sidebar>
