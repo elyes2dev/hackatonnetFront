@@ -11,7 +11,7 @@ export class PrizeService {
   private baseUrl = 'http://localhost:9100/prize';
   
    // For testing without authentication - static user ID
-   private staticUserId = 17; // Change this to your test user ID
+   private staticUserId = 18; // Change this to your test user ID
 
     // For testing without hackathon - static hackathon ID
   private staticHackathonId = 10; // Change this to your test hackathon ID
