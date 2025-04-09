@@ -10,9 +10,10 @@ import { StorageService } from '../../services/storage.service';
 })
 export class SupportTicketComponent implements OnInit {
   tickets: Ticket[] = [];
-  ticket: Ticket = { id: 0, userId: this.storageservice.getUserId(), description: '', status: '', createdAt: new Date(), updatedAt: new Date() };
+  ticket: Ticket = { id: 0, userId: this.storageService.getUserId(), description: '', status: '', createdAt: new Date(), updatedAt: new Date() };
+  isUpdating: boolean = false;
 
-  constructor(private ticketService: TicketService,private storageservice: StorageService) {}
+  constructor(private ticketService: TicketService, private storageService: StorageService) {}
 
   ngOnInit(): void {
     this.loadAllTickets();
@@ -22,12 +23,36 @@ export class SupportTicketComponent implements OnInit {
     this.ticketService.getAllTickets().subscribe((tickets) => this.tickets = tickets);
   }
 
+  populateForm(ticket: Ticket): void {
+    this.ticket = { ...ticket };
+    this.isUpdating = true;
+  }
+
+  onSubmit(): void {
+    if (this.isUpdating) {
+      this.updateTicket();
+    } else {
+      this.createTicket();
+    }
+  }
+
   createTicket(): void {
-    this.ticketService.createTicket(this.ticket).subscribe(() => this.loadAllTickets());
+    this.ticketService.createTicket(this.ticket).subscribe(() => {
+      this.loadAllTickets();
+      this.resetForm();
+    });
   }
 
   updateTicket(): void {
-    this.ticketService.updateTicket(this.ticket.id, this.ticket).subscribe(() => this.loadAllTickets());
+    this.ticketService.updateTicket(this.ticket.id, this.ticket).subscribe(() => {
+      this.loadAllTickets();
+      this.resetForm();
+    });
+  }
+
+  resetForm(): void {
+    this.ticket = { id: 0, userId: this.storageService.getUserId(), description: '', status: '', createdAt: new Date(), updatedAt: new Date() };
+    this.isUpdating = false;
   }
 
   deleteTicket(id: number): void {

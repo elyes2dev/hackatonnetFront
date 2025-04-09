@@ -3,7 +3,7 @@
     <h2>Support Tickets</h2>
   </div>
   <div class="card-body">
-    <form (ngSubmit)="createTicket()">
+    <form (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="description">Description</label>
         <input type="text" id="description" [(ngModel)]="ticket.description" name="description" required class="form-control">
@@ -16,7 +16,7 @@
           <option value="Closed">Closed</option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary">Create Ticket</button>
+      <button type="submit" class="btn btn-primary">{{ isUpdating ? 'Update Ticket' : 'Create Ticket' }}</button>
     </form>
 
     <ul class="list-group mt-3">
@@ -29,7 +29,7 @@
             <p><strong>Status:</strong> {{ ticket.status }}</p>
           </div>
           <div>
-            <button class="btn btn-secondary" (click)="updateTicket">Update</button>
+            <button class="btn btn-secondary" (click)="populateForm(ticket)">Select</button>
             <button class="btn btn-danger" (click)="deleteTicket(ticket.id)">Delete</button>
           </div>
         </div>
