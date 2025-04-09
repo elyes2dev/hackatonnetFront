@@ -143,89 +143,102 @@
     }
   </style>
 
-  <!-- Workshops Cards -->
-  <div class="cards-container">
-    <div
-      class="nft"
-      *ngFor="let workshop of workshops | filterByNameAndTheme:searchName:selectedTheme"
-    >
-      <div class="main">
-        <img
-          class="tokenImage"
-          [src]="workshop.photo || 'assets/images/placeholder-workshop.png'"
-          alt="Workshop"
-        />
-        <h2>{{ workshop.name }}</h2>
-        <p class="description">
-          {{ workshop.description || 'No description provided.' }}
-        </p>
+<!-- Workshops Cards -->
+<div class="cards-container">
+  <div
+    class="nft"
+    *ngFor="let workshop of workshops | filterByNameAndTheme:searchName:selectedTheme"
+  >
+    <div class="main">
+      <img
+        class="tokenImage"
+        [src]="workshop.photo || 'assets/images/placeholder-workshop.png'"
+        alt="Workshop"
+      />
+      <h2>{{ workshop.name }}</h2>
+      <p class="description">
+        {{ workshop.description || 'No description provided.' }}
+      </p>
 
-        <div class="tokenInfo">
-          <div class="price">
-            <ins>🎯</ins>
-            <p>{{ workshop.theme || 'No Theme' }}</p>
-          </div>
-          <div class="duration">
-            <ins>📅</ins>
-            <p>{{ workshop.date || 'Unknown Date' }}</p>
-          </div>
+      <div class="tokenInfo">
+        <div class="price">
+          <ins>🎯</ins>
+          <p>{{ workshop.theme || 'No Theme' }}</p>
         </div>
-
-        <hr />
-
-        <div class="creator">
-          <div class="wrapper">
-            <img
-              [src]="workshop.user.photo || 'assets/images/default-user.png'"
-              alt="Creator"
-            />
-          </div>
-          <p><ins>Hosted by</ins> {{ workshop.user.name || 'Unknown' }}</p>
+        <div class="duration">
+          <ins>📅</ins>
+          <p>{{ workshop.date || 'Unknown Date' }}</p>
         </div>
+      </div>
 
-        <div class="card-buttons">
-          <button
-            pButton
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-success"
-            [routerLink]="['/workshopsf', workshop.id, 'edit']"
-          ></button>
+      <hr />
 
-          <button
-            pButton
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-danger"
-            (click)="deleteWorkshop(workshop.id)"
-          ></button>
-
-          <button
-            pButton
-            icon="pi pi-list"
-            class="p-button-rounded p-button-info"
-            [routerLink]="['/workshopsf', workshop.id, 'resources']"
-          ></button>
-
-          <button
-            pButton
-            icon="pi pi-question-circle"
-            class="p-button-rounded p-button-help"
-            [routerLink]="['/workshopsf', workshop.id, 'quizzes']"
-            pTooltip="View quizzes"
-            tooltipPosition="top"
-          ></button>
-
-          <button
-            pButton
-            icon="pi pi-plus"
-            class="p-button-rounded p-button-warning"
-            [routerLink]="['/workshopsf', workshop.id, 'quizzes', 'new']"
-            pTooltip="Add new quiz"
-            tooltipPosition="top"
-          ></button>
+      <div class="creator">
+        <div class="wrapper">
+          <img
+            [src]="workshop.user.photo || 'assets/images/default-user.png'"
+            alt="Creator"
+          />
         </div>
+        <p><ins>Hosted by</ins> {{ workshop.user.name || 'Unknown' }}</p>
+      </div>
+
+      <div class="card-buttons">
+        <!-- Favorite Button -->
+        <button
+          pButton
+          icon="pi pi-star"
+          class="p-button-rounded p-button-warning"
+          [class.favorited]="favorites.includes(workshop.id)"
+          (click)="toggleFavorite(workshop.id)"
+          pTooltip="Favorite this workshop"
+          tooltipPosition="top"
+        >
+          {{ favorites.includes(workshop.id) ? ' Unfavorite' : ' Favorite' }}
+        </button>
+        <!-- Other buttons (Edit, Delete, etc.) -->
+        <button
+          pButton
+          icon="pi pi-pencil"
+          class="p-button-rounded p-button-success"
+          [routerLink]="['/workshopsf', workshop.id, 'edit']"
+        ></button>
+
+        <button
+          pButton
+          icon="pi pi-trash"
+          class="p-button-rounded p-button-danger"
+          (click)="deleteWorkshop(workshop.id)"
+        ></button>
+
+        <button
+          pButton
+          icon="pi pi-list"
+          class="p-button-rounded p-button-info"
+          [routerLink]="['/workshopsf', workshop.id, 'resources']"
+        ></button>
+
+        <button
+          pButton
+          icon="pi pi-question-circle"
+          class="p-button-rounded p-button-help"
+          [routerLink]="['/workshopsf', workshop.id, 'quizzes']"
+          pTooltip="View quizzes"
+          tooltipPosition="top"
+        ></button>
+
+        <button
+          pButton
+          icon="pi pi-plus"
+          class="p-button-rounded p-button-warning"
+          [routerLink]="['/workshopsf', workshop.id, 'quizzes', 'new']"
+          pTooltip="Add new quiz"
+          tooltipPosition="top"
+        ></button>
       </div>
     </div>
   </div>
 </div>
+
 
 <app-footer></app-footer>

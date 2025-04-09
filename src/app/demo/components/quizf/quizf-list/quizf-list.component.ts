@@ -99,7 +99,7 @@ export class QuizfListComponent implements OnInit {
     if (this.quizStatusMap[quizId]) {
       this.showQuizResults(quizId);
     } else {
-      this.router.navigate(['/workshops', this.workshopId, 'quizzes', quizId, 'edit']);
+      this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', quizId, 'edit']);
     }
   }
 

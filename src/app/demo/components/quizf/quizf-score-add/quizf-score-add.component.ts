@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizService } from 'src/app/demo/services/quiz.service';
 import { UserQuizScoreService } from 'src/app/demo/services/user-quiz-score.service';
 import { Quiz } from 'src/app/demo/models/quiz.model';
 import { UserQuizScoreRequest } from 'src/app/demo/models/user-quiz-score-request.model'; // Ensure the correct import
 import { StorageService } from 'src/app/demo/services/storage.service'; // Import StorageService
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-quizf-score-add',
   templateUrl: './quizf-score-add.component.html',
   styleUrls: ['./quizf-score-add.component.scss']
 })
-export class QuizfScoreAddComponent implements OnInit {
+export class QuizfScoreAddComponent implements OnInit, OnDestroy {
   quizId!: number;
   workshopId!: number;
   quiz!: Quiz;
@@ -19,6 +20,14 @@ export class QuizfScoreAddComponent implements OnInit {
   userAnswers: { [questionId: number]: number } = {}; // Store the user's answers
   score: number = 0;
   userId: string | null = null; // Store user ID here
+
+  // Timer variables
+  remainingTime: number = 600; // Set the initial timer to 30 seconds
+  timerSubscription!: Subscription;
+  progress: number = 0; // Progress bar percentage
+
+  // Flag to track if the quiz has been submitted
+  hasSubmitted: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -47,6 +56,9 @@ export class QuizfScoreAddComponent implements OnInit {
 
     // Fetch the quiz by its ID
     this.fetchQuiz();
+
+    // Start the countdown timer
+    this.startTimer();
   }
 
   fetchQuiz(): void {
@@ -60,7 +72,28 @@ export class QuizfScoreAddComponent implements OnInit {
     });
   }
 
+  startTimer(): void {
+    this.timerSubscription = interval(10).subscribe(() => {
+      if (this.remainingTime > 0) {
+        this.remainingTime--;
+        this.updateProgress();
+      } else if (!this.hasSubmitted) {
+        this.onSubmit(); // Auto-submit when time is up, if not already submitted
+      }
+    });
+  }
+
+  updateProgress(): void {
+    this.progress = ((600 - this.remainingTime) / 600) * 100; // Update progress bar for 30 seconds
+  }
+
   onSubmit(): void {
+    if (this.hasSubmitted) {
+      return; // Prevent multiple submissions
+    }
+
+    this.hasSubmitted = true; // Set the flag to true to prevent further submissions
+
     if (!this.userId) {
       alert('User not logged in!');
       return;
@@ -69,7 +102,7 @@ export class QuizfScoreAddComponent implements OnInit {
     this.calculateScore();
 
     const request: UserQuizScoreRequest = {
-      userId: parseInt(this.userId),  // Use the dynamically retrieved userId
+      userId: parseInt(this.userId!),  // Use the dynamically retrieved userId
       quizId: this.quizId,
       score: this.score
     };
@@ -82,6 +115,7 @@ export class QuizfScoreAddComponent implements OnInit {
       },
       error: () => {
         alert('Failed to save score.');
+        this.hasSubmitted = false; // Reset flag on error for potential retry
       }
     });
   }
@@ -101,5 +135,11 @@ export class QuizfScoreAddComponent implements OnInit {
     // Navigate back to the quizzes list page
     this.router.navigate(['/workshopsf', this.workshopId, 'quizzes']);
   }
-}
 
+  ngOnDestroy(): void {
+    // Clean up the timer subscription to avoid memory leaks
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+    }
+  }
+}

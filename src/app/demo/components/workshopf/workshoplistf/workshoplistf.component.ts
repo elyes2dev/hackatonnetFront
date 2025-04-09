@@ -11,66 +11,30 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
   templateUrl: './workshoplistf.component.html',
   styleUrls: ['./workshoplistf.component.scss']
 })
-
 export class WorkshoplistfComponent implements OnInit {
   workshops: any[] = [];
   isLoading = true;
   isAdmin: boolean = false;
   isStudent: boolean = false;
   searchName: string = '';
-selectedTheme: string = '';
-uniqueThemes: string[] = [];
-
-  
-  // Define columns for the table structure
-  columns = [
-    { field: 'id', header: 'ID' },
-    { field: 'name', header: 'Name' },
-    { field: 'theme', header: 'Theme' },
-    { field: 'description', header: 'Description' }
-  ];
+  selectedTheme: string = '';
+  uniqueThemes: string[] = [];
+  favorites: string[] = [];
+  recentlyViewed: string[] = [];
 
   constructor(
     private workshopService: WorkshopService,
     private userService: UserService,
-    private authService: AuthService // Inject UserService
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     this.getAllWorkshops();
-    this.getUserRole(); // Call method to fetch and log user role
-    console.log(this.getUserRole)
-    const userRole = this.authService.getUserRole(); // Assuming you get user role from the service
-    console.log(userRole)
-
-    if (userRole === 'admin') {
-      this.isAdmin = true;
-    } else if (userRole === 'student') {
-      this.isStudent = true;
-    }
-    console.log(this.isStudent)
-
+    this.getUserRole();
+    this.loadFavorites();
+    this.loadRecentlyViewed();
   }
 
-  // Fetch and log user role
-  getUserRole() {
-    const userId = localStorage.getItem('loggedid'); // Assuming user ID is stored in localStorage
-    console.log(userId)
-    if (userId) {
-      this.userService.getUserById(parseInt(userId)).subscribe({
-        next: (user: User) => {
-          if (user.roles && user.roles.length > 0) {
-            console.log('User roles:', user.roles.map(role => role.name)); // Log roles
-          } else {
-            console.log('No roles found for the user');
-          }
-        },
-        error: (err) => console.error('Error fetching user roles:', err)
-      });
-    } else {
-      console.error('User ID not found in localStorage');
-    }
-  }
   getAllWorkshops() {
     this.workshopService.getAllWorkshops().subscribe({
       next: (data: any[]) => {
@@ -86,6 +50,50 @@ uniqueThemes: string[] = [];
       }
     });
   }
+
+  getUserRole() {
+    const userRole = this.authService.getUserRole(); 
+    if (userRole === 'admin') {
+      this.isAdmin = true;
+    } else if (userRole === 'student') {
+      this.isStudent = true;
+    }
+    const userId = localStorage.getItem('loggedid'); // Assuming user ID is stored in localStorage
+    console.log('UserID from localStorage:', userId);
+  }
+
+  // Mark workshop as favorite/unfavorite
+  toggleFavorite(workshopId: string) {
+    const index = this.favorites.indexOf(workshopId);
+    if (index === -1) {
+      this.favorites.push(workshopId);
+    } else {
+      this.favorites.splice(index, 1);
+    }
+    localStorage.setItem('favorites', JSON.stringify(this.favorites));
+  }
+
+  // Mark a workshop as recently viewed
+  viewWorkshop(workshopId: string) {
+    if (!this.recentlyViewed.includes(workshopId)) {
+      this.recentlyViewed.push(workshopId);
+      localStorage.setItem('recentlyViewed', JSON.stringify(this.recentlyViewed));
+    }
+  }
+
+  // Load favorites from localStorage
+  loadFavorites() {
+    const favorites = localStorage.getItem('favorites');
+    this.favorites = favorites ? JSON.parse(favorites) : [];
+  }
+
+  // Load recently viewed workshops from localStorage
+  loadRecentlyViewed() {
+    const recentlyViewed = localStorage.getItem('recentlyViewed');
+    this.recentlyViewed = recentlyViewed ? JSON.parse(recentlyViewed) : [];
+  }
+
+  // Delete workshop
   deleteWorkshop(id: number): void {
     if (confirm('Are you sure you want to delete this workshop?')) {
       this.workshopService.deleteWorkshop(id).subscribe({
