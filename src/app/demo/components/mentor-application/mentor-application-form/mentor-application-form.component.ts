@@ -1,11 +1,12 @@
-// mentor-application-form.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ApplicationStatus, MentorApplication } from 'src/app/demo/models/mentor-application.model';
+import { PreviousExperience } from 'src/app/demo/models/previous-experience.model';
 import { User } from 'src/app/demo/models/user.model';
 import { MentorApplicationService } from 'src/app/demo/services/mentor-application.service';
+import { PreviousExperienceService } from 'src/app/demo/services/previous-experience.service';
 
 @Component({
   selector: 'app-mentor-application-form',
@@ -24,6 +25,7 @@ export class MentorApplicationFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private mentorAppService: MentorApplicationService,
+    private previousExperienceService: PreviousExperienceService,
     private messageService: MessageService,
     private router: Router
   ) {
@@ -42,7 +44,9 @@ export class MentorApplicationFormComponent implements OnInit {
   private setupFormListeners(): void {
     this.applicationForm.get('hasPreviousExperience')?.valueChanges.subscribe(value => {
       if (value) {
-        this.addExperience();
+        if (this.previousExperiences.length === 0) {
+          this.addExperience();
+        }
       } else {
         this.clearExperiences();
       }
@@ -55,6 +59,11 @@ export class MentorApplicationFormComponent implements OnInit {
 
   get previousExperiences(): FormArray {
     return this.applicationForm.get('previousExperiences') as FormArray;
+  }
+
+  // Helper method to safely get a FormGroup from the FormArray
+  getFormGroupAt(index: number): FormGroup {
+    return this.previousExperiences.at(index) as FormGroup;
   }
 
   addLink(): void {
@@ -122,7 +131,7 @@ export class MentorApplicationFormComponent implements OnInit {
       links: formValue.links.filter((link: string) => link), // Filter out empty links
       hasPreviousExperience: formValue.hasPreviousExperience,
       status: ApplicationStatus.PENDING,
-      previousExperiences: formValue.hasPreviousExperience ? formValue.previousExperiences : [],
+      previousExperiences: [], // Empty array as we will handle previous experiences separately
       user: {} as User, // Replace with actual user from your auth service
       cv: '', // Will be set by the backend
       uploadPaper: '' // Will be set by the backend if file is uploaded
@@ -134,26 +143,67 @@ export class MentorApplicationFormComponent implements OnInit {
     this.mentorAppService.createApplication(application, this.cvFile, this.uploadPaperFile || undefined)
       .subscribe({
         next: (createdApp) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Application submitted successfully!'
-          });
-          this.router.navigate(['/mentor-applications', createdApp.id]);
+          if (formValue.hasPreviousExperience && this.previousExperiences.length > 0) {
+            this.savePreviousExperiences(createdApp.id!);
+          } else {
+            this.handleSuccessfulSubmission(createdApp.id!);
+          }
         },
         error: (err) => {
-          console.error('Error submitting application:', err);
-          this.errorMessage = 'Error submitting application. Please try again.';
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: this.errorMessage
-          });
-          this.submitting = false;
-        },
-        complete: () => {
-          this.submitting = false;
+          this.handleSubmissionError(err);
         }
       });
+  }
+
+  private savePreviousExperiences(applicationId: number): void {
+    const experiences = this.previousExperiences.value as PreviousExperience[];
+    const requests = experiences.map(exp => this.previousExperienceService.createExperience(applicationId, exp));
+    
+    // Create a counter to track completed requests
+    let completedRequests = 0;
+    let hasError = false;
+
+    requests.forEach(request => {
+      request.subscribe({
+        next: () => {
+          completedRequests++;
+          if (completedRequests === requests.length && !hasError) {
+            this.handleSuccessfulSubmission(applicationId);
+          }
+        },
+        error: (err) => {
+          if (!hasError) {
+            hasError = true;
+            this.handleSubmissionError(err);
+          }
+        }
+      });
+    });
+
+    // If there are no experiences to save, consider it successful
+    if (requests.length === 0) {
+      this.handleSuccessfulSubmission(applicationId);
+    }
+  }
+
+  private handleSuccessfulSubmission(applicationId: number): void {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Application submitted successfully!'
+    });
+    this.submitting = false;
+    this.router.navigate(['/mentor-applications', applicationId]);
+  }
+
+  private handleSubmissionError(err: any): void {
+    console.error('Error submitting application:', err);
+    this.errorMessage = 'Error submitting application. Please try again.';
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: this.errorMessage
+    });
+    this.submitting = false;
   }
 }

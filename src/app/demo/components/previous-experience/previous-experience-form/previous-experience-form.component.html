@@ -1,1 +1,71 @@
-<p>previous-experience-form works!</p>
+<div class="card mb-3" [formGroup]="experienceForm">
+    <div class="grid">
+      <div class="col-12 md:col-4">
+        <div class="field">
+          <label [for]="'hackathonName'+index">Hackathon Name*</label>
+          <input 
+            pInputText 
+            [id]="'hackathonName'+index"
+            formControlName="hackathonName"
+            [class.ng-invalid]="experienceForm.get('hackathonName')?.invalid && experienceForm.get('hackathonName')?.touched"
+            [class.ng-dirty]="experienceForm.get('hackathonName')?.invalid && experienceForm.get('hackathonName')?.touched">
+          <small *ngIf="experienceForm.get('hackathonName')?.invalid && experienceForm.get('hackathonName')?.touched" class="p-error">
+            Hackathon name is required.
+          </small>
+        </div>
+      </div>
+      <div class="col-12 md:col-4">
+        <div class="field">
+          <label [for]="'year'+index">Year*</label>
+          <input 
+            pInputText 
+            type="number"
+            [id]="'year'+index"
+            formControlName="year"
+            [class.ng-invalid]="experienceForm.get('year')?.invalid && experienceForm.get('year')?.touched"
+            [class.ng-dirty]="experienceForm.get('year')?.invalid && experienceForm.get('year')?.touched">
+          <small *ngIf="experienceForm.get('year')?.invalid && experienceForm.get('year')?.touched" class="p-error">
+            Year must be between 2000 and {{currentYear}}.
+          </small>
+        </div>
+      </div>
+      <div class="col-12 md:col-4">
+        <div class="field">
+          <label [for]="'numberOfTeamsCoached'+index">Teams Coached*</label>
+          <input 
+            pInputText 
+            type="number"
+            [id]="'numberOfTeamsCoached'+index"
+            formControlName="numberOfTeamsCoached"
+            [class.ng-invalid]="experienceForm.get('numberOfTeamsCoached')?.invalid && experienceForm.get('numberOfTeamsCoached')?.touched"
+            [class.ng-dirty]="experienceForm.get('numberOfTeamsCoached')?.invalid && experienceForm.get('numberOfTeamsCoached')?.touched">
+          <small *ngIf="experienceForm.get('numberOfTeamsCoached')?.invalid && experienceForm.get('numberOfTeamsCoached')?.touched" class="p-error">
+            Number of teams coached is required and must be at least 1.
+          </small>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="field">
+          <label [for]="'description'+index">Description*</label>
+          <textarea 
+            pInputTextarea 
+            [id]="'description'+index"
+            formControlName="description" 
+            rows="3"
+            [class.ng-invalid]="experienceForm.get('description')?.invalid && experienceForm.get('description')?.touched"
+            [class.ng-dirty]="experienceForm.get('description')?.invalid && experienceForm.get('description')?.touched">
+          </textarea>
+          <small *ngIf="experienceForm.get('description')?.invalid && experienceForm.get('description')?.touched" class="p-error">
+            Description is required.
+          </small>
+        </div>
+      </div>
+    </div>
+    <button 
+      pButton 
+      pRipple 
+      type="button" 
+      icon="pi pi-trash" 
+      class="p-button-danger p-button-sm" 
+      (click)="removeExperience()"></button>
+  </div>

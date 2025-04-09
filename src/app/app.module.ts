@@ -56,6 +56,7 @@ import { CalendarModule } from 'primeng/calendar';
         AppLayoutModule,
         TableModule,
         CommonModule,
+        ReactiveFormsModule,
         RatingModule,
         ButtonModule,
         SliderModule,
@@ -71,7 +72,6 @@ import { CalendarModule } from 'primeng/calendar';
         CardModule,
         TagModule,
         ProgressSpinnerModule,
-        ReactiveFormsModule,
             // PrimeNG Modules
         InputTextModule,
         InputTextareaModule,

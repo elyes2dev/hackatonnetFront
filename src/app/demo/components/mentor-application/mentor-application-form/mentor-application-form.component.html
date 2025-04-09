@@ -96,78 +96,14 @@
           <div *ngIf="applicationForm.get('hasPreviousExperience')?.value">
             <div class="field">
               <label>Previous Experiences</label>
-              <div formArrayName="previousExperiences" *ngFor="let exp of previousExperiences.controls; let i = index">
-                <div class="card mb-3" [formGroupName]="i">
-                  <div class="grid">
-                    <div class="col-12 md:col-4">
-                      <div class="field">
-                        <label [for]="'hackathonName'+i">Hackathon Name*</label>
-                        <input 
-                          pInputText 
-                          [id]="'hackathonName'+i"
-                          formControlName="hackathonName"
-                          [class.ng-invalid]="previousExperiences.at(i).get('hackathonName')?.invalid && previousExperiences.at(i).get('hackathonName')?.touched"
-                          [class.ng-dirty]="previousExperiences.at(i).get('hackathonName')?.invalid && previousExperiences.at(i).get('hackathonName')?.touched">
-                        <small *ngIf="previousExperiences.at(i).get('hackathonName')?.invalid && previousExperiences.at(i).get('hackathonName')?.touched" class="p-error">
-                          Hackathon name is required.
-                        </small>
-                      </div>
-                    </div>
-                    <div class="col-12 md:col-4">
-                      <div class="field">
-                        <label [for]="'year'+i">Year*</label>
-                        <input 
-                          pInputText 
-                          type="number"
-                          [id]="'year'+i"
-                          formControlName="year"
-                          [class.ng-invalid]="previousExperiences.at(i).get('year')?.invalid && previousExperiences.at(i).get('year')?.touched"
-                          [class.ng-dirty]="previousExperiences.at(i).get('year')?.invalid && previousExperiences.at(i).get('year')?.touched">
-                        <small *ngIf="previousExperiences.at(i).get('year')?.invalid && previousExperiences.at(i).get('year')?.touched" class="p-error">
-                          Year is required.
-                        </small>
-                      </div>
-                    </div>
-                    <div class="col-12 md:col-4">
-                      <div class="field">
-                        <label [for]="'numberOfTeamsCoached'+i">Teams Coached*</label>
-                        <input 
-                          pInputText 
-                          type="number"
-                          [id]="'numberOfTeamsCoached'+i"
-                          formControlName="numberOfTeamsCoached"
-                          [class.ng-invalid]="previousExperiences.at(i).get('numberOfTeamsCoached')?.invalid && previousExperiences.at(i).get('numberOfTeamsCoached')?.touched"
-                          [class.ng-dirty]="previousExperiences.at(i).get('numberOfTeamsCoached')?.invalid && previousExperiences.at(i).get('numberOfTeamsCoached')?.touched">
-                        <small *ngIf="previousExperiences.at(i).get('numberOfTeamsCoached')?.invalid && previousExperiences.at(i).get('numberOfTeamsCoached')?.touched" class="p-error">
-                          Number of teams coached is required.
-                        </small>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="field">
-                        <label [for]="'description'+i">Description*</label>
-                        <textarea 
-                          pInputTextarea 
-                          [id]="'description'+i"
-                          formControlName="description" 
-                          rows="3"
-                          [class.ng-invalid]="previousExperiences.at(i).get('description')?.invalid && previousExperiences.at(i).get('description')?.touched"
-                          [class.ng-dirty]="previousExperiences.at(i).get('description')?.invalid && previousExperiences.at(i).get('description')?.touched">
-                        </textarea>
-                        <small *ngIf="previousExperiences.at(i).get('description')?.invalid && previousExperiences.at(i).get('description')?.touched" class="p-error">
-                          Description is required.
-                        </small>
-                      </div>
-                    </div>
-                  </div>
-                  <button 
-                    pButton 
-                    pRipple 
-                    type="button" 
-                    icon="pi pi-trash" 
-                    class="p-button-danger p-button-sm" 
-                    (click)="removeExperience(i)"></button>
-                </div>
+              <div formArrayName="previousExperiences">
+                <ng-container *ngFor="let exp of previousExperiences.controls; let i = index">
+                  <app-previous-experience-form
+                    [experienceForm]="getFormGroupAt(i)"
+                    [index]="i"
+                    (removeExperienceEvent)="removeExperience($event)">
+                  </app-previous-experience-form>
+                </ng-container>
               </div>
               <button 
                 pButton 
