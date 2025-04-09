@@ -7,7 +7,7 @@ import { PreviousExperience } from 'src/app/demo/models/previous-experience.mode
 import { User } from 'src/app/demo/models/user.model';
 import { MentorApplicationService } from 'src/app/demo/services/mentor-application.service';
 import { PreviousExperienceService } from 'src/app/demo/services/previous-experience.service';
-import { switchMap, of, forkJoin, tap, catchError, finalize } from 'rxjs';
+import { switchMap, of, forkJoin, tap, catchError, finalize, EMPTY, map } from 'rxjs';
 
 @Component({
   selector: 'app-mentor-application-form',
@@ -270,104 +270,98 @@ export class MentorApplicationFormComponent implements OnInit {
   private updateApplication(application: MentorApplication): void {
     console.log('Updating application:', application);
     
-    // Create FormData for update - similar to create method for consistency
-    const formData = new FormData();
-    
-    // Add each field individually
-    formData.append('applicationText', application.applicationText);
-    
-    // For arrays like links, use indexed notation
-    if (application.links && application.links.length > 0) {
-      application.links.forEach((link, index) => {
-        formData.append(`links[${index}]`, link);
-      });
-    }
-    
-    formData.append('hasPreviousExperience', application.hasPreviousExperience.toString());
-    formData.append('status', application.status);
-    
-    // Add files if new ones uploaded
-    if (this.cvFile) {
-      console.log('Uploading new CV file');
-      formData.append('cvFile', this.cvFile);
-    }
-    
-    if (this.uploadPaperFile) {
-      console.log('Uploading new paper file');
-      formData.append('uploadPaperFile', this.uploadPaperFile);
-    }
-  
-    this.mentorAppService.updateApplicationFormData(this.applicationId!, formData)
-      .subscribe({
-        next: (updatedApp) => {
-          console.log('Application updated successfully:', updatedApp);
-          
-          if (application.hasPreviousExperience) {
-            console.log('Handling previous experiences');
-            // First delete existing experiences, then save new ones
-            this.previousExperienceService.deleteExperiencesByApplicationId(this.applicationId!)
-              .pipe(
-                tap(() => console.log('Deleted existing experiences')),
-                switchMap(() => {
-                  if (this.previousExperiences.length > 0) {
-                    console.log('Saving new experiences');
-                    return of(this.savePreviousExperiences(this.applicationId!));
-                  }
-                  console.log('No experiences to save');
-                  return of(this.handleSuccessfulSubmission(this.applicationId!, 'updated'));
-                }),
-                catchError(err => {
-                  console.error('Error handling experiences:', err);
-                  this.handleSubmissionError(err);
-                  return of(null);
-                })
-              )
-              .subscribe();
-          } else {
-            // If no previous experience, just delete any existing ones
-            console.log('No previous experience selected, deleting any existing ones');
-            this.previousExperienceService.deleteExperiencesByApplicationId(this.applicationId!)
-              .subscribe({
-                next: () => this.handleSuccessfulSubmission(this.applicationId!, 'updated'),
-                error: (err) => this.handleSubmissionError(err)
-              });
-          }
-        },
-        error: (err) => {
-          this.handleSubmissionError(err);
-        }
-      });
-  }
+    this.mentorAppService.updateApplication(
+        this.applicationId!, 
+        application, 
+        this.cvFile || undefined, 
+        this.uploadPaperFile || undefined
+    )
+    .pipe(
+        catchError(err => {
+            console.error('Error updating application:', err);
+            this.handleSubmissionError(err);
+            return EMPTY;
+        }),
+        switchMap(updatedApp => {
+            console.log('Application updated successfully:', updatedApp);
+            
+            if (application.hasPreviousExperience) {
+                console.log('Handling previous experiences');
+                // First delete existing experiences
+                return this.previousExperienceService.deleteExperiencesByApplicationId(this.applicationId!)
+                    .pipe(
+                        tap(() => console.log('Deleted existing experiences')),
+                        catchError(err => {
+                            console.error('Error deleting experiences:', err);
+                            this.handleSubmissionError(err);
+                            return EMPTY;
+                        }),
+                        // Then save new ones if there are any
+                        switchMap(() => {
+                            if (this.previousExperiences.length > 0) {
+                                this.savePreviousExperiences(this.applicationId!);
+                            } else {
+                                this.handleSuccessfulSubmission(this.applicationId!, 'updated');
+                            }
+                            return of(updatedApp);
+                        })
+                    );
+            } else {
+                // If no previous experience, just delete any existing ones
+                return this.previousExperienceService.deleteExperiencesByApplicationId(this.applicationId!)
+                    .pipe(
+                        tap(() => this.handleSuccessfulSubmission(this.applicationId!, 'updated')),
+                        catchError(err => {
+                            console.error('Error deleting experiences:', err);
+                            this.handleSubmissionError(err);
+                            return EMPTY;
+                        }),
+                        map(() => updatedApp)
+                    );
+            }
+        })
+    )
+    .subscribe();
+}
 
   private savePreviousExperiences(applicationId: number): void {
     const experiences = this.previousExperiences.value as PreviousExperience[];
     console.log('Saving experiences:', experiences);
     
-    const requests = experiences.map(exp => {
-      console.log('Creating experience:', exp);
-      return this.previousExperienceService.createExperience(applicationId, exp);
-    });
-    
-    // If there are no experiences to save, consider it successful
-    if (requests.length === 0) {
-      console.log('No experiences to save');
-      this.handleSuccessfulSubmission(applicationId, this.isEditMode ? 'updated' : 'created');
-      return;
+    if (experiences.length === 0) {
+        console.log('No experiences to save');
+        this.handleSuccessfulSubmission(applicationId, this.isEditMode ? 'updated' : 'created');
+        return;
     }
     
-    // Use forkJoin to handle multiple requests
+    const requests = experiences.map(exp => {
+        // Make sure each experience is properly formatted
+        const formattedExp: PreviousExperience = {
+            hackathonName: exp.hackathonName,
+            year: exp.year,
+            description: exp.description,
+            numberOfTeamsCoached: exp.numberOfTeamsCoached
+        };
+        
+        console.log('Creating experience:', formattedExp);
+        return this.previousExperienceService.createExperience(applicationId, formattedExp);
+    });
+    
     forkJoin(requests)
-      .subscribe({
-        next: (results) => {
-          console.log('All experiences saved successfully:', results);
-          this.handleSuccessfulSubmission(applicationId, this.isEditMode ? 'updated' : 'created');
-        },
-        error: (err) => {
-          console.error('Error saving experiences:', err);
-          this.handleSubmissionError(err);
-        }
-      });
-  }
+        .pipe(
+            catchError(err => {
+                console.error('Error saving experiences:', err);
+                this.handleSubmissionError(err);
+                return of(null);
+            })
+        )
+        .subscribe(results => {
+            if (results) {
+                console.log('All experiences saved successfully:', results);
+                this.handleSuccessfulSubmission(applicationId, this.isEditMode ? 'updated' : 'created');
+            }
+        });
+}
 
   private handleSuccessfulSubmission(applicationId: number, action: 'created' | 'updated'): void {
     this.messageService.add({

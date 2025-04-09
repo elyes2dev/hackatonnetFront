@@ -69,23 +69,32 @@ export class MentorApplicationService {
   updateApplication(id: number, application: MentorApplication, cvFile?: File, uploadPaperFile?: File): Observable<MentorApplication> {
     const formData = new FormData();
 
-    formData.append('application', new Blob([JSON.stringify(application)], {
-      type: 'application/json'
-    }));
+    // Add each field individually
+    formData.append('applicationText', application.applicationText);
 
+    // For arrays like links, use indexed notation
+    if (application.links && application.links.length > 0) {
+        application.links.forEach((link, index) => {
+            formData.append(`links[${index}]`, link);
+        });
+    }
+
+    formData.append('hasPreviousExperience', application.hasPreviousExperience.toString());
+    formData.append('status', application.status);
+
+    // Add files if provided
     if (cvFile) {
-      formData.append('cvFile', cvFile);
+        formData.append('cvFile', cvFile);
     }
     if (uploadPaperFile) {
-      formData.append('uploadPaperFile', uploadPaperFile);
+        formData.append('uploadPaperFile', uploadPaperFile);
     }
 
     return this.http.put<MentorApplication>(`${this.apiUrl}/${id}`, formData);
-  }
-  updateApplicationFormData(id: number, formData: FormData): Observable<MentorApplication> {
-    console.log('Sending form data update request for application ID:', id);
-    return this.http.put<MentorApplication>(`${this.apiUrl}/${id}`, formData);
-  }
+}
+
+// You can remove updateApplicationFormData and just use the above method
+
 
   downloadCv(id: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${id}/cv`, {
