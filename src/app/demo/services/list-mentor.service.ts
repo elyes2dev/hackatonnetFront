@@ -2,48 +2,59 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MentorApplication, ApplicationStatus } from '../models/mentor-application.model';
+import { ListMentor } from '../models/list-mentor.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MentorApplicationService {
-  private apiUrl = `http://localhost:9100/api/mentor-applications`;
+export class ListMentorService {
+  private baseUrl = 'http://localhost:9100/api/list-mentors';
 
   constructor(private http: HttpClient) { }
 
-  createApplication(application: MentorApplication): Observable<MentorApplication> {
-    return this.http.post<MentorApplication>(this.apiUrl, application);
+  // Create a new mentor listing
+  // Create a new mentor listing (simplified for your static user/hackathon case)
+  createListMentor(numberOfTeams: number): Observable<ListMentor> {
+    // The backend will set the static user and hackathon, so we only need to send numberOfTeams
+    const listMentor = {
+      numberOfTeams: numberOfTeams,
+      // These will be overwritten by the backend, but providing empty objects to match the interface
+      mentor: {} as any,
+      hackathon: {} as any
+    };
+    
+    return this.http.post<ListMentor>(this.baseUrl, listMentor);
   }
 
-  getAllApplications(): Observable<MentorApplication[]> {
-    return this.http.get<MentorApplication[]>(this.apiUrl);
+  // Get all mentor listings
+  getAllListMentors(): Observable<ListMentor[]> {
+    return this.http.get<ListMentor[]>(this.baseUrl);
   }
 
-  getApplicationById(id: number): Observable<MentorApplication> {
-    return this.http.get<MentorApplication>(`${this.apiUrl}/${id}`);
+  // Get mentor listing by ID
+  getListMentorById(id: number): Observable<ListMentor> {
+    return this.http.get<ListMentor>(`${this.baseUrl}/${id}`);
   }
 
-  getApplicationsByMentorId(mentorId: number): Observable<MentorApplication[]> {
-    return this.http.get<MentorApplication[]>(`${this.apiUrl}/mentor/${mentorId}`);
+  // Get listings by mentor ID
+  getListMentorsByMentorId(mentorId: number): Observable<ListMentor[]> {
+    return this.http.get<ListMentor[]>(`${this.baseUrl}/mentor/${mentorId}`);
   }
 
-  getApplicationsByStatus(status: ApplicationStatus): Observable<MentorApplication[]> {
-    return this.http.get<MentorApplication[]>(`${this.apiUrl}/status/${status}`);
+  // Get listings by hackathon ID
+  getListMentorsByHackathonId(hackathonId: number): Observable<ListMentor[]> {
+    return this.http.get<ListMentor[]>(`${this.baseUrl}/hackathon/${hackathonId}`);
   }
 
-  getApplicationsByExperience(hasPreviousExperience: boolean): Observable<MentorApplication[]> {
-    return this.http.get<MentorApplication[]>(`${this.apiUrl}/experience?hasPreviousExperience=${hasPreviousExperience}`);
+  updateListMentor(id: number, numberOfTeams: number): Observable<ListMentor> {
+    const listMentor = {
+      numberOfTeams: numberOfTeams
+    };
+    return this.http.put<ListMentor>(`${this.baseUrl}/${id}`, listMentor);
   }
 
-  updateApplication(id: number, application: MentorApplication): Observable<MentorApplication> {
-    return this.http.put<MentorApplication>(`${this.apiUrl}/${id}`, application);
-  }
-
-  updateApplicationStatus(id: number, status: ApplicationStatus): Observable<MentorApplication> {
-    return this.http.patch<MentorApplication>(`${this.apiUrl}/${id}/status?status=${status}`, {});
-  }
-
-  deleteApplication(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  // Delete a mentor listing
+  deleteListMentor(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

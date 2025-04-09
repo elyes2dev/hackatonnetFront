@@ -7,6 +7,8 @@ import { MentorApplicationDetailsComponent } from './demo/components/mentor-appl
 import { MentorApplicationFormComponent } from './demo/components/mentor-application/mentor-application-form/mentor-application-form.component';
 import { MentorApplicationListComponent } from './demo/components/mentor-application/mentor-application-list/mentor-application-list.component';
 import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor-application/mentor-application-details-admin/mentor-application-details-admin.component';
+import { ListMentorFormComponent } from './demo/components/list-mentor/list-mentor-form/list-mentor-form.component';
+import { ListMentorListComponent } from './demo/components/list-mentor/list-mentor-list/list-mentor-list.component';
 
 
 @NgModule({
@@ -26,6 +28,8 @@ import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor
 
                     { path: 'mentor-applications', component: MentorApplicationListComponent },
                     { path: 'mentor-applications-admin/:id', component: MentorApplicationDetailsAdminComponent },
+                    { path: 'list-mentors', component: ListMentorListComponent },
+                    { path: 'mentor/edit/:id', component: ListMentorFormComponent },
 
                     { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },
                 ],
@@ -38,7 +42,9 @@ import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor
                 path: 'mentor-applications/:id/edit', 
                 component: MentorApplicationFormComponent
               },
-              
+              { path: 'mentor-form', component: ListMentorFormComponent },
+
+
             { path: 'pages/notfound', component: NotfoundComponent },
             { path: '**', redirectTo: 'pages/notfound' },
 

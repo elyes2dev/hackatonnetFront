@@ -48,6 +48,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { FooterComponent } from './demo/components/landing/footer/footer.component';
 import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
 import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor-application/mentor-application-details-admin/mentor-application-details-admin.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -84,6 +86,14 @@ import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor
         CheckboxModule,
         FileUploadModule,
         CalendarModule,
+        RippleModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        FormsModule,
+        TableModule,
+        ButtonModule,
+        ToastModule,
         RippleModule
     ],
     providers: [

@@ -1,1 +1,50 @@
-<p>list-mentor-form works!</p>
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h2>{{ isEditMode ? 'Edit Mentor Listing' : 'Create Mentor Listing' }}</h2>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="mentorForm" (ngSubmit)="onSubmit()">
+        
+        <div class="alert alert-danger" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <div class="mb-3">
+          <label for="numberOfTeams" class="form-label">Number of Teams</label>
+          <input 
+            type="number" 
+            class="form-control" 
+            id="numberOfTeams"
+            formControlName="numberOfTeams"
+            min="1">
+          
+          <div *ngIf="mentorForm.get('numberOfTeams')?.invalid && (mentorForm.get('numberOfTeams')?.dirty || mentorForm.get('numberOfTeams')?.touched)">
+            <small class="text-danger" *ngIf="mentorForm.get('numberOfTeams')?.errors?.['required']">
+              Number of teams is required.
+            </small>
+            <small class="text-danger" *ngIf="mentorForm.get('numberOfTeams')?.errors?.['min']">
+              Number of teams must be at least 1.
+            </small>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button 
+            type="button" 
+            class="btn btn-secondary" 
+            (click)="cancel()">
+            Cancel
+          </button>
+          
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="mentorForm.invalid || isSubmitting">
+            {{ isSubmitting ? 'Processing...' : (isEditMode ? 'Update' : 'Create') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
