@@ -8,7 +8,8 @@
             icon="pi pi-plus" 
             label="Add Resource" 
             class="p-button-primary add-resource-btn"
-            [routerLink]="['/workshopsf', workshopId, 'resources', 'new']">
+            [routerLink]="['/workshopsf', workshopId, 'resources', 'new']"
+            *ngIf="userIsOwner">
     </button>
         <!-- New Back to Workshop List Button -->
         <button pButton 
@@ -36,12 +37,14 @@
           <button pButton 
                   icon="pi pi-pencil" 
                   class="p-button-rounded p-button-warning" 
-                  [routerLink]="['/workshopsf', workshopId, 'resources', resource.id, 'edit']">
+                  [routerLink]="['/workshopsf', workshopId, 'resources', resource.id, 'edit']"
+                  *ngIf="userIsOwner">
           </button>
           <button pButton 
                   icon="pi pi-trash" 
                   class="p-button-rounded p-button-danger" 
-                  (click)="deleteResource(resource.id)">
+                  (click)="deleteResource(resource.id)"
+                  *ngIf="userIsOwner">
           </button>
         </div>
       </div>

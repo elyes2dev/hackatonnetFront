@@ -196,21 +196,26 @@
         >
           {{ favorites.includes(workshop.id) ? ' Unfavorite' : ' Favorite' }}
         </button>
-        <!-- Other buttons (Edit, Delete, etc.) -->
+
+        <!-- Edit Button (Only show if user is the owner of the workshop) -->
         <button
           pButton
           icon="pi pi-pencil"
           class="p-button-rounded p-button-success"
           [routerLink]="['/workshopsf', workshop.id, 'edit']"
+          *ngIf="isOwner(workshop.user.id)"
         ></button>
 
+        <!-- Delete Button (Only show if user is the owner of the workshop) -->
         <button
           pButton
           icon="pi pi-trash"
           class="p-button-rounded p-button-danger"
           (click)="deleteWorkshop(workshop.id)"
+          *ngIf="isOwner(workshop.user.id)"
         ></button>
 
+        <!-- View Resources Button -->
         <button
           pButton
           icon="pi pi-list"
@@ -218,6 +223,7 @@
           [routerLink]="['/workshopsf', workshop.id, 'resources']"
         ></button>
 
+        <!-- View Quizzes Button -->
         <button
           pButton
           icon="pi pi-question-circle"
@@ -227,6 +233,7 @@
           tooltipPosition="top"
         ></button>
 
+        <!-- Add New Quiz Button (Only show if user is the owner of the workshop) -->
         <button
           pButton
           icon="pi pi-plus"
@@ -234,6 +241,7 @@
           [routerLink]="['/workshopsf', workshop.id, 'quizzes', 'new']"
           pTooltip="Add new quiz"
           tooltipPosition="top"
+          *ngIf="isOwner(workshop.user.id)"
         ></button>
       </div>
     </div>

@@ -5,6 +5,8 @@ import { ImageModel } from 'src/app/demo/models/image.model';
 import { Resources } from 'src/app/demo/models/resources.model';
 import { ImageService } from 'src/app/demo/services/image.service';
 import { ResourceService } from 'src/app/demo/services/resources.service';
+import { UserService } from 'src/app/demo/services/user.service';
+import { WorkshopService } from 'src/app/demo/services/workshop.service';
 
 @Component({
   selector: 'app-resourcef-list',
@@ -24,6 +26,12 @@ export class ResourcefListComponent implements OnInit {
     }
   } = {};
 
+  userIsOwner: boolean = false; // To check if the current user is the owner
+
+
+  userId: string | null = localStorage.getItem('loggedid'); // Get user ID from localStorage
+  workshopOwnerId: string = ''; // Initialize the workshop owner's ID
+
   // To track the visibility of files for each resource
   fileVisibility: Map<number, boolean> = new Map();
   
@@ -37,13 +45,18 @@ export class ResourcefListComponent implements OnInit {
     private route: ActivatedRoute,
     private resourceService: ResourceService,
     private imageService: ImageService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private userService: UserService,
+    private workshopService: WorkshopService
   ) { }
 
   ngOnInit(): void {
     this.workshopId = +this.route.snapshot.params['workshopId'];
     this.loadResources();
-  }
+    this.checkIfUserIsOwner(); // Check if the user is the owner of the workshop
+  } 
+
+  
 
   loadResources(): void {
     this.loading = true;
@@ -232,4 +245,19 @@ export class ResourcefListComponent implements OnInit {
   isFilesOpen(resourceId: number): boolean {
     return !!this.fileVisibility.get(resourceId);
   }
+
+
+  // Fetch the logged-in user ID and compare with the owner of the workshop
+  checkIfUserIsOwner(): void {
+    const loggedUserId = localStorage.getItem('loggedid') ? parseInt(localStorage.getItem('loggedid')!, 10) : null;
+  
+    if (loggedUserId !== null && this.workshopId) {
+      this.workshopService.getWorkshopById(this.workshopId).subscribe({
+        next: (workshop) => {
+          this.userIsOwner = (workshop?.user?.id === loggedUserId); // Set the userIsOwner based on the comparison
+        }
+      });
+    }
+}
+
 }

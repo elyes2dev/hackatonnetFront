@@ -105,4 +105,11 @@ export class WorkshoplistfComponent implements OnInit {
       });
     }
   }
+
+
+    // Check if the logged-in user is the owner of the workshop
+    isOwner(workshopOwnerId: number): boolean {
+      const userId = localStorage.getItem('loggedid');
+      return userId ? parseInt(userId) === workshopOwnerId : false;
+    }
 }

@@ -6,6 +6,7 @@ import { Quiz } from 'src/app/demo/models/quiz.model';
 import { QuestionService } from 'src/app/demo/services/question.service';
 import { Question } from 'src/app/demo/models/question.model';
 import { StorageService } from 'src/app/demo/services/storage.service'; // Import StorageService
+import { WorkshopService } from 'src/app/demo/services/workshop.service';
 
 @Component({
   selector: 'app-quizf-list',
@@ -27,6 +28,8 @@ export class QuizfListComponent implements OnInit {
     questions: []
   };
   hasQuiz: boolean = false; // Track if the user has a quiz
+  userIsOwner: boolean = false; // To check if the current user is the owner
+
 
   constructor(
     private quizService: QuizService,
@@ -34,7 +37,9 @@ export class QuizfListComponent implements OnInit {
     private questionService: QuestionService,
     private route: ActivatedRoute,
     private router: Router,
-    private storageService: StorageService // Inject StorageService
+    private storageService: StorageService, // Inject StorageService
+    private workshopService: WorkshopService
+    
   ) {}
 
   ngOnInit(): void {
@@ -49,6 +54,8 @@ export class QuizfListComponent implements OnInit {
 
     this.workshopId = +this.route.snapshot.params['workshopId'];
     this.fetchQuizzes();
+    this.checkIfUserIsOwner(); // <-- add this line
+
   }
 
   fetchQuizzes(): void {
@@ -169,4 +176,19 @@ export class QuizfListComponent implements OnInit {
     // Navigate back to the workshop list
     this.router.navigate(['/workshopsf']);  // Adjust the route as needed
   }
+
+
+  // Fetch the logged-in user ID and compare with the owner of the workshop
+  checkIfUserIsOwner(): void {
+    const loggedUserId = localStorage.getItem('loggedid') ? parseInt(localStorage.getItem('loggedid')!, 10) : null;
+  
+    if (loggedUserId !== null) {
+      this.workshopService.getWorkshopById(this.workshopId).subscribe({
+        next: (workshop) => {
+          this.userIsOwner = (workshop?.user?.id === loggedUserId); // Set the userIsOwner based on the comparison
+        }
+      });
+    }
+}
+
 }

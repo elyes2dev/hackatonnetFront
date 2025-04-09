@@ -18,9 +18,10 @@
       <i class="fas fa-arrow-left"></i> Go Back to Workshop
     </button>
     
-    <button *ngIf="!hasQuiz" (click)="goToAdd()" class="btn btn-add">
-        <i class="fas fa-plus"></i> Add New Quiz
-      </button>
+    <button *ngIf="!hasQuiz && userIsOwner" (click)="goToAdd()" class="btn btn-add">
+      <i class="fas fa-plus"></i> Add New Quiz
+    </button>
+    
     
     <div *ngIf="hasQuiz" class="no-new-quiz-message">
       <i class="fas fa-info-circle"></i> You already have a quiz for this workshop.
@@ -45,16 +46,20 @@
             </span>
           </td>
           <td data-label="Actions" class="actions">
-            <button (click)="goToDetails(quiz.id_quiz!)" class="btn btn-view" title="View Details">
+            <button *ngIf="userIsOwner" (click)="goToDetails(quiz.id_quiz!)" class="btn btn-view" title="View Details">
               <i class="fas fa-eye"></i>
             </button>
             
-            <button (click)="goToEdit(quiz.id_quiz!)" class="btn btn-edit" 
-                    [title]="quizStatusMap[quiz.id_quiz!] ? 'View Results' : 'Edit Quiz'">
-              <i [class]="quizStatusMap[quiz.id_quiz!] ? 'fas fa-trophy' : 'fas fa-edit'"></i>
-            </button>
+            <button *ngIf="userIsOwner || quizStatusMap[quiz.id_quiz!]" 
+            (click)="goToEdit(quiz.id_quiz!)" 
+            class="btn btn-edit"
+            [title]="quizStatusMap[quiz.id_quiz!] ? 'View Results' : 'Edit Quiz'">
+      
+      <i [class]="quizStatusMap[quiz.id_quiz!] ? 'fas fa-trophy' : 'fas fa-edit'"></i>
+    </button>
+    
             
-            <button (click)="deleteQuiz(quiz.id_quiz!)" class="btn btn-delete" title="Delete Quiz">
+            <button *ngIf="userIsOwner" (click)="deleteQuiz(quiz.id_quiz!)" class="btn btn-delete" title="Delete Quiz">
               <i class="fas fa-trash-alt"></i>
             </button>
             

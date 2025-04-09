@@ -73,7 +73,7 @@ export class QuizfScoreAddComponent implements OnInit, OnDestroy {
   }
 
   startTimer(): void {
-    this.timerSubscription = interval(10).subscribe(() => {
+    this.timerSubscription = interval(600).subscribe(() => {
       if (this.remainingTime > 0) {
         this.remainingTime--;
         this.updateProgress();
