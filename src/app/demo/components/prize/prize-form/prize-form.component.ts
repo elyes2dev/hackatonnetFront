@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { Prize, PrizeCategory, PrizeType } from 'src/app/demo/models/prize';
 import { PrizeService } from 'src/app/demo/services/prize.service';
+import { MessageService, ConfirmationService } from 'primeng/api'; // Import PrimeNG services
 
 @Component({
   selector: 'app-prize-form',
@@ -20,13 +21,12 @@ export class PrizeFormComponent implements OnInit {
   // Form states
   submitting = false;
   submitted = false;
-  successMessage = '';
-  errorMessage = '';
   
   constructor(
     private fb: FormBuilder,
     private prizeService: PrizeService,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService // Add PrimeNG MessageService
   ) { }
 
   ngOnInit(): void {
@@ -81,14 +81,10 @@ export class PrizeFormComponent implements OnInit {
     return category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
-  // Clear alert messages
-  clearSuccessMessage(): void {
-    this.successMessage = '';
-  }
-
-  clearErrorMessage(): void {
-    this.errorMessage = '';
-  }
+  // These methods are no longer needed as we use PrimeNG toast
+  // But keep them empty for compatibility with existing code
+  clearSuccessMessage(): void {}
+  clearErrorMessage(): void {}
 
   onSubmit(): void {
     this.submitted = true;
@@ -125,14 +121,27 @@ export class PrizeFormComponent implements OnInit {
       .subscribe(
         (createdPrize) => {
           console.log('Prize created successfully:', createdPrize);
-          this.successMessage = 'Prize created successfully!';
+          
+          // Replace success message with PrimeNG toast
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Prize created successfully!'
+          });
+          
           setTimeout(() => {
             this.router.navigate(['/sponsor-prizes']);
           }, 2000);
         },
         (error) => {
           console.error('Error creating prize:', error);
-          this.errorMessage = error.message || 'Failed to create prize. Please try again.';
+          
+          // Replace error message with PrimeNG toast
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.message || 'Failed to create prize. Please try again.'
+          });
         }
       );
   }

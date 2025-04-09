@@ -1,21 +1,12 @@
 <app-navbar></app-navbar>
 <!-- src/app/sponsor-application-form/sponsor-application-form.component.html -->
 <div class="card-container">
+  <!-- Add PrimeNG Toast component -->
+  <p-toast></p-toast>
+  
   <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="form">
     <div class="title">Sponsor Application<br><span>Fill out the form to continue</span></div>
     
-    <!-- Success Message -->
-    <div *ngIf="successMessage" class="alert-success" role="alert">
-      {{successMessage}}
-      <button type="button" class="close-btn" data-bs-dismiss="alert" aria-label="Close">×</button>
-    </div>
-    
-    <!-- Error Message -->
-    <div *ngIf="errorMessage" class="alert-danger" role="alert">
-      {{errorMessage}}
-      <button type="button" class="close-btn" data-bs-dismiss="alert" aria-label="Close">×</button>
-    </div>
-
     <!-- Company Name -->
     <input
       type="text"

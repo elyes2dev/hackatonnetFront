@@ -3,6 +3,7 @@ import { ApplicationStatus } from 'src/app/demo/models/application-status';
 import { Hackathon } from 'src/app/demo/models/hackathon';
 import { Prize, PrizeType, SponsorInfoDTO } from 'src/app/demo/models/prize';
 import { PrizeService } from 'src/app/demo/services/prize.service';
+import { ConfirmationService, MessageService } from 'primeng/api'; // Import PrimeNG services
 
 @Component({
   selector: 'app-sponsor-prizes',
@@ -20,7 +21,11 @@ export class SponsorPrizesComponent implements OnInit {
   PrizeType = PrizeType;
   ApplicationStatus = ApplicationStatus;
 
-  constructor(private prizeService: PrizeService) { }
+  constructor(
+    private prizeService: PrizeService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
+  ) { }
 
   ngOnInit(): void {
     this.loadPrizes();
@@ -45,6 +50,13 @@ export class SponsorPrizesComponent implements OnInit {
         this.error = 'Failed to load prizes. Please try again.';
         this.loading = false;
         console.error('Error loading prizes:', err);
+        
+        // Add toast message instead of using plain error text
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load prizes. Please try again.'
+        });
       }
     });
   }
@@ -57,6 +69,13 @@ export class SponsorPrizesComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading sponsor info:', err);
+        
+        // Add toast message for error
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load sponsor information.'
+        });
       }
     });
   }
@@ -69,27 +88,52 @@ export class SponsorPrizesComponent implements OnInit {
     // Check if hackathon has already started
     const now = new Date();
     if (prize.hackathon && prize.hackathon.startDate && new Date(prize.hackathon.startDate) < now) {
-      alert('Cannot cancel prize: The hackathon has already started.');
+      // Replace alert with PrimeNG toast
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Cannot Cancel',
+        detail: 'Cannot cancel prize: The hackathon has already started.'
+      });
       return;
     }
 
-    if (confirm('Are you sure you want to cancel this prize?')) {
-      this.prizeService.cancelPrize(prizeId).subscribe({
-        next: () => {
-          // Refresh prizes list after cancellation
-          this.loadPrizes();
-        },
-        error: (err) => {
-          console.error('Error cancelling prize:', err);
-          // Display the specific error message from the backend if available
-          if (err.error && err.error.message) {
-            alert(err.error.message);
-          } else {
-            alert('Failed to cancel prize. Please try again.');
+    // Replace confirm with PrimeNG confirmationService
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to cancel this prize?',
+      header: 'Confirm Cancellation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.prizeService.cancelPrize(prizeId).subscribe({
+          next: () => {
+            // Show success message
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Prize has been cancelled successfully.'
+            });
+            // Refresh prizes list after cancellation
+            this.loadPrizes();
+          },
+          error: (err) => {
+            console.error('Error cancelling prize:', err);
+            // Display the specific error message from the backend if available
+            if (err.error && err.error.message) {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: err.error.message
+              });
+            } else {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to cancel prize. Please try again.'
+              });
+            }
           }
-        }
-      });
-    }
+        });
+      }
+    });
   }
 
   getCategoryLabel(category: string): string {

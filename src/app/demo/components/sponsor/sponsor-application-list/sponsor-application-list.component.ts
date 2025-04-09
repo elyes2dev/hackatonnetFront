@@ -48,7 +48,14 @@ export class SponsorApplicationListComponent implements OnInit {
       error: (error) => {
         console.error('Error loading applications', error);
         this.loading = false;
-        alert('Failed to load applications. Please try again later.');
+        // Replace this alert:
+        // alert('Failed to load applications. Please try again later.');
+        // With this:
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load applications. Please try again later.'
+        });
       }
     });
   }

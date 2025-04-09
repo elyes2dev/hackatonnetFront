@@ -11,7 +11,7 @@ export class SponsorApplicationService {
   private baseUrl = 'http://localhost:9100/sponsor-application';
   
   // For testing without authentication - static user ID
-  private staticUserId = 18; // Change this to your test user ID
+  private staticUserId = 17; // Change this to your test user ID
 
   constructor(private http: HttpClient) { }
 

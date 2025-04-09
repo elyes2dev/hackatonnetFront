@@ -6,6 +6,7 @@ import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { SponsorApplicationService } from 'src/app/demo/services/sponsor-application.service';
 import { FileUploadService } from 'src/app/demo/services/file-upload.service';
 import { SponsorApplication } from 'src/app/demo/models/sponsor-application';
+import { MessageService } from 'primeng/api'; // Import PrimeNG MessageService
 
 interface UploadResult {
   filePath: string | null;
@@ -24,10 +25,6 @@ export class SponsorApplicationFormComponent implements OnInit {
   logoPreview: string | null = null;
   isDocumentRequired = true;
   
-  // For error handling
-  errorMessage: string | null = null;
-  successMessage: string | null = null;
-
   // For file upload progress
   logoUploadProgress = 0;
   documentUploadProgress = 0;
@@ -36,7 +33,8 @@ export class SponsorApplicationFormComponent implements OnInit {
     private fb: FormBuilder,
     private sponsorService: SponsorApplicationService,
     private fileUploadService: FileUploadService,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService // Add PrimeNG MessageService
   ) { }
 
   ngOnInit(): void {
@@ -56,13 +54,21 @@ export class SponsorApplicationFormComponent implements OnInit {
     if (file) {
       // Validate file type
       if (!this.isValidImageType(file)) {
-        alert('Please select a valid image file (JPEG, PNG, GIF)');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Invalid File',
+          detail: 'Please select a valid image file (JPEG, PNG, GIF)'
+        });
         return;
       }
       
       // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
-        alert('Logo file size should not exceed 2MB');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'File Too Large',
+          detail: 'Logo file size should not exceed 2MB'
+        });
         return;
       }
       
@@ -82,13 +88,21 @@ export class SponsorApplicationFormComponent implements OnInit {
     if (file) {
       // Validate file type
       if (!this.isValidDocumentType(file)) {
-        alert('Please select a valid document file (PDF, DOC, DOCX)');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Invalid File',
+          detail: 'Please select a valid document file (PDF, DOC, DOCX)'
+        });
         return;
       }
       
       // Validate file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
-        alert('Document file size should not exceed 10MB');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'File Too Large',
+          detail: 'Document file size should not exceed 10MB'
+        });
         return;
       }
       
@@ -137,16 +151,17 @@ export class SponsorApplicationFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.errorMessage = null;
-    this.successMessage = null;
-    
     if (this.applicationForm.invalid) {
       this.applicationForm.markAllAsTouched();
       return;
     }
     
     if (!this.selectedDocument && this.isDocumentRequired) {
-      this.errorMessage = 'Please select a business document to upload';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Missing Document',
+        detail: 'Please select a business document to upload'
+      });
       return;
     }
     
@@ -177,7 +192,12 @@ export class SponsorApplicationFormComponent implements OnInit {
               next: (response) => {
                 console.log('Application submitted successfully', response);
                 this.isSubmitting = false;
-                this.successMessage = 'Application submitted successfully! We will review your application soon.';
+                
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Success',
+                  detail: 'Application submitted successfully! We will review your application soon.'
+                });
                 
                 // Reset form after successful submission
                 setTimeout(() => {
@@ -187,21 +207,36 @@ export class SponsorApplicationFormComponent implements OnInit {
               error: (error: any) => {
                 console.error('Error submitting application', error);
                 this.isSubmitting = false;
-                this.errorMessage = error.error?.message || 'Failed to submit application. Please try again later.';
+                
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Application Error',
+                  detail: error.error?.message || 'Failed to submit application. Please try again later.'
+                });
               }
             });
           },
           error: (error: any) => {
             console.error('Error uploading document', error);
             this.isSubmitting = false;
-            this.errorMessage = 'Failed to upload document. Please try again.';
+            
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Upload Error',
+              detail: 'Failed to upload document. Please try again.'
+            });
           }
         });
       },
       error: (error: any) => {
         console.error('Error uploading logo', error);
         this.isSubmitting = false;
-        this.errorMessage = 'Failed to upload company logo. Please try again.';
+        
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Upload Error',
+          detail: 'Failed to upload company logo. Please try again.'
+        });
       }
     });
   }
