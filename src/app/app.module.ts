@@ -50,6 +50,7 @@ import { NavbarComponent } from './demo/components/landing/navbar/navbar.compone
 import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor-application/mentor-application-details-admin/mentor-application-details-admin.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MessageService } from 'primeng/api';
 
 
 @NgModule({
@@ -79,6 +80,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         CardModule,
         TagModule,
         ProgressSpinnerModule,
+        ToastModule,
+
             // PrimeNG Modules
         InputTextModule,
         InputTextareaModule,
@@ -99,7 +102,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
+        PhotoService, ProductService,    MessageService
+
     ],
     bootstrap: [AppComponent]
 })

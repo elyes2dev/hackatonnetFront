@@ -1,1 +1,52 @@
-<p>mentor-evaluation-form works!</p>
+<app-navbar></app-navbar>
+<div class="grid">
+  <div class="col-12">
+    <p-toast></p-toast>
+    <div class="card">
+      <h5>{{ isEditMode ? 'Edit' : 'New' }} Mentor Evaluation</h5>
+      <form (ngSubmit)="submitEvaluation()">
+        <div class="p-fluid p-formgrid grid">
+          <!-- Rating -->
+          <div class="field col-12">
+            <label for="rating">Rating (0-5)</label>
+            <p-rating
+              [(ngModel)]="evaluation.rating"
+              id="rating"
+              name="rating"
+              [cancel]="true"
+              [stars]="5"
+              [required]="true"
+              style="font-size: 1.5rem"></p-rating>
+            <small *ngIf="submitted && (evaluation.rating < 0 || evaluation.rating > 5)" class="p-error">
+              Rating must be between 0 and 5
+            </small>
+          </div>
+          
+          <!-- Feedback -->
+          <div class="field col-12">
+            <label for="feedback">Feedback</label>
+            <textarea
+              pInputTextarea
+              id="feedback"
+              rows="4"
+              [(ngModel)]="evaluation.feedbackText"
+              name="feedbackText"
+              required></textarea>
+            <small *ngIf="submitted && !evaluation.feedbackText" class="p-error">
+              Feedback is required
+            </small>
+          </div>
+          
+          <!-- Submit button -->
+          <div class="field col-12">
+            <button pButton type="submit" label="{{ isEditMode ? 'Update' : 'Submit' }} Evaluation" class="p-button-primary"></button>
+            <button *ngIf="isEditMode" pButton type="button" label="Cancel" 
+            class="p-button-secondary ml-2" (click)="router.navigate(['/mydashboard'])">
+        </button>
+                  </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

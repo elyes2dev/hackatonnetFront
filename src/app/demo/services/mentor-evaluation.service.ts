@@ -31,12 +31,29 @@ export class MentorEvaluationService {
     return this.http.get<MentorEvaluation[]>(`${this.apiUrl}/rating/${minRating}`)
   }
 
-  createEvaluation(evaluation: MentorEvaluation): Observable<MentorEvaluation> {
-    return this.http.post<MentorEvaluation>(this.apiUrl, evaluation)
-  }
 
-  updateEvaluation(id: number, evaluation: MentorEvaluation): Observable<MentorEvaluation> {
-    return this.http.put<MentorEvaluation>(`${this.apiUrl}/${id}`, evaluation)
+  createEvaluation(evaluation: any): Observable<MentorEvaluation> {
+    console.log('Service sending payload:', evaluation); // Debug log
+    
+    // Make sure rating is sent as a number, not a string
+    const payload = {
+      rating: Number(evaluation.rating),
+      feedbackText: evaluation.feedbackText
+    };
+    
+    return this.http.post<MentorEvaluation>(this.apiUrl, payload);
+  }
+  
+  updateEvaluation(id: number, evaluation: any): Observable<MentorEvaluation> {
+    console.log('Service updating with payload:', evaluation); // Debug log
+    
+    // Make sure rating is sent as a number, not a string
+    const payload = {
+      rating: Number(evaluation.rating),
+      feedbackText: evaluation.feedbackText
+    };
+    
+    return this.http.put<MentorEvaluation>(`${this.apiUrl}/${id}`, payload);
   }
 
   deleteEvaluation(id: number): Observable<void> {
