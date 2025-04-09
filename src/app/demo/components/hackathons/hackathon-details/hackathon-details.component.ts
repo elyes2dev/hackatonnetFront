@@ -11,6 +11,7 @@ import { Hackathon } from 'src/app/demo/models/hackathon';  // Ensure correct pa
 })
 export class HackathonDetailsComponent implements OnInit {
   hackathon: Hackathon | null = null;  // Store selected hackathon
+  display: boolean = false;
 
   constructor(
     private route: ActivatedRoute,

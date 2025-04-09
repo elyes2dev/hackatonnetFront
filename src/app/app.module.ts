@@ -35,10 +35,12 @@ import { FormsModule } from '@angular/forms';
 import { HackathonDetailsComponent } from './demo/components/hackathons/hackathon-details/hackathon-details.component';
 import { HackathonListComponent } from './demo/components/hackathons/hackathon-list/hackathon-list/hackathon-list.component';
 import { HackathonFormComponent } from './demo/components/hackathons/hackathon-form/hackathon-form.component';
+import { DialogModule } from 'primeng/dialog';
+import { PostListComponent } from './demo/components/posts/post-list/post-list.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent
     ],
     imports: [
         AppRoutingModule,
@@ -61,6 +63,8 @@ import { HackathonFormComponent } from './demo/components/hackathons/hackathon-f
         ReactiveFormsModule,
         SidebarModule,
         ConfirmDialogModule, 
+        DialogModule,
+        ButtonModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

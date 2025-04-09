@@ -1,4 +1,27 @@
+<div class="add-post-button-container">
+  <button pButton type="button" label="Add Post" icon="pi pi-plus" class="p-button-primary" (click)="display = true"></button>
+</div>
+
+<!-- Add Post Dialog -->
+<p-dialog header="Add New Post" [(visible)]="display" [modal]="true" showEffect="fade" [style]="{ width: '30vw' }" [breakpoints]="{ '960px': '75vw' }">
+  <p class="line-height-3 m-0">
+    <!-- You can replace this with a form or post content -->
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. You can place a post form here.
+  </p>
+  <ng-template pTemplate="footer">
+    <button pButton icon="pi pi-check" (click)="display = false" label="Ok" class="p-button-outlined"></button>
+  </ng-template>
+</p-dialog>
+
 <div *ngIf="hackathon as h" class="hackathon-details-container">
+  <div class="floating-actions">
+    <button class="action-btn edit-btn" >
+      <i class="pi pi-pencil"></i>
+    </button>
+    <button class="action-btn delete-btn">
+      <i class="pi pi-trash"></i>
+    </button>
+  </div>
   <!-- Hero Section with Gradient Overlay -->
   <div class="hero-section" [style.backgroundImage]="'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url(' + h.logo + ')'">
     <div class="hero-content">
