@@ -35,23 +35,31 @@ export class MentorApplicationService {
 
 
 
-
-  createApplication(application: MentorApplication, cvFile: File, uploadPaperFile?: File): Observable<MentorApplication> {
-    const formData = new FormData();
-    
-    // Append application data as JSON string
-    formData.append('application', new Blob([JSON.stringify(application)], {
-      type: 'application/json'
-    }));
-    
-    // Append files
-    formData.append('cvFile', cvFile);
-    if (uploadPaperFile) {
-      formData.append('uploadPaperFile', uploadPaperFile);
-    }
-
-    return this.http.post<MentorApplication>(this.apiUrl, formData);
+// mentor-application.service.ts (updated createApplication method)
+createApplication(application: MentorApplication, cvFile: File, uploadPaperFile?: File): Observable<MentorApplication> {
+  const formData = new FormData();
+  
+  // Add each field individually
+  formData.append('applicationText', application.applicationText);
+  
+  // For arrays like links, use indexed notation that Spring can understand
+  if (application.links && application.links.length > 0) {
+    application.links.forEach((link, index) => {
+      formData.append(`links[${index}]`, link);
+    });
   }
+  
+  formData.append('hasPreviousExperience', application.hasPreviousExperience.toString());
+  formData.append('status', application.status);
+  
+  // Add files
+  formData.append('cvFile', cvFile);
+  if (uploadPaperFile) {
+    formData.append('uploadPaperFile', uploadPaperFile);
+  }
+
+  return this.http.post<MentorApplication>(this.apiUrl, formData);
+}
 
   updateApplicationStatus(id: number, status: ApplicationStatus): Observable<MentorApplication> {
     return this.http.patch<MentorApplication>(`${this.apiUrl}/${id}/status?status=${status}`, {})

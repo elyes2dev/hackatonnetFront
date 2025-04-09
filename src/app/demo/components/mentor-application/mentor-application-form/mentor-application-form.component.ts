@@ -1,20 +1,11 @@
-import { CommonModule } from '@angular/common';
+// mentor-application-form.component.ts
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { CalendarModule } from 'primeng/calendar';
-import { CheckboxModule } from 'primeng/checkbox';
-import { FileUploadModule } from 'primeng/fileupload';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
-import { RippleModule } from 'primeng/ripple';
-import { MentorApplication, ApplicationStatus } from 'src/app/demo/models/mentor-application.model';
-import { PreviousExperience } from 'src/app/demo/models/previous-experience.model';
+import { MessageService } from 'primeng/api';
+import { ApplicationStatus, MentorApplication } from 'src/app/demo/models/mentor-application.model';
 import { User } from 'src/app/demo/models/user.model';
 import { MentorApplicationService } from 'src/app/demo/services/mentor-application.service';
-import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-mentor-application-form',
@@ -28,8 +19,7 @@ export class MentorApplicationFormComponent implements OnInit {
   uploadPaperFile: File | null = null;
   submitting = false;
   errorMessage: string | null = null;
-  applicationStatus = ApplicationStatus; // Make enum available in template if needed
-
+  applicationStatus = ApplicationStatus;
 
   constructor(
     private fb: FormBuilder,
@@ -39,45 +29,23 @@ export class MentorApplicationFormComponent implements OnInit {
   ) {
     this.applicationForm = this.fb.group({
       applicationText: ['', [Validators.required, Validators.minLength(100)]],
-      links: this.fb.array([this.createLink()]),
+      links: this.fb.array([this.fb.control('', Validators.pattern(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/))]),
       hasPreviousExperience: [false],
       previousExperiences: this.fb.array([])
     });
   }
 
   ngOnInit(): void {
-    this.initializeForm();
+    this.setupFormListeners();
   }
 
-  initializeForm(): void {
-    this.applicationForm = this.fb.group({
-      applicationText: ['', [Validators.required, Validators.minLength(100)]],
-      links: this.fb.array([this.createLink()]),
-      hasPreviousExperience: [false],
-      previousExperiences: this.fb.array([])
-    });
-
+  private setupFormListeners(): void {
     this.applicationForm.get('hasPreviousExperience')?.valueChanges.subscribe(value => {
       if (value) {
         this.addExperience();
       } else {
         this.clearExperiences();
       }
-    });
-  }
-
-  createLink(): FormGroup {
-    return this.fb.group({
-      url: ['', [Validators.pattern(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/)]]
-    });
-  }
-
-  createExperience(): FormGroup {
-    return this.fb.group({
-      hackathonName: ['', Validators.required],
-      year: ['', [Validators.required, Validators.min(2000), Validators.max(new Date().getFullYear())]],
-      description: ['', Validators.required],
-      numberOfTeamsCoached: ['', [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -90,11 +58,20 @@ export class MentorApplicationFormComponent implements OnInit {
   }
 
   addLink(): void {
-    this.links.push(this.createLink());
+    this.links.push(this.fb.control('', Validators.pattern(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/)));
   }
 
   removeLink(index: number): void {
     this.links.removeAt(index);
+  }
+
+  createExperience(): FormGroup {
+    return this.fb.group({
+      hackathonName: ['', Validators.required],
+      year: ['', [Validators.required, Validators.min(2000), Validators.max(new Date().getFullYear())]],
+      description: ['', Validators.required],
+      numberOfTeamsCoached: ['', [Validators.required, Validators.min(1)]]
+    });
   }
 
   addExperience(): void {
@@ -138,17 +115,21 @@ export class MentorApplicationFormComponent implements OnInit {
     this.errorMessage = null;
 
     const formValue = this.applicationForm.value;
+    
+    // Create the application object
     const application: MentorApplication = {
       applicationText: formValue.applicationText,
-      links: formValue.links.map((link: any) => link.url).filter((url: string) => url),
+      links: formValue.links.filter((link: string) => link), // Filter out empty links
       hasPreviousExperience: formValue.hasPreviousExperience,
-      status: ApplicationStatus.PENDING, // Use the enum value here
-      previousExperiences: formValue.hasPreviousExperience ? formValue.previousExperiences : undefined,
-      // Note: You'll need to include other required fields from your interface
+      status: ApplicationStatus.PENDING,
+      previousExperiences: formValue.hasPreviousExperience ? formValue.previousExperiences : [],
       user: {} as User, // Replace with actual user from your auth service
-      cv: '', // Will be set by the service from the uploaded file
-      uploadPaper: '' // Will be set by the service if file is uploaded
+      cv: '', // Will be set by the backend
+      uploadPaper: '' // Will be set by the backend if file is uploaded
     };
+
+    // Log the application object to verify the data
+    console.log('Application data being sent:', application);
 
     this.mentorAppService.createApplication(application, this.cvFile, this.uploadPaperFile || undefined)
       .subscribe({

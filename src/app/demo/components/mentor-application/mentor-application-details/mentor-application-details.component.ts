@@ -69,4 +69,37 @@ export class MentorApplicationDetailsComponent implements OnInit {
     }
   }
   
+
+
+  downloadCv(applicationId: number, filename: string): void {
+    this.applicationService.downloadCv(applicationId).subscribe(blob => {
+      this.downloadFile(blob, filename || 'cv.pdf');
+    });
+  }
+  
+  downloadUploadPaper(applicationId: number, filename: string): void {
+    this.applicationService.downloadUploadPaper(applicationId).subscribe(blob => {
+      this.downloadFile(blob, filename || 'paper.pdf');
+    });
+  }
+  
+  private downloadFile(blob: Blob, filename: string): void {
+    // Create a blob URL
+    const url = window.URL.createObjectURL(blob);
+    
+    // Create a temporary anchor element
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    
+    // Append to the document
+    document.body.appendChild(a);
+    
+    // Trigger the download
+    a.click();
+    
+    // Clean up
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }
 }
