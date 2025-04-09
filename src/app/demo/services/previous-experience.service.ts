@@ -7,40 +7,44 @@ import { PreviousExperience } from '../models/previous-experience.model';
   providedIn: 'root'
 })
 export class PreviousExperienceService {
-  private apiUrl = `http://localhost:9100/api/previous-experiences`
+  private apiUrl = 'http://localhost:9100/api/previous-experiences';
 
   constructor(private http: HttpClient) {}
 
   getAllExperiences(): Observable<PreviousExperience[]> {
-    return this.http.get<PreviousExperience[]>(this.apiUrl)
+    return this.http.get<PreviousExperience[]>(this.apiUrl);
   }
 
   getExperienceById(id: number): Observable<PreviousExperience> {
-    return this.http.get<PreviousExperience>(`${this.apiUrl}/${id}`)
+    return this.http.get<PreviousExperience>(`${this.apiUrl}/${id}`);
   }
 
   getExperiencesByApplicationId(applicationId: number): Observable<PreviousExperience[]> {
-    return this.http.get<PreviousExperience[]>(`${this.apiUrl}/application/${applicationId}`)
+    return this.http.get<PreviousExperience[]>(`${this.apiUrl}/application/${applicationId}`);
   }
 
   getExperiencesByYear(year: number): Observable<PreviousExperience[]> {
-    return this.http.get<PreviousExperience[]>(`${this.apiUrl}/year/${year}`)
+    return this.http.get<PreviousExperience[]>(`${this.apiUrl}/year/${year}`);
   }
 
   getExperiencesByHackathonName(keyword: string): Observable<PreviousExperience[]> {
-    return this.http.get<PreviousExperience[]>(`${this.apiUrl}/hackathon?keyword=${keyword}`)
+    return this.http.get<PreviousExperience[]>(`${this.apiUrl}/hackathon?keyword=${keyword}`);
   }
 
   createExperience(applicationId: number, experience: PreviousExperience): Observable<PreviousExperience> {
-    return this.http.post<PreviousExperience>(`${this.apiUrl}/application/${applicationId}`, experience)
+    return this.http.post<PreviousExperience>(`${this.apiUrl}/application/${applicationId}`, experience);
   }
 
   updateExperience(id: number, experience: PreviousExperience): Observable<PreviousExperience> {
-    return this.http.put<PreviousExperience>(`${this.apiUrl}/${id}`, experience)
+    return this.http.put<PreviousExperience>(`${this.apiUrl}/${id}`, experience);
   }
 
   deleteExperience(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  // Delete all experiences for an application
+  deleteExperiencesByApplicationId(applicationId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/application/${applicationId}`);
   }
 }
-

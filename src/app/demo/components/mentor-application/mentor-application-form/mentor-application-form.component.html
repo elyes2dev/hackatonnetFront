@@ -1,7 +1,14 @@
+<app-navbar></app-navbar>
+
 <div class="grid">
-    <div class="col-12">
-      <div class="card">
-        <h5>Mentor Application Form</h5>
+  <div class="col-12">
+    <div class="card">
+      <div *ngIf="loading" class="flex justify-content-center">
+        <p-progressSpinner></p-progressSpinner>
+      </div>
+      
+      <div *ngIf="!loading">
+        <h5>{{ isEditMode ? 'Edit' : 'New' }} Mentor Application</h5>
         
         <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="p-fluid">
           <!-- Application Text -->
@@ -19,7 +26,7 @@
               Application text is required and must be at least 100 characters long.
             </small>
           </div>
-  
+    
           <!-- Links Section -->
           <div class="field">
             <label>Links (optional)</label>
@@ -48,12 +55,19 @@
               class="p-button-secondary p-button-sm" 
               (click)="addLink()"></button>
           </div>
-  
+    
           <!-- File Uploads -->
           <div class="grid">
             <div class="col-12 md:col-6">
               <div class="field">
-                <label for="cvFile">Upload CV*</label>
+                <label for="cvFile">Upload CV{{ !isEditMode || !existingCvFileName ? '*' : ' (optional)' }}</label>
+                
+                <!-- Show existing CV file name if in edit mode -->
+                <div *ngIf="isEditMode && existingCvFileName" class="mb-2">
+                  <span class="pi pi-file-pdf mr-2"></span>
+                  <span>Current file: {{ existingCvFileName }}</span>
+                </div>
+                
                 <p-fileUpload 
                   mode="basic" 
                   id="cvFile"
@@ -61,14 +75,21 @@
                   accept=".pdf,.doc,.docx" 
                   [maxFileSize]="5000000"
                   (onSelect)="onCvFileChange($event)"
-                  chooseLabel="Select CV">
+                  [chooseLabel]="isEditMode && existingCvFileName ? 'Replace CV' : 'Select CV'">
                 </p-fileUpload>
-                <small *ngIf="!cvFile && applicationForm.touched" class="p-error">CV is required.</small>
+                <small *ngIf="!cvFile && !existingCvFileName && applicationForm.touched" class="p-error">CV is required.</small>
               </div>
             </div>
             <div class="col-12 md:col-6">
               <div class="field">
                 <label for="uploadPaperFile">Upload Paper (optional)</label>
+                
+                <!-- Show existing paper file name if in edit mode -->
+                <div *ngIf="isEditMode && existingPaperFileName" class="mb-2">
+                  <span class="pi pi-file-pdf mr-2"></span>
+                  <span>Current file: {{ existingPaperFileName }}</span>
+                </div>
+                
                 <p-fileUpload 
                   mode="basic" 
                   id="uploadPaperFile"
@@ -76,12 +97,12 @@
                   accept=".pdf,.doc,.docx" 
                   [maxFileSize]="5000000"
                   (onSelect)="onUploadPaperFileChange($event)"
-                  chooseLabel="Select Paper">
+                  [chooseLabel]="isEditMode && existingPaperFileName ? 'Replace Paper' : 'Select Paper'">
                 </p-fileUpload>
               </div>
             </div>
           </div>
-  
+    
           <!-- Previous Experience Toggle -->
           <div class="field-checkbox mb-3">
             <p-checkbox 
@@ -91,7 +112,7 @@
               inputId="hasPreviousExperience"></p-checkbox>
             <label for="hasPreviousExperience">I have previous mentoring experience</label>
           </div>
-  
+    
           <!-- Previous Experiences -->
           <div *ngIf="applicationForm.get('hasPreviousExperience')?.value">
             <div class="field">
@@ -115,21 +136,33 @@
                 (click)="addExperience()"></button>
             </div>
           </div>
-  
-          <!-- Submit Button -->
-          <div class="field mt-4">
+    
+          <!-- Submit and Cancel Buttons -->
+          <div class="field mt-4 flex justify-content-between">
+            <button 
+              pButton 
+              pRipple 
+              type="button" 
+              label="Cancel" 
+              class="p-button-secondary"
+              (click)="onCancel()">
+            </button>
+            
             <button 
               pButton 
               pRipple 
               type="submit" 
-              label="Submit Application" 
+              [label]="isEditMode ? 'Update Application' : 'Submit Application'" 
               class="p-button-primary"
-              [disabled]="submitting || applicationForm.invalid || !cvFile">
+              [disabled]="submitting || applicationForm.invalid || (!cvFile && !existingCvFileName)">
               <i *ngIf="submitting" class="pi pi-spinner pi-spin mr-2"></i>
             </button>
-            <small *ngIf="errorMessage" class="p-error block">{{errorMessage}}</small>
           </div>
+          
+          <small *ngIf="errorMessage" class="p-error block mt-2">{{errorMessage}}</small>
         </form>
       </div>
     </div>
   </div>
+</div>
+<app-footer></app-footer>

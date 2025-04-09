@@ -6,6 +6,8 @@ import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.
 import { MentorApplicationDetailsComponent } from './demo/components/mentor-application/mentor-application-details/mentor-application-details.component';
 import { MentorApplicationFormComponent } from './demo/components/mentor-application/mentor-application-form/mentor-application-form.component';
 import { MentorApplicationListComponent } from './demo/components/mentor-application/mentor-application-list/mentor-application-list.component';
+import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor-application/mentor-application-details-admin/mentor-application-details-admin.component';
+
 
 @NgModule({
     imports: [
@@ -23,13 +25,20 @@ import { MentorApplicationListComponent } from './demo/components/mentor-applica
                     { path: 'mydashboard', component: MydashboardComponent },
 
                     { path: 'mentor-applications', component: MentorApplicationListComponent },
-                    { path: 'mentor-applications/create', component: MentorApplicationFormComponent },
-                    { path: 'mentor-applications/:id', component: MentorApplicationDetailsComponent },
+                    { path: 'mentor-applications-admin/:id', component: MentorApplicationDetailsAdminComponent },
+
                     { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },
                 ],
             },
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
             { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
+            { path: 'mentor-applications/new', component: MentorApplicationFormComponent },
+            { path: 'mentor-applications/:id', component: MentorApplicationDetailsComponent },
+            { 
+                path: 'mentor-applications/:id/edit', 
+                component: MentorApplicationFormComponent
+              },
+              
             { path: 'pages/notfound', component: NotfoundComponent },
             { path: '**', redirectTo: 'pages/notfound' },
 

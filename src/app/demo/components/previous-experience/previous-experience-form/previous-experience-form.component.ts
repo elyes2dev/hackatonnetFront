@@ -10,8 +10,10 @@ import { PreviousExperience } from 'src/app/demo/models/previous-experience.mode
 export class PreviousExperienceFormComponent implements OnInit {
   @Input() experienceForm!: FormGroup;
   @Input() index!: number;
+  @Input() experienceData?: PreviousExperience; // Add this input for explicit data binding
+
   @Output() removeExperienceEvent = new EventEmitter<number>();
-  
+
   currentYear = new Date().getFullYear();
 
   constructor(private fb: FormBuilder) { }
@@ -19,6 +21,9 @@ export class PreviousExperienceFormComponent implements OnInit {
   ngOnInit(): void {
     if (!this.experienceForm) {
       this.experienceForm = this.createExperienceForm();
+    }
+    if (this.experienceData) {
+      this.experienceForm.patchValue(this.experienceData);
     }
   }
 

@@ -45,11 +45,16 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FileUploadModule } from 'primeng/fileupload';
 import { CalendarModule } from 'primeng/calendar';
+import { FooterComponent } from './demo/components/landing/footer/footer.component';
+import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
+import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor-application/mentor-application-details-admin/mentor-application-details-admin.component';
 
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, MentorApplicationListComponent, MentorApplicationDetailsComponent, MentorApplicationFormComponent, PreviousExperienceListComponent, PreviousExperienceFormComponent, MentorEvaluationListComponent, MentorEvaluationFormComponent, ListMentorListComponent, ListMentorFormComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, MentorApplicationListComponent, MentorApplicationDetailsComponent, MentorApplicationFormComponent, PreviousExperienceListComponent, PreviousExperienceFormComponent, MentorEvaluationListComponent, MentorEvaluationFormComponent, ListMentorListComponent, ListMentorFormComponent, NavbarComponent,
+        FooterComponent,
+        MentorApplicationDetailsAdminComponent
     ],
     imports: [
         AppRoutingModule,
