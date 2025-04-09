@@ -25,4 +25,8 @@ export interface User {
     createdAt?: Date;
     skills?: Skill[];
     roles?: Role[];
+
+    // New fields for mentorship
+  mentorPoints?: number;
+  badge: string;
 }
