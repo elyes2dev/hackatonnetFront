@@ -7,6 +7,9 @@ import { QuestionService } from 'src/app/demo/services/question.service';
 import { Question } from 'src/app/demo/models/question.model';
 import { StorageService } from 'src/app/demo/services/storage.service'; // Import StorageService
 import { WorkshopService } from 'src/app/demo/services/workshop.service';
+import { QuizCertificateService } from 'src/app/demo/services/quizcertificate.service';
+import { UserService } from 'src/app/demo/services/user.service';
+import { UserQuizScore } from 'src/app/demo/models/user-quiz-score.model';
 
 @Component({
   selector: 'app-quizf-list',
@@ -30,6 +33,9 @@ export class QuizfListComponent implements OnInit {
   hasQuiz: boolean = false; // Track if the user has a quiz
   userIsOwner: boolean = false; // To check if the current user is the owner
 
+  userScoresMap: { [quizId: number]: UserQuizScore } = {};
+
+
 
   constructor(
     private quizService: QuizService,
@@ -38,7 +44,9 @@ export class QuizfListComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private storageService: StorageService, // Inject StorageService
-    private workshopService: WorkshopService
+    private workshopService: WorkshopService,
+    private certificateService: QuizCertificateService,
+    private userService: UserService
     
   ) {}
 
@@ -55,6 +63,16 @@ export class QuizfListComponent implements OnInit {
     this.workshopId = +this.route.snapshot.params['workshopId'];
     this.fetchQuizzes();
     this.checkIfUserIsOwner(); // <-- add this line
+
+    const userId = Number(localStorage.getItem('loggedid'));
+    this.userQuizScoreService.getUserScores(userId).subscribe((scores: UserQuizScore[]) => {
+      scores.forEach(score => {
+        const quizId = score.quiz.id_quiz;
+        if (quizId !== undefined) {
+          this.userScoresMap[quizId] = score;
+        }
+      });
+    });
 
   }
 
@@ -190,5 +208,51 @@ export class QuizfListComponent implements OnInit {
       });
     }
 }
+
+downloadCertificate(quizId: number, quizTitle: string): void {
+  const userId = localStorage.getItem('loggedid') ? +localStorage.getItem('loggedid')! : null;
+
+  if (!userId) {
+    alert('User not found');
+    return;
+  }
+
+  // Step 1: Get user's score for this quiz
+  this.userQuizScoreService.getUserScoreForQuiz(userId, quizId).subscribe({
+    next: (score) => {
+      // Step 2: Get the username
+      this.userService.getUserById(userId).subscribe({
+        next: (user) => {
+          const username = user.username;
+
+          // Step 3: Download certificate
+          this.certificateService.downloadCertificate(username, quizTitle, score).subscribe({
+            next: (response) => {
+              const blob = new Blob([response.body!], { type: 'application/pdf' });
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'certificate.pdf';
+              a.click();
+              window.URL.revokeObjectURL(url);
+            },
+            error: (err) => {
+              console.error('Certificate download error:', err);
+              alert('Could not download the certificate.');
+            }
+          });
+        },
+        error: () => {
+          alert('Failed to fetch user info.');
+        }
+      });
+    },
+    error: () => {
+      alert('Failed to retrieve user score.');
+    }
+  });
+}
+
+
 
 }

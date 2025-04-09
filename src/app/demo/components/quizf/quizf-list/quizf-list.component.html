@@ -68,6 +68,15 @@
                     class="btn btn-take" title="Take Quiz">
               <i class="fas fa-pen"></i>
             </button>
+
+            <button 
+            *ngIf="userScoresMap[quiz.id_quiz!]" 
+            (click)="downloadCertificate(quiz.id_quiz!, quiz.title)" 
+            class="btn btn-certificate" 
+            title="Download Certificate">
+            <i class="fas fa-award"></i>
+          </button>
+          
           </td>
         </tr>
       </tbody>

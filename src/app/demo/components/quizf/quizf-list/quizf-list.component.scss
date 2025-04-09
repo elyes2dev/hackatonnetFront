@@ -299,4 +299,24 @@
     height: 18px;
   }  
 
+  .btn-certificate {
+    background-color: #007bff; /* Bootstrap primary blue */
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+  }
+  
+  .btn-certificate:hover {
+    background-color: #0056b3;
+    cursor: pointer;
+  }
+  
+  .btn-certificate i {
+    margin-right: 2px;
+  }
+  
+
   

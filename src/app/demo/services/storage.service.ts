@@ -19,4 +19,10 @@ export class StorageService {
   clearUserId(): void {
     localStorage.removeItem(this.userIdKey);
   }
+  
+  getLoggedInUserId(): number | null {
+    const id = localStorage.getItem('loggedid');
+    return id ? parseInt(id, 10) : null;
+  }
+  
 }
