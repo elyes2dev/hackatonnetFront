@@ -14,6 +14,7 @@ import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.co
 import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
 import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
 import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
+import { SupportTicketComponent } from './demo/components/ticket/support-ticket.component';
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/qui
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
                     
                     // Dashboard
+                    { path: 'support-tickets', component: SupportTicketComponent },  // Add support ticket component route
                     { path: 'mydashboard', component: MydashboardComponent },
 
                     // User Management Route

@@ -44,12 +44,13 @@ import { RouterModule } from '@angular/router';
 import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
 import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
 import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
+import { SupportTicketComponent } from './demo/components/ticket/support-ticket.component';
 
 
 @NgModule({
     declarations: [
         AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent, QuizDetailsComponent, QuizFormComponent, QuizListComponent, QuizResultDialogComponent, QuizScoreAddComponent ,
-        ResourceDetailsComponent, WorkshoplistComponent,ResourceListComponent,ResourceFormComponent
+        ResourceDetailsComponent, WorkshoplistComponent,ResourceListComponent,ResourceFormComponent,SupportTicketComponent
     ],
     imports: [
         AppRoutingModule,

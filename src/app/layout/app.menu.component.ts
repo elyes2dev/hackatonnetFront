@@ -41,7 +41,8 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Misc', icon: 'pi pi-fw pi-circle', routerLink: ['/uikit/misc'] },
                     { label: 'MyDashBoard', icon: 'pi pi-fw pi-id-card', routerLink: ['/mydashboard'] },
                     { label: 'Workshop', icon: 'pi pi-fw pi-id-card', routerLink: ['/workshops'] },
-                    { label: 'User', icon: 'pi pi-fw pi-id-card', routerLink: ['/users'] }
+                    { label: 'User', icon: 'pi pi-fw pi-id-card', routerLink: ['/users'] },
+                    { label: 'Support-Ticket', icon: 'pi pi-fw pi-id-card', routerLink: ['/support-tickets'] }
 
                 ]
             },
