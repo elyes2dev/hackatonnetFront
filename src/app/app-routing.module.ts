@@ -6,6 +6,7 @@ import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
+import { UserComponent } from './demo/components/user/user.component';
 import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
 import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
 import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
@@ -13,6 +14,7 @@ import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.co
 import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
 import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
 import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
+
 import { WorkshoplistfComponent } from './demo/components/workshopf/workshoplistf/workshoplistf.component';
 import { WorkshopfFormComponent } from './demo/components/workshopf/workshopf-form/workshopf-form.component';
 import { WorkshopfDetailsComponent } from './demo/components/workshopf/workshopf-details/workshopf-details.component';
@@ -24,6 +26,10 @@ import { QuizfFormComponent } from './demo/components/quizf/quizf-form/quizf-for
 import { QuizfDetailsComponent } from './demo/components/quizf/quizf-details/quizf-details.component';
 import { QuizfScoreAddComponent } from './demo/components/quizf/quizf-score-add/quizf-score-add.component';
 import { ChartsComponent } from './demo/components/charts/charts.component';
+
+import { SupportTicketComponent } from './demo/components/ticket/support-ticket.component';
+
+
 
 @NgModule({
     imports: [
@@ -39,7 +45,11 @@ import { ChartsComponent } from './demo/components/charts/charts.component';
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
                     
                     // Dashboard
+                    { path: 'support-tickets', component: SupportTicketComponent },  // Add support ticket component route
                     { path: 'mydashboard', component: MydashboardComponent },
+
+                    // User Management Route
+                    { path: 'users', component: UserComponent },  // Add UserComponent Route
 
                     // Workshops Routes
                     { path: 'workshops', 

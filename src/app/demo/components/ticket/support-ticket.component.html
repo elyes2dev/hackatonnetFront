@@ -1,0 +1,39 @@
+<div class="card">
+  <div class="card-header">
+    <h2>Support Tickets</h2>
+  </div>
+  <div class="card-body">
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input type="text" id="description" [(ngModel)]="ticket.description" name="description" required class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" [(ngModel)]="ticket.status" name="status" class="form-control">
+          <option value="Open">Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">{{ isUpdating ? 'Update Ticket' : 'Create Ticket' }}</button>
+    </form>
+
+    <ul class="list-group mt-3">
+      <li class="list-group-item" *ngFor="let ticket of tickets">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <p><strong>ID:</strong> {{ ticket.id }}</p>
+            <p><strong>User ID:</strong> {{ ticket.userId }}</p>
+            <p><strong>Description:</strong> {{ ticket.description }}</p>
+            <p><strong>Status:</strong> {{ ticket.status }}</p>
+          </div>
+          <div>
+            <button class="btn btn-secondary" (click)="populateForm(ticket)">Select</button>
+            <button class="btn btn-danger" (click)="deleteTicket(ticket.id)">Delete</button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

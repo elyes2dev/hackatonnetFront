@@ -7,6 +7,7 @@ import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 
 
+
 @Component({
     selector: 'app-landing',
     templateUrl: './landing.component.html',
@@ -65,14 +66,19 @@ import { User } from '../../models/user.model';
 })
 export class LandingComponent implements OnInit {
     userId: string | null = null;
+
     isAdmin: boolean = false;
     isStudent: boolean = false;
+ isAuthenticated: boolean = false;
 
     constructor(private storageService: StorageService,public layoutService: LayoutService, public router: Router,   private userService: UserService,
         private authService: AuthService ) {
+
       this.userId = this.storageService.getUserId();
+      this.isAuthenticated = this.authService.isAuthenticated(); // Use AuthService to determine authentication state
       console.log('User ID:', this.userId);
     }
+
 
     ngOnInit(): void {
         this.getUserRole();
@@ -105,10 +111,13 @@ export class LandingComponent implements OnInit {
           console.error('User ID not found in localStorage');
         }
       }
+
+   logout()
+    {
+        this.authService.logout()
+        window.location.reload();
+    }
     
-
-
-      
 
     
 }
