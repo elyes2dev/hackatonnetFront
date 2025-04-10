@@ -7,12 +7,11 @@ import { MentorEvaluation } from 'src/app/demo/models/mentor-evaluation.model';
 import { MentorEvaluationService } from 'src/app/demo/services/mentor-evaluation.service';
 
 @Component({
-  selector: 'app-mentor-evaluation-list',
-  templateUrl: './mentor-evaluation-list.component.html',
-  styleUrls: ['./mentor-evaluation-list.component.scss']
-  
+  selector: 'app-mentor-evaluation-list-user',
+  templateUrl: './mentor-evaluation-list-user.component.html',
+  styleUrls: ['./mentor-evaluation-list-user.component.scss']
 })
-export class MentorEvaluationListComponent implements OnInit {
+export class MentorEvaluationListUserComponent  implements OnInit {
   evaluations: MentorEvaluation[] = [];
   loading: boolean = true;
 
@@ -62,4 +61,5 @@ export class MentorEvaluationListComponent implements OnInit {
    editEvaluation(id: number) {
     this.router.navigate(['/mentor-evaluation-admin', id, 'edit']);
   }
+
 }

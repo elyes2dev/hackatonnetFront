@@ -11,6 +11,9 @@ import { ListMentorFormComponent } from './demo/components/list-mentor/list-ment
 import { ListMentorListComponent } from './demo/components/list-mentor/list-mentor-list/list-mentor-list.component';
 import { MentorEvaluationFormComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form/mentor-evaluation-form.component';
 import { MentorEvaluationListComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list/mentor-evaluation-list.component';
+import { MentorEvaluationFormAdminComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form-admin/mentor-evaluation-form-admin.component';
+import { ListMentorFormAdminComponent } from './demo/components/list-mentor/list-mentor-form-admin/list-mentor-form-admin.component';
+import { MentorEvaluationListUserComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list-user/mentor-evaluation-list-user.component';
 
 
 @NgModule({
@@ -31,11 +34,9 @@ import { MentorEvaluationListComponent } from './demo/components/mentor-evaluati
                     { path: 'mentor-applications', component: MentorApplicationListComponent },
                     { path: 'mentor-applications-admin/:id', component: MentorApplicationDetailsAdminComponent },
                     { path: 'list-mentors', component: ListMentorListComponent },
-                    { path: 'mentor/edit/:id', component: ListMentorFormComponent },
+                    { path: 'mentor/edit/:id', component: ListMentorFormAdminComponent },
                     { path: 'mentor-evaluations', component: MentorEvaluationListComponent },
-
-
-                    { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },
+                    { path: 'mentor-evaluation-admin/:id/edit', component: MentorEvaluationFormAdminComponent },
                     
                 ],
             },
@@ -44,6 +45,10 @@ import { MentorEvaluationListComponent } from './demo/components/mentor-evaluati
             { path: 'mentor-applications/new', component: MentorApplicationFormComponent },
             { path: 'mentor-applications/:id', component: MentorApplicationDetailsComponent },
             {  path: 'mentor-applications/:id/edit',  component: MentorApplicationFormComponent },
+            { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },
+            { path: 'mentor-evaluations-user', component: MentorEvaluationListUserComponent },
+
+
               { path: 'mentor-form', component: ListMentorFormComponent },
             { path: 'mentor-evaluation/new', component: MentorEvaluationFormComponent },
             { path: 'mentor-evaluation/:id/edit', component: MentorEvaluationFormComponent },

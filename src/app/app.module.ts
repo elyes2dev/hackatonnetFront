@@ -51,13 +51,20 @@ import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MessageService } from 'primeng/api';
+import { MentorEvaluationFormAdminComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form-admin/mentor-evaluation-form-admin.component';
+import { ListMentorFormAdminComponent } from './demo/components/list-mentor/list-mentor-form-admin/list-mentor-form-admin.component';
+import { MentorEvaluationListUserComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list-user/mentor-evaluation-list-user.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 @NgModule({
     declarations: [
         AppComponent, NotfoundComponent, MydashboardComponent, MentorApplicationListComponent, MentorApplicationDetailsComponent, MentorApplicationFormComponent, PreviousExperienceListComponent, PreviousExperienceFormComponent, MentorEvaluationListComponent, MentorEvaluationFormComponent, ListMentorListComponent, ListMentorFormComponent, NavbarComponent,
         FooterComponent,
-        MentorApplicationDetailsAdminComponent
+        MentorApplicationDetailsAdminComponent,
+        MentorEvaluationFormAdminComponent,
+        ListMentorFormAdminComponent,
+        MentorEvaluationListUserComponent
     ],
     imports: [
         AppRoutingModule,
@@ -81,6 +88,7 @@ import { MessageService } from 'primeng/api';
         TagModule,
         ProgressSpinnerModule,
         ToastModule,
+        TooltipModule,
 
             // PrimeNG Modules
         InputTextModule,
