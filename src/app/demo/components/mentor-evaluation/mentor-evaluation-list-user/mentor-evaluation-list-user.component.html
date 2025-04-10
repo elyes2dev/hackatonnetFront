@@ -45,7 +45,6 @@
           <!-- Header -->
           <ng-template pTemplate="header">
             <tr>
-              <th class="font-semibold">Mentor</th>
               <th class="font-semibold">Team</th>
               <th class="font-semibold">Rating</th>
               <th class="font-semibold">Feedback</th>
@@ -57,12 +56,7 @@
           <!-- Body -->
           <ng-template pTemplate="body" let-eval>
             <tr>
-              <td>
-                <ng-container *ngIf="eval.mentor; else noMentor">
-                  <span class="font-medium">{{ eval.mentor.name }} {{ eval.mentor.lastname }}</span>
-                </ng-container>
-                <ng-template #noMentor>N/A</ng-template>
-              </td>
+
               <td>
                 <ng-container *ngIf="eval.team; else noTeam">
                   <span class="p-tag p-tag-rounded p-tag-info">{{ eval.team.teamName }}</span>

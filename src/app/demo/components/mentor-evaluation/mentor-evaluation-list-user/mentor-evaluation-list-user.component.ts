@@ -59,7 +59,7 @@ export class MentorEvaluationListUserComponent  implements OnInit {
 
 
    editEvaluation(id: number) {
-    this.router.navigate(['/mentor-evaluation-admin', id, 'edit']);
+    this.router.navigate(['/mentor-evaluation', id, 'edit']);
   }
 
 }
