@@ -1,0 +1,91 @@
+<!-- team-submission.component.html -->
+<div class="main-container">
+  <!-- En-tête -->
+  <div class="header">
+    <h3>Ajouter une soumission</h3>
+  </div>
+
+  <!-- Formulaire de création -->
+  <div class="section creation-section">
+    <form (ngSubmit)="createSubmission()" #submissionForm="ngForm" class="form-container">
+      <div class="form-group">
+        <label for="projectName">Nom du projet</label>
+        <input type="text" id="projectName" name="projectName" [(ngModel)]="newSubmission.projectName" required class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" [(ngModel)]="newSubmission.description" required class="form-input"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="repoLink">Lien GitHub</label>
+        <input type="url" id="repoLink" name="repoLink" [(ngModel)]="newSubmission.repoLink" required class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label for="teamMemberId">ID du membre de l'équipe</label>
+        <input type="number" id="teamMemberId" name="teamMemberId" [(ngModel)]="newSubmission.teamMember.id" required class="form-input" />
+      </div>
+
+      <button type="submit" class="btn btn-create">Créer</button>
+    </form>
+  </div>
+
+  <hr>
+
+  <!-- Affichage des soumissions -->
+  <div class="section submissions-section">
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Chargement des soumissions...</p>
+    </div>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+
+    <!-- Conteneur de cartes -->
+    <div class="card-container">
+      <div *ngFor="let submission of submissions" class="card">
+        <h4>ID: {{ submission.id }}</h4>
+        <h3>{{ submission.projectName }}</h3>
+        <p>{{ submission.description }}</p>
+        <p><a href="{{ submission.repoLink }}" target="_blank" class="project-link">Voir le projet</a></p>
+        <div class="actions">
+          <!-- Bouton Modifier -->
+          <button *ngIf="submission.id !== undefined" class="btn btn-edit" (click)="edit(submission.id)">
+            Modifier
+          </button>
+          <!-- Bouton Supprimer -->
+          <button *ngIf="submission.id !== undefined" class="btn btn-delete" (click)="delete(submission.id)">
+            Supprimer
+          </button>
+        </div>
+        <!-- Formulaire de modification sous la carte correspondante -->
+        <div class="modification-section" *ngIf="editSubmission && editSubmission.id === submission.id">
+          <h3>Modifier la soumission</h3>
+          <form (ngSubmit)="updateSubmission()" #editForm="ngForm" class="form-container">
+            <div class="form-group">
+              <label for="editProjectName-{{ submission.id }}">Nom du projet</label>
+              <input type="text" id="editProjectName-{{ submission.id }}" name="projectName" [(ngModel)]="editSubmission.projectName" required class="form-input" />
+            </div>
+            <div class="form-group">
+              <label for="editDescription-{{ submission.id }}">Description</label>
+              <textarea id="editDescription-{{ submission.id }}" name="description" [(ngModel)]="editSubmission.description" required class="form-input"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editRepoLink-{{ submission.id }}">Lien GitHub</label>
+              <input type="url" id="editRepoLink-{{ submission.id }}" name="repoLink" [(ngModel)]="editSubmission.repoLink" required class="form-input" />
+            </div>
+            <div class="form-group">
+              <label for="editTeamMemberId-{{ submission.id }}">ID du membre de l'équipe</label>
+              <input type="number" id="editTeamMemberId-{{ submission.id }}" name="teamMemberId" [(ngModel)]="editSubmission.teamMember.id" required class="form-input" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-update">Mettre à jour</button>
+              <button type="button" class="btn btn-cancel" (click)="editSubmission = null">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
