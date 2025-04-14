@@ -1,0 +1,237 @@
+/* Team badges */
+.team-badge {
+  border-radius: 2px;
+  padding: .25em .5rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .3px;
+
+  &.status-public {
+      background: #C8E6C9;
+      color: #256029;
+  }
+
+  &.status-private {
+      background: #FFCDD2;
+      color: #C63737;
+  }
+
+  &.status-full {
+      background: #FEEDAF;
+      color: #8A5340;
+  }
+
+  &.status-available {
+      background: #B3E5FC;
+      color: #23547B;
+  }
+}
+
+/* Conversation Dialog Styles */
+.chat-popup {
+  .p-dialog-content {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+  }
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--surface-d);
+
+  .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+
+      &.status-online {
+          background-color: #28a745;
+      }
+  }
+}
+
+.chat-container {
+  max-height: calc(70vh - 150px);
+  overflow-y: auto;
+  padding: 1rem;
+
+  .message {
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+
+      &.current-user {
+          background-color: #e6f3ff;
+          margin-left: 2rem;
+          text-align: right;
+
+          .message-header {
+              .sender-name, .sender-role {
+                  color: #007bff;
+              }
+          }
+      }
+
+      &.other-user {
+          background-color: #f4f4f4;
+          margin-right: 2rem;
+
+          .message-header {
+              .sender-name, .sender-role {
+                  color: #28a745;
+              }
+          }
+      }
+
+      .message-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .sender-name {
+              font-weight: bold;
+          }
+
+          .sender-role {
+              font-size: 0.9em;
+              font-style: italic;
+          }
+
+          .timestamp {
+              font-size: 0.8em;
+              color: #666;
+          }
+      }
+
+      .message-content {
+          margin-top: 0.5rem;
+
+          p {
+              margin: 0;
+          }
+      }
+  }
+
+  .date-separator {
+      text-align: center;
+      margin: 1rem 0;
+      color: #888;
+      font-size: 0.9em;
+  }
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-top: 1px solid #ddd;
+
+  input {
+      flex: 1;
+      margin-right: 1rem;
+  }
+}
+
+/* Table styles */
+:host ::ng-deep .p-datatable {
+  .p-datatable-thead > tr > th {
+      background: #f8f9fa;
+  }
+
+  .p-sortable-column:hover {
+      background: #f8f9fa;
+  }
+
+  .p-datatable-tbody > tr {
+      transition: background-color 0.2s;
+
+      &:hover {
+          background: #f8f9fa !important;
+      }
+  }
+}
+
+/* Dialog styles */
+.p-dialog {
+  .p-dialog-header {
+      border-bottom: 1px solid #dee2e6;
+  }
+
+  .p-dialog-content {
+      padding: 1.5rem;
+  }
+
+  .p-dialog-footer {
+      border-top: 1px solid #dee2e6;
+      padding: 1rem 1.5rem;
+  }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 960px) {
+  :host ::ng-deep .p-datatable {
+      &.p-datatable-responsive-demo {
+          .p-datatable-thead > tr > th,
+          .p-datatable-tfoot > tr > td {
+              display: none !important;
+          }
+
+          .p-datatable-tbody > tr > td {
+              text-align: left;
+              display: block;
+              width: 100%;
+              float: left;
+              clear: left;
+              border: 0 none;
+
+              .p-column-title {
+                  padding: .4rem;
+                  min-width: 30%;
+                  display: inline-block;
+                  margin: -.4em 1em -.4em -.4rem;
+                  font-weight: bold;
+              }
+
+              &:last-child {
+                  border-bottom: 1px solid var(--surface-d);
+              }
+          }
+      }
+  }
+}
+
+/* Loading spinner */
+.p-text-center {
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Empty message */
+.text-500 {
+  color: var(--text-color-secondary);
+}
+
+/* Toolbar spacing */
+.p-toolbar {
+  margin-bottom: 1rem;
+}
+
+/* Button spacing in table */
+.flex {
+  display: flex;
+
+  button {
+      margin-right: 0.5rem;
+
+      &:last-child {
+          margin-right: 0;
+      }
+  }
+}

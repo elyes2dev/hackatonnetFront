@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
@@ -11,10 +12,9 @@ import { EventService } from './demo/service/event.service';
 import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
-
-//New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -26,34 +26,49 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
-import { FormsModule } from '@angular/forms';
+import { LandingModule } from './demo/components/landing/landing.module';
+import { AuthInterceptor } from './interceptor/auth.interceptor';
+import { AuthService } from './services/auth.service';
+import { TeamModule } from './demo/components/team/team.module';
 
 @NgModule({
-    declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent
-    ],
-    imports: [
-        AppRoutingModule,
-        AppLayoutModule,
-        TableModule,
-        CommonModule,
-        RatingModule,
-        ButtonModule,
-        SliderModule,
-        InputTextModule,
-        ToggleButtonModule,
-        RippleModule,
-        MultiSelectModule,
-        DropdownModule,
-        ProgressBarModule,
-        ToastModule,
-        FormsModule
-    ],
-    providers: [
-        { provide: LocationStrategy, useClass: HashLocationStrategy },
-        CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
-    ],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    NotfoundComponent,
+    MydashboardComponent
+  ],
+  imports: [
+    HttpClientModule,
+    AppRoutingModule,
+    AppLayoutModule,
+    CommonModule,
+    FormsModule,
+    TableModule,
+    RatingModule,
+    ButtonModule,
+    SliderModule,
+    InputTextModule,
+    ToggleButtonModule,
+    RippleModule,
+    MultiSelectModule,
+    DropdownModule,
+    ProgressBarModule,
+    ToastModule,
+    LandingModule,
+    TeamModule
+  ],
+  providers: [
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
+    CountryService,
+    CustomerService,
+    EventService,
+    IconService,
+    NodeService,
+    PhotoService,
+    ProductService,
+    AuthService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
+  bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

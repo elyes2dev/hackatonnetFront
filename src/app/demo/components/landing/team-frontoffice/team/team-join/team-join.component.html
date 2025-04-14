@@ -1,0 +1,16 @@
+<!-- team-join.component.html -->
+<app-navbar></app-navbar>
+<div class="team-join-container">
+  <h2>Join a Team</h2>
+  <form (ngSubmit)="joinTeam()">
+    <input [(ngModel)]="teamCode" name="teamCode" placeholder="Enter Team Code" required>
+    <button type="submit">Join</button>
+  </form>
+
+  <h3>Public Teams</h3>
+  <div *ngFor="let team of publicTeams" class="public-team">
+    <p>{{ team.teamName }}</p>
+    <button (click)="joinPublicTeam(team.id!)">Join</button>
+  </div>
+</div>
+<app-footer></app-footer>

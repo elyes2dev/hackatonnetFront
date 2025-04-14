@@ -16,6 +16,7 @@ import { ContextMenuModule } from 'primeng/contextmenu';
 import { StepsModule } from 'primeng/steps';
 import { InputTextModule } from 'primeng/inputtext';
 
+
 @NgModule({
     declarations: [
         MenusComponent,
@@ -23,6 +24,7 @@ import { InputTextModule } from 'primeng/inputtext';
         ConfirmationComponent,
         PersonalComponent,
         SeatComponent,
+        
 
     ],
     imports: [

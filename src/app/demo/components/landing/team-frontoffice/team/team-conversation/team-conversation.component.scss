@@ -1,0 +1,13 @@
+/* team-conversation.component.scss */
+.conversation-container {
+    padding: 20px;
+  }
+  .messages {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  .message {
+    margin: 5px 0;
+  }

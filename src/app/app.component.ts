@@ -22,6 +22,7 @@ export class AppComponent {
 import { Component, OnInit } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
 import { LayoutService } from './layout/service/app.layout.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
     selector: 'app-root',
@@ -29,9 +30,12 @@ import { LayoutService } from './layout/service/app.layout.service';
 })
 export class AppComponent implements OnInit {
 
-    constructor(private primengConfig: PrimeNGConfig, private layoutService: LayoutService) { }
-
+    constructor(private primengConfig: PrimeNGConfig, private layoutService: LayoutService, private authService: AuthService) { }
     ngOnInit(): void {
+            this.authService.setToken(
+              'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6ImdnIiwiaWF0IjoxNzQ0NTgyMTAwLCJleHAiOjE3NDQ2Njg1MDB9.SEG0JLaejzV64vFDu3hfn2xjOcGVpr_lG3N-3klRx6HufF1jCdYYaIS4NmhuGRZdqkk0OtCZxxiN_-QXen2_1Q'
+            );
+          
         this.primengConfig.ripple = true;       //enables core ripple functionality
 		document.documentElement.style.fontSize = '14px';
 		

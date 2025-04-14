@@ -12,6 +12,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { StyleClassModule } from 'primeng/styleclass';
 import { TableModule } from 'primeng/table';
 
+
 @NgModule({
     imports: [
         // Angular Modules

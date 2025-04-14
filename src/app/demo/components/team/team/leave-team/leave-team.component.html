@@ -1,0 +1,30 @@
+<div class="card">
+  <h5>Leave Team</h5>
+  
+  <div class="p-fluid">
+    <div class="field">
+      <label for="teamId">Team ID</label>
+      <input 
+        pInputText 
+        id="teamId" 
+        type="number" 
+        [(ngModel)]="teamId" 
+        [ngClass]="{'ng-invalid ng-dirty': submitted && !teamId}"
+        placeholder="Enter team ID"
+      />
+      <small class="p-error" *ngIf="submitted && !teamId">Team ID is required</small>
+    </div>
+
+    <div class="field">
+      <button 
+        pButton 
+        label="Leave Team" 
+        icon="pi pi-sign-out" 
+        (click)="confirmLeave()"
+        [disabled]="!teamId"
+      ></button>
+    </div>
+  </div>
+
+  <p-toast></p-toast>
+</div>

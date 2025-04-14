@@ -1,0 +1,279 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+      <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" 
+                  (click)="openNew()"></button>
+          <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" 
+                  (click)="deleteSelectedTeams()" [disabled]="!selectedTeams.length"></button>
+        </ng-template>
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="Import" icon="pi pi-upload" class="p-button-help" 
+                  (click)="onImport($event)"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <p-table #dt [value]="teams" responsiveLayout="scroll" [rows]="10" [paginator]="true" 
+               [rowsPerPageOptions]="[5, 10, 20]" [showCurrentPageReport]="true" 
+               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} teams" 
+               [globalFilterFields]="['teamName', 'teamCode', 'hackathon.title']" [(selection)]="selectedTeams" 
+               selectionMode="multiple" [rowHover]="true" dataKey="id" [groupRowsBy]="'hackathon.title'"
+               [loading]="loading">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0">Manage Teams</h5>
+            <span class="block mt-2 md:mt-0 p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." class="w-full sm:w-auto"/>
+            </span>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="teamName">Team Name <p-sortIcon field="teamName"></p-sortIcon></th>
+            <th pSortableColumn="teamCode">Team Code <p-sortIcon field="teamCode"></p-sortIcon></th>
+            <th pSortableColumn="hackathon.title">Hackathon <p-sortIcon field="hackathon.title"></p-sortIcon></th>
+            <th pSortableColumn="isPublic">Public <p-sortIcon field="isPublic"></p-sortIcon></th>
+            <th pSortableColumn="isFull">Full <p-sortIcon field="isFull"></p-sortIcon></th>
+            <th pSortableColumn="createdAt">Created At <p-sortIcon field="createdAt"></p-sortIcon></th>
+            <th style="width: 16rem">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="groupheader" let-team>
+          <tr pRowGroup>
+            <td colspan="9">
+              <span class="font-bold">{{ team.hackathon?.title || 'No Hackathon' }}</span>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-team>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="team"></p-tableCheckbox>
+            </td>
+            <td>{{ team.id }}</td>
+            <td>{{ team.teamName }}</td>
+            <td>{{ team.teamCode }}</td>
+            <td>{{ team.hackathon?.title || 'N/A' }}</td>
+            <td>
+              <span [class]="'team-badge status-' + (team.isPublic ? 'public' : 'private')">
+                {{ team.isPublic ? 'Yes' : 'No' }}
+              </span>
+            </td>
+            <td>
+              <span [class]="'team-badge status-' + (team.isFull ? 'full' : 'available')">
+                {{ team.isFull ? 'Yes' : 'No' }}
+              </span>
+            </td>
+            <td>{{ team.createdAt | date:'medium' }}</td>
+            <td>
+              <div class="flex">
+                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" 
+                        (click)="editTeam(team)"></button>
+                <button pButton pRipple icon="pi pi-users" class="p-button-rounded p-button-info mr-2" 
+                        (click)="viewTeamMembers(team)"></button>
+                <button pButton pRipple icon="pi pi-sign-in" class="p-button-rounded p-button-primary mr-2" 
+                        (click)="openJoinTeamDialog(team)"></button>
+                <button pButton pRipple icon="pi pi-sign-out" class="p-button-rounded p-button-warning mr-2" 
+                        (click)="openLeaveTeamDialog(team)"></button>
+                <button pButton pRipple icon="pi pi-comments" class="p-button-rounded p-button-secondary mr-2" 
+                        (click)="openConversationDialog(team)"></button>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" 
+                        (click)="deleteTeam(team)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="9" class="text-center">No teams found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- Create/Edit Team Dialog -->
+      <p-dialog [(visible)]="teamDialog" [style]="{width: '450px'}" header="Team Details" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+          <div class="field">
+            <label for="teamName">Team Name</label>
+            <input pInputText id="teamName" [(ngModel)]="team.teamName" required autofocus 
+                   [ngClass]="{'ng-invalid ng-dirty' : submitted && !team.teamName}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !team.teamName">Team Name is required.</small>
+          </div>
+          <div class="field">
+            <label for="hackathonId">Hackathon ID</label>
+            <input pInputText id="hackathonId" [(ngModel)]="hackathonId" required type="number" 
+                   [ngClass]="{'ng-invalid ng-dirty' : submitted && !hackathonId}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !hackathonId">Hackathon ID is required.</small>
+          </div>
+          <div class="field">
+            <label for="isPublic">Public</label>
+            <p-dropdown id="isPublic" [options]="publicOptions" [(ngModel)]="team.isPublic" optionLabel="label" 
+                        optionValue="value" placeholder="Select visibility"></p-dropdown>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+          <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveTeam()"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Delete Team Dialog -->
+      <p-dialog [(visible)]="deleteTeamDialog" [style]="{width: '450px'}" header="Confirm" [modal]="true">
+        <ng-template pTemplate="content">
+          <div class="flex align-items-center">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+            <span *ngIf="team">Are you sure you want to delete <b>{{team.teamName}}</b>?</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple label="No" icon="pi pi-times" class="p-button-text" (click)="deleteTeamDialog = false"></button>
+          <button pButton pRipple label="Yes" icon="pi pi-check" class="p-button-text" (click)="confirmDelete()"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Delete Selected Teams Dialog -->
+      <p-dialog [(visible)]="deleteTeamsDialog" [style]="{width: '450px'}" header="Confirm" [modal]="true">
+        <ng-template pTemplate="content">
+          <div class="flex align-items-center">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+            <span>Are you sure you want to delete the selected teams?</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple label="No" icon="pi pi-times" class="p-button-text" (click)="deleteTeamsDialog = false"></button>
+          <button pButton pRipple label="Yes" icon="pi pi-check" class="p-button-text" (click)="confirmDeleteSelected()"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Team Members Dialog -->
+      <p-dialog [(visible)]="teamMembersDialog" [style]="{width: '450px'}" header="Team Members" [modal]="true">
+        <ng-template pTemplate="content">
+          <p-table [value]="teamMembers" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined At</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-member>
+              <tr>
+                <td>{{ member.id }}</td>
+                <td>{{ member.user?.name || 'N/A' }}</td>
+                <td>{{ member.user?.email || 'N/A' }}</td>
+                <td>{{ member.role }}</td>
+                <td>{{ member.joinedAt | date:'medium' }}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5">No members found.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple label="Close" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Join Team Dialog -->
+      <p-dialog [(visible)]="joinTeamDialog" [style]="{width: '450px'}" header="Join Team" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+          <div class="confirmation-content">
+            <p>Are you sure you want to join team: <b>{{ selectedTeam?.teamName }}</b>?</p>
+            <p>Team Code: {{ selectedTeam?.teamCode }}</p>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple label="No" icon="pi pi-times" class="p-button-text" (click)="hideJoinTeamDialog()"></button>
+          <button pButton pRipple label="Yes" icon="pi pi-check" class="p-button-text" (click)="confirmJoinTeam()"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Leave Team Dialog -->
+      <p-dialog [(visible)]="leaveTeamDialog" [style]="{width: '450px'}" header="Leave Team" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+          <div class="confirmation-content">
+            <p>Are you sure you want to leave team: <b>{{ selectedTeam?.teamName }}</b>?</p>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple label="No" icon="pi pi-times" class="p-button-text" (click)="hideLeaveTeamDialog()"></button>
+          <button pButton pRipple label="Yes" icon="pi pi-check" class="p-button-text" (click)="confirmLeaveTeam()"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Conversation Dialog -->
+      <p-dialog [(visible)]="conversationDialog" [style]="{width: '500px', height: '70vh'}" 
+                header="Team Conversation" [modal]="true" styleClass="p-fluid chat-popup" (onHide)="hideConversationDialog()">
+        <ng-template pTemplate="content">
+          <div class="chat-header">
+            <div class="flex align-items-center">
+              <h3 class="m-0">{{ selectedTeam?.teamName }}</h3>
+              <span class="ml-3 text-sm flex align-items-center">
+                <span class="status-indicator status-online"></span>
+                <span>{{ getDiscussionCount() }} messages</span>
+              </span>
+            </div>
+            <button pButton pRipple icon="pi pi-times" (click)="hideConversationDialog()" 
+                    class="p-button-rounded p-button-text"></button>
+          </div>
+
+          <div *ngIf="loadingTeamMember" class="p-text-center">
+            <p-progressSpinner></p-progressSpinner>
+          </div>
+          <div *ngIf="!loadingTeamMember" class="chat-container" #chatContainer>
+            <ng-container *ngIf="selectedTeam && selectedTeam.id && hasDiscussions(selectedTeam.id); else noMessages">
+              <div *ngFor="let msg of getDiscussionsForTeam(selectedTeam.id); let i = index">
+                <div *ngIf="shouldShowDateSeparator(msg, i > 0 ? getDiscussionsForTeam(selectedTeam.id)[i-1] : null)" 
+                     class="date-separator">
+                  {{ getMessageDate(msg.createdAt) }}
+                </div>
+                <div class="message" [ngClass]="getMessageClass(msg.teamMember?.id)">
+                  <div class="message-header">
+                    <div class="flex flex-column">
+                      <div class="flex align-items-center">
+                        <span class="sender-name">{{ msg.senderName || 'Unknown' }}</span>
+                        <span class="sender-role ml-2">({{ msg.senderRole || 'Unknown' }})</span>
+                        <span class="timestamp ml-2">{{ getMessageTime(msg.createdAt) }}</span>
+                      </div>
+                      <div class="message-content">
+                        <p>{{ msg.message || 'No message content' }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #noMessages>
+              <div class="text-center p-4">
+                <p class="text-500">No messages yet. Start the conversation!</p>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="chat-input">
+            <input pInputText [(ngModel)]="newMessage" placeholder="Type your message here..." 
+                   class="w-full" (keydown.enter)="$event.preventDefault(); sendMessage()" />
+            <button pButton pRipple icon="pi pi-send" class="p-button-rounded p-button-primary" 
+                    (click)="sendMessage()" [disabled]="!canSendMessage()"></button>
+          </div>
+        </ng-template>
+      </p-dialog>
+    </div>
+  </div>
+</div>
