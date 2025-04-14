@@ -1,8 +1,18 @@
 <div class="video-room">
     <h2>Room: {{ roomId }}</h2>
     
-    <div class="video-container">
-      <video #localVideo autoplay muted [srcObject]="localStream"></video>
+    <div class="video-grid">
+      <!-- Local video -->
+      <div class="video-container">
+        <video #localVideo autoplay muted></video>
+        <div class="user-label">You</div>
+      </div>
+  
+      <!-- Remote videos -->
+      <div class="video-container" *ngFor="let stream of remoteStreams; let i = index">
+        <video [srcObject]="stream" autoplay></video>
+        <div class="user-label">User {{ i + 1 }}</div>
+      </div>
     </div>
   
     <div class="controls">
