@@ -1,1 +1,41 @@
-<p>post-list works!</p>
+<div class="post-feed">
+   <div *ngFor="let post of posts" class="post-card">
+    <div class="post-header">
+      <img [src]="post.postedBy?.picture || 'assets/default-avatar.png'"
+           class="avatar"
+           alt="Profile picture">
+      <div class="user-info">
+        <h3>{{ post.postedBy?.name }} {{ post.postedBy?.lastname }}</h3>
+        <span class="post-meta">
+          {{ post.createdAt | date:'mediumDate' }}
+          <span *ngIf="post.hackathon?.title"> • {{ post.hackathon.title }}</span>
+        </span>
+      </div>
+    </div>
+  
+      <div class="post-content">
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.content }}</p>
+        
+        <div *ngIf="post.images?.length" class="post-images">
+          <img *ngFor="let image of post.images" [src]="image" alt="Post image">
+        </div>
+      </div>
+  
+      <div class="post-stats">
+        <button (click)="onLikePost(post)" 
+                [class.active]="isPostLikedByCurrentUser(post)">
+          <i class="pi pi-heart"></i> {{ post.likes?.length || 0 }}
+        </button>
+        <button>
+          <i class="pi pi-comment"></i> {{ post.comments?.length || 0 }}
+        </button>
+      </div>
+  
+      <app-comment-list 
+        [post]="post"
+        [currentUserId]="currentUserId"
+        (commentAdded)="onCommentAdded(post, $event)">
+      </app-comment-list>
+  </div>
+</div>

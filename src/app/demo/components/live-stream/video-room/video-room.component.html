@@ -1,0 +1,17 @@
+<div class="video-room">
+    <h2>Room: {{ roomId }}</h2>
+    
+    <div class="video-container">
+      <video #localVideo autoplay muted [srcObject]="localStream"></video>
+    </div>
+  
+    <div class="controls">
+      <button (click)="toggleMic()">
+        {{ isMicMuted ? 'Unmute' : 'Mute' }}
+      </button>
+      <button (click)="toggleCamera()">
+        {{ isCameraOff ? 'Camera On' : 'Camera Off' }}
+      </button>
+      <button (click)="generateRoomId()">New Room</button>
+    </div>
+  </div>

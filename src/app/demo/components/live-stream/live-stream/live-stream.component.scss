@@ -1,0 +1,22 @@
+.fixed-header {
+    border-radius: 8px;
+    background-color: white;
+    z-index: 1000; /* Make sure it's above other content */
+    padding: 10px 20px; /* Add padding to make the button look nice */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for separation */
+    margin-bottom: 15px;
+  }
+  
+  .header-button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+  }

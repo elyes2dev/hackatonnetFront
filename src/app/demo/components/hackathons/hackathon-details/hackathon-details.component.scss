@@ -1,3 +1,26 @@
+.fixed-header {
+  border-radius: 8px;
+  background-color: white;
+  z-index: 1000; /* Make sure it's above other content */
+  padding: 10px 20px; /* Add padding to make the button look nice */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for separation */
+  margin-bottom: 15px;
+}
+
+.header-button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
 .hackathon-details-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -333,6 +356,14 @@
   justify-content: flex-end;
 }
 
+.buttons-container{
+    border-radius: 8px;
+    background-color: white;
+    z-index: 1000; /* Make sure it's above other content */
+    padding: 10px 20px; /* Add padding to make the button look nice */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for separation */
+  
+}
 
 @media (max-width: 480px) {
   .floating-actions {
@@ -350,5 +381,65 @@
 
   .stats-grid {
     grid-template-columns: 1fr !important;
+  }
+}
+
+.posts-section-container {
+  margin-top: 40px;
+  padding: 0 20px;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #2d3748;
+    padding-left: 12px;
+  }
+}
+
+.posts-scroll-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-height: 600px;
+  overflow-y: auto;
+  
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .posts-section-container {
+    margin-top: 30px;
+    padding: 0 10px;
+  }
+  
+  .posts-scroll-container {
+    max-height: 500px;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .posts-scroll-container {
+    max-height: 400px;
   }
 }

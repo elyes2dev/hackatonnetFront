@@ -1,17 +1,6 @@
-<div class="add-post-button-container">
-  <button pButton type="button" label="Add Post" icon="pi pi-plus" class="p-button-primary" (click)="display = true"></button>
+<div class="fixed-header">
+  <button class="header-button" (click)="goToLiveStream()">Live stream</button>
 </div>
-
-<!-- Add Post Dialog -->
-<p-dialog header="Add New Post" [(visible)]="display" [modal]="true" showEffect="fade" [style]="{ width: '30vw' }" [breakpoints]="{ '960px': '75vw' }">
-  <p class="line-height-3 m-0">
-    <!-- You can replace this with a form or post content -->
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. You can place a post form here.
-  </p>
-  <ng-template pTemplate="footer">
-    <button pButton icon="pi pi-check" (click)="display = false" label="Ok" class="p-button-outlined"></button>
-  </ng-template>
-</p-dialog>
 
 <div *ngIf="hackathon as h" class="hackathon-details-container">
   <div class="floating-actions">
@@ -107,3 +96,27 @@
     </div>
   </div>
 </div>
+<!-- Posts Section with Scrollable Container -->
+<div class="posts-section-container">
+  <div class="buttons-container">
+    <div class="add-post-button-container">
+      <button pButton type="button" label="Add Post" icon="pi pi-plus" class="p-button-primary" 
+              (click)="showPostForm()"></button>
+    </div>
+  </div>
+  <h2>Community Posts</h2>
+  <div class="posts-scroll-container">
+    <app-post-list *ngIf="hackathon" [hackathonId]="hackathon.id"></app-post-list>
+  </div>
+</div>
+
+<!-- Add Post Dialog -->
+<p-dialog header="Add New Post" [(visible)]="displayPostForm" [modal]="true" [style]="{ width: '50vw' }" 
+          [breakpoints]="{ '960px': '75vw', '640px': '90vw' }">
+  <app-post-form 
+    *ngIf="hackathon"
+    [hackathon]="hackathon"
+    (postCreated)="onPostCreated()"
+    (cancel)="onPostFormCancel()">
+  </app-post-form>
+</p-dialog>

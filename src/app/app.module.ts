@@ -16,6 +16,9 @@ import { BadgeModule } from 'primeng/badge';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SidebarModule } from 'primeng/sidebar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { FileUploadModule } from 'primeng/fileupload';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { PrimeIcons } from 'primeng/api';
 
 //New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
@@ -37,10 +40,14 @@ import { HackathonListComponent } from './demo/components/hackathons/hackathon-l
 import { HackathonFormComponent } from './demo/components/hackathons/hackathon-form/hackathon-form.component';
 import { DialogModule } from 'primeng/dialog';
 import { PostListComponent } from './demo/components/posts/post-list/post-list.component';
+import { CommentListComponent } from './demo/components/comment/comment-list/comment-list.component';
+import { PostFormComponent } from './demo/components/posts/post-form/post-form/post-form.component';
+import { LiveStreamComponent } from './demo/components/live-stream/live-stream/live-stream.component';
+import { VideoRoomComponent } from './demo/components/live-stream/video-room/video-room.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent
     ],
     imports: [
         AppRoutingModule,
@@ -64,7 +71,14 @@ import { PostListComponent } from './demo/components/posts/post-list/post-list.c
         SidebarModule,
         ConfirmDialogModule, 
         DialogModule,
-        ButtonModule
+        ButtonModule,
+        FileUploadModule,
+        CommonModule,
+        FileUploadModule,
+        InputTextModule,
+        InputTextareaModule,
+        ButtonModule,
+        ToastModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
