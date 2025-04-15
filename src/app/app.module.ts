@@ -56,6 +56,7 @@ import { QuizfScoreAddComponent } from './demo/components/quizf/quizf-score-add/
 import { FilterByNameAndThemePipe } from './demo/components/workshopf/workshoplistf/filter-by-name-and-theme.pipe';
 import { ChartsComponent } from './demo/components/charts/charts.component';
 import { NgChartsModule } from 'ng2-charts';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @NgModule({
     declarations: [
@@ -82,7 +83,8 @@ import { NgChartsModule } from 'ng2-charts';
         CardModule,
         ButtonModule,
         InputTextModule,
-        NgChartsModule
+        NgChartsModule,
+        FileUploadModule
 
     ],
     providers: [

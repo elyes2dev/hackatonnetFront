@@ -65,20 +65,18 @@ export class WorkshopFormComponent implements OnInit {
       error: (err) => console.error('Failed to load workshop:', err)
     });
   }
-
-  onFileSelected(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
+  onFileSelected(event: { files: File[] }) {
+    const file = event.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64String = reader.result as string;
-        this.workshopForm.patchValue({ photo: base64String });
-        this.imagePreview = base64String; // Show preview
-      };
-      reader.readAsDataURL(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64String = reader.result as string;
+            this.workshopForm.patchValue({ photo: base64String });
+            this.imagePreview = base64String; // Show preview
+        };
+        reader.readAsDataURL(file);
     }
-  }
-
+}
   onSubmit() {
     if (this.workshopForm.valid) {
       const workshop = this.workshopForm.value as Workshop;
@@ -141,5 +139,5 @@ export class WorkshopFormComponent implements OnInit {
         this.router.navigate(['/workshops']);
       }
  
-  
+      
 }
