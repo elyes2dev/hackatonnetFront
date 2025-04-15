@@ -10,6 +10,14 @@ import { Router } from '@angular/router';
 })
 export class LandingHackathonListComponent {
   hackathons: Hackathon[] = [];  
+  filteredHackathons: Hackathon[] = [];
+  searchTerm: string = '';
+  selectedEventType: string | null = null;
+  
+  eventTypeOptions = [
+    { label: 'Online', value: 'online' },
+    { label: 'Onsite', value: 'onsite' }
+  ];
 
   constructor(private hackathonService: HackathonService, public router: Router) {}
 
@@ -20,7 +28,18 @@ export class LandingHackathonListComponent {
   loadHackathons() {
     this.hackathonService.getHackathons().subscribe((data: Hackathon[]) => {
       this.hackathons = data;
+      this.filteredHackathons = [...this.hackathons];
     });
   }
 
+  filterHackathons() {
+    this.filteredHackathons = this.hackathons.filter(hackathon => {
+      const matchesSearch = hackathon.title.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const matchesType = !this.selectedEventType || 
+                         (this.selectedEventType === 'online' && hackathon.isOnline) || 
+                         (this.selectedEventType === 'onsite' && !hackathon.isOnline);
+      
+      return matchesSearch && matchesType;
+    });
+  }
 }

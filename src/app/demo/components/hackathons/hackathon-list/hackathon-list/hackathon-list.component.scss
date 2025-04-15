@@ -244,7 +244,24 @@
   background-color: white;
   z-index: 1000; /* Make sure it's above other content */
   padding: 10px 20px; /* Add padding to make the button look nice */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for separation */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.search-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  margin-left: 15px;
+}
+
+.search-container .p-inputtext {
+  width: 250px;
+}
+
+.search-container .p-dropdown {
+  width: 200px;
 }
 
 /* Adjust the content below the fixed header */
@@ -268,6 +285,25 @@
 }
 
 .add-button:hover {
+  background-color: #0056b3;
+}
+
+.analytics-button-wrapper {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.show-analytics {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.show-analytics:hover {
   background-color: #0056b3;
 }
 

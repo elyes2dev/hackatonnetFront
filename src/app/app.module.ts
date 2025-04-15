@@ -18,6 +18,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ChartModule } from 'primeng/chart';
 import { PrimeIcons } from 'primeng/api';
 
 //New TODO mydasboard
@@ -44,10 +45,11 @@ import { CommentListComponent } from './demo/components/comment/comment-list/com
 import { PostFormComponent } from './demo/components/posts/post-form/post-form/post-form.component';
 import { LiveStreamComponent } from './demo/components/live-stream/live-stream/live-stream.component';
 import { VideoRoomComponent } from './demo/components/live-stream/video-room/video-room.component';
+import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackathon-analytics/hackathon-analytics.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent
     ],
     imports: [
         AppRoutingModule,
@@ -78,7 +80,8 @@ import { VideoRoomComponent } from './demo/components/live-stream/video-room/vid
         InputTextModule,
         InputTextareaModule,
         ButtonModule,
-        ToastModule
+        ToastModule,
+        ChartModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

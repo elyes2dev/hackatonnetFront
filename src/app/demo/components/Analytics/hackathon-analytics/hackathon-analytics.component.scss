@@ -1,0 +1,75 @@
+.card {
+    background: #ffffff;
+    padding: 1.25rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h4, h5 {
+    margin-top: 0;
+    color: #495057;
+  }
+  
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.5rem;
+    margin-left: -0.5rem;
+    margin-top: -0.5rem;
+  }
+  
+  .col-12 {
+    width: 100%;
+    padding: 0.5rem;
+  }
+  
+  @media screen and (min-width: 992px) {
+    .lg\:col-6 {
+      width: 50%;
+    }
+  }
+  
+  .flex {
+    display: flex;
+  }
+  
+  .flex-column {
+    flex-direction: column;
+  }
+  
+  .justify-content-center {
+    justify-content: center;
+  }
+  
+  .align-items-center {
+    align-items: center;
+  }
+  
+  .text-left {
+    text-align: left;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .w-full {
+    width: 100%;
+  }
+  
+  .mt-3 {
+    margin-top: 1rem;
+  }
+  
+  .mr-5 {
+    margin-right: 1.5rem;
+  }
+  
+  .mb-0 {
+    margin-bottom: 0;
+  }
+  
+  .font-bold {
+    font-weight: 700;
+  }

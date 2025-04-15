@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HackathonService } from 'src/app/demo/services/hackathon/hackathon.service';
 import { Hackathon } from 'src/app/demo/models/hackathon';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hackathon-list',
@@ -11,8 +12,17 @@ export class HackathonListComponent {
   hackathons: Hackathon[] = [];  // Array of hackathons
   selectedHackathon: Hackathon | null = null;  // To store the selected hackathon for editing
   visibleSidebar2: boolean = false;  // Controls sidebar visibility
+  filteredHackathons: Hackathon[] = [];
+  searchTerm: string = '';
+  selectedEventType: string | null = null;
 
-  constructor(private hackathonService: HackathonService) {}
+  eventTypeOptions = [
+    { label: 'Online', value: 'online' },
+    { label: 'Onsite', value: 'onsite' }
+  ];
+
+
+  constructor(private hackathonService: HackathonService, private router: Router ) {}
 
   ngOnInit() {
     this.loadHackathons();
@@ -21,6 +31,7 @@ export class HackathonListComponent {
   loadHackathons() {
     this.hackathonService.getHackathons().subscribe((data: Hackathon[]) => {
       this.hackathons = data;
+      this.filteredHackathons = [...this.hackathons];
     });
   }
 
@@ -45,5 +56,21 @@ export class HackathonListComponent {
       });
     }
     location.reload();
+  }
+
+  
+  filterHackathons() {
+    this.filteredHackathons = this.hackathons.filter(hackathon => {
+      const matchesSearch = hackathon.title.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const matchesType = !this.selectedEventType || 
+                         (this.selectedEventType === 'online' && hackathon.isOnline) || 
+                         (this.selectedEventType === 'onsite' && !hackathon.isOnline);
+      
+      return matchesSearch && matchesType;
+    });
+  }
+
+  navigateToAnalytics() {
+    this.router.navigate(['/hackathon-analytics']);
   }
 }

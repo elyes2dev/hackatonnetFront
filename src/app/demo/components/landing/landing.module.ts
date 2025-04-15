@@ -10,7 +10,9 @@ import { ButtonModule } from 'primeng/button';
 import { LandingHackathonListComponent } from './Hackathon/landing-hackathon-list/landing-hackathon-list.component';
 import { LandingHackathonDetailsComponent } from './Hackathon/landing-hackathon-details/landing-hackathon-details.component';
 import { AvatarModule } from 'primeng/avatar';
-
+import { FormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
 
 
 @NgModule({
@@ -23,6 +25,9 @@ import { AvatarModule } from 'primeng/avatar';
         PanelModule,
         ButtonModule,
         AvatarModule,
+        FormsModule,
+        DropdownModule,
+        InputTextModule
         
     ],
     declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent]

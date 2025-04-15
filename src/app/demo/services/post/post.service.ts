@@ -25,7 +25,7 @@ export class PostService {
   }
 
   createPost(formData: FormData): Observable<Post> {
-    return this.http.post<Post>(this.apiUrl, formData);
+    return this.http.post<Post>(`http://localhost:9100/pi/posts`, formData);
   }
 
   createComment(postId: number, comment: Comment): Observable<Comment> {

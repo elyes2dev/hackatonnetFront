@@ -44,11 +44,28 @@
     
     </div>
   </div>
+
+  <div class="fixed-header">
+    <div class="search-container">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input type="text" pInputText [(ngModel)]="searchTerm" 
+               (input)="filterHackathons()" 
+               placeholder="Search by name..." />
+      </span>
+  
+      <p-dropdown [options]="eventTypeOptions" [(ngModel)]="selectedEventType" 
+                  (onChange)="filterHackathons()" 
+                  placeholder="Filter by type" [showClear]="true">
+      </p-dropdown>
+    </div>
+  </div>
+
   <!-- Display the Hackathons -->
   <div class="hackathon-list-container">
     <div class="col-12 md:col-12">
     <div class="hackathon-grid">
-      <div class="hackathon-card" *ngFor="let hackathon of hackathons">
+      <div class="hackathon-card" *ngFor="let hackathon of filteredHackathons">
         <!-- Card Header with Logo -->
         <div class="card-header">
           <div class="logo-container">
