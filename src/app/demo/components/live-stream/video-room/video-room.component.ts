@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Peer, MediaConnection } from 'peerjs';
+import { ChatService } from 'src/app/demo/services/live-stream/chat/chat.service';
 
 interface Participant {
   id: string;
@@ -31,9 +32,15 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   private peers: { [id: string]: MediaConnection } = {};
 
   async ngOnInit() {
+    
     await this.setupLocalStream();
     this.initPeer();
+    
+    this.chatService.messages$.subscribe(messages => {
+      this.messages = messages;
+    });
   }
+  
 
   private async setupLocalStream() {
     try {
@@ -183,5 +190,36 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.leaveCall();
+  }
+
+
+
+
+
+
+  showChat = false;
+  newMessage = '';
+  isHandRaised = false;
+  messages: any[] = [];
+
+  constructor(private chatService: ChatService) {}
+
+  // Add these new methods
+  toggleChat() {
+    this.showChat = !this.showChat;
+  }
+
+  sendMessage() {
+    if (this.newMessage.trim()) {
+      this.chatService.addMessage('You', this.newMessage);
+      this.newMessage = '';
+    }
+  }
+
+  toggleHandRaise() {
+    this.isHandRaised = !this.isHandRaised;
+    if (this.isHandRaised) {
+      this.chatService.raiseHand('You');
+    }
   }
 }

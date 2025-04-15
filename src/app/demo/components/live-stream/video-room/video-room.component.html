@@ -1,3 +1,43 @@
+
+    <!-- Chat Sidebar -->
+    <div class="chat-sidebar" [class.visible]="showChat">
+        <div class="chat-header">
+          <h3>Chat</h3>
+          <button (click)="toggleChat()" class="close-chat">
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+        
+        <div class="chat-messages">
+          <div *ngFor="let msg of messages" class="message" 
+               [class.hand-raised]="msg.isHandRaised">
+            <strong>{{ msg.sender }}:</strong> 
+            <span>{{ msg.text }}</span>
+            <i *ngIf="msg.isHandRaised" class="pi pi-hand-stop"></i>
+          </div>
+        </div>
+        
+        <div class="chat-input">
+          <input [(ngModel)]="newMessage" placeholder="Type message..." 
+                 (keyup.enter)="sendMessage()">
+          <button (click)="sendMessage()">
+            <i class="pi pi-send"></i>
+          </button>
+          <button (click)="toggleHandRaise()" [class.active]="isHandRaised" 
+                  class="raise-hand">
+            <i class="pi pi-hand-stop"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Chat Toggle Button -->
+      <button (click)="toggleChat()" class="chat-toggle">
+        <i class="pi pi-comments"></i>
+        <span *ngIf="messages.length > 0" class="notification-badge">
+          {{ messages.length }}
+        </span>
+      </button>
+      
 <div class="video-room">
     <!-- Loading State -->
     <div class="loading-overlay" *ngIf="!localStream">
@@ -69,4 +109,5 @@
         </button>
       </div>
     </div>
+
   </div>
