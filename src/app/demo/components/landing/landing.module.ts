@@ -7,6 +7,11 @@ import { DividerModule } from 'primeng/divider';
 import { ChartModule } from 'primeng/chart';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
+import { LandingHackathonListComponent } from './Hackathon/landing-hackathon-list/landing-hackathon-list.component';
+import { LandingHackathonDetailsComponent } from './Hackathon/landing-hackathon-details/landing-hackathon-details.component';
+import { AvatarModule } from 'primeng/avatar';
+
+
 
 @NgModule({
     imports: [
@@ -16,8 +21,10 @@ import { ButtonModule } from 'primeng/button';
         StyleClassModule,
         ChartModule,
         PanelModule,
-        ButtonModule
+        ButtonModule,
+        AvatarModule,
+        
     ],
-    declarations: [LandingComponent]
+    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent]
 })
 export class LandingModule { }

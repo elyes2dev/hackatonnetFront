@@ -7,6 +7,8 @@ import { HackathonListComponent } from './demo/components/hackathons/hackathon-l
 import { HackathonDetailsComponent } from './demo/components/hackathons/hackathon-details/hackathon-details.component';
 import { LiveStreamComponent } from './demo/components/live-stream/live-stream/live-stream.component';
 import { VideoRoomComponent } from './demo/components/live-stream/video-room/video-room.component';
+import { LandingHackathonListComponent } from './demo/components/landing/Hackathon/landing-hackathon-list/landing-hackathon-list.component';
+import { LandingHackathonDetailsComponent } from './demo/components/landing/Hackathon/landing-hackathon-details/landing-hackathon-details.component';
 
 
 @NgModule({
@@ -15,6 +17,7 @@ import { VideoRoomComponent } from './demo/components/live-stream/video-room/vid
             {
                 path: '', component: AppLayoutComponent,
                 children: [
+                   
                     { path: '', loadChildren: () => import('./demo/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
                     { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UikitModule) },
                     { path: 'utilities', loadChildren: () => import('./demo/components/utilities/utilities.module').then(m => m.UtilitiesModule) },
@@ -25,11 +28,13 @@ import { VideoRoomComponent } from './demo/components/live-stream/video-room/vid
                     { path: 'call/:roomId', component: VideoRoomComponent },
                     { path: 'mydashboard', component: MydashboardComponent },
                     { path: 'hackathons', component: HackathonListComponent }, 
-                    { path: 'hackathon/:id', component: HackathonDetailsComponent }
+                    { path: 'hackathon/:id', component: HackathonDetailsComponent },
                 ],
             },
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
             { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
+            { path: 'landing-hackathons', component: LandingHackathonListComponent}, 
+            { path: 'landing-hackathon/:id', component: LandingHackathonDetailsComponent}, 
             { path: 'pages/notfound', component: NotfoundComponent },
             { path: '**', redirectTo: 'pages/notfound' },
            
