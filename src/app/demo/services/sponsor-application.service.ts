@@ -1,4 +1,3 @@
-// src/app/services/sponsor-application.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -11,7 +10,7 @@ export class SponsorApplicationService {
   private baseUrl = 'http://localhost:9100/sponsor-application';
   
   // For testing without authentication - static user ID
-  private staticUserId = 18; // Change this to your test user ID
+  private staticUserId = 17; // Change this to your test user ID
 
   constructor(private http: HttpClient) { }
 
@@ -38,6 +37,11 @@ export class SponsorApplicationService {
   // Reject application
   rejectApplication(id: number): Observable<SponsorApplication> {
     return this.http.put<SponsorApplication>(`${this.baseUrl}/${id}/reject`, {});
+  }
+
+  // AI Verify application
+  aiVerifyApplication(id: number): Observable<string> {
+    return this.http.put<string>(`${this.baseUrl}/${id}/ai-verify`, {});
   }
 
   // Delete application

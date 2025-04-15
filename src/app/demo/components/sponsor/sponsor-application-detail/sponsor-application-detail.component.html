@@ -119,6 +119,11 @@
                       <button pButton pRipple type="button" label="Reject Application" icon="pi pi-times-circle" 
                              class="p-button-outlined p-button-danger" [disabled]="isProcessing" (click)="confirmAction('reject')">
                       </button>
+
+                      <!-- AI verify button -->
+          <button pButton pRipple type="button" label="AI Verify" icon="pi pi-cloud" 
+          class="p-button-outlined p-button-info" [disabled]="isProcessing" (click)="confirmAction('ai-verify')">
+   </button>
                       
                       <button pButton pRipple type="button" label="Approve Application" icon="pi pi-check-circle" 
                              class="p-button-outlined p-button-success" [disabled]="isProcessing" (click)="confirmAction('approve')">

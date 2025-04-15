@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SponsorApplication } from 'src/app/demo/models/sponsor-application';
 import { FileUploadService } from 'src/app/demo/services/file-upload.service';
 import { SponsorApplicationService } from 'src/app/demo/services/sponsor-application.service';
-import { ConfirmationService, MessageService } from 'primeng/api'; // Import PrimeNG services
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-sponsor-application-detail',
@@ -21,8 +21,8 @@ export class SponsorApplicationDetailComponent implements OnInit {
     private router: Router,
     private sponsorService: SponsorApplicationService,
     private fileUploadService: FileUploadService,
-    private confirmationService: ConfirmationService, // Add ConfirmationService
-    private messageService: MessageService // Add MessageService
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -46,7 +46,6 @@ export class SponsorApplicationDetailComponent implements OnInit {
       error: (error) => {
         console.error('Error loading application details', error);
         this.loading = false;
-        // Replace alert with PrimeNG toast
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -56,16 +55,24 @@ export class SponsorApplicationDetailComponent implements OnInit {
     });
   }
 
-  confirmAction(action: 'approve' | 'reject'): void {
+  confirmAction(action: 'approve' | 'reject' | 'ai-verify'): void {
+    const actionMessages = {
+      'approve': 'approve',
+      'reject': 'reject',
+      'ai-verify': 'AI verify'
+    };
+
     this.confirmationService.confirm({
-      message: `Are you sure you want to ${action} this sponsor application?`,
+      message: `Are you sure you want to ${actionMessages[action]} this sponsor application?`,
       header: 'Confirm Action',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         if (action === 'approve') {
           this.approveApplication();
-        } else {
+        } else if (action === 'reject') {
           this.rejectApplication();
+        } else if (action === 'ai-verify') {
+          this.aiVerifyApplication();
         }
       }
     });
@@ -77,7 +84,6 @@ export class SponsorApplicationDetailComponent implements OnInit {
       next: (data) => {
         this.application = data;
         this.isProcessing = false;
-        // Replace alert with PrimeNG toast
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
@@ -87,7 +93,6 @@ export class SponsorApplicationDetailComponent implements OnInit {
       error: (error) => {
         console.error('Error approving application', error);
         this.isProcessing = false;
-        // Replace alert with PrimeNG toast
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -103,7 +108,6 @@ export class SponsorApplicationDetailComponent implements OnInit {
       next: (data) => {
         this.application = data;
         this.isProcessing = false;
-        // Replace alert with PrimeNG toast
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
@@ -113,11 +117,47 @@ export class SponsorApplicationDetailComponent implements OnInit {
       error: (error) => {
         console.error('Error rejecting application', error);
         this.isProcessing = false;
-        // Replace alert with PrimeNG toast
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Failed to reject application. Please try again later.'
+        });
+      }
+    });
+  }
+
+  aiVerifyApplication(): void {
+    this.isProcessing = true;
+    this.sponsorService.aiVerifyApplication(this.applicationId).subscribe({
+      next: (response) => {
+        this.isProcessing = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: response
+        });
+        // Reload the application to reflect the new status
+        this.loadApplicationDetails();
+      },
+      error: (error) => {
+        console.error('Error during AI verification', error);
+        this.isProcessing = false;
+        
+        // Extracting the error message from the response
+        let errorMessage = 'Failed to verify application. Please try again later.';
+        
+        if (error.error && error.error.message) {
+          // If the error object has a nested message property
+          errorMessage = error.error.message;
+        } else if (typeof error.error === 'string') {
+          // If error.error is just a string
+          errorMessage = error.error;
+        }
+        
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Verification Failed',
+          detail: errorMessage
         });
       }
     });
@@ -136,7 +176,6 @@ export class SponsorApplicationDetailComponent implements OnInit {
 
   downloadDocument(): void {
     if (!this.application?.documentPath) {
-      // Replace alert with PrimeNG toast
       this.messageService.add({
         severity: 'warn',
         summary: 'Warning',
@@ -148,7 +187,6 @@ export class SponsorApplicationDetailComponent implements OnInit {
     // Extract the filename from the path
     const filename = this.application.documentPath.split('/').pop();
     if (!filename) {
-      // Replace alert with PrimeNG toast
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
@@ -181,7 +219,6 @@ export class SponsorApplicationDetailComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error downloading document', error);
-        // Replace alert with PrimeNG toast
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
