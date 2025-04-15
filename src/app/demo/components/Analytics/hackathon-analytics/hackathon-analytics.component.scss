@@ -310,3 +310,166 @@
       page-break-inside: avoid;
     }
   }
+
+  // hackathon-analytics.component.scss
+
+:host ::ng-deep {
+    // Chart container styling
+    .card {
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+    }
+    
+    // Chart height control
+    .p-chart {
+      min-height: 250px;
+      
+      canvas {
+        max-height: 300px;
+      }
+    }
+    
+    // Insights box styling
+    .surface-100 {
+      border-left: 4px solid var(--primary-color, #42A5F5);
+      background-color: var(--surface-100, #f8f9fa);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: var(--surface-200, #e9ecef);
+      }
+      
+      p {
+        line-height: 1.5;
+      }
+    }
+    
+    // Report panel styling
+    .p-panel {
+      .p-panel-header {
+        background-color: var(--surface-200, #e9ecef);
+        
+        .p-panel-title {
+          font-size: 1.1rem;
+        }
+      }
+      
+      .p-panel-content {
+        padding: 1.25rem;
+        
+        // Markdown content styling
+        h1 {
+          font-size: 1.75rem;
+          margin-bottom: 1rem;
+          color: var(--text-color-secondary, #6c757d);
+        }
+        
+        h2 {
+          font-size: 1.5rem;
+          margin-top: 1.5rem;
+          margin-bottom: 0.75rem;
+          padding-bottom: 0.5rem;
+          border-bottom: 1px solid var(--surface-300, #dee2e6);
+        }
+        
+        h3 {
+          font-size: 1.25rem;
+          margin-top: 1.25rem;
+          margin-bottom: 0.5rem;
+          color: var(--primary-color, #42A5F5);
+        }
+        
+        p {
+          margin-bottom: 1rem;
+          line-height: 1.6;
+        }
+        
+        ul {
+          margin-left: 1.5rem;
+          margin-bottom: 1rem;
+          
+          li {
+            margin-bottom: 0.5rem;
+          }
+        }
+        
+        strong {
+          color: var(--primary-color, #42A5F5);
+        }
+      }
+    }
+    
+    // Button styling
+    .p-button {
+      &.p-button-primary {
+        background-color: var(--primary-color, #42A5F5);
+        border-color: var(--primary-color, #42A5F5);
+      }
+      
+      &.p-button-secondary {
+        background-color: var(--text-color-secondary, #6c757d);
+        border-color: var(--text-color-secondary, #6c757d);
+      }
+    }
+    
+    // Loading spinner styling
+    .custom-spinner {
+      .p-progress-spinner-circle {
+        stroke: var(--primary-color, #42A5F5) !important;
+      }
+    }
+    
+    // Media queries for responsive design
+    @media screen and (max-width: 992px) {
+      .grid {
+        .col-12 {
+          padding: 0.5rem;
+        }
+      }
+      
+      .card {
+        h5 {
+          font-size: 1rem;
+        }
+      }
+      
+      .p-chart {
+        min-height: 200px;
+      }
+    }
+    
+    // Animation for insights cards
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .surface-100 {
+      animation: fadeIn 0.5s ease-out;
+    }
+  }
+  
+  // Print styles for reports
+  @media print {
+    .card:not(:last-child) {
+      display: none;
+    }
+    
+    .p-button {
+      display: none;
+    }
+    
+    .p-panel {
+      box-shadow: none !important;
+      border: none !important;
+      
+      .p-panel-content {
+        padding: 0 !important;
+      }
+    }
+  }

@@ -1,0 +1,34 @@
+<!-- hackathon-analytics.component.html -->
+<div class="analytics-container">
+    <h2>Hackathon Analytics</h2>
+    
+    <div class="back-button-container">
+      <button pButton type="button" icon="pi pi-arrow-left" label="Back to List" routerLink="/hackathons"></button>
+    </div>
+    
+    <div class="chart-grid">
+      <!-- Event Type Chart -->
+      <div class="chart-card">
+        <h3>Event Type Distribution</h3>
+        <p-chart type="pie" [data]="eventTypeChartData" [options]="chartOptions"></p-chart>
+      </div>
+      
+      <!-- Theme Categories Chart -->
+      <div class="chart-card">
+        <h3>Hackathon Themes</h3>
+        <p-chart type="pie" [data]="themeChartData" [options]="chartOptions"></p-chart>
+      </div>
+      
+      <!-- Audience Categories Chart -->
+      <div class="chart-card">
+        <h3>Target Audiences</h3>
+        <p-chart type="pie" [data]="audienceChartData" [options]="chartOptions"></p-chart>
+      </div>
+      
+      <!-- Tech Categories Chart -->
+      <div class="chart-card">
+        <h3>Technology Focus</h3>
+        <p-chart type="pie" [data]="techChartData" [options]="chartOptions"></p-chart>
+      </div>
+    </div>
+  </div>
