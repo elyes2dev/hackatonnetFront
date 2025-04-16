@@ -28,7 +28,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
-import { FormsModule } from '@angular/forms';
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { HttpClientModule } from '@angular/common/http';
 import { WorkshopService } from './demo/services/workshop.service';
@@ -47,7 +46,6 @@ import { ResourceListComponent } from './demo/components/resource/resource-list/
 import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
 import { SupportTicketComponent } from './demo/components/ticket/support-ticket.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { MentorApplicationListComponent } from './demo/components/mentor-application/mentor-application-list/mentor-application-list.component';
 import { MentorApplicationDetailsComponent } from './demo/components/mentor-application/mentor-application-details/mentor-application-details.component';
 import { MentorApplicationFormComponent } from './demo/components/mentor-application/mentor-application-form/mentor-application-form.component';
@@ -68,9 +66,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { FooterComponent } from './demo/components/landing/footer/footer.component';
 import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
 import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor-application/mentor-application-details-admin/mentor-application-details-admin.component';
-import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MessageService } from 'primeng/api';
 import { MentorEvaluationFormAdminComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form-admin/mentor-evaluation-form-admin.component';
 import { ListMentorFormAdminComponent } from './demo/components/list-mentor/list-mentor-form-admin/list-mentor-form-admin.component';
 import { MentorEvaluationListUserComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list-user/mentor-evaluation-list-user.component';
@@ -90,9 +86,6 @@ import { QuizfScoreAddComponent } from './demo/components/quizf/quizf-score-add/
 import { FilterByNameAndThemePipe } from './demo/components/workshopf/workshoplistf/filter-by-name-and-theme.pipe';
 import { ChartsComponent } from './demo/components/charts/charts.component';
 import { NgChartsModule } from 'ng2-charts';
-import { FileUploadModule } from 'primeng/fileupload';
-import {CardModule} from "primeng/card";
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SponsorApplicationFormComponent } from './demo/components/sponsor/sponsor-application-form/sponsor-application-form.component';
 import { SponsorApplicationDetailComponent } from './demo/components/sponsor/sponsor-application-detail/sponsor-application-detail.component';
 import { SponsorApplicationListComponent } from './demo/components/sponsor/sponsor-application-list/sponsor-application-list.component';
@@ -101,8 +94,6 @@ import { PrizeListComponent } from './demo/components/prize/prize-list/prize-lis
 import { PrizeDetailComponent } from './demo/components/prize/prize-detail/prize-detail.component';
 import { SponsorLeaderboardComponent } from './demo/components/sponsor/sponsor-leaderboard/sponsor-leaderboard.component';
 import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/sponsor-prizes.component';
-import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
-import { FooterComponent } from './demo/components/landing/footer/footer.component';
 
 
 @NgModule({

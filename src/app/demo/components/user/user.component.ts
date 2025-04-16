@@ -25,7 +25,7 @@ export class UserComponent implements OnInit {
   }
 
   initializeUser(): User {
-    return { name: '', lastname: '', email: '', username: '', password: '', birthdate: null, picture: '', description: '' };
+    return { name: '', lastname: '', email: '', username: '', password: '', birthdate: null, picture: '', description: '',badge: 'JUNIOR_COACH' };
   }
 
   loadUsers() {

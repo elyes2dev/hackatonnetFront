@@ -14,6 +14,7 @@ interface RegistrationData {
   birthdate: Date | null;
   picture: string;
   description: string;
+  badge: string;
 }
 
 @Component({
@@ -30,7 +31,8 @@ export class RegisterComponent {
     password: '',
     birthdate: null,
     picture: '',
-    description: ''
+    description: '',
+    badge: 'JUNIOR_COACH'
   };
 
   errorMessage: string | null = null;
