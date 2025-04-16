@@ -1,4 +1,4 @@
-<div class="layout-topbar">
+<div class="layout-topbar" (click)="hideNotifications()">
     <a class="layout-topbar-logo" routerLink="">
         <img src="assets/layout/images/{{layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="logo">
         <span>SAKAI</span>
@@ -13,6 +13,33 @@
     </button>
 
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+        <!-- Notification button -->
+<button class="p-link layout-topbar-button notification-button" (click)="toggleNotifications($event)">
+    <i class="pi pi-bell" [ngClass]="{'active-notification': unreadNotifications.length > 0}"></i>
+    <span class="notification-badge" *ngIf="unreadNotifications.length > 0">{{unreadNotifications.length}}</span>
+    <span>Notifications</span>
+</button>
+
+        <!-- Notification dropdown -->
+        <div #notificationMenu class="notification-dropdown" [ngClass]="{'show-notifications': showNotifications}" (click)="$event.stopPropagation()">
+            <div class="notification-header">
+                <h3>Notifications</h3>
+            </div>
+            <div class="notification-body">
+                <div *ngIf="unreadNotifications.length === 0" class="no-notifications">
+                    No new notifications
+                </div>
+                <ul class="notification-list">
+                    <li *ngFor="let notification of unreadNotifications" class="notification-item" (click)="handleNotificationClick(notification)">
+                        <div class="notification-content">
+                            <div class="notification-message">{{notification.message}}</div>
+                            <div class="notification-time">{{getTimeAgo(notification.createdAt)}}</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <button class="p-link layout-topbar-button">
             <i class="pi pi-calendar"></i>
             <span>Calendar</span>

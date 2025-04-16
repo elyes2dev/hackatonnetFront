@@ -1,0 +1,138 @@
+<div class="container mt-5">
+  <!-- Add PrimeNG Toast and Confirmation Dialog -->
+  <p-toast></p-toast>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+  
+  <div *ngIf="prize && !loading && !error">
+    <!-- Main Card Container -->
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5>Prize Details</h5>
+          <span [class]="getStatusBadgeClass(prize.status)">{{ prize.status }}</span>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <!-- Animated Cards Row -->
+        <div class="row justify-content-center">
+          <!-- Prize Information Card -->
+          <div class="col-md-3 mb-4">
+            <div class="animated-card">
+              <h2>Prize Info</h2>
+              <div class="card-content">
+                <div class="info-item">
+                  <span class="info-label">ID:</span>
+                  <span class="info-value">{{ prize.id }}</span>
+                </div>
+                
+                <div class="info-item">
+                  <span class="info-label">Type:</span>
+                  <span class="info-value">{{ prize.prizeType }}</span>
+                </div>
+                
+                <div class="info-item">
+                  <span class="info-label">Category:</span>
+                  <span class="info-value">{{ prize.prizeCategory.replace('_', ' ') }}</span>
+                </div>
+                
+                <ng-container *ngIf="prize.prizeType === 'MONEY'">
+                  <div class="info-item">
+                    <span class="info-label">Amount:</span>
+                    <span class="info-value">${{ prize.amount }}</span>
+                  </div>
+                </ng-container>
+                
+                <ng-container *ngIf="prize.prizeType === 'PRODUCT'">
+                  <div class="info-item">
+                    <span class="info-label">Product:</span>
+                    <span class="info-value">{{ prize.productName }}</span>
+                  </div>
+                  
+                  <div class="info-item">
+                    <span class="info-label">Description:</span>
+                    <span class="info-value">{{ prize.productDescription }}</span>
+                  </div>
+                </ng-container>
+                
+                <div class="info-item">
+                  <span class="info-label">Submitted:</span>
+                  <span class="info-value">{{ prize.submittedAt | date:'medium' }}</span>
+                </div>
+                
+                <ng-container *ngIf="prize.reviewedAt">
+                  <div class="info-item">
+                    <span class="info-label">Reviewed:</span>
+                    <span class="info-value">{{ prize.reviewedAt | date:'medium' }}</span>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Sponsor Information Card -->
+          <div class="col-md-3 mb-4">
+            <div class="animated-card">
+              <h2>Sponsor</h2>
+              <div class="card-content">
+                <div *ngIf="prize.sponsor">
+                  <div class="info-item">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value">{{ prize.sponsor.name }} {{ prize.sponsor.lastname }}</span>
+                  </div>
+                  
+                  <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ prize.sponsor.email }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Hackathon Information Card -->
+          <div class="col-md-3 mb-4">
+            <div class="animated-card">
+              <h2>Hackathon</h2>
+              <div class="card-content">
+                <div *ngIf="prize.hackathon">
+                  <div class="info-item">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value">{{ prize.hackathon.title }}</span>
+                  </div>
+                  
+                  <div class="info-item">
+                    <span class="info-label">Period:</span>
+                    <span class="info-value">{{ prize.hackathon.startDate | date }} to {{ prize.hackathon.endDate | date }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-footer">
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between">
+          <button pButton pRipple type="button" label="Back to List" icon="pi pi-arrow-left" class="p-button-outlined p-button-secondary" (click)="goBack()"></button>
+          
+          <div *ngIf="isAdmin && canApproveOrReject()">
+            <button pButton pRipple type="button" label="Approve" icon="pi pi-check-circle" class="p-button-outlined p-button-success mr-2" (click)="confirmAction('approve')"></button>
+            <button pButton pRipple type="button" label="Reject" icon="pi pi-x-circle" class="p-button-outlined p-button-danger" (click)="confirmAction('reject')"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

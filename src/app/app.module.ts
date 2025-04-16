@@ -11,6 +11,7 @@ import { EventService } from './demo/service/event.service';
 import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 //New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
@@ -23,17 +24,16 @@ import { RippleModule } from 'primeng/ripple';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { HttpClientModule } from '@angular/common/http';
 import { WorkshopService } from './demo/services/workshop.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
-import { RegisterComponent } from './demo/components/auth/register/register.component';
 import { UserComponent } from './demo/components/user/user.component';
 import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
 import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
@@ -47,8 +47,6 @@ import { ResourceFormComponent } from './demo/components/resource/resource-form/
 import { SupportTicketComponent } from './demo/components/ticket/support-ticket.component';
 
 import { WorkshoplistfComponent } from './demo/components/workshopf/workshoplistf/workshoplistf.component';
-import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
-import { FooterComponent } from './demo/components/landing/footer/footer.component';
 import { WorkshopfFormComponent } from './demo/components/workshopf/workshopf-form/workshopf-form.component';
 import { WorkshopfDetailsComponent } from './demo/components/workshopf/workshopf-details/workshopf-details.component';
 import { ResourcefListComponent } from './demo/components/resourcef/resourcef-list/resourcef-list.component';
@@ -64,15 +62,32 @@ import { ChartsComponent } from './demo/components/charts/charts.component';
 import { NgChartsModule } from 'ng2-charts';
 import { FileUploadModule } from 'primeng/fileupload';
 import {CardModule} from "primeng/card";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SponsorApplicationFormComponent } from './demo/components/sponsor/sponsor-application-form/sponsor-application-form.component';
+import { SponsorApplicationDetailComponent } from './demo/components/sponsor/sponsor-application-detail/sponsor-application-detail.component';
+import { SponsorApplicationListComponent } from './demo/components/sponsor/sponsor-application-list/sponsor-application-list.component';
+import { PrizeFormComponent } from './demo/components/prize/prize-form/prize-form.component';
+import { PrizeListComponent } from './demo/components/prize/prize-list/prize-list.component';
+import { PrizeDetailComponent } from './demo/components/prize/prize-detail/prize-detail.component';
+import { SponsorLeaderboardComponent } from './demo/components/sponsor/sponsor-leaderboard/sponsor-leaderboard.component';
+import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/sponsor-prizes.component';
+import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
+import { FooterComponent } from './demo/components/landing/footer/footer.component';
 
 @NgModule({
     declarations: [
         AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent, FilterByNameAndThemePipe, ChartsComponent
           ,MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent, QuizDetailsComponent, QuizFormComponent, QuizListComponent, QuizResultDialogComponent, QuizScoreAddComponent ,
-        ResourceDetailsComponent, WorkshoplistComponent,ResourceListComponent,ResourceFormComponent,SupportTicketComponent
+        ResourceDetailsComponent, WorkshoplistComponent,ResourceListComponent,ResourceFormComponent,SupportTicketComponent,SponsorApplicationFormComponent,
+        SponsorApplicationListComponent,
+        SponsorApplicationDetailComponent,
+        PrizeFormComponent,
+        PrizeListComponent,
+        PrizeDetailComponent,
+        SponsorLeaderboardComponent,
+        SponsorPrizesComponent,
     ],
     imports: [
-
         AppRoutingModule,
         AppLayoutModule,
         TableModule,
@@ -86,6 +101,7 @@ import {CardModule} from "primeng/card";
         MultiSelectModule,
         DropdownModule,
         ProgressBarModule,
+        ConfirmDialogModule,
         ToastModule,
         FormsModule,
         HttpClientModule,
@@ -101,7 +117,7 @@ import {CardModule} from "primeng/card";
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, WorkshopService
+        PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService
     ],
     bootstrap: [AppComponent]
 })
