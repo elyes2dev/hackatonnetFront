@@ -10,14 +10,12 @@ import { SponsorApplication } from '../models/sponsor-application';
 export class SponsorApplicationService {
   private baseUrl = 'http://localhost:9100/sponsor-application';
   
-  // For testing without authentication - static user ID
-  private staticUserId = 1; // Change this to your test user ID
 
   constructor(private http: HttpClient) { }
 
   // Submit application
-  submitApplication(application: SponsorApplication): Observable<SponsorApplication> {
-    return this.http.post<SponsorApplication>(`${this.baseUrl}/${this.staticUserId}/submit`, application);
+  submitApplication(userId: number, application: SponsorApplication): Observable<SponsorApplication> {
+    return this.http.post<SponsorApplication>(`${this.baseUrl}/${userId}/submit`, application);
   }
 
   // Get all applications

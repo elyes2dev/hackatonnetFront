@@ -6,6 +6,7 @@ import { finalize } from 'rxjs/operators';
 import { Prize, PrizeCategory, PrizeType } from 'src/app/demo/models/prize';
 import { PrizeService } from 'src/app/demo/services/prize.service';
 import { MessageService, ConfirmationService } from 'primeng/api'; // Import PrimeNG services
+import { StorageService } from 'src/app/demo/services/storage.service';
 
 @Component({
   selector: 'app-prize-form',
@@ -26,7 +27,8 @@ export class PrizeFormComponent implements OnInit {
     private fb: FormBuilder,
     private prizeService: PrizeService,
     private router: Router,
-    private messageService: MessageService // Add PrimeNG MessageService
+    private messageService: MessageService, // Add PrimeNG MessageService
+    private storageService: StorageService // ✅ Inject here
   ) { }
 
   ngOnInit(): void {
@@ -88,55 +90,56 @@ export class PrizeFormComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
-    
+  
     if (this.prizeForm.invalid) {
-      // Mark all fields as touched to trigger validation messages
       Object.keys(this.prizeForm.controls).forEach(key => {
-        const control = this.prizeForm.get(key);
-        control?.markAsTouched();
+        this.prizeForm.get(key)?.markAsTouched();
       });
       return;
     }
-
+  
+    // ✅ Get dynamic user ID
+    const userId = this.storageService.getLoggedInUserId();
+    if (!userId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'User Not Logged In',
+        detail: 'You must be logged in to create a prize.'
+      });
+      return;
+    }
+  
     this.submitting = true;
     const formValue = this.prizeForm.value;
     const prize: Prize = {
       prizeType: formValue.prizeType,
       prizeCategory: formValue.prizeCategory
     };
-
+  
     if (formValue.prizeType === PrizeType.MONEY) {
       prize.amount = formValue.amount;
     } else {
       prize.productName = formValue.productName;
       prize.productDescription = formValue.productDescription;
     }
-
+  
     this.prizeService.createPrize(prize)
-      .pipe(
-        finalize(() => {
-          this.submitting = false;
-        })
-      )
+      .pipe(finalize(() => {
+        this.submitting = false;
+      }))
       .subscribe(
         (createdPrize) => {
-          console.log('Prize created successfully:', createdPrize);
-          
-          // Replace success message with PrimeNG toast
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
             detail: 'Prize created successfully!'
           });
-          
+  
           setTimeout(() => {
             this.router.navigate(['/sponsor-prizes']);
           }, 2000);
         },
         (error) => {
-          console.error('Error creating prize:', error);
-          
-          // Replace error message with PrimeNG toast
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
@@ -145,4 +148,6 @@ export class PrizeFormComponent implements OnInit {
         }
       );
   }
+  
 }
+

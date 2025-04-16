@@ -7,6 +7,7 @@ import { SponsorApplicationService } from 'src/app/demo/services/sponsor-applica
 import { FileUploadService } from 'src/app/demo/services/file-upload.service';
 import { SponsorApplication } from 'src/app/demo/models/sponsor-application';
 import { MessageService } from 'primeng/api'; // Import PrimeNG MessageService
+import { StorageService } from 'src/app/demo/services/storage.service';
 
 interface UploadResult {
   filePath: string | null;
@@ -34,7 +35,8 @@ export class SponsorApplicationFormComponent implements OnInit {
     private sponsorService: SponsorApplicationService,
     private fileUploadService: FileUploadService,
     private router: Router,
-    private messageService: MessageService // Add PrimeNG MessageService
+    private messageService: MessageService, // Add PrimeNG MessageService
+    private storageService: StorageService // ✅ Injected here
   ) { }
 
   ngOnInit(): void {
@@ -155,7 +157,7 @@ export class SponsorApplicationFormComponent implements OnInit {
       this.applicationForm.markAllAsTouched();
       return;
     }
-    
+  
     if (!this.selectedDocument && this.isDocumentRequired) {
       this.messageService.add({
         severity: 'error',
@@ -164,9 +166,20 @@ export class SponsorApplicationFormComponent implements OnInit {
       });
       return;
     }
-    
+  
+    // ✅ Get logged-in user ID dynamically
+    const userId = this.storageService.getLoggedInUserId();
+    if (!userId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'User Not Logged In',
+        detail: 'You must be logged in to submit a sponsor application.'
+      });
+      return;
+    }
+  
     this.isSubmitting = true;
-    
+  
     // Upload logo
     this.uploadFile(this.selectedLogo, 'logo').pipe(
       finalize(() => {
@@ -181,25 +194,25 @@ export class SponsorApplicationFormComponent implements OnInit {
           })
         ).subscribe({
           next: (docResult: UploadResult) => {
-            // Submit the application with the file paths
+            // Create application object
             const application: SponsorApplication = {
               ...this.applicationForm.value,
               companyLogo: logoResult.filePath,
               documentPath: docResult.filePath
             };
-            
-            this.sponsorService.submitApplication(application).subscribe({
+  
+            // ✅ Submit with dynamic user ID
+            this.sponsorService.submitApplication(userId, application).subscribe({
               next: (response) => {
                 console.log('Application submitted successfully', response);
                 this.isSubmitting = false;
-                
+  
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Success',
-                  detail: 'Application submitted successfully! We will review your application soon.'
+                  detail: 'Application submitted successfully! We will review it soon.'
                 });
-                
-                // Reset form after successful submission
+  
                 setTimeout(() => {
                   this.router.navigate(['/sponsor-application-form']);
                 }, 2000);
@@ -207,7 +220,7 @@ export class SponsorApplicationFormComponent implements OnInit {
               error: (error: any) => {
                 console.error('Error submitting application', error);
                 this.isSubmitting = false;
-                
+  
                 this.messageService.add({
                   severity: 'error',
                   summary: 'Application Error',
@@ -219,7 +232,7 @@ export class SponsorApplicationFormComponent implements OnInit {
           error: (error: any) => {
             console.error('Error uploading document', error);
             this.isSubmitting = false;
-            
+  
             this.messageService.add({
               severity: 'error',
               summary: 'Upload Error',
@@ -231,7 +244,7 @@ export class SponsorApplicationFormComponent implements OnInit {
       error: (error: any) => {
         console.error('Error uploading logo', error);
         this.isSubmitting = false;
-        
+  
         this.messageService.add({
           severity: 'error',
           summary: 'Upload Error',
@@ -239,5 +252,5 @@ export class SponsorApplicationFormComponent implements OnInit {
         });
       }
     });
-  }
+  }  
 }

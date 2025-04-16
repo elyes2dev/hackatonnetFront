@@ -3,25 +3,25 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { Prize, SponsorInfoDTO } from '../models/prize';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PrizeService {
   private baseUrl = 'http://localhost:9100/prize';
-  
-   // For testing without authentication - static user ID
-   private staticUserId = 1; // Change this to your test user ID
+
 
     // For testing without hackathon - static hackathon ID
   private staticHackathonId = 1; // Change this to your test hackathon ID
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private storageService: StorageService) { }
 
 
   createPrize(prize: Prize): Observable<Prize> {
-    // Since we're using static values, we'll always use the same IDs
-    return this.http.post<Prize>(`${this.baseUrl}/${this.staticUserId}/${this.staticHackathonId}/create`, prize);
+    const userId = this.storageService.getLoggedInUserId();
+    const hackathonId = 1; // Replace with dynamic if needed
+    return this.http.post<Prize>(`${this.baseUrl}/${userId}/${hackathonId}/create`, prize);
   }
 
   getAllPrizes(): Observable<Prize[]> {
@@ -38,8 +38,8 @@ export class PrizeService {
   }
 
   getPrizesBySponsor(): Observable<Prize[]> {
-    // Always use the static sponsor ID
-    return this.http.get<Prize[]>(`${this.baseUrl}/getprizebysponsor/${this.staticUserId}`);
+    const userId = this.storageService.getLoggedInUserId();
+    return this.http.get<Prize[]>(`${this.baseUrl}/getprizebysponsor/${userId}`);
   }
 
   approvePrize(id: number): Observable<Prize> {
@@ -51,8 +51,8 @@ export class PrizeService {
   }
 
   cancelPrize(prizeId: number): Observable<Prize> {
-    // Always use the static sponsor ID
-    return this.http.put<Prize>(`${this.baseUrl}/${prizeId}/cancel/${this.staticUserId}`, {});
+    const userId = this.storageService.getLoggedInUserId();
+    return this.http.put<Prize>(`${this.baseUrl}/${prizeId}/cancel/${userId}`, {});
   }
 
   deletePrize(id: number): Observable<any> {
