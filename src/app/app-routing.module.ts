@@ -28,7 +28,7 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
                     { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
                     { path: 'live-stream/:id', component: LiveStreamComponent },
-                    { path: 'call/:roomId', component: VideoRoomComponent },
+                    { path: ':hackathonId/call/:roomId', component: VideoRoomComponent },
                     { path: 'mydashboard', component: MydashboardComponent },
                     { path: 'hackathons', component: HackathonListComponent }, 
                     { path: 'hackathon/:id', component: HackathonDetailsComponent },

@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Peer, MediaConnection } from 'peerjs';
 import { ChatService } from 'src/app/demo/services/live-stream/chat/chat.service';
 
@@ -22,16 +23,31 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   participants: Participant[] = [];
   
   // States
-  roomId: string = 'test123';
+  roomId: string = '';
   isMicMuted = false;
   isCameraOff = false;
   isSharingScreen = false;
+
+  hackathonId: string = '';
+  
+  showChat = false;
+  newMessage = '';
+  isHandRaised = false;
+  messages: any[] = [];
+
+  constructor(private chatService: ChatService, private route: ActivatedRoute, private router: Router) {}
   
   // PeerJS
   private peer!: Peer;
   private peers: { [id: string]: MediaConnection } = {};
 
   async ngOnInit() {
+
+    this.route.paramMap.subscribe(params => {
+      this.hackathonId = params.get('hackathonId') || '';
+      this.roomId = params.get('roomId') || '';
+      console.log(`Connected to hackathon: ${this.hackathonId}, room: ${this.roomId}`);
+    });
     
     await this.setupLocalStream();
     this.initPeer();
@@ -180,12 +196,15 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   }
 
   leaveCall() {
+    
     this.participants.forEach(p => {
       p.stream.getTracks().forEach(track => track.stop());
     });
     
     Object.values(this.peers).forEach(peer => peer.close());
     this.peer.destroy();
+
+    this.router.navigate(['/live-stream', this.hackathonId]);
   }
 
   ngOnDestroy() {
@@ -197,12 +216,6 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
 
 
 
-  showChat = false;
-  newMessage = '';
-  isHandRaised = false;
-  messages: any[] = [];
-
-  constructor(private chatService: ChatService) {}
 
   // Add these new methods
   toggleChat() {
