@@ -34,6 +34,19 @@ import { PrizeFormComponent } from './demo/components/prize/prize-form/prize-for
 import { SponsorLeaderboardComponent } from './demo/components/sponsor/sponsor-leaderboard/sponsor-leaderboard.component';
 import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/sponsor-prizes.component';
 import { SponsorApplicationFormComponent } from './demo/components/sponsor/sponsor-application-form/sponsor-application-form.component';
+import { MentorApplicationDetailsComponent } from './demo/components/mentor-application/mentor-application-details/mentor-application-details.component';
+import { MentorApplicationFormComponent } from './demo/components/mentor-application/mentor-application-form/mentor-application-form.component';
+import { MentorApplicationListComponent } from './demo/components/mentor-application/mentor-application-list/mentor-application-list.component';
+import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor-application/mentor-application-details-admin/mentor-application-details-admin.component';
+import { ListMentorFormComponent } from './demo/components/list-mentor/list-mentor-form/list-mentor-form.component';
+import { ListMentorListComponent } from './demo/components/list-mentor/list-mentor-list/list-mentor-list.component';
+import { MentorEvaluationFormComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form/mentor-evaluation-form.component';
+import { MentorEvaluationListComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list/mentor-evaluation-list.component';
+import { MentorEvaluationFormAdminComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form-admin/mentor-evaluation-form-admin.component';
+import { ListMentorFormAdminComponent } from './demo/components/list-mentor/list-mentor-form-admin/list-mentor-form-admin.component';
+import { MentorEvaluationListUserComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list-user/mentor-evaluation-list-user.component';
+
+
 
 
 @NgModule({
@@ -52,7 +65,7 @@ import { SponsorApplicationFormComponent } from './demo/components/sponsor/spons
                     // Dashboard
                     { path: 'support-tickets', component: SupportTicketComponent },  // Add support ticket component route
                     { path: 'mydashboard', component: MydashboardComponent },
-                  
+
                     { path: 'prizes', component: PrizeListComponent },
                     { path: 'prizes/:id', component: PrizeDetailComponent },
                     { path: 'sponsor-application', component: SponsorApplicationListComponent },
@@ -61,6 +74,12 @@ import { SponsorApplicationFormComponent } from './demo/components/sponsor/spons
                     // User Management Route
                     { path: 'users', component: UserComponent },  // Add UserComponent Route
 
+                    { path: 'mentor-applications', component: MentorApplicationListComponent },
+                    { path: 'mentor-applications-admin/:id', component: MentorApplicationDetailsAdminComponent },
+                    { path: 'list-mentors', component: ListMentorListComponent },
+                    { path: 'mentor/edit/:id', component: ListMentorFormAdminComponent },
+                    { path: 'mentor-evaluations', component: MentorEvaluationListComponent },
+                    { path: 'mentor-evaluation-admin/:id/edit', component: MentorEvaluationFormAdminComponent },
                     // Workshops Routes
                     { path: 'workshops',
                         children: [
@@ -151,6 +170,16 @@ import { SponsorApplicationFormComponent } from './demo/components/sponsor/spons
             { path: 'sponsors-leaderboard', component: SponsorLeaderboardComponent },
             { path: 'sponsor-prizes', component: SponsorPrizesComponent },
             { path: 'sponsor-application-form', component: SponsorApplicationFormComponent },
+            { path: 'mentor-applications/new', component: MentorApplicationFormComponent },
+            { path: 'mentor-applications/:id', component: MentorApplicationDetailsComponent },
+            {  path: 'mentor-applications/:id/edit',  component: MentorApplicationFormComponent },
+            { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },
+            { path: 'mentor-evaluations-user', component: MentorEvaluationListUserComponent },
+
+
+            { path: 'mentor-form', component: ListMentorFormComponent },
+            { path: 'mentor-evaluation/new', component: MentorEvaluationFormComponent },
+            { path: 'mentor-evaluation/:id/edit', component: MentorEvaluationFormComponent },
             { path: 'pages/notfound', component: NotfoundComponent },
             { path: '**', redirectTo: 'pages/notfound' },
         ], { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })

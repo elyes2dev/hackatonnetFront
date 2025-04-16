@@ -11,7 +11,7 @@ export interface Role {
     id: number;
     name: string;
   }
-  
+
 export interface User {
     id?: number;
     name: string;
@@ -27,5 +27,8 @@ export interface User {
     workshops?: Workshop[];
     skills?: Skill[];
     roles?: Role[];
+
+    mentorPoints?: number;
+    badge: string;
     // Additional properties can be added as needed
 }

@@ -1,0 +1,133 @@
+<app-navbar></app-navbar>
+
+<div class="container mx-auto p-4">
+  <div class="grid">
+    <div class="col-12">
+      <div class="card shadow-4 border-round-lg p-4">
+        <div class="flex justify-content-between align-items-center mb-4">
+          <h5 class="text-xl font-bold m-0">Mentor Evaluations</h5>
+        </div>
+        
+        <p-table
+          #dt1
+          [value]="evaluations"
+          dataKey="id"
+          [rows]="10"
+          [paginator]="true"
+          [globalFilterFields]="['mentor.name', 'mentor.lastname', 'team.name', 'feedbackText']"
+          [loading]="loading"
+          [rowHover]="true"
+          responsiveLayout="scroll"
+          styleClass="p-datatable-gridlines p-datatable-sm">
+  
+          <!-- Global filter -->
+          <ng-template pTemplate="caption">
+            <div class="flex justify-content-between align-items-center flex-column sm:flex-row">
+              <button
+                pButton
+                label="Clear"
+                class="p-button-outlined mb-2"
+                icon="pi pi-filter-slash"
+                (click)="clear(dt1)">
+              </button>
+              <span class="p-input-icon-left mb-2">
+                <i class="pi pi-search"></i>
+                <input
+                  pInputText
+                  type="text"
+                  (input)="onGlobalFilter(dt1, $event)"
+                  placeholder="Search Keyword"
+                  class="w-full" />
+              </span>
+            </div>
+          </ng-template>
+  
+          <!-- Header -->
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="font-semibold">Team</th>
+              <th class="font-semibold">Rating</th>
+              <th class="font-semibold">Feedback</th>
+              <th class="font-semibold">Created At</th>
+              <th class="font-semibold text-center">Actions</th>
+            </tr>
+          </ng-template>
+  
+          <!-- Body -->
+          <ng-template pTemplate="body" let-eval>
+            <tr>
+
+              <td>
+                <ng-container *ngIf="eval.team; else noTeam">
+                  <span class="p-tag p-tag-rounded p-tag-info">{{ eval.team.teamName }}</span>
+                </ng-container>
+                <ng-template #noTeam>N/A</ng-template>
+              </td>
+              <td>
+                <p-rating
+                  [readonly]="true"
+                  [cancel]="false"
+                  [stars]="5"
+                  [(ngModel)]="eval.rating">
+                </p-rating>
+              </td>
+              <td>
+                <span [pTooltip]="eval.feedbackText" *ngIf="eval.feedbackText">
+                  {{ (eval.feedbackText.length > 50) ? (eval.feedbackText | slice:0:50) + '...' : eval.feedbackText }}
+                </span>
+                <span *ngIf="!eval.feedbackText" class="text-gray-500 font-italic">No feedback provided</span>
+              </td>
+              <td>{{ eval.createdAt ? (eval.createdAt | date: 'MMM d, y, h:mm a') : 'N/A' }}</td>
+              <td>
+                <div class="flex justify-content-center gap-2">
+                  <!-- Edit button -->
+                  <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning p-button-sm"
+                    pTooltip="Edit" tooltipPosition="top"
+                    (click)="editEvaluation(eval.id)">
+                  </button>
+              
+                  <!-- Delete button -->
+                  <button 
+                    pButton 
+                    pRipple 
+                    icon="pi pi-trash" 
+                    class="p-button-rounded p-button-danger p-button-sm" 
+                    pTooltip="Delete" tooltipPosition="top"
+                    (click)="deleteEvaluation(eval.id)">
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+  
+          <!-- Empty state -->
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6" class="text-center p-4">
+                <div class="flex flex-column align-items-center">
+                  <i class="pi pi-info-circle text-5xl text-primary mb-3"></i>
+                  <span class="font-bold text-xl">No evaluations found</span>
+                  <p class="text-gray-600">Try adjusting your search criteria or add a new evaluation.</p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+  
+          <!-- Loading -->
+          <ng-template pTemplate="loadingbody">
+            <tr>
+              <td colspan="6" class="text-center p-4">
+                <i class="pi pi-spin pi-spinner text-2xl mr-2"></i>
+                <span>Loading evaluations...</span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        
+        <!-- Pagination controls appear at the bottom through the paginator property -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

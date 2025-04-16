@@ -1,0 +1,42 @@
+<div class="col-12">
+    <div class="card">
+      <h5>Previous Experiences</h5>
+      <p-table [value]="experiences" 
+               rowGroupMode="subheader" 
+               groupRowsBy="year" 
+               sortField="year" 
+               sortMode="single" 
+               [sortOrder]="-1" 
+               responsiveLayout="scroll"
+               [scrollable]="true" 
+               scrollHeight="400px">
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width:20%">Year</th>
+            <th style="width:25%">Hackathon</th>
+            <th style="width:35%">Description</th>
+            <th style="width:20%">Teams Coached</th>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="body" let-exp let-rowIndex="rowIndex">
+          <!-- Group Header -->
+          <tr pRowGroupHeader *ngIf="rowGroupMetadata[exp.year].index === rowIndex">
+            <td colspan="4">
+              <span class="font-bold text-xl">{{exp.year}}</span>
+            </td>
+          </tr>
+          
+          <!-- Experience Row -->
+          <tr>
+            <td>{{exp.year}}</td>
+            <td>{{exp.hackathonName}}</td>
+            <td>{{exp.description}}</td>
+            <td>{{exp.numberOfTeamsCoached}}</td>
+          </tr>
+        </ng-template>
+        
+      </p-table>
+    </div>
+  </div>

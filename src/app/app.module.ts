@@ -28,6 +28,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
+import { FormsModule } from '@angular/forms';
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { HttpClientModule } from '@angular/common/http';
 import { WorkshopService } from './demo/services/workshop.service';
@@ -45,6 +46,35 @@ import { ResourceDetailsComponent } from './demo/components/resource/resource-de
 import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
 import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
 import { SupportTicketComponent } from './demo/components/ticket/support-ticket.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { MentorApplicationListComponent } from './demo/components/mentor-application/mentor-application-list/mentor-application-list.component';
+import { MentorApplicationDetailsComponent } from './demo/components/mentor-application/mentor-application-details/mentor-application-details.component';
+import { MentorApplicationFormComponent } from './demo/components/mentor-application/mentor-application-form/mentor-application-form.component';
+import { PreviousExperienceListComponent } from './demo/components/previous-experience/previous-experience-list/previous-experience-list.component';
+import { PreviousExperienceFormComponent } from './demo/components/previous-experience/previous-experience-form/previous-experience-form.component';
+import { MentorEvaluationListComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list/mentor-evaluation-list.component';
+import { MentorEvaluationFormComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form/mentor-evaluation-form.component';
+import { ListMentorListComponent } from './demo/components/list-mentor/list-mentor-list/list-mentor-list.component';
+import { ListMentorFormComponent } from './demo/components/list-mentor/list-mentor-form/list-mentor-form.component';
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+// PrimeNG Modules
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { CheckboxModule } from 'primeng/checkbox';
+import { FileUploadModule } from 'primeng/fileupload';
+import { CalendarModule } from 'primeng/calendar';
+import { FooterComponent } from './demo/components/landing/footer/footer.component';
+import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
+import { MentorApplicationDetailsAdminComponent } from './demo/components/mentor-application/mentor-application-details-admin/mentor-application-details-admin.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MessageService } from 'primeng/api';
+import { MentorEvaluationFormAdminComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form-admin/mentor-evaluation-form-admin.component';
+import { ListMentorFormAdminComponent } from './demo/components/list-mentor/list-mentor-form-admin/list-mentor-form-admin.component';
+import { MentorEvaluationListUserComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list-user/mentor-evaluation-list-user.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { WorkshoplistfComponent } from './demo/components/workshopf/workshoplistf/workshoplistf.component';
 import { WorkshopfFormComponent } from './demo/components/workshopf/workshopf-form/workshopf-form.component';
@@ -74,6 +104,7 @@ import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/s
 import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
 import { FooterComponent } from './demo/components/landing/footer/footer.component';
 
+
 @NgModule({
     declarations: [
         AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent, FilterByNameAndThemePipe, ChartsComponent
@@ -85,13 +116,18 @@ import { FooterComponent } from './demo/components/landing/footer/footer.compone
         PrizeListComponent,
         PrizeDetailComponent,
         SponsorLeaderboardComponent,
-        SponsorPrizesComponent,
+        SponsorPrizesComponent,  MentorApplicationDetailsAdminComponent,
+        MentorEvaluationFormAdminComponent,
+         MentorApplicationListComponent, MentorApplicationDetailsComponent, MentorApplicationFormComponent, PreviousExperienceListComponent, PreviousExperienceFormComponent, MentorEvaluationListComponent, MentorEvaluationFormComponent, ListMentorListComponent, ListMentorFormComponent,
+        ListMentorFormAdminComponent,
+        MentorEvaluationListUserComponent
     ],
     imports: [
         AppRoutingModule,
         AppLayoutModule,
         TableModule,
         CommonModule,
+        ReactiveFormsModule,
         RatingModule,
         ButtonModule,
         SliderModule,
@@ -112,7 +148,31 @@ import { FooterComponent } from './demo/components/landing/footer/footer.compone
         InputTextModule,
         NgChartsModule,
         FileUploadModule,
-        BrowserModule
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        CardModule,
+        TagModule,
+        ProgressSpinnerModule,
+        ToastModule,
+        TooltipModule,
+
+        // PrimeNG Modules
+        InputTextModule,
+        InputTextareaModule,
+        ButtonModule,
+        CheckboxModule,
+        FileUploadModule,
+        CalendarModule,
+        RippleModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        FormsModule,
+        TableModule,
+        ButtonModule,
+        ToastModule,
+        RippleModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

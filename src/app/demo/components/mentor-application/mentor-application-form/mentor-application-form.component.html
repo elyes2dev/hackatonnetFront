@@ -1,0 +1,181 @@
+<app-navbar></app-navbar>
+
+<div class="surface-section px-4 py-8 md:px-6 lg:px-8">
+    <div class="grid justify-content-center">
+        <div class="col-12 md:col-8 lg:col-6">
+            <div class="flex align-items-center justify-content-between mb-4">
+                <div>
+                    <div class="font-medium text-3xl text-900 mb-1">{{ isEditMode ? 'Edit' : 'New' }} Mentor Application</div>
+                    <div class="text-500">{{ isEditMode ? 'Update your mentor application' : 'Submit a new mentor application' }}</div>
+                </div>
+                <div class="flex gap-2">
+                    <button pButton 
+                            pRipple 
+                            icon="pi pi-arrow-left" 
+                            label="Back" 
+                            class="p-button-text" 
+                            (click)="onCancel()">
+                    </button>
+                </div>
+            </div>
+            
+            <p-card *ngIf="!loading">
+                <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="p-fluid">
+                    <div class="grid">
+                        <div class="col-12">
+                            <!-- Application Text -->
+                            <div class="field mb-4">
+                                <label for="applicationText" class="text-500 font-medium mb-2 block">Application Text*</label>
+                                <textarea 
+                                    pInputTextarea 
+                                    id="applicationText" 
+                                    formControlName="applicationText" 
+                                    rows="5"
+                                    [class.ng-invalid]="applicationForm.get('applicationText')?.invalid && applicationForm.get('applicationText')?.touched"
+                                    [class.ng-dirty]="applicationForm.get('applicationText')?.invalid && applicationForm.get('applicationText')?.touched">
+                                </textarea>
+                                <small *ngIf="applicationForm.get('applicationText')?.invalid && applicationForm.get('applicationText')?.touched" class="p-error">
+                                    Application text is required and must be at least 100 characters long.
+                                </small>
+                            </div>
+                            
+                            <!-- Links Section -->
+                            <div class="field mb-4">
+                                <label class="text-500 font-medium mb-2 block">Links (optional)</label>
+                                <div formArrayName="links" *ngFor="let link of links.controls; let i = index" class="p-inputgroup mb-2">
+                                    <input 
+                                        pInputText 
+                                        [formControlName]="i" 
+                                        placeholder="https://example.com"
+                                        [class.ng-invalid]="links.at(i).invalid && links.at(i).touched"
+                                        [class.ng-dirty]="links.at(i).invalid && links.at(i).touched">
+                                    <button 
+                                        pButton 
+                                        pRipple 
+                                        type="button" 
+                                        icon="pi pi-times" 
+                                        class="p-button-danger" 
+                                        (click)="removeLink(i)"
+                                        [disabled]="links.length <= 1"></button>
+                                </div>
+                                <button 
+                                    pButton 
+                                    pRipple 
+                                    type="button" 
+                                    icon="pi pi-plus" 
+                                    label="Add Link" 
+                                    class="p-button-secondary p-button-sm" 
+                                    (click)="addLink()"></button>
+                            </div>
+                            
+                            <!-- File Uploads -->
+                            <div class="p-formgrid grid mb-4">
+                                <div class="field col-12 md:col-6">
+                                    <label for="cvFile" class="text-500 font-medium mb-2 block">Upload CV{{ !isEditMode || !existingCvFileName ? '*' : ' (optional)' }}</label>
+                                    
+                                    <!-- Show existing CV file name if in edit mode -->
+                                    <div *ngIf="isEditMode && existingCvFileName" class="mb-2">
+                                        <span class="pi pi-file-pdf mr-2"></span>
+                                        <span>Current file: {{ existingCvFileName }}</span>
+                                    </div>
+                                    
+                                    <p-fileUpload 
+                                        mode="basic" 
+                                        id="cvFile"
+                                        name="cvFile" 
+                                        accept=".pdf,.doc,.docx" 
+                                        [maxFileSize]="5000000"
+                                        (onSelect)="onCvFileChange($event)"
+                                        [chooseLabel]="isEditMode && existingCvFileName ? 'Replace CV' : 'Select CV'">
+                                    </p-fileUpload>
+                                    <small *ngIf="!cvFile && !existingCvFileName && applicationForm.touched" class="p-error">CV is required.</small>
+                                </div>
+                                <div class="field col-12 md:col-6">
+                                    <label for="uploadPaperFile" class="text-500 font-medium mb-2 block">Upload Paper (optional)</label>
+                                    
+                                    <!-- Show existing paper file name if in edit mode -->
+                                    <div *ngIf="isEditMode && existingPaperFileName" class="mb-2">
+                                        <span class="pi pi-file-pdf mr-2"></span>
+                                        <span>Current file: {{ existingPaperFileName }}</span>
+                                    </div>
+                                    
+                                    <p-fileUpload 
+                                        mode="basic" 
+                                        id="uploadPaperFile"
+                                        name="uploadPaperFile" 
+                                        accept=".pdf,.doc,.docx" 
+                                        [maxFileSize]="5000000"
+                                        (onSelect)="onUploadPaperFileChange($event)"
+                                        [chooseLabel]="isEditMode && existingPaperFileName ? 'Replace Paper' : 'Select Paper'">
+                                    </p-fileUpload>
+                                </div>
+                            </div>
+                            
+                            <!-- Previous Experience Toggle -->
+                            <div class="field-checkbox mb-4">
+                                <p-checkbox 
+                                    id="hasPreviousExperience" 
+                                    formControlName="hasPreviousExperience"
+                                    [binary]="true"
+                                    inputId="hasPreviousExperience"></p-checkbox>
+                                <label for="hasPreviousExperience" class="ml-2">I have previous mentoring experience</label>
+                            </div>
+                            
+                            <!-- Previous Experiences -->
+                            <div *ngIf="applicationForm.get('hasPreviousExperience')?.value" class="mb-4">
+                                <label class="text-500 font-medium mb-2 block">Previous Experiences</label>
+                                <div formArrayName="previousExperiences">
+                                    <ng-container *ngFor="let exp of previousExperiences.controls; let i = index">
+                                        <app-previous-experience-form
+                                            [experienceForm]="getFormGroupAt(i)"
+                                            [index]="i"
+                                            (removeExperienceEvent)="removeExperience($event)">
+                                        </app-previous-experience-form>
+                                    </ng-container>
+                                </div>
+                                <button 
+                                    pButton 
+                                    pRipple 
+                                    type="button" 
+                                    icon="pi pi-plus" 
+                                    label="Add Experience" 
+                                    class="p-button-secondary p-button-sm" 
+                                    (click)="addExperience()"></button>
+                            </div>
+                            
+                            <!-- Submit and Cancel Buttons -->
+                            <div class="flex justify-content-between mt-4 pt-3 border-top-1 surface-border">
+                                <button 
+                                    pButton 
+                                    pRipple 
+                                    type="button" 
+                                    label="Cancel" 
+                                    class="p-button-secondary"
+                                    (click)="onCancel()">
+                                </button>
+                                
+                                <button 
+                                    pButton 
+                                    pRipple 
+                                    type="submit" 
+                                    [label]="isEditMode ? 'Update Application' : 'Submit Application'" 
+                                    class="p-button-primary"
+                                    [disabled]="submitting || applicationForm.invalid || (!cvFile && !existingCvFileName)">
+                                    <i *ngIf="submitting" class="pi pi-spinner pi-spin mr-2"></i>
+                                </button>
+                            </div>
+                            
+                            <small *ngIf="errorMessage" class="p-error block mt-2">{{errorMessage}}</small>
+                        </div>
+                    </div>
+                </form>
+            </p-card>
+
+            <div *ngIf="loading" class="flex justify-content-center p-5">
+                <p-progressSpinner></p-progressSpinner>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-footer></app-footer>

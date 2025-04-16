@@ -1,0 +1,27 @@
+:host ::ng-deep {
+  .p-datatable .p-datatable-header {
+    padding: 1rem;
+  }
+  
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .p-button-text {
+    padding: 0.5rem;
+  }
+  
+  .p-datatable-responsive-scroll > .p-datatable-wrapper {
+    overflow-x: auto;
+  }
+}
+
+.card {
+  margin-bottom: 2rem;
+  
+  h5 {
+    margin-bottom: 1rem;
+  }
+}

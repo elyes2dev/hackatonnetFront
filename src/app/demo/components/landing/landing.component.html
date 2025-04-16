@@ -5,8 +5,8 @@
         <!-- Topbar Section (Admin or Student) -->
         <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
             <a class="flex align-items-center" href="#">
-                <img src="assets/layout/images/{{layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="Logo" height="50" class="mr-0 lg:mr-2">
-                <span class="text-900 font-medium text-2xl line-height-3 mr-8">SAKAI</span>
+                <img src="assets/layout/images/hackathonnetlogo.png" alt="Logo" height="50" class="mr-0 lg:mr-2">
+
             </a>
 
             <!-- Mobile Menu Icon -->
@@ -26,7 +26,8 @@
                         <a (click)="router.navigate(['/prize-form'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
                             <span>Add a prize</span>
                         </a>
-                    </li>
+                      </li>
+
                     <li>
                         <a (click)="router.navigate(['/sponsor-prizes'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
                             <span>My prizes</span>
@@ -40,6 +41,30 @@
                     <li>
                         <a (click)="router.navigate(['/sponsors-leaderboard'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
                             <span>Sponsor Leaderboard</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a [routerLink]="['/mentor-applications/new']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>Apply</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a (click)="router.navigate(['mentor-evaluation/new'], {fragment: 'features'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>Evaluate</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a [routerLink]="['/mentor-form']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>Participate</span>
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a [routerLink]="['/mentor-evaluations-user']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>my evaluations</span>
                         </a>
                     </li>
                 </ul>

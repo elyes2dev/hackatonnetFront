@@ -10,6 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
 
+
 @NgModule({
     imports: [
         CommonModule,
@@ -20,7 +21,7 @@ import { FooterComponent } from './footer/footer.component';
         PanelModule,
         ButtonModule
     ],
-    declarations: [LandingComponent]
+    declarations: [LandingComponent ]
 })
 export class LandingModule { 
     
