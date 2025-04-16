@@ -7,7 +7,7 @@ import { User } from '../models/user.model';  // Ensure the path to the User mod
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:9100/pi/auth'; 
+  private apiUrl = 'http://localhost:9100/auth'; 
   private userRole: string = 'admin'; // This should be set based on the logged-in user
 
 

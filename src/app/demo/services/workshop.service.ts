@@ -8,7 +8,7 @@ import { Workshop } from '../models/workshop.model';
 })
 export class WorkshopService {
 
-  private apiUrl = 'http://localhost:9100/pi/workshops';  // Base URL for Workshop API
+  private apiUrl = 'http://localhost:9100/workshops';  // Base URL for Workshop API
 
   constructor(private http: HttpClient) { }
 

@@ -1,8 +1,12 @@
-<div class="surface-0 flex justify-content-center">
-    <div id="home" class="landing-wrapper overflow-hidden">
+
+<div class="surface-0 flex justify-content-center h-full">
+    <div id="home" class="landing-wrapper overflow-hidden w-full h-full">
+
+        <!-- Topbar Section (Admin or Student) -->
         <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
             <a class="flex align-items-center" href="#">
-                <img src="assets/layout/images/{{layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="Sakai Logo" height="50" class="mr-0 lg:mr-2"><span class="text-900 font-medium text-2xl line-height-3 mr-8">SAKAI</span>
+                <img src="assets/layout/images/{{layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="Logo" height="50" class="mr-0 lg:mr-2">
+                <span class="text-900 font-medium text-2xl line-height-3 mr-8">SAKAI</span>
             </a>
 
             <!-- Mobile Menu Icon -->
@@ -18,16 +22,6 @@
                     <li><a (click)="router.navigate(['/pages/landing'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">Highlights</a></li>
                     <li><a (click)="router.navigate(['/pages/landing'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">Pricing</a></li>
                     <li><a (click)="router.navigate(['/workshopsf'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">Workshops</a></li>
-                    <li>
-                        <a (click)="router.navigate(['/pages/landing'], {fragment: 'home'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                            <span>Home</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a (click)="router.navigate(['/pages/landing'], {fragment: 'features'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                            <span>Features</span>
-                        </a>
-                    </li>
                     <li>
                         <a (click)="router.navigate(['/prize-form'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
                             <span>Add a prize</span>

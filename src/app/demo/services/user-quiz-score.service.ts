@@ -8,7 +8,7 @@ import { Observable, of, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class UserQuizScoreService {
-  private baseUrl = 'http://localhost:9100/pi/score';
+  private baseUrl = 'http://localhost:9100/score';
 
   constructor(private http: HttpClient) {}
 

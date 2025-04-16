@@ -26,15 +26,15 @@ import { QuizfDetailsComponent } from './demo/components/quizf/quizf-details/qui
 import { QuizfScoreAddComponent } from './demo/components/quizf/quizf-score-add/quizf-score-add.component';
 import { ChartsComponent } from './demo/components/charts/charts.component';
 import { SupportTicketComponent } from './demo/components/ticket/support-ticket.component';
-
-import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/sponsor-prizes.component';
-import { SponsorApplicationDetailComponent } from './demo/components/sponsor/sponsor-application-detail/sponsor-application-detail.component';
-import { SponsorLeaderboardComponent } from './demo/components/sponsor/sponsor-leaderboard/sponsor-leaderboard.component';
-import { SponsorApplicationListComponent } from './demo/components/sponsor/sponsor-application-list/sponsor-application-list.component';
-import { PrizeDetailComponent } from './demo/components/prize/prize-detail/prize-detail.component';
-import { PrizeFormComponent } from './demo/components/prize/prize-form/prize-form.component';
 import { PrizeListComponent } from './demo/components/prize/prize-list/prize-list.component';
+import { PrizeDetailComponent } from './demo/components/prize/prize-detail/prize-detail.component';
+import { SponsorApplicationDetailComponent } from './demo/components/sponsor/sponsor-application-detail/sponsor-application-detail.component';
+import { SponsorApplicationListComponent } from './demo/components/sponsor/sponsor-application-list/sponsor-application-list.component';
+import { PrizeFormComponent } from './demo/components/prize/prize-form/prize-form.component';
+import { SponsorLeaderboardComponent } from './demo/components/sponsor/sponsor-leaderboard/sponsor-leaderboard.component';
+import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/sponsor-prizes.component';
 import { SponsorApplicationFormComponent } from './demo/components/sponsor/sponsor-application-form/sponsor-application-form.component';
+
 
 @NgModule({
     imports: [
@@ -52,6 +52,11 @@ import { SponsorApplicationFormComponent } from './demo/components/sponsor/spons
                     // Dashboard
                     { path: 'support-tickets', component: SupportTicketComponent },  // Add support ticket component route
                     { path: 'mydashboard', component: MydashboardComponent },
+                  
+                    { path: 'prizes', component: PrizeListComponent },
+                    { path: 'prizes/:id', component: PrizeDetailComponent },
+                    { path: 'sponsor-application', component: SponsorApplicationListComponent },
+                    { path: 'sponsor-application/:id', component: SponsorApplicationDetailComponent },
 
                     // User Management Route
                     { path: 'users', component: UserComponent },  // Add UserComponent Route
@@ -94,10 +99,6 @@ import { SponsorApplicationFormComponent } from './demo/components/sponsor/spons
                         component: QuizScoreAddComponent // Replace with your actual component
                       }
 
-                    { path: 'prizes', component: PrizeListComponent },
-                    { path: 'prizes/:id', component: PrizeDetailComponent },
-                    { path: 'sponsor-application', component: SponsorApplicationListComponent },
-                    { path: 'sponsor-application/:id', component: SponsorApplicationDetailComponent },
                 ],
             },
 
@@ -146,11 +147,11 @@ import { SponsorApplicationFormComponent } from './demo/components/sponsor/spons
             // Authentication & Other Routes
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
             { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
-            { path: 'pages/notfound', component: NotfoundComponent },
             { path: 'prize-form', component: PrizeFormComponent },
             { path: 'sponsors-leaderboard', component: SponsorLeaderboardComponent },
             { path: 'sponsor-prizes', component: SponsorPrizesComponent },
             { path: 'sponsor-application-form', component: SponsorApplicationFormComponent },
+            { path: 'pages/notfound', component: NotfoundComponent },
             { path: '**', redirectTo: 'pages/notfound' },
         ], { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })
     ],

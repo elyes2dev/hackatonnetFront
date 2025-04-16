@@ -9,7 +9,7 @@ import { ImageModel } from '../models/image.model';
   providedIn: 'root'
 })
 export class ResourceService {
-  private baseUrl = 'http://localhost:9100/pi/workshopsr';
+  private baseUrl = 'http://localhost:9100/workshopsr';
 
   constructor(private http: HttpClient) { }
 
