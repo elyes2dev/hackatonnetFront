@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
-
 
 @Component({
     selector: 'app-landing',
@@ -65,19 +64,32 @@ import { User } from '../../models/user.model';
 })
 export class LandingComponent implements OnInit {
     userId: string | null = null;
+    isAuthenticated: boolean = false;
     isAdmin: boolean = false;
     isStudent: boolean = false;
 
-    constructor(private storageService: StorageService,public layoutService: LayoutService, public router: Router,   private userService: UserService,
-        private authService: AuthService ) {
+    constructor(
+      private storageService: StorageService,
+      public layoutService: LayoutService,
+      public router: Router,
+      private authService: AuthService ,
+      private userService: UserService// Inject AuthService
+    ) {
       this.userId = this.storageService.getUserId();
+      this.isAuthenticated = this.authService.isAuthenticated(); // Use AuthService to determine authentication state
       console.log('User ID:', this.userId);
     }
 
     ngOnInit(): void {
         this.getUserRole();
       }
-    
+
+    logout()
+    {
+        this.authService.logout()
+        window.location.reload();
+    }
+
       // Fetch and log user role
       getUserRole() {
         const userId = localStorage.getItem('loggedid'); // Assuming user ID is stored in localStorage
@@ -87,12 +99,12 @@ export class LandingComponent implements OnInit {
             next: (user: User) => {
               if (user.roles && user.roles.length > 0) {
                 console.log('User roles:', user.roles.map(role => role.name)); // Log roles
-    
+
                 // Check if user has an admin role
                 this.isAdmin = user.roles.some(role => role.name === 'admin');
                 // Check if user has a student role
                 this.isStudent = user.roles.some(role => role.name === 'student');
-    
+
                 console.log('Is Admin:', this.isAdmin);  // Log isAdmin after setting
                 console.log('Is Student:', this.isStudent);  // Log isStudent after setting
               } else {
@@ -105,10 +117,10 @@ export class LandingComponent implements OnInit {
           console.error('User ID not found in localStorage');
         }
       }
-    
 
 
-      
 
-    
+
+
+
 }

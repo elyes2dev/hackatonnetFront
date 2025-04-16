@@ -6,6 +6,7 @@ import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
+import { UserComponent } from './demo/components/user/user.component';
 import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
 import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
 import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
@@ -24,6 +25,8 @@ import { QuizfFormComponent } from './demo/components/quizf/quizf-form/quizf-for
 import { QuizfDetailsComponent } from './demo/components/quizf/quizf-details/quizf-details.component';
 import { QuizfScoreAddComponent } from './demo/components/quizf/quizf-score-add/quizf-score-add.component';
 import { ChartsComponent } from './demo/components/charts/charts.component';
+import { SupportTicketComponent } from './demo/components/ticket/support-ticket.component';
+
 
 @NgModule({
     imports: [
@@ -37,12 +40,16 @@ import { ChartsComponent } from './demo/components/charts/charts.component';
                     { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },
                     { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
-                    
+
                     // Dashboard
+                    { path: 'support-tickets', component: SupportTicketComponent },  // Add support ticket component route
                     { path: 'mydashboard', component: MydashboardComponent },
 
+                    // User Management Route
+                    { path: 'users', component: UserComponent },  // Add UserComponent Route
+
                     // Workshops Routes
-                    { path: 'workshops', 
+                    { path: 'workshops',
                         children: [
                             { path: '', component: WorkshoplistComponent },  // List Workshops
                             { path: 'new', component: WorkshopFormComponent },  // Add New Workshop
@@ -78,7 +85,7 @@ import { ChartsComponent } from './demo/components/charts/charts.component';
                         path: 'workshops/:workshopId/quizzes/:quizId/score-add',
                         component: QuizScoreAddComponent // Replace with your actual component
                       }
-                      
+
                 ],
             },
 
@@ -90,7 +97,7 @@ import { ChartsComponent } from './demo/components/charts/charts.component';
             // Workshops Routes
 // Workshops Routes
 {
-    path: 'workshopsf', 
+    path: 'workshopsf',
     children: [
       { path: '', component: WorkshoplistfComponent },  // List Workshops
       { path: 'new', component: WorkshopfFormComponent },  // Add New Workshop
@@ -98,10 +105,10 @@ import { ChartsComponent } from './demo/components/charts/charts.component';
       { path: ':id', component: WorkshopfDetailsComponent }  // Workshop Details
     ]
   },
-  
+
   // Resources Routes inside Workshops
   {
-    path: 'workshopsf/:workshopId/resources', 
+    path: 'workshopsf/:workshopId/resources',
     children: [
       { path: '', component: ResourcefListComponent },  // List Resources
       { path: 'new', component: ResourcefFormComponent },  // Add Resource
@@ -109,7 +116,7 @@ import { ChartsComponent } from './demo/components/charts/charts.component';
       { path: ':resourceId', component: ResourcefDetailsComponent },  // Resource Details
     ]
   },
-  
+
   {
     path: 'workshopsf/:workshopId/quizzes',
     children: [

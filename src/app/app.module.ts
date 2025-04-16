@@ -26,20 +26,26 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
-import { AbstractControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
+import { HttpClientModule } from '@angular/common/http';
+import { WorkshopService } from './demo/services/workshop.service';
+import { BrowserModule } from '@angular/platform-browser';
 import { WorkshopFormComponent } from './demo/components/workshop/workshop-form/workshop-form.component';
 import { WorkshopDetailsComponent } from './demo/components/workshop/workshop-details/workshop-details.component';
+import { RegisterComponent } from './demo/components/auth/register/register.component';
+import { UserComponent } from './demo/components/user/user.component';
+import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
+import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
+import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.component';
+import { QuizResultDialogComponent } from './demo/components/quiz/quiz-result-dialog/quiz-result-dialog.component';
+import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
+import { RouterModule } from '@angular/router';
+import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
 import { ResourceListComponent } from './demo/components/resource/resource-list/resource-list.component';
 import { ResourceFormComponent } from './demo/components/resource/resource-form/resource-form.component';
-import { ResourceDetailsComponent } from './demo/components/resource/resource-details/resource-details.component';
-import { RouterModule } from '@angular/router';
-import { CardModule } from 'primeng/card';
-import { QuizListComponent } from './demo/components/quiz/quiz-list/quiz-list.component';
-import { QuizFormComponent } from './demo/components/quiz/quiz-form/quiz-form.component';
-import { QuizDetailsComponent } from './demo/components/quiz/quiz-details/quiz-details.component';
-import { QuizScoreAddComponent } from './demo/components/quiz/quiz-score-add/quiz-score-add.component';
-import { QuizResultDialogComponent } from './demo/components/quiz/quiz-result-dialog/quiz-result-dialog.component';
+import { SupportTicketComponent } from './demo/components/ticket/support-ticket.component';
+
 import { WorkshoplistfComponent } from './demo/components/workshopf/workshoplistf/workshoplistf.component';
 import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
 import { FooterComponent } from './demo/components/landing/footer/footer.component';
@@ -57,12 +63,16 @@ import { FilterByNameAndThemePipe } from './demo/components/workshopf/workshopli
 import { ChartsComponent } from './demo/components/charts/charts.component';
 import { NgChartsModule } from 'ng2-charts';
 import { FileUploadModule } from 'primeng/fileupload';
+import {CardModule} from "primeng/card";
 
 @NgModule({
     declarations: [
         AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent, FilterByNameAndThemePipe, ChartsComponent
+          ,MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent, QuizDetailsComponent, QuizFormComponent, QuizListComponent, QuizResultDialogComponent, QuizScoreAddComponent ,
+        ResourceDetailsComponent, WorkshoplistComponent,ResourceListComponent,ResourceFormComponent,SupportTicketComponent
     ],
     imports: [
+
         AppRoutingModule,
         AppLayoutModule,
         TableModule,
@@ -78,19 +88,20 @@ import { FileUploadModule } from 'primeng/fileupload';
         ProgressBarModule,
         ToastModule,
         FormsModule,
+        HttpClientModule,
         ReactiveFormsModule,
         RouterModule,
         CardModule,
         ButtonModule,
         InputTextModule,
         NgChartsModule,
-        FileUploadModule
-
+        FileUploadModule,
+        BrowserModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
+        PhotoService, ProductService, WorkshopService
     ],
     bootstrap: [AppComponent]
 })
