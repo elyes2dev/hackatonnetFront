@@ -20,6 +20,8 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ChartModule } from 'primeng/chart';
 import { PrimeIcons } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
+
 
 //New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
@@ -88,7 +90,7 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
+        PhotoService, ProductService ,  MessageService, ConfirmationService
     ],
     bootstrap: [AppComponent]
 })

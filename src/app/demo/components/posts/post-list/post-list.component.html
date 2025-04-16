@@ -11,6 +11,10 @@
           <span *ngIf="post.hackathon?.title"> • {{ post.hackathon.title }}</span>
         </span>
       </div>
+      <div class="post-actions" *ngIf="post.postedBy?.id === currentUserId">
+        <button pButton icon="pi pi-pencil" class="p-button-text" (click)="editPost(post)"></button>
+        <button pButton icon="pi pi-trash" class="p-button-text p-button-danger" (click)="confirmDelete(post)"></button>
+      </div>
     </div>
   
       <div class="post-content">
@@ -39,3 +43,19 @@
       </app-comment-list>
   </div>
 </div>
+
+<p-sidebar [(visible)]="editSidebarVisible" position="right" [baseZIndex]="10000" styleClass="p-sidebar-md">
+  <h3>Edit Post</h3>
+  <app-post-form 
+    *ngIf="selectedPost"
+    [hackathon]="selectedPost.hackathon"
+    [isEditMode]="true"
+    [postToEdit]="selectedPost"
+    (postCreated)="onPostUpdated()"
+    (cancel)="closeEditSidebar()">
+  </app-post-form>
+</p-sidebar>
+
+<!-- Add confirmation dialog for delete -->
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<p-toast></p-toast>

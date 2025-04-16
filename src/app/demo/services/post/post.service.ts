@@ -28,6 +28,16 @@ export class PostService {
     return this.http.post<Post>(`http://localhost:9100/pi/posts`, formData);
   }
 
+  updatePost(postId: number, formData: FormData): Observable<Post> {
+    return this.http.put<Post>(`${this.apiUrl}/posts/${postId}`, formData);
+  }
+
+  deletePost(postId: number): Observable<string> {
+    return this.http.delete(`${this.apiUrl}/posts/${postId}`, {
+        responseType: 'text'
+    });
+}
+
   createComment(postId: number, comment: Comment): Observable<Comment> {
     const commentRequest = {
       userId: comment.userId,
