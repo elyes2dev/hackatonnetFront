@@ -1,8 +1,13 @@
 <div class="grid">
   <div class="col-12">
+   
     <div class="card">
+      <div class="back-button-container">
+        <button pButton type="button" icon="pi pi-arrow-left" label="Back to List" routerLink="/hackathons"></button>
+      </div>
       <h4 class="mb-0">Hackathon Analytics</h4>
     </div>
+    
   </div>
   
   <!-- Pie Chart for Online vs Onsite -->
@@ -32,6 +37,8 @@
       <p-chart type="bar" [data]="barData" [options]="barOptions" [style]="{'width': '100%', 'height': '300px'}"></p-chart>
     </div>
   </div>
+
+  <app-hackathon-categorization-analytics></app-hackathon-categorization-analytics>
   
   <!-- Line Chart for Cumulative Growth -->
   <div class="col-12">
@@ -40,4 +47,6 @@
       <p-chart type="line" [data]="lineData" [options]="lineOptions" [style]="{'width': '100%', 'height': '300px'}"></p-chart>
     </div>
   </div>
+
+  
 </div>

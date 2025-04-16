@@ -1,5 +1,9 @@
 <div class="fixed-header">
+  <div class="back-button-container">
+    <button pButton type="button" icon="pi pi-arrow-left" label="Back to List" routerLink="/hackathons"></button>
+  </div>
   <button class="header-button" (click)="goToLiveStream()">Live stream</button>
+  
 </div>
 
 <div *ngIf="hackathon as h" class="hackathon-details-container">

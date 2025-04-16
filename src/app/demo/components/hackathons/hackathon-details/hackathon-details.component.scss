@@ -5,10 +5,13 @@
   padding: 10px 20px; /* Add padding to make the button look nice */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for separation */
   margin-bottom: 15px;
+  display: flex;
+  align-items: center;
 }
 
+
 .header-button {
-  background: #4CAF50;
+  background: #007bff;
   color: white;
   border: none;
   padding: 10px 20px;

@@ -1,6 +1,9 @@
+
 import { Component, OnInit } from '@angular/core';
 import { HackathonService } from 'src/app/demo/services/hackathon/hackathon.service';
+import { CategorizationService } from 'src/app/demo/services/categorization/categorization.service';
 import { Hackathon } from 'src/app/demo/models/hackathon';
+import { HackathonWithCategories, CategoryType } from 'src/app/demo/models/hackathon-category';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,34 +11,65 @@ import { Router } from '@angular/router';
   templateUrl: './hackathon-list.component.html',
   styleUrls: ['./hackathon-list.component.scss']
 })
-export class HackathonListComponent {
-  hackathons: Hackathon[] = [];  // Array of hackathons
-  selectedHackathon: Hackathon | null = null;  // To store the selected hackathon for editing
-  visibleSidebar2: boolean = false;  // Controls sidebar visibility
-  filteredHackathons: Hackathon[] = [];
+export class HackathonListComponent implements OnInit {
+  hackathons: HackathonWithCategories[] = [];  
+  selectedHackathon: HackathonWithCategories | null = null;  
+  visibleSidebar2: boolean = false;  
+  filteredHackathons: HackathonWithCategories[] = [];
   searchTerm: string = '';
   selectedEventType: string | null = null;
+  
+  // New properties for category filtering
+  themeOptions: any[] = [];
+  audienceOptions: any[] = [];
+  techOptions: any[] = [];
+  selectedTheme: string | null = null;
+  selectedAudience: string | null = null;
+  selectedTech: string | null = null;
 
   eventTypeOptions = [
     { label: 'Online', value: 'online' },
     { label: 'Onsite', value: 'onsite' }
   ];
 
-
-  constructor(private hackathonService: HackathonService, private router: Router ) {}
+  constructor(
+    private hackathonService: HackathonService,
+    private categorizationService: CategorizationService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadHackathons();
+    this.initializeCategoryOptions();
+  }
+
+  initializeCategoryOptions() {
+    // Create dropdown options for categories
+    this.themeOptions = this.categorizationService.getAllCategories(CategoryType.THEME)
+      .map(theme => ({ label: this.capitalizeFirstLetter(theme), value: theme }));
+    
+    this.audienceOptions = this.categorizationService.getAllCategories(CategoryType.AUDIENCE)
+      .map(audience => ({ label: this.capitalizeFirstLetter(audience), value: audience }));
+    
+    this.techOptions = this.categorizationService.getAllCategories(CategoryType.TECH)
+      .map(tech => ({ label: this.capitalizeFirstLetter(tech), value: tech }));
+  }
+
+  capitalizeFirstLetter(string: string): string {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
   loadHackathons() {
     this.hackathonService.getHackathons().subscribe((data: Hackathon[]) => {
-      this.hackathons = data;
+      // Apply categorization to each hackathon
+      this.hackathons = data.map(hackathon => 
+        this.categorizationService.categorizeHackathon(hackathon)
+      );
       this.filteredHackathons = [...this.hackathons];
     });
   }
 
-  showAddHackathonForm(hackathon?: Hackathon) {
+  showAddHackathonForm(hackathon?: HackathonWithCategories) {
     // Deep clone the hackathon object
     this.selectedHackathon = hackathon ? JSON.parse(JSON.stringify(hackathon)) : null;
     
@@ -55,22 +89,40 @@ export class HackathonListComponent {
         error: (err) => console.error('Error:', err)
       });
     }
-    location.reload();
   }
 
-  
   filterHackathons() {
     this.filteredHackathons = this.hackathons.filter(hackathon => {
       const matchesSearch = hackathon.title.toLowerCase().includes(this.searchTerm.toLowerCase());
+      
       const matchesType = !this.selectedEventType || 
                          (this.selectedEventType === 'online' && hackathon.isOnline) || 
                          (this.selectedEventType === 'onsite' && !hackathon.isOnline);
       
-      return matchesSearch && matchesType;
+      const matchesTheme = !this.selectedTheme || 
+                          (hackathon.categories?.theme?.includes(this.selectedTheme));
+      
+      const matchesAudience = !this.selectedAudience || 
+                             (hackathon.categories?.audience?.includes(this.selectedAudience));
+      
+      const matchesTech = !this.selectedTech || 
+                         (hackathon.categories?.tech?.includes(this.selectedTech));
+      
+      return matchesSearch && matchesType && matchesTheme && matchesAudience && matchesTech;
     });
   }
 
   navigateToAnalytics() {
     this.router.navigate(['/hackathon-analytics']);
+  }
+
+  // Reset all filters
+  resetFilters() {
+    this.searchTerm = '';
+    this.selectedEventType = null;
+    this.selectedTheme = null;
+    this.selectedAudience = null;
+    this.selectedTech = null;
+    this.filteredHackathons = [...this.hackathons];
   }
 }

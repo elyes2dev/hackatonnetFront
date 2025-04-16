@@ -3,7 +3,7 @@
   padding: 1.5rem;
   background-color: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-top: 50px; /* Space for the fixed button + header (adjust as needed) */
+  margin-top: 80px; /* Space for the fixed button + header (adjust as needed) */
   max-height: 700px; /* Adjust the height as needed */
   overflow-y: scroll; /* Allows scrolling */
   padding-right: 20px; 
@@ -238,8 +238,8 @@
 .fixed-header {
   position: fixed;
   top: 80px;
-  left: 355px;
-  right: 0;
+  // left: 355px;
+  // right: 0;
   border-radius: 8px;
   background-color: white;
   z-index: 1000; /* Make sure it's above other content */
@@ -249,12 +249,77 @@
   align-items: center;
 }
 
+
+
+
+
+
 .search-container {
   display: flex;
-  gap: 20px;
-  width: 100%;
-  margin-left: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  
+  .p-dropdown {
+    min-width: 150px;
+  }
+  
+  .reset-filters {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    color: #495057;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    
+    &:hover {
+      background-color: #e9ecef;
+    }
+  }
 }
+
+/* Category tags inside hackathon cards */
+.category-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  
+  .category-tag {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    
+    &.theme {
+      background-color: #e3f2fd;
+      color: #0d47a1;
+    }
+    
+    &.audience {
+      background-color: #f3e5f5;
+      color: #4a148c;
+    }
+    
+    &.tech {
+      background-color: #e8f5e9;
+      color: #1b5e20;
+    }
+    
+    i {
+      font-size: 0.7rem;
+    }
+  }
+}
+
+
 
 .search-container .p-inputtext {
   width: 250px;

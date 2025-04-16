@@ -10,6 +10,7 @@ import { VideoRoomComponent } from './demo/components/live-stream/video-room/vid
 import { LandingHackathonListComponent } from './demo/components/landing/Hackathon/landing-hackathon-list/landing-hackathon-list.component';
 import { LandingHackathonDetailsComponent } from './demo/components/landing/Hackathon/landing-hackathon-details/landing-hackathon-details.component';
 import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackathon-analytics/hackathon-analytics.component';
+import { HackathonCategorizationAnalyticsComponent } from './demo/components/Analytics/hackathon-categorization-analytics/hackathon-categorization-analytics.component';
 
 
 
@@ -31,7 +32,9 @@ import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackath
                     { path: 'mydashboard', component: MydashboardComponent },
                     { path: 'hackathons', component: HackathonListComponent }, 
                     { path: 'hackathon/:id', component: HackathonDetailsComponent },
-                    { path: 'hackathon-analytics', component: HackathonAnalyticsComponent }
+                    { path: 'hackathon-analytics', component: HackathonAnalyticsComponent },
+                    { path: 'hackathon-categorization', component: HackathonCategorizationAnalyticsComponent },
+
                 ],
             },
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },

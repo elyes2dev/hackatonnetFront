@@ -46,10 +46,12 @@ import { PostFormComponent } from './demo/components/posts/post-form/post-form/p
 import { LiveStreamComponent } from './demo/components/live-stream/live-stream/live-stream.component';
 import { VideoRoomComponent } from './demo/components/live-stream/video-room/video-room.component';
 import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackathon-analytics/hackathon-analytics.component';
+import { HackathonCategorizationAnalyticsComponent } from './demo/components/Analytics/hackathon-categorization-analytics/hackathon-categorization-analytics.component';
+
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent, HackathonCategorizationAnalyticsComponent
     ],
     imports: [
         AppRoutingModule,
