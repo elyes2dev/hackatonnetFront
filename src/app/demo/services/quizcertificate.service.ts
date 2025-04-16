@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 })
 export class QuizCertificateService {
 
-  private baseUrl = 'http://localhost:9100/pi/certificates';
+  private baseUrl = 'http://localhost:9100/certificates';
 
   constructor(private http: HttpClient) { }
 
