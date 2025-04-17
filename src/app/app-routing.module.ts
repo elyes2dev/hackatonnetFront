@@ -45,7 +45,7 @@ import { MentorEvaluationListComponent } from './demo/components/mentor-evaluati
 import { MentorEvaluationFormAdminComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form-admin/mentor-evaluation-form-admin.component';
 import { ListMentorFormAdminComponent } from './demo/components/list-mentor/list-mentor-form-admin/list-mentor-form-admin.component';
 import { MentorEvaluationListUserComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list-user/mentor-evaluation-list-user.component';
-import { UserProfileComponent } from './user-profile/user-profile.component';
+import { UserProfileComponent } from './demo/components/user-profile/user-profile.component';
 
 
 
@@ -177,6 +177,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
             {  path: 'mentor-applications/:id/edit',  component: MentorApplicationFormComponent },
             { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },
             { path: 'mentor-evaluations-user', component: MentorEvaluationListUserComponent },
+            { path: 'profile', component: UserProfileComponent },  
 
 
             { path: 'mentor-form', component: ListMentorFormComponent },

@@ -12,7 +12,7 @@ import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { UserProfileComponent } from './user-profile/user-profile.component';
+import { UserProfileComponent } from './demo/components/user-profile/user-profile.component';
 
 //New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
