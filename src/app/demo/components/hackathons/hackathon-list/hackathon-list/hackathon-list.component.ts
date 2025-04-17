@@ -89,6 +89,7 @@ export class HackathonListComponent implements OnInit {
         error: (err) => console.error('Error:', err)
       });
     }
+    location.reload();
   }
 
   filterHackathons() {

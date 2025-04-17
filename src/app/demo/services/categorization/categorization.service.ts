@@ -13,7 +13,7 @@ interface CategoryDistribution {
   providedIn: 'root'
 })
 export class CategorizationService {
-  // Keywords for categorization
+  
   private themeKeywords = {
     'healthcare': ['health', 'medical', 'patient', 'hospital', 'wellness', 'doctor'],
     'education': ['education', 'learning', 'school', 'student', 'teach', 'academic'],
@@ -42,7 +42,6 @@ export class CategorizationService {
 
   constructor() { }
 
-  // Main categorization function
   categorizeHackathon(hackathon: Hackathon): HackathonWithCategories {
     const text = (hackathon.title + ' ' + hackathon.description).toLowerCase();
     
@@ -58,7 +57,6 @@ export class CategorizationService {
     return hackathonWithCategories;
   }
 
-  // Helper function to match keywords to text
   private findCategories(text: string, keywordMap: Record<string, string[]>): string[] {
     const categories = new Set<string>();
     
@@ -74,7 +72,6 @@ export class CategorizationService {
     return Array.from(categories);
   }
 
-  // Get all possible categories
   getAllCategories(type: CategoryType): string[] {
     switch(type) {
       case CategoryType.THEME:

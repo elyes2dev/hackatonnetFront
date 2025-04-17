@@ -46,7 +46,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
     this.route.paramMap.subscribe(params => {
       this.hackathonId = params.get('hackathonId') || '';
       this.roomId = params.get('roomId') || '';
-      console.log(`Connected to hackathon: ${this.hackathonId}, room: ${this.roomId}`);
+      this.chatService.setRoom(this.roomId); // Add this line
     });
     
     await this.setupLocalStream();
@@ -204,18 +204,13 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
     Object.values(this.peers).forEach(peer => peer.close());
     this.peer.destroy();
 
+    this.chatService.clearMessages();
     this.router.navigate(['/live-stream', this.hackathonId]);
   }
 
   ngOnDestroy() {
     this.leaveCall();
   }
-
-
-
-
-
-
 
   // Add these new methods
   toggleChat() {

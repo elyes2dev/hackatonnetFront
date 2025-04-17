@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Post } from 'src/app/demo/models/post';
 import { Comment } from 'src/app/demo/models/comment';
@@ -25,7 +25,12 @@ export class PostService {
   }
 
   createPost(formData: FormData): Observable<Post> {
-    return this.http.post<Post>(`http://localhost:9100/pi/posts`, formData);
+    // Explicitly set headers for multipart form data
+    const headers = new HttpHeaders();
+    // Don't set Content-Type - let browser set it with proper boundary
+    // headers = headers.set('Content-Type', 'multipart/form-data');
+    
+    return this.http.post<Post>(`${this.apiUrl}/posts`, formData, { headers });
   }
 
   updatePost(postId: number, formData: FormData): Observable<Post> {

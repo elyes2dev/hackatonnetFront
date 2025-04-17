@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output, Input, Pipe, PipeTransform } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { PostService } from 'src/app/demo/services/post/post.service';
 import { Hackathon } from 'src/app/demo/models/hackathon';
 import { User } from 'src/app/demo/models/user';
 import { Post } from 'src/app/demo/models/post';
+
 
 @Component({
   selector: 'app-post-form',
@@ -19,6 +20,8 @@ export class PostFormComponent {
   @Output() postCreated = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
+
+  
   postForm: FormGroup;
   selectedFiles: File[] = [];
   currentUser: User = { id: 1, name: 'Current', lastname: 'User' }; // Replace with actual user from auth service
@@ -34,45 +37,65 @@ export class PostFormComponent {
       content: ['', Validators.required]
     });
   }
-  onFileSelect(event: { files: File[] }) {
-    this.selectedFiles = event.files;
+
+  ngOnInit() {
+    this.postForm = this.fb.group({
+      title: ['', Validators.required],
+      content: ['', Validators.required]
+    });
+  
+    if (this.isEditMode && this.postToEdit) {
+      this.postForm.patchValue({
+        title: this.postToEdit.title,
+        content: this.postToEdit.content
+      });
+    }
+  }
+
+  onFileSelect(event: any) {
+    // Convert FileList to array if needed
+    if (event.files instanceof FileList) {
+      this.selectedFiles = Array.from(event.files);
+    } else if (Array.isArray(event.files)) {
+      this.selectedFiles = event.files;
+    } else {
+      this.selectedFiles = [event.files];
+    }
   }
   
-  onFileRemove(event: { file: File }) {
+  onFileRemove(event: any) {
     this.selectedFiles = this.selectedFiles.filter(f => f.name !== event.file.name);
   }
 
   onSubmit() {
-    if (this.postForm.valid) {
-      const formValue = this.postForm.value;
-      
-      const postData = {
-        title: formValue.title,
-        content: formValue.content,
-        postedBy: this.currentUser,
-        hackathon: this.hackathon
-      };
-
-      // Convert files to FormData if needed (backend expects MultipartFile)
+    if (this.postForm.valid && this.hackathon && this.currentUser) {
       const formData = new FormData();
       
+      // Create a simplified post object with only IDs for relationships
+      const postData = {
+        title: this.postForm.value.title,
+        content: this.postForm.value.content,
+        postedBy: this.currentUser.id, // Just send the ID
+        hackathon: this.hackathon.id   // Just send the ID
+      };
+  
       if (this.isEditMode && this.postToEdit) {
-        // If editing, include the post ID
-        const updatedPostData = {
+        // For edit mode, include the post ID
+        const postToUpdate = {
           ...postData,
-          id: this.postToEdit.id,
-          // Preserve other properties that should remain unchanged
-          createdAt: this.postToEdit.createdAt,
-          likes: this.postToEdit.likes,
-          comments: this.postToEdit.comments
+          id: this.postToEdit.id
         };
-        
-        formData.append('post', new Blob([JSON.stringify(updatedPostData)], { type: 'application/json' }));
-        
-        this.selectedFiles.forEach((file) => {
-          formData.append('images', file, file.name);
-        });
-
+  
+        const postBlob = new Blob([JSON.stringify(postToUpdate)], { type: 'application/json' });
+        formData.append('post', postBlob);
+  
+        // Append files if any
+        if (this.selectedFiles && this.selectedFiles.length > 0) {
+      for (const file of this.selectedFiles) {
+        formData.append('images', file, file.name);
+      }
+    }
+  
         this.postService.updatePost(this.postToEdit.id, formData).subscribe({
           next: () => {
             this.messageService.add({
@@ -84,21 +107,26 @@ export class PostFormComponent {
             this.resetForm();
           },
           error: (err) => {
+            console.error('Error updating post:', err);
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to update post: ' + err.message
+              detail: err.error?.message || 'Failed to update post'
             });
           }
         });
       } else {
-        // Create new post
-        formData.append('post', new Blob([JSON.stringify(postData)], { type: 'application/json' }));
-        
-        this.selectedFiles.forEach((file) => {
-          formData.append('images', file, file.name);
-        });
-
+        // For create mode
+        const postBlob = new Blob([JSON.stringify(postData)], { type: 'application/json' });
+        formData.append('post', postBlob);
+  
+        // Append files if any
+        if (this.selectedFiles && this.selectedFiles.length > 0) {
+          for (const file of this.selectedFiles) {
+            formData.append('images', file, file.name);
+          }
+        }
+  
         this.postService.createPost(formData).subscribe({
           next: () => {
             this.messageService.add({
@@ -110,15 +138,17 @@ export class PostFormComponent {
             this.resetForm();
           },
           error: (err) => {
+            console.error('Error creating post:', err);
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to create post: ' + err.message
+              detail: err.error?.message || 'Failed to create post'
             });
           }
         });
       }
     }
+    
   }
 
   onCancel() {
@@ -130,4 +160,6 @@ export class PostFormComponent {
     this.postForm.reset();
     this.selectedFiles = [];
   }
+
+  
 }
