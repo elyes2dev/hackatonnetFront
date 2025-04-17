@@ -25,8 +25,16 @@
                     class="p-button-text p-button-rounded p-button-plain" 
                     [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
           </td>
-          <td style="min-width: 12rem;">{{group.hackathon.name}}</td>
+          <td style="min-width: 12rem;">{{group.hackathon.title}}</td>
           <td style="min-width: 8rem;">{{group.mentors.length}}</td>
+          <td>
+            <!-- Add CSV Export Button -->
+            <button pButton pRipple type="button" icon="pi pi-download" 
+              class="p-button-success p-button-rounded p-button-sm mr-2"
+              [loading]="exportInProgress[group.hackathon.id]"
+              (click)="exportMentorsCSV(group.hackathon.id, group.hackathon.title)"
+              title="Export Mentors to CSV"></button>
+          </td>
         </tr>
       </ng-template>
       

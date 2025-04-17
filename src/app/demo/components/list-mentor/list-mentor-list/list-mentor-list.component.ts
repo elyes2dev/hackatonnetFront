@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { Hackathon } from "src/app/demo/models/hackathon.model";
 import { ListMentor } from "src/app/demo/models/list-mentor.model";
 import { ListMentorService } from "src/app/demo/services/list-mentor.service";
+import { CsvExportService } from "src/app/demo/services/csv-export.service";
 
 interface HackathonWithMentors {
   hackathon: Hackathon;
@@ -22,9 +23,12 @@ export class ListMentorListComponent implements OnInit {
   hackathonGroups: HackathonWithMentors[] = [];
   expandedRows: { [key: string]: boolean } = {};
   isExpanded = false;
+  exportInProgress: { [key: number]: boolean } = {};
+
 
   constructor(
     private listMentorService: ListMentorService, // Updated service name
+    private csvExportService: CsvExportService, // Add the CSV export service
     private messageService: MessageService,
     private router: Router
   ) {}
@@ -110,4 +114,41 @@ export class ListMentorListComponent implements OnInit {
       });
     }
   }
+
+    // New method for CSV export
+    exportMentorsCSV(hackathonId: number, hackathonName: string) {
+      this.exportInProgress[hackathonId] = true;
+      
+      this.csvExportService.exportMentorsToCSV(hackathonId).subscribe({
+        next: (data: Blob) => {
+          const url = window.URL.createObjectURL(data);
+          const a = document.createElement('a');
+          a.href = url;
+          // Create a filename with the hackathon name (sanitized)
+          const safeFileName = hackathonName.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+          a.download = `mentors-${safeFileName}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Mentors list exported to CSV'
+          });
+        },
+        error: (error: any) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to export mentors list'
+          });
+          console.error('Error exporting mentors list:', error);
+        },
+        complete: () => {
+          this.exportInProgress[hackathonId] = false;
+        }
+      });
+    }
 }

@@ -2,7 +2,7 @@ import { ListMentor } from "./list-mentor.model";
 
 export interface Hackathon {
     id: number;
-    name: string
+    title: string
     mentors: ListMentor[];
 
 
