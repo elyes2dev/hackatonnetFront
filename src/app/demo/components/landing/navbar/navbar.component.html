@@ -72,6 +72,12 @@
             <div class="badge-icon ml-auto mr-1" *ngIf="user">
                 <img [src]="getBadgeIcon()" [alt]="user.badge" />
             </div>
+            <button (click)="router.navigate(['/user-profile'])"
+                    pButton pRipple
+                    label="Profile"
+                    class="p-button-rounded border-none ml-1 font-light line-height-2 bg-green-500 text-white"
+                    *ngIf="user">
+            </button>
             <button pButton pRipple label="Login" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></button>
             <button pButton pRipple label="Register" class="p-button-rounded border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></button>
         </div>

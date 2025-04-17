@@ -45,6 +45,7 @@ import { MentorEvaluationListComponent } from './demo/components/mentor-evaluati
 import { MentorEvaluationFormAdminComponent } from './demo/components/mentor-evaluation/mentor-evaluation-form-admin/mentor-evaluation-form-admin.component';
 import { ListMentorFormAdminComponent } from './demo/components/list-mentor/list-mentor-form-admin/list-mentor-form-admin.component';
 import { MentorEvaluationListUserComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list-user/mentor-evaluation-list-user.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 
 
@@ -65,6 +66,7 @@ import { MentorEvaluationListUserComponent } from './demo/components/mentor-eval
                     // Dashboard
                     { path: 'support-tickets', component: SupportTicketComponent },  // Add support ticket component route
                     { path: 'mydashboard', component: MydashboardComponent },
+                    { path: 'profile', component: UserProfileComponent },  // User profile route
 
                     { path: 'prizes', component: PrizeListComponent },
                     { path: 'prizes/:id', component: PrizeDetailComponent },

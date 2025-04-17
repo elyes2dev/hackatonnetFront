@@ -1,0 +1,14 @@
+<div class="profile-container card">
+  <div class="profile-header">
+    <img *ngIf="profileImageUrl; else defaultAvatar" [src]="profileImageUrl" class="profile-avatar" alt="Profile Image">
+    <ng-template #defaultAvatar>
+      <div class="profile-avatar default-avatar"></div>
+    </ng-template>
+    <h2 class="profile-name">{{ user?.name }}</h2>
+    <p class="profile-email">{{ user?.email }}</p>
+  </div>
+  <div class="profile-details">
+    <!-- Add more user details here as needed -->
+    <p><strong>Joined:</strong> {{ user?.createdAt | date }}</p>
+  </div>
+</div>

@@ -12,6 +12,7 @@ import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 //New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
@@ -98,8 +99,8 @@ import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/s
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent, FilterByNameAndThemePipe, ChartsComponent
-          ,MydashboardComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent, QuizDetailsComponent, QuizFormComponent, QuizListComponent, QuizResultDialogComponent, QuizScoreAddComponent ,
+        AppComponent, NotfoundComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent, FilterByNameAndThemePipe, ChartsComponent
+          , WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent, QuizDetailsComponent, QuizFormComponent, QuizListComponent, QuizResultDialogComponent, QuizScoreAddComponent ,
         ResourceDetailsComponent, WorkshoplistComponent,ResourceListComponent,ResourceFormComponent,SupportTicketComponent,SponsorApplicationFormComponent,
         SponsorApplicationListComponent,
         SponsorApplicationDetailComponent,
@@ -111,7 +112,10 @@ import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/s
         MentorEvaluationFormAdminComponent,
          MentorApplicationListComponent, MentorApplicationDetailsComponent, MentorApplicationFormComponent, PreviousExperienceListComponent, PreviousExperienceFormComponent, MentorEvaluationListComponent, MentorEvaluationFormComponent, ListMentorListComponent, ListMentorFormComponent,
         ListMentorFormAdminComponent,
-        MentorEvaluationListUserComponent
+        MentorEvaluationListUserComponent,
+        MydashboardComponent,
+        UserProfileComponent
+        
     ],
     imports: [
         AppRoutingModule,
