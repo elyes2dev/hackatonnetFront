@@ -103,4 +103,25 @@ export class MentorApplicationDetailsAdminComponent implements OnInit {
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
   }
+
+
+  deleteApplication(): void {
+    if (!this.application || !this.application.id) {
+      return;
+    }
+    
+    if (confirm('Are you sure you want to delete this application? This action cannot be undone.')) {
+      this.applicationService.deleteApplication(this.application.id).subscribe({
+        next: () => {
+          console.log('Application deleted successfully');
+          // Navigate back after deletion
+          this.location.back();
+        },
+        error: (error) => {
+          console.error('Error deleting application:', error);
+          // Here you might want to add error handling/notification
+        }
+      });
+    }
+  }
 }

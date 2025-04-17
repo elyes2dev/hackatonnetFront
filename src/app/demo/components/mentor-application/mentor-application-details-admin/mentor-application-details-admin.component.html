@@ -5,6 +5,16 @@
                 <div class="font-medium text-3xl text-900 mb-1">Mentor Application Details</div>
                 <div class="text-500">View mentor application information</div>
             </div>
+            <button 
+            *ngIf="application && !loading"
+            pButton 
+            pRipple 
+            type="button" 
+            icon="pi pi-trash" 
+            label="Delete Application" 
+            class="p-button-danger" 
+            (click)="deleteApplication()">
+        </button>
         </div>
         
         <p-card *ngIf="application && !loading">
