@@ -1,0 +1,129 @@
+<div class="fixed-header">
+  <div class="search-container">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input type="text" pInputText [(ngModel)]="searchTerm" 
+             (input)="filterHackathons()" 
+             placeholder="Search by name..." />
+    </span>
+
+    <!-- Event Type Filter -->
+    <p-dropdown [options]="eventTypeOptions" [(ngModel)]="selectedEventType" 
+                (onChange)="filterHackathons()" 
+                placeholder="Event Type" [showClear]="true">
+    </p-dropdown>
+
+    <!-- Theme Filter -->
+    <p-dropdown [options]="themeOptions" [(ngModel)]="selectedTheme" 
+                (onChange)="filterHackathons()" 
+                placeholder="Theme" [showClear]="true">
+    </p-dropdown>
+
+    <!-- Audience Filter -->
+    <p-dropdown [options]="audienceOptions" [(ngModel)]="selectedAudience" 
+                (onChange)="filterHackathons()" 
+                placeholder="Target Audience" [showClear]="true">
+    </p-dropdown>
+
+    <!-- Tech Filter -->
+    <p-dropdown [options]="techOptions" [(ngModel)]="selectedTech" 
+                (onChange)="filterHackathons()" 
+                placeholder="Technology" [showClear]="true">
+    </p-dropdown>
+
+    <!-- Reset Filters Button -->
+    <button class="reset-filters" (click)="resetFilters()">
+      <i class="pi pi-refresh"></i> Reset
+    </button>
+
+    <div class="add-button-wrapper">
+      <button class="add-button" (click)="showAddHackathonForm()">
+        <i class="pi pi-plus mr-2"></i> Add Hackathon
+      </button>
+    </div>
+    
+    <div class="analytics-button-wrapper">
+      <button class="show-analytics" (click)="navigateToAnalytics()">
+        <i class="pi pi-chart-pie mr-2"></i> Show Analytics
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Display the Hackathons with Category Tags -->
+<div class="hackathon-list-container">
+  <div class="col-12 md:col-12">
+    <div class="hackathon-grid">
+      <div class="hackathon-card" *ngFor="let hackathon of filteredHackathons">
+        <!-- Card Header with Logo -->
+        <div class="card-header">
+          <div class="logo-container">
+            <img [src]="hackathon.logo" alt="Hackathon Logo" class="card-logo">
+          </div>
+          <!-- Floating Action Buttons -->
+          <div class="card-actions">
+            <button class="action-btn edit-btn" (click)="showAddHackathonForm(hackathon); $event.stopPropagation()">
+              <i class="pi pi-pencil"></i>
+            </button>
+            <button class="action-btn delete-btn" (click)="deleteHackathon(hackathon.id); $event.stopPropagation()">
+              <i class="pi pi-trash"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Card Content -->
+        <div class="card-content" [routerLink]="['/hackathon', hackathon.id]">
+          <h3 class="card-title">{{ hackathon.title }}</h3>
+          
+          <div class="card-meta">
+            <span class="meta-item location">
+              <i class="pi pi-map-marker"></i> {{ hackathon.location }}
+            </span>
+            <span class="meta-item date">
+              <i class="pi pi-calendar"></i> {{ hackathon.startDate | date:'MMM d' }} - {{ hackathon.endDate | date:'MMM d' }}
+            </span>
+          </div>
+          
+          <p class="card-description">{{ (hackathon.description) || 'No description provided' }}</p>
+          
+          <!-- Category Tags -->
+          <div class="category-tags">
+            <!-- Theme Tags -->
+            <span class="category-tag theme" *ngFor="let theme of hackathon.categories?.theme">
+              <i class="pi pi-tag"></i> {{ theme }}
+            </span>
+            
+            <!-- Audience Tags -->
+            <span class="category-tag audience" *ngFor="let audience of hackathon.categories?.audience">
+              <i class="pi pi-users"></i> {{ audience }}
+            </span>
+            
+            <!-- Tech Tags -->
+            <span class="category-tag tech" *ngFor="let tech of hackathon.categories?.tech">
+              <i class="pi pi-code"></i> {{ tech }}
+            </span>
+          </div>
+          
+          <div class="card-footer">
+            <span class="event-type" [ngClass]="{'online': hackathon.isOnline, 'onsite': !hackathon.isOnline}">
+              <i class="pi" [ngClass]="hackathon.isOnline ? 'pi-globe' : 'pi-building'"></i>
+              {{ hackathon.isOnline ? 'Online' : 'Onsite' }}
+            </span>
+            <span class="participants">
+              <i class="pi pi-users"></i> {{ hackathon.maxMembers }} max
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar for Adding or Editing Hackathon -->
+<p-sidebar [(visible)]="visibleSidebar2" position="right">
+  <app-hackathon-form 
+    *ngIf="visibleSidebar2"
+    [hackathon]="selectedHackathon" 
+    (hideSidebar)="hideSidebar()">
+  </app-hackathon-form>
+</p-sidebar>

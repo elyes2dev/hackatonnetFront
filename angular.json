@@ -18,6 +18,7 @@
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
                         "outputPath": "dist/sakai-ng",
+                        
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
@@ -71,12 +72,17 @@
                 },
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "proxyConfig": "proxy.conf.json"
+                      },
                     "configurations": {
                         "production": {
                             "browserTarget": "sakai:build:production"
                         },
                         "development": {
-                            "browserTarget": "sakai:build:development"
+                            "browserTarget": "sakai:build:development",
+                            "proxyConfig": "proxy.conf.json"
+
                         }
                     },
                     "defaultConfiguration": "development"
@@ -100,7 +106,8 @@
                             "src/assets"
                         ],
                         "styles": [
-                            "src/styles.scss"
+                            "src/styles.scss",
+                            "node_modules/primeicons/primeicons.css"
                         ],
                         "scripts": []
                     }

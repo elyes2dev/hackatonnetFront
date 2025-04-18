@@ -1,0 +1,28 @@
+<div class="card">
+    <h5 class="text-left w-full">AI-Generated Insights</h5>
+    
+    <div *ngIf="loading" class="flex justify-content-center">
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" strokeWidth="4"></p-progressSpinner>
+    </div>
+    
+    <div *ngIf="!loading" class="p-3">
+      <!-- Top Insight with highlight -->
+      <div class="top-insight p-3 mb-3" *ngIf="topInsight">
+        <i class="pi pi-lightbulb mr-2" style="color: #FFD700;"></i>
+        <span class="font-bold">Key Finding:</span> {{topInsight}}
+      </div>
+      
+      <!-- Other insights -->
+      <div class="other-insights">
+        <ul class="p-0 ml-3">
+          <li *ngFor="let insight of insights; let i = index" [ngClass]="{'hidden': i === 0}">
+            {{insight}}
+          </li>
+        </ul>
+      </div>
+      
+      <div class="mt-3 text-right">
+        <span class="text-sm text-500">Last updated: {{hackathons.length > 0 ? (hackathons[hackathons.length-1].createdAt | date:'medium') : 'Never'}}</span>
+      </div>
+    </div>
+  </div>
