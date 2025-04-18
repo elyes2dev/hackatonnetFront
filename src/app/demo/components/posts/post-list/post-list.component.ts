@@ -18,7 +18,8 @@ export class PostListComponent implements OnInit {
     id: 1,
     name: 'tasnim',
     lastname: 'omrani',
-    picture: 'https://media.istockphoto.com/id/1389823037/vector/young-smiling-woman-mia-avatar-3d-vector-people-character-illustration-cartoon-minimal-style.jpg?s=612x612&w=0&k=20&c=ciwsDqBIy3mcTxhWN4I1S-kKSTvjoN1einMrQawNZDQ='
+    picture: 'https://media.istockphoto.com/id/1389823037/vector/young-smiling-woman-mia-avatar-3d-vector-people-character-illustration-cartoon-minimal-style.jpg?s=612x612&w=0&k=20&c=ciwsDqBIy3mcTxhWN4I1S-kKSTvjoN1einMrQawNZDQ=',
+    email: 'tasnimomrani@gmail.com'
   };
 
   constructor(private postService: PostService,  private confirmationService: ConfirmationService,  private messageService: MessageService) {}
@@ -32,7 +33,7 @@ export class PostListComponent implements OnInit {
       console.log('hackathonId changed:', this.hackathonId);
       this.loadPosts();
     }}
-  
+
   ngOnInit(): void {
     console.log('Initializing PostListComponent with hackathonId:', this.hackathonId);
     this.loadPosts();
@@ -136,7 +137,7 @@ export class PostListComponent implements OnInit {
         console.error('Status:', err.status);
         console.error('Status text:', err.statusText);
         console.error('Error details:', err.error);
-        
+
         // Display more informative error message
         this.messageService.add({
           severity: 'error',

@@ -4,7 +4,7 @@ import { Prize } from './prize';
 import { Team } from './team';
 
 export interface Hackathon {
-    id?: number;
+    id: number;
     title: string;
     location: string;
     logo?: string;
