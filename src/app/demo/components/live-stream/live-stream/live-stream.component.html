@@ -1,0 +1,53 @@
+<div class="fixed-header">
+  <div class="back-button-container">
+    <button pButton type="button" icon="pi pi-arrow-left" label="Back to Hackathon" routerLink="/hackathon/{{hackathonId}}"></button>
+  </div>
+</div>
+
+<div class="livestream-container"> 
+
+  <!-- Main Content Section -->
+  <div class="content-section">
+
+    <!-- Call to Action Card -->
+    <div class="card cta-card">
+      <h2>Ready to Connect</h2>
+      <p>Join the live stream to collaborate with your fellow participants, share your progress, and get real-time feedback from mentors.</p>
+      
+      <div class="cta-features">
+        <div class="feature">
+          <i class="pi pi-desktop"></i>
+          <span>Screen sharing</span>
+        </div>
+        <div class="feature">
+          <i class="pi pi-comments"></i>
+          <span>Group chat</span>
+        </div>
+        <div class="feature">
+          <i class="pi pi-users"></i>
+          <span>Team collaboration</span>
+        </div>
+      </div>
+      
+      <div class="cta-button-container">
+        <button pButton type="button" class="p-button-raised p-button-lg" (click)="startCall()">
+          <i class="pi pi-play-circle"></i>
+          Join Live Room
+        </button>
+        <div class="room-note">All participants from this hackathon will join the same room</div>
+      </div>
+    </div>
+
+    <div class="card quote-card">
+      <div class="quote-container">
+        <i class="pi pi-comment quote-icon"></i>
+        <blockquote>
+          "The strength of the team is each individual member. The strength of each member is the team."
+          <cite>— Phil Jackson</cite>
+        </blockquote>
+      </div>
+    </div>
+
+   
+  </div>
+</div>

@@ -44,22 +44,29 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Prizes', icon: 'pi pi-fw pi-id-card', routerLink: ['/prizes'] },
                     { label: 'Workshop', icon: 'pi pi-fw pi-id-card', routerLink: ['/workshops'] },
                     { label: 'User', icon: 'pi pi-fw pi-id-card', routerLink: ['/users'] },
-                    { label: 'Support-Ticket', icon: 'pi pi-fw pi-id-card', routerLink: ['/support-tickets'] }
-
+                    { label: 'Support-Ticket', icon: 'pi pi-fw pi-id-card', routerLink: ['/support-tickets'] },
+                    { label: 'Hackathons', icon: 'pi pi-fw pi-id-card', routerLink: ['/hackathons'] }
                 ]
             },
             {
                 label: 'mentor admin Components',
                 items: [
-                        { label: 'Mentor Applications', icon: 'pi pi-fw pi-file', routerLink: ['/mentor-applications'] },
-                        { label: 'List Mentors', icon: 'pi pi-fw pi-users', routerLink: ['/list-mentors'] },
-                        { label: 'mentor-form', icon: 'pi pi-fw pi-user-edit', routerLink: ['/mentor/edit', 1] },
-                        { label: 'Mentor Evaluations', icon: 'pi pi-fw pi-star', routerLink: ['/mentor-evaluations'] },
-
+                    { label: 'Free Blocks', icon: 'pi pi-fw pi-eye', routerLink: ['/blocks'], badge: 'NEW' },
+                    { label: 'All Blocks', icon: 'pi pi-fw pi-globe', url: ['https://www.primefaces.org/primeblocks-ng'], target: '_blank' },
+                    { label: 'Mentor Applications', icon: 'pi pi-fw pi-file', routerLink: ['/mentor-applications'] },
+                    { label: 'List Mentors', icon: 'pi pi-fw pi-users', routerLink: ['/list-mentors'] },
+                    { label: 'mentor-form', icon: 'pi pi-fw pi-user-edit', routerLink: ['/mentor/edit', 1] },
+                    { label: 'Mentor Evaluations', icon: 'pi pi-fw pi-star', routerLink: ['/mentor-evaluations'] },
 
                 ]
             },
-
+            {
+                label: 'Utilities',
+                items: [
+                    { label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', routerLink: ['/utilities/icons'] },
+                    { label: 'PrimeFlex', icon: 'pi pi-fw pi-desktop', url: ['https://www.primefaces.org/primeflex/'], target: '_blank' },
+                ]
+            },
             {
                 label: 'Pages',
                 icon: 'pi pi-fw pi-briefcase',

@@ -46,6 +46,15 @@ import { MentorEvaluationFormAdminComponent } from './demo/components/mentor-eva
 import { ListMentorFormAdminComponent } from './demo/components/list-mentor/list-mentor-form-admin/list-mentor-form-admin.component';
 import { MentorEvaluationListUserComponent } from './demo/components/mentor-evaluation/mentor-evaluation-list-user/mentor-evaluation-list-user.component';
 import { UserProfileComponent } from './demo/components/user-profile/user-profile.component';
+import { HackathonListComponent } from './demo/components/hackathons/hackathon-list/hackathon-list/hackathon-list.component';
+import { HackathonDetailsComponent } from './demo/components/hackathons/hackathon-details/hackathon-details.component';
+import { LiveStreamComponent } from './demo/components/live-stream/live-stream/live-stream.component';
+import { VideoRoomComponent } from './demo/components/live-stream/video-room/video-room.component';
+import { LandingHackathonListComponent } from './demo/components/landing/Hackathon/landing-hackathon-list/landing-hackathon-list.component';
+import { LandingHackathonDetailsComponent } from './demo/components/landing/Hackathon/landing-hackathon-details/landing-hackathon-details.component';
+import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackathon-analytics/hackathon-analytics.component';
+import { HackathonCategorizationAnalyticsComponent } from './demo/components/Analytics/hackathon-categorization-analytics/hackathon-categorization-analytics.component';
+
 
 
 
@@ -118,7 +127,15 @@ import { UserProfileComponent } from './demo/components/user-profile/user-profil
                       {
                         path: 'workshops/:workshopId/quizzes/:quizId/score-add',
                         component: QuizScoreAddComponent // Replace with your actual component
-                      }
+                      },
+                    { path: 'live-stream/:id', component: LiveStreamComponent },
+                    { path: ':hackathonId/call/:roomId', component: VideoRoomComponent },
+                    { path: 'mydashboard', component: MydashboardComponent },
+                    { path: 'hackathons', component: HackathonListComponent },
+                    { path: 'hackathon/:id', component: HackathonDetailsComponent },
+                    { path: 'hackathon-analytics', component: HackathonAnalyticsComponent },
+                    { path: 'hackathon-categorization', component: HackathonCategorizationAnalyticsComponent },
+
 
                 ],
             },
@@ -168,6 +185,8 @@ import { UserProfileComponent } from './demo/components/user-profile/user-profil
             // Authentication & Other Routes
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
             { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
+            { path: 'landing-hackathons', component: LandingHackathonListComponent},
+            { path: 'landing-hackathon/:id', component: LandingHackathonDetailsComponent},
             { path: 'prize-form', component: PrizeFormComponent },
             { path: 'sponsors-leaderboard', component: SponsorLeaderboardComponent },
             { path: 'sponsor-prizes', component: SponsorPrizesComponent },
@@ -177,12 +196,13 @@ import { UserProfileComponent } from './demo/components/user-profile/user-profil
             {  path: 'mentor-applications/:id/edit',  component: MentorApplicationFormComponent },
             { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },
             { path: 'mentor-evaluations-user', component: MentorEvaluationListUserComponent },
-            { path: 'profile', component: UserProfileComponent },  
+            { path: 'profile', component: UserProfileComponent },
 
 
             { path: 'mentor-form', component: ListMentorFormComponent },
             { path: 'mentor-evaluation/new', component: MentorEvaluationFormComponent },
             { path: 'mentor-evaluation/:id/edit', component: MentorEvaluationFormComponent },
+
             { path: 'pages/notfound', component: NotfoundComponent },
             { path: '**', redirectTo: 'pages/notfound' },
         ], { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })

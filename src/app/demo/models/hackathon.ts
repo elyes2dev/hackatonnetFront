@@ -1,4 +1,7 @@
 import { User } from "./user";
+import { Post } from './post';
+import { Prize } from './prize';
+import { Team } from './team';
 
 export interface Hackathon {
     id?: number;
@@ -8,8 +11,11 @@ export interface Hackathon {
     maxMembers: number;
     isOnline?: boolean;
     description: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     createdBy: User;
-    createdAt?: Date;
+    createdAt: string;
+    posts: Post[];
+    prizes: Prize[];
+    teams: Team[];
   }

@@ -1,0 +1,61 @@
+<div class="post-feed">
+  <div *ngFor="let post of posts" class="post-card">
+   <div class="post-header">
+     <img [src]="post.postedBy?.picture || 'assets/default-avatar.png'"
+          class="avatar"
+          alt="Profile picture">
+     <div class="user-info">
+       <h3>{{ post.postedBy?.name }} {{ post.postedBy?.lastname }}</h3>
+       <span class="post-meta">
+         {{ post.createdAt | date:'mediumDate' }}
+         <span *ngIf="post.hackathon?.title"> • {{ post.hackathon.title }}</span>
+       </span>
+     </div>
+     <div class="post-actions" *ngIf="post.postedBy?.id === currentUserId">
+       <button pButton icon="pi pi-pencil" class="p-button-text" (click)="editPost(post)"></button>
+       <button pButton icon="pi pi-trash" class="p-button-text p-button-danger" (click)="confirmDelete(post)"></button>
+     </div>
+   </div>
+ 
+     <div class="post-content">
+       <h2>{{ post.title }}</h2>
+       <p>{{ post.content }}</p>
+       
+       <div *ngIf="post.images?.length" class="post-images">
+         <img *ngFor="let image of post.images" [src]="image" alt="Post image">
+       </div>
+     </div>
+ 
+     <div class="post-stats">
+       <button (click)="onLikePost(post)" 
+               [class.active]="isPostLikedByCurrentUser(post)">
+         <i class="pi pi-heart"></i> {{ post.likes?.length || 0 }}
+       </button>
+       <button>
+         <i class="pi pi-comment"></i> {{ post.comments?.length || 0 }}
+       </button>
+     </div>
+ 
+     <app-comment-list 
+       [post]="post"
+       [currentUserId]="currentUserId"
+       (commentAdded)="onCommentAdded(post, $event)">
+     </app-comment-list>
+ </div>
+</div>
+
+<p-sidebar [(visible)]="editSidebarVisible" position="right" [baseZIndex]="10000" styleClass="p-sidebar-md">
+ <h3>Edit Post</h3>
+ <app-post-form 
+   *ngIf="selectedPost"
+   [hackathon]="selectedPost.hackathon"
+   [isEditMode]="true"
+   [postToEdit]="selectedPost"
+   (postCreated)="onPostUpdated()"
+   (cancel)="closeEditSidebar()">
+ </app-post-form>
+</p-sidebar>
+
+<!-- Add confirmation dialog for delete -->
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<p-toast></p-toast>

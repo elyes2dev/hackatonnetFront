@@ -9,6 +9,12 @@ import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
+import { LandingHackathonListComponent } from './Hackathon/landing-hackathon-list/landing-hackathon-list.component';
+import { LandingHackathonDetailsComponent } from './Hackathon/landing-hackathon-details/landing-hackathon-details.component';
+import { AvatarModule } from 'primeng/avatar';
+import { FormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
 
 
 @NgModule({
@@ -19,10 +25,13 @@ import { FooterComponent } from './footer/footer.component';
         StyleClassModule,
         ChartModule,
         PanelModule,
-        ButtonModule
+        ButtonModule,
+        AvatarModule,
+        FormsModule,
+        DropdownModule,
+        InputTextModule
+
     ],
-    declarations: [LandingComponent ]
+    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent]
 })
-export class LandingModule { 
-    
-}
+export class LandingModule { }

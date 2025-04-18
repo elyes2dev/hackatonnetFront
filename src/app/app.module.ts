@@ -13,6 +13,13 @@ import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UserProfileComponent } from './demo/components/user-profile/user-profile.component';
+import { AvatarModule } from 'primeng/avatar';
+import { BadgeModule } from 'primeng/badge';
+import { SidebarModule } from 'primeng/sidebar';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ChartModule } from 'primeng/chart';
+import { PrimeIcons } from 'primeng/api';
+
 
 //New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
@@ -25,7 +32,6 @@ import { RippleModule } from 'primeng/ripple';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
@@ -95,6 +101,18 @@ import { PrizeListComponent } from './demo/components/prize/prize-list/prize-lis
 import { PrizeDetailComponent } from './demo/components/prize/prize-detail/prize-detail.component';
 import { SponsorLeaderboardComponent } from './demo/components/sponsor/sponsor-leaderboard/sponsor-leaderboard.component';
 import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/sponsor-prizes.component';
+import { HackathonDetailsComponent } from './demo/components/hackathons/hackathon-details/hackathon-details.component';
+import { HackathonListComponent } from './demo/components/hackathons/hackathon-list/hackathon-list/hackathon-list.component';
+import { HackathonFormComponent } from './demo/components/hackathons/hackathon-form/hackathon-form.component';
+import { DialogModule } from 'primeng/dialog';
+import { PostListComponent } from './demo/components/posts/post-list/post-list.component';
+import { CommentListComponent } from './demo/components/comment/comment-list/comment-list.component';
+import { PostFormComponent } from './demo/components/posts/post-form/post-form/post-form.component';
+import { LiveStreamComponent } from './demo/components/live-stream/live-stream/live-stream.component';
+import { VideoRoomComponent } from './demo/components/live-stream/video-room/video-room.component';
+import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackathon-analytics/hackathon-analytics.component';
+import { HackathonCategorizationAnalyticsComponent } from './demo/components/Analytics/hackathon-categorization-analytics/hackathon-categorization-analytics.component';
+import { HackathonInsightsComponent } from './demo/components/Analytics/hackathon-insights/hackathon-insights/hackathon-insights.component';
 
 
 @NgModule({
@@ -114,8 +132,9 @@ import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/s
         ListMentorFormAdminComponent,
         MentorEvaluationListUserComponent,
         MydashboardComponent,
-        UserProfileComponent
-        
+        UserProfileComponent,
+        HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent, HackathonCategorizationAnalyticsComponent, HackathonInsightsComponent
+
     ],
     imports: [
         AppRoutingModule,
@@ -151,6 +170,19 @@ import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/s
         ProgressSpinnerModule,
         ToastModule,
         TooltipModule,
+        AvatarModule, // Add AvatarModule here
+        BadgeModule,
+        ReactiveFormsModule,
+        SidebarModule,
+        ConfirmDialogModule,
+        DialogModule,
+        ButtonModule,
+        FileUploadModule,
+        CommonModule,
+        FileUploadModule,
+        ToastModule,
+        ChartModule,
+        ProgressSpinnerModule,
 
         // PrimeNG Modules
         InputTextModule,

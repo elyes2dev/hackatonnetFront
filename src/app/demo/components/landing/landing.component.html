@@ -65,11 +65,17 @@
                             <span>my evaluations</span>
                         </a>
                     </li>
+                    <li>
+                        <a (click)="router.navigate(['/landing-hackathons'])" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>Hackathons</span>
+                        </a>
+                    </li>
+
                 </ul>
                 <div *ngIf="isAuthenticated" class="flex align-items-center">
                     <p class="mr-3">Welcome back, user!</p>
                     <button (click)="logout()" class="p-button-rounded border-none font-light line-height-2 bg-red-500 text-white mr-2">Logout</button>
-                    <button 
+                    <button
                     [routerLink]="['/profile']"
                     class="p-button-rounded border-none font-light line-height-2 bg-green-500 text-white">
                     Profile
