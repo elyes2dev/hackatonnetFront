@@ -33,4 +33,7 @@ export class NavbarComponent implements OnInit{
     };
     return this.user ? badgeIcons[this.user.badge] || 'assets/icons/default_badge.png' : '';
   }
+    navigateToTeamSubmission(): void {
+        this.router.navigate(['/team-submission']); // Navigation directe vers /team-submission
+    }
 }

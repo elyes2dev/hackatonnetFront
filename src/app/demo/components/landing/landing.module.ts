@@ -15,8 +15,11 @@ import { AvatarModule } from 'primeng/avatar';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
-
-
+import { RippleModule } from 'primeng/ripple';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ToastModule } from 'primeng/toast';
+import { LandingProjectEvaluationComponent } from './landing-project-evaluation/landing-project-evaluation.component'; // Nouveau
+import { LandingTeamSubmissionComponent } from './landing-team-submission/landing-team-submission.component'; // Nouveau
 @NgModule({
     imports: [
         CommonModule,
@@ -29,9 +32,15 @@ import { InputTextModule } from 'primeng/inputtext';
         AvatarModule,
         FormsModule,
         DropdownModule,
+        FormsModule,
+        RippleModule,
+        InputTextModule,
+        InputTextareaModule,
+        ToastModule,
         InputTextModule
 
     ],
-    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent]
+    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent,NavbarComponent,
+        FooterComponent]
 })
 export class LandingModule { }

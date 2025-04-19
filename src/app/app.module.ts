@@ -21,9 +21,11 @@ import { BadgeModule } from 'primeng/badge';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ChartModule } from 'primeng/chart';
 import { PrimeIcons } from 'primeng/api';
+import { ProjectEvaluationService } from './demo/service/project-evaluation.service'; // Ajout
+import { TeamSubmissionService } from './demo/service/team-submission.service'; // Ajout
 
 
-//New TODO mydasboard
+// Imports existants
 
 // Modules
 import { AppRoutingModule } from './app-routing.module';
@@ -129,6 +131,10 @@ import { AuthService } from './services/auth.service';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MenuModule } from 'primeng/menu'; // Added
+import { TeamSubmissionComponent } from './demo/components/team-submission/team-submission.component';
+import { ProjectEvaluationComponent } from './demo/components/project-evaluation/project-evaluation.component';
+import { PaymentComponent } from './components/payment/payment.component';
+import { ComponentsComponent } from './components/components.component';
 
 
 @NgModule({
@@ -151,6 +157,10 @@ import { MenuModule } from 'primeng/menu'; // Added
         HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent, HackathonCategorizationAnalyticsComponent, HackathonInsightsComponent,
 
         AiQuizDialogComponent,
+        TeamSubmissionComponent,
+        ProjectEvaluationComponent,
+        PaymentComponent,
+        ComponentsComponent,
         FooterComponent
 
     ],
@@ -161,6 +171,8 @@ import { MenuModule } from 'primeng/menu'; // Added
         CommonModule,
         FormsModule,
         RouterModule,
+        SliderModule,
+        RippleModule,
 
         // App Modules
         AppRoutingModule,
@@ -242,6 +254,8 @@ import { MenuModule } from 'primeng/menu'; // Added
         PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService,
         AuthService,
         DialogService,
+        ProjectEvaluationService,
+        TeamSubmissionService
     ],
     bootstrap: [AppComponent]
 })

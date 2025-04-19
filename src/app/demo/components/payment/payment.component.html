@@ -1,0 +1,17 @@
+<div class="payment-container">
+
+  <!-- Bouton pour lancer la création du PaymentIntent -->
+  <button (click)="createPaymentIntent(123)">Faire un don</button>
+
+  <!-- Zone où Stripe va injecter le champ de carte -->
+  <div id="card-element" style="margin-top: 20px;"></div>
+
+  <!-- Message d'erreur Stripe (facultatif, à connecter dans le code TS si besoin) -->
+  <div id="card-errors" role="alert" style="color: red;"></div>
+
+  <!-- Message de succès (facultatif aussi) -->
+  <div *ngIf="paymentIntentClientSecret && stripe">
+    <p>Paiement en cours...</p>
+  </div>
+  <button (click)="createPaymentIntent(123)">Faire un don</button>
+</div>

@@ -35,7 +35,7 @@ import { User } from '../../models/user.model';
                 top:15%;
             }
 
-        #hero > div > p {
+            #hero > div > p {
                 max-width: 450px;
             }
         }
@@ -45,17 +45,17 @@ import { User } from '../../models/user.model';
                 height: 600px;
             }
 
-        #hero > img {
-            position:static;
-            transform: scale(1);
-            margin-left: auto;
-        }
+            #hero > img {
+                position:static;
+                transform: scale(1);
+                margin-left: auto;
+            }
 
-        #hero > div {
-            width: 100%;
-        }
+            #hero > div {
+                width: 100%;
+            }
 
-        #hero > div > p {
+            #hero > div > p {
                 width: 100%;
                 max-width: 100%;
             }

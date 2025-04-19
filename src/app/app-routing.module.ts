@@ -1,8 +1,8 @@
 // Current Date and Time (UTC): 2025-04-15 20:30:56
 // Current User's Login: Zoghlamirim
 
-import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
 import { AppLayoutComponent } from './layout/app.layout.component';
 import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/team-frontoffice.component';
@@ -59,7 +59,8 @@ import { LandingHackathonListComponent } from './demo/components/landing/Hackath
 import { LandingHackathonDetailsComponent } from './demo/components/landing/Hackathon/landing-hackathon-details/landing-hackathon-details.component';
 import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackathon-analytics/hackathon-analytics.component';
 import { HackathonCategorizationAnalyticsComponent } from './demo/components/Analytics/hackathon-categorization-analytics/hackathon-categorization-analytics.component';
-
+import { TeamSubmissionComponent } from './demo/components/team-submission/team-submission.component';  // Import du composant
+import { ProjectEvaluationComponent } from './demo/components/project-evaluation/project-evaluation.component';
 
 
 
@@ -114,6 +115,11 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
                     { path: 'support-tickets', component: SupportTicketComponent },  // Add support ticket component route
                     { path: 'mydashboard', component: MydashboardComponent },
                     { path: 'profile', component: UserProfileComponent },  // User profile route
+                    { path: 'project-evaluations', component: ProjectEvaluationComponent },
+
+                    // Nouvelle route pour accéder au composant TeamSubmission
+                    { path: 'team-submission', component: TeamSubmissionComponent },  // Ajout de la route
+
 
                     { path: 'prizes', component: PrizeListComponent },
                     { path: 'prizes/:id', component: PrizeDetailComponent },
