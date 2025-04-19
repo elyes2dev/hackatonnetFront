@@ -8,6 +8,7 @@ export const environment = {
   quizGenerationEndpoint: '/quiz/generate',
     apiBaseUrl: 'http://localhost:9100/pi/api'
 
+
 };
 
 /*

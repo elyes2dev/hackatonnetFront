@@ -23,6 +23,7 @@ import { ChartModule } from 'primeng/chart';
 import { PrimeIcons } from 'primeng/api';
 import { ProjectEvaluationService } from './demo/service/project-evaluation.service'; // Ajout
 import { TeamSubmissionService } from './demo/service/team-submission.service'; // Ajout
+import { DialogService } from 'primeng/dynamicdialog';
 
 
 // Imports existants
@@ -112,6 +113,7 @@ import { PrizeListComponent } from './demo/components/prize/prize-list/prize-lis
 import { PrizeDetailComponent } from './demo/components/prize/prize-detail/prize-detail.component';
 import { SponsorLeaderboardComponent } from './demo/components/sponsor/sponsor-leaderboard/sponsor-leaderboard.component';
 import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/sponsor-prizes.component';
+
 import { HackathonDetailsComponent } from './demo/components/hackathons/hackathon-details/hackathon-details.component';
 import { HackathonListComponent } from './demo/components/hackathons/hackathon-list/hackathon-list/hackathon-list.component';
 import { HackathonFormComponent } from './demo/components/hackathons/hackathon-form/hackathon-form.component';
@@ -129,13 +131,18 @@ import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-
 // Services
 import { AuthService } from './services/auth.service';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
-import { DialogService } from 'primeng/dynamicdialog';
 import { MenuModule } from 'primeng/menu'; // Added
 import { TeamSubmissionComponent } from './demo/components/team-submission/team-submission.component';
 import { ProjectEvaluationComponent } from './demo/components/project-evaluation/project-evaluation.component';
 import { PaymentComponent } from './components/payment/payment.component';
 import { ComponentsComponent } from './components/components.component';
 
+
+
+import { MessageModule } from 'primeng/message';
+import { AccordionModule } from 'primeng/accordion';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { QuizService } from './demo/services/quiz.service';
 
 @NgModule({
     declarations: [
@@ -161,8 +168,9 @@ import { ComponentsComponent } from './components/components.component';
         ProjectEvaluationComponent,
         PaymentComponent,
         ComponentsComponent,
-        FooterComponent
-
+        FooterComponent,
+        SponsorPrizesComponent,
+        AiQuizDialogComponent
     ],
     imports: [
         // Angular Modules
@@ -210,6 +218,7 @@ import { ComponentsComponent } from './components/components.component';
         NgChartsModule,
         FileUploadModule,
         BrowserModule,
+
         FormsModule,
         HttpClientModule,
         CardModule,
@@ -246,7 +255,11 @@ import { ComponentsComponent } from './components/components.component';
         TableModule,
         ButtonModule,
         ToastModule,
-        RippleModule
+        RippleModule,
+        BrowserAnimationsModule,
+        MessageModule,
+        AccordionModule,
+        DynamicDialogModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
@@ -257,7 +270,9 @@ import { ComponentsComponent } from './components/components.component';
         AuthService,
         DialogService,
         ProjectEvaluationService,
-        TeamSubmissionService
+        TeamSubmissionService,
+        QuizService,
+        DialogService
     ],
     bootstrap: [AppComponent]
 })

@@ -11,7 +11,6 @@ export class QuizService {
   private baseUrl = 'http://localhost:9100/quiz';
   private apiUrl = environment.apiUrl;
 
-
   constructor(private http: HttpClient) {}
 
   createQuiz(quiz: Quiz): Observable<Quiz> {
@@ -38,7 +37,6 @@ export class QuizService {
     getQuizzesByWorkshop(workshopId: number): Observable<Quiz[]> {
         return this.http.get<Quiz[]>(`${this.baseUrl}/workshops/${workshopId}/quizzes`);
       }
-
 
   saveQuestion(question: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/quiz/questions`, question);

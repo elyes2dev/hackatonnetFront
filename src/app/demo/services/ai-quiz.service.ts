@@ -8,7 +8,6 @@ import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-
 export class AiQuizService {
   private baseUrl = 'http://localhost:5050/api';  // Keep this separate from the main API URL
 
