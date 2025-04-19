@@ -1,0 +1,47 @@
+<p-toast></p-toast>
+
+<div class="card">
+    <p-table 
+        [value]="hackathons" 
+        [paginator]="true" 
+        [rows]="10"
+        [loading]="loading"
+        styleClass="p-datatable-striped"
+        [tableStyle]="{'min-width': '50rem'}"
+        responsiveLayout="scroll"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Max Team Size</th>
+                <th>Location</th>
+                <th>Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-hackathon>
+            <tr>
+                <td>{{hackathon.id}}</td>
+                <td>{{hackathon.title || 'N/A'}}</td>
+                <td>{{hackathon.maxTeamSize}}</td>
+                <td>{{hackathon.location || 'N/A'}}</td>
+                <td>
+                    <button 
+                        pButton 
+                        pRipple 
+                        icon="pi pi-eye" 
+                        class="p-button-rounded p-button-info" 
+                        (click)="viewDetails(hackathon.id)"
+                    ></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5" class="text-center p-4">
+                    No hackathons found
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

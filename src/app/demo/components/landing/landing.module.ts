@@ -9,12 +9,19 @@ import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
-import { LoginComponent } from './auth/login/login.component';
 import { SharedModule } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { RippleModule } from 'primeng/ripple';
+import { TooltipModule } from 'primeng/tooltip'; // Add this import
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
+
 
 @NgModule({
     imports: [
@@ -28,10 +35,18 @@ import { CheckboxModule } from 'primeng/checkbox';
         SharedModule,
         FormsModule,
         InputTextModule,
-        CheckboxModule
+        CheckboxModule,
+        ToastModule,
+        DialogModule,
+        TableModule,
+        RippleModule,
+        TooltipModule,
+        ProgressSpinnerModule, // Corrected import
+        
+        
         
     ],
-    declarations: [LandingComponent,LoginComponent]
+    declarations: [LandingComponent]
     
 })
 export class LandingModule {}

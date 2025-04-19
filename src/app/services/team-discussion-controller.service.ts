@@ -252,4 +252,26 @@ export class TeamDiscussionControllerService extends BaseService {
     );
   }
 
+  updateMessage(params: { teamId: number; messageId: number; body: Partial<TeamDiscussion> }): Observable<TeamDiscussion> {
+    return this.http.put<TeamDiscussion>(
+      `${this.rootUrl}/api/team-discussions/${params.teamId}/messages/${params.messageId}`,
+      params.body,
+      { context: new HttpContext() }
+    );
+  }
+
+  sendTypingIndicator(params: { teamId: number; teamMemberId: number }): Observable<void> {
+    return this.http.post<void>(
+      `${this.rootUrl}/api/team-discussions/${params.teamId}/typing`,
+      { teamMemberId: params.teamMemberId },
+      { context: new HttpContext() }
+    );
+  }
+
+  uploadFile(formData: FormData): Observable<TeamDiscussion> {
+    return this.http.post<TeamDiscussion>(
+      `${this.rootUrl}/api/team-discussions/upload`,
+      formData
+    );
+  }
 }

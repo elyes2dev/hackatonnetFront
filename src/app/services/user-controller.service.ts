@@ -10,6 +10,8 @@ import { map } from 'rxjs/operators';
 import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
+import { AuthService } from './auth.service';
+import { HttpHeaders } from '@angular/common/http';
 
 import { createUser } from '../fn/user-controller/create-user';
 import { CreateUser$Params } from '../fn/user-controller/create-user';
@@ -25,8 +27,16 @@ import { User } from '../models/user';
 
 @Injectable({ providedIn: 'root' })
 export class UserControllerService extends BaseService {
-  constructor(config: ApiConfiguration, http: HttpClient) {
+  constructor(config: ApiConfiguration, http: HttpClient, private authService: AuthService) {
     super(config, http);
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
   }
 
   /** Path part for operation `getUserById()` */
@@ -108,25 +118,10 @@ export class UserControllerService extends BaseService {
   static readonly GetAllUsersPath = '/api/users';
 
   /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAllUsers()` instead.
-   *
-   * This method doesn't expect any request body.
+   * Custom: Get all users with Authorization header
    */
-  getAllUsers$Response(params?: GetAllUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<User>>> {
-    return getAllUsers(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAllUsers$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getAllUsers(params?: GetAllUsers$Params, context?: HttpContext): Observable<Array<User>> {
-    return this.getAllUsers$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<User>>): Array<User> => r.body)
-    );
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.rootUrl}/api/users`, { headers: this.getAuthHeaders() });
   }
 
   /** Path part for operation `createUser()` */

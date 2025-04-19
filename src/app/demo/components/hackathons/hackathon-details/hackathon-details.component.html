@@ -1,0 +1,63 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card enhanced-card">
+            <p-toast></p-toast>
+
+            <!-- Loading Spinner -->
+            <div *ngIf="loading" class="flex justify-content-center align-items-center h-full">
+                <p-progressSpinner strokeWidth="4" class="spinner"></p-progressSpinner>
+            </div>
+
+            <!-- Hackathon Details -->
+            <div *ngIf="hackathon && !loading" class="grid">
+                <!-- Header Section -->
+                <div class="col-12 mb-5">
+                    <div class="flex align-items-center justify-content-between">
+                        <h2 class="hackathon-title m-0">{{hackathon.title}}</h2>
+                        <button pButton 
+                                type="button" 
+                                [label]="getParticipateButtonLabel()" 
+                                [icon]="getParticipateButtonIcon()"
+                                class="p-button-lg futuristic-button"
+                                [class.neon-purple]="!userTeam"
+                                [class.neon-cyan]="userTeam"
+                                [disabled]="loading || loadingDialog"
+                                (click)="participate()"></button>
+                    </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="col-12 md:col-8">
+                    <div class="card h-full info-card">
+                        <h3>Description</h3>
+                        <p class="description-text">{{hackathon.description || 'No description provided.'}}</p>
+                        
+                        <h3 class="mt-5">Rules & Guidelines</h3>
+                        <p class="description-text">Follow the hackathon guidelines to ensure a fair and fun competition.</p>
+                    </div>
+                </div>
+
+                <!-- Info Panel -->
+                <div class="col-12 md:col-4">
+                    <div class="card h-full info-card">
+                        <h3>Event Details</h3>
+                        <div class="field mb-4">
+                            <label class="font-bold block mb-2">Team Size</label>
+                            <div>{{hackathon.maxTeamSize ? 'Up to ' + hackathon.maxTeamSize + ' members per team' : 'Not specified'}}</div>
+                        </div>
+                        <div class="field mb-4">
+                            <label class="font-bold block mb-2">Start Date</label>
+                        </div>
+                        <div class="field mb-4">
+                            <label class="font-bold block mb-2">End Date</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Enhanced dialog header for purple color and style -->
+            <p *ngIf="dialogHeader" class="purple-dialog-header">
+              {{ dialogHeader }}
+            </p>
+        </div>
+    </div>
+</div>

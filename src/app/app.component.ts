@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
     constructor(private primengConfig: PrimeNGConfig, private layoutService: LayoutService, private authService: AuthService) { }
     ngOnInit(): void {
             this.authService.setToken(
-              'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6ImdnIiwiaWF0IjoxNzQ0NTgyMTAwLCJleHAiOjE3NDQ2Njg1MDB9.SEG0JLaejzV64vFDu3hfn2xjOcGVpr_lG3N-3klRx6HufF1jCdYYaIS4NmhuGRZdqkk0OtCZxxiN_-QXen2_1Q'
+              'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IlRhc25pbSIsImlhdCI6MTc0NDg4MDQ0OSwiZXhwIjoxNzQ0OTY2ODQ5fQ.oa1dUL6RP8SECJsDWAfB79aSYqvM8PxHGj4-OKBaUP17hL2A9asp2OuFbXlb4WgdqMfUUqCEr9I1Eb_5wawHPg'
             );
           
         this.primengConfig.ripple = true;       //enables core ripple functionality

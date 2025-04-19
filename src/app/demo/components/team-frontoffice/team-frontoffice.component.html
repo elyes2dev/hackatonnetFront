@@ -1,0 +1,348 @@
+<div class="futuristic-dialog-content">
+    <!-- Participate View -->
+    <ng-container *ngIf="participateDialog">
+        <div class="futuristic-dialog participate-dialog soft-light">
+            <div class="grid p-fluid dialog-content">
+                <div class="col-12">
+                    <h2 class="futuristic-header soft-title">Hackathon Participation</h2>
+                    <div class="hackathon-info-card soft-card">
+                        <div class="hackathon-details">
+                            <h3>{{selectedHackathon?.title || 'Hackathon'}}</h3>
+                            <div class="hackathon-meta">
+                                <span class="hackathon-date">
+                                    <i class="pi pi-calendar"></i>
+                                    {{selectedHackathon?.startDate | date:'mediumDate'}} - {{selectedHackathon?.endDate | date:'mediumDate'}}
+                                </span>
+                                <span class="hackathon-location">
+                                    <i class="pi pi-map-marker"></i>
+                                    {{selectedHackathon?.location || 'Online'}}
+                                </span>
+                            </div>
+                            <p class="hackathon-description soft-desc">{{selectedHackathon?.description || 'Join this exciting hackathon!'}}</p>
+                        </div>
+                    </div>
+
+                    <div class="participation-options soft-options">
+                        <div class="option-card create-team soft-option-card cute-option-card">
+                            <span class="cute-emoji">✨</span>
+                            <i class="pi pi-plus-circle cute-icon"></i>
+                            <h4>Create New Team</h4>
+                            <p>Start your own team and invite others to join</p>
+                            <button pButton pRipple 
+                                    label="Create Team" 
+                                    class="p-button-md futuristic-button soft-btn soft-btn-sm soft-btn-purple cute-btn"
+                                    [disabled]="loading"
+                                    (click)="openCreateTeamDialog()"></button>
+                        </div>
+
+                        <div class="option-card join-team soft-option-card cute-option-card">
+                            <span class="cute-emoji">🤝</span>
+                            <i class="pi pi-users cute-icon"></i>
+                            <h4>Join Existing Team</h4>
+                            <p>Join a team using a team code or browse public teams</p>
+                            <button pButton pRipple 
+                                    label="Join Team" 
+                                    class="p-button-md futuristic-button soft-btn soft-btn-sm cute-btn"
+                                    [disabled]="loading"
+                                    (click)="openJoinTeamDialog()"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-content-end gap-3 mt-4">
+            <button pButton pRipple 
+                    label="Cancel" 
+                    icon="pi pi-times" 
+                    class="p-button-md futuristic-button transparent soft-btn soft-btn-sm"
+                    [disabled]="loading"
+                    (click)="setParticipateDialog(false)"></button>
+        </div>
+    </ng-container>
+
+    <!-- Create Team View -->
+    <ng-container *ngIf="createTeamDialog">
+        <div class="futuristic-dialog soft-light create-dialog">
+            <h2 class="futuristic-header soft-title">Create New Team</h2>
+            <div class="dialog-content">
+                <div class="team-creation-guide soft-card">
+                    <p class="guide-text soft-desc">Create a team to participate in {{selectedHackathon?.title || 'the hackathon'}}.<br>
+                    <span class="soft-hint">Maximum team size: {{selectedHackathon?.maxTeamSize || '4'}} members.</span></p>
+                </div>
+
+                <div class="field">
+                    <label for="teamName" class="futuristic-label">Team Name</label>
+                    <input type="text" pInputText id="teamName" 
+                           [(ngModel)]="team.teamName" 
+                           [ngClass]="{'ng-invalid ng-dirty': submitted && !team.teamName}"
+                           [disabled]="loading"
+                           class="futuristic-input soft-input"
+                           placeholder="Enter a creative team name"
+                           required autofocus/>
+                    <small class="p-error futuristic-error" *ngIf="submitted && !team.teamName">
+                        Team name is required
+                    </small>
+                </div>
+
+                <div class="field">
+                    <label class="futuristic-label">Team Visibility</label>
+                    <div class="visibility-options soft-options">
+                        <div class="visibility-option soft-option-card" 
+                             [class.selected]="team.isPublic"
+                             (click)="team.isPublic = true">
+                            <i class="pi pi-globe"></i>
+                            <span>Public</span>
+                            <p>Anyone can see and request to join</p>
+                        </div>
+                        <div class="visibility-option soft-option-card" 
+                             [class.selected]="!team.isPublic"
+                             (click)="team.isPublic = false">
+                            <i class="pi pi-lock"></i>
+                            <span>Private</span>
+                            <p>Only team members can see details</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-content-end gap-3 mt-4">
+                <button pButton pRipple 
+                        label="Cancel" 
+                        icon="pi pi-times" 
+                        class="p-button-md futuristic-button transparent soft-btn soft-btn-sm"
+                        [disabled]="loading"
+                        (click)="setDialogState({create: false})"></button>
+                <button pButton pRipple 
+                        label="Create Team" 
+                        icon="pi pi-check" 
+                        class="p-button-md futuristic-button soft-btn soft-btn-sm soft-btn-purple"
+                        [loading]="loading"
+                        [disabled]="loading || !team.teamName"
+                        (click)="createTeam()"></button>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Success Dialog -->
+    <ng-container *ngIf="showSuccessDialog">
+        <div class="success-dialog">
+            <div class="success-icon">
+                <i class="pi pi-check-circle"></i>
+            </div>
+            <h2 class="success-title">Team Created Successfully!</h2>
+            <p class="success-message">Share this code with your team members to let them join:</p>
+            
+            <div class="team-code-container">
+                <div class="team-code">{{createdTeamCode}}</div>
+                <button pButton pRipple 
+                        icon="pi pi-copy" 
+                        class="p-button-rounded futuristic-button neon-blue"
+                        (click)="copyTeamCode()"
+                        pTooltip="Copy team code"
+                        tooltipPosition="top"></button>
+            </div>
+
+            <div class="success-actions">
+                <button pButton pRipple 
+                        label="Close" 
+                        class="p-button-md futuristic-button transparent soft-btn soft-btn-sm"
+                        (click)="closeSuccessDialog()"></button>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Join Team View -->
+    <ng-container *ngIf="joinTeamDialog">
+        <div class="futuristic-dialog soft-light join-dialog">
+            <h2 class="futuristic-header soft-title">Join a Team</h2>
+            <div class="dialog-content">
+                <div class="join-options soft-options">
+                    <div class="join-option soft-option-card">
+                        <h4>Join with Team Code</h4>
+                        <div class="field">
+                            <label for="teamCode" class="futuristic-label">Enter Team Code</label>
+                            <div class="p-inputgroup">
+                                <input type="text" pInputText id="teamCode" 
+                                       [(ngModel)]="teamCode" 
+                                       [disabled]="loading"
+                                       class="futuristic-input soft-input"
+                                       placeholder="Enter the team code provided by the team leader"/>
+                                <button pButton pRipple 
+                                        label="Join" 
+                                        class="p-button-md futuristic-button soft-btn soft-btn-sm"
+                                        [loading]="loading"
+                                        [disabled]="!teamCode.trim() || loading"
+                                        (click)="joinTeamByCode()"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="join-option soft-option-card">
+                        <h4>Join Any Available Team</h4>
+                        <button pButton pRipple label="Join Available Team" class="p-button-md futuristic-button soft-btn soft-btn-sm" [disabled]="loading || !publicTeams.length" (click)="joinAnyAvailableTeam()"></button>
+                    </div>
+
+                    <div class="join-option soft-option-card">
+                        <h4>Browse Public Teams</h4>
+                        <div class="public-teams-container">
+                            <ng-container *ngIf="publicTeams && publicTeams.length > 0; else noTeams">
+                                <div class="team-card" *ngFor="let team of publicTeams">
+                                    <i class="pi pi-users team-icon"></i>
+                                    <div class="team-name">{{team.teamName}}</div>
+                                    <div class="team-members">
+                                        {{team.teamMembers?.length || 0}}/{{team.hackathon?.maxTeamSize}} members
+                                    </div>
+                                    <div class="team-status" [ngClass]="{'status-full': team.isFull, 'status-available': !team.isFull}">
+                                        {{team.isFull ? 'Full' : 'Available'}}
+                                    </div>
+                                    <button class="pin-emoji-btn team-pin-btn" pTooltip="Pinned team" style="margin-left:8px; background: transparent; border: none;">
+                                        <span style="font-size:1.25rem;">📍</span>
+                                    </button>
+                                    <button pButton pRipple 
+                                            class="join-button soft-btn soft-btn-sm"
+                                            [disabled]="loading || team.isFull"
+                                            (click)="joinPublicTeam(team)">
+                                        Join Team
+                                    </button>
+                                </div>
+                            </ng-container>
+                            <ng-template #noTeams>
+                                <div class="empty-teams-state">
+                                    <i class="pi pi-users empty-icon"></i>
+                                    <div class="empty-message">No public teams available</div>
+                                    <div class="empty-submessage">Create a team or join using a team code</div>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-content-end gap-3 mt-4">
+                <button pButton pRipple 
+                        label="Cancel" 
+                        icon="pi pi-times" 
+                        class="p-button-md futuristic-button transparent soft-btn soft-btn-sm"
+                        [disabled]="loading"
+                        (click)="setDialogState({join: false})"></button>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Team Chat View -->
+    <ng-container *ngIf="conversationDialog">
+        <div class="futuristic-chat-wrapper">
+            <!-- Team Info Section -->
+            <div class="team-info">
+                <div class="flex align-items-center gap-4 justify-content-between">
+                    <div class="flex align-items-center gap-4">
+                        <i class="pi pi-users futuristic-icon" aria-hidden="true"></i>
+                        <span class="futuristic-info-text">Members: {{selectedTeam?.teamMembers?.length || 0}}</span>
+                        <ng-container *ngIf="getTeamCode()">
+                            <span class="futuristic-info-text">Code: {{getTeamCode()}}</span>
+                        </ng-container>
+                    </div>
+                    <button pButton pRipple 
+                            type="button" 
+                            icon="pi pi-sign-out" 
+                            label="Leave Team"
+                            class="p-button-rounded p-button-danger futuristic-button"
+                            [disabled]="loading"
+                            pTooltip="Leave this team"
+                            tooltipPosition="top"
+                            [attr.aria-label]="'Leave team'"
+                            (click)="leaveCurrentTeam()"></button>
+                </div>
+            </div>
+
+            <!-- Pinned Messages Section -->
+            <div *ngIf="pinnedMessages.length > 0" class="pinned-messages-area">
+                <div class="pinned-title"><i class="pi pi-pin"></i> Pinned Messages</div>
+                <div class="pinned-message" *ngFor="let pinned of pinnedMessages">
+                    <div class="pinned-content">
+                        <span class="pinned-sender">{{pinned.teamMember?.user?.name || 'Unknown'}}:</span>
+                        <span class="pinned-text">{{pinned.message}}</span>
+                        <small class="pinned-time">{{getMessageTime(pinned.createdAt)}}</small>
+                    </div>
+                    <button pButton pRipple icon="pi pi-times" class="p-button-rounded p-button-text unpin-btn ml-2" (click)="unpinMessage(pinned)" pTooltip="Unpin"></button>
+                </div>
+            </div>
+
+            <!-- Chat Messages Section -->
+            <div class="futuristic-chat-container" #chatContainer role="log" aria-live="polite">
+                <div *ngIf="loadingTeamMember || loadingMessages" class="futuristic-loading-overlay">
+                    <div class="futuristic-spinner">
+                        <div class="futuristic-spinner-circle"></div>
+                        <div class="futuristic-spinner-circle"></div>
+                        <div class="futuristic-spinner-circle"></div>
+                    </div>
+                </div>
+                
+                <div *ngIf="selectedTeam" class="futuristic-messages-list">
+                    <ng-container *ngIf="selectedTeam && selectedTeam.id && getDiscussions(selectedTeam.id) as messages">
+                        <div *ngIf="teamMemberId === null && !loadingTeamMember" class="futuristic-error-state">
+                            <i class="pi pi-exclamation-triangle futuristic-error-icon" aria-hidden="true"></i>
+                            <p class="futuristic-error-text">Unable to chat: Your account is incomplete. Please update your profile with a username.</p>
+                        </div>
+                        <div *ngFor="let msg of messages" 
+                             class="futuristic-message-item"
+                             [ngClass]="{'futuristic-own-message': isCurrentUserMessage(msg.teamMember?.id)}">
+                            <div class="futuristic-message-content">
+                                <div class="futuristic-message-header">
+                                    <span class="futuristic-sender-name">{{msg.teamMember?.user?.name || 'Unknown'}}</span>
+                                    <small class="futuristic-message-time">{{getMessageTime(msg.createdAt)}}</small>
+                                    <button *ngIf="!msg.isPinned" 
+                                            class="p-button-rounded p-button-text blue-pin-btn ml-2 pin-emoji-btn"
+                                            (click)="pinMessage(msg)"
+                                            pTooltip="Pin message">
+                                        <span style="font-size: 1.25rem;">📍</span>
+                                    </button>
+                                    <span *ngIf="msg.isPinned" class="pinned-indicator" pTooltip="Pinned"><i class="pi pi-pin"></i></span>
+                                </div>
+                                <!-- Text message -->
+                                <div class="futuristic-message-text" *ngIf="msg.messageType !== 'FILE'">{{msg.message}}</div>
+                                <!-- File message -->
+                                <div class="futuristic-message-file" *ngIf="msg.messageType === 'FILE'">
+                                    <i class="pi pi-file"></i>
+                                    <a [href]="msg.message" target="_blank" download class="file-link">
+                                        {{ extractFileName(msg.message) || msg.message }}
+                                    </a>
+                                    <span class="file-type">(File)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="messages.length === 0 && !loadingMessages && teamMemberId !== null" class="futuristic-empty-state">
+                            <i class="pi pi-comments futuristic-empty-icon" aria-hidden="true"></i>
+                            <p class="futuristic-empty-text">No messages yet. Start the conversation!</p>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+
+            <!-- Message Input Section -->
+            <div class="futuristic-message-input soft-chat-input">
+                <div class="p-inputgroup soft-inputgroup">
+                    <button pButton pRipple class="p-button-rounded p-button-text soft-chat-btn" type="button" (click)="toggleEmojiPicker()" aria-label="Emoji">
+                        <span class="pi pi-heart" style="color: #222; font-size: 1.45rem;"></span>
+                    </button>
+                    <input type="text" pInputText [(ngModel)]="newMessage" placeholder="Type a message..." class="soft-chat-input-field" (keyup.enter)="sendMessage()" />
+                    <button pButton pRipple class="p-button-rounded p-button-text soft-chat-btn" icon="pi pi-paperclip" type="button" (click)="triggerFileUpload()" aria-label="Attach"></button>
+                    <button pButton pRipple class="p-button-rounded p-button-text soft-chat-btn" icon="pi pi-send" type="button" (click)="sendMessage()" aria-label="Send"></button>
+                </div>
+                <input id="file-upload-input" type="file" (change)="onFileSelected($event)" style="display: none;"/>
+            </div>
+            <div *ngIf="showEmojiPicker" class="emoji-picker-wrapper messenger-emoji-view animated-fade-in">
+                <button class="emoji-close-btn" (click)="toggleEmojiPicker()" aria-label="Close emoji picker">×</button>
+                <div class="emoji-horizontal-slider">
+                    <button class="emoji-slider-arrow left" (click)="scrollEmojiSlider('left')" aria-label="Scroll left">&#8592;</button>
+                    <div class="emoji-slider-track" #emojiSliderTrack>
+                        <span *ngFor="let emoji of recentEmojis" class="emoji-slider-emoji" (click)="addEmoji({emoji: emoji})">{{emoji}}</span>
+                    </div>
+                    <button class="emoji-slider-arrow right" (click)="scrollEmojiSlider('right')" aria-label="Scroll right">&#8594;</button>
+                </div>
+                <div class="all-emojis-grid">
+                    <span *ngFor="let emoji of allEmojis" class="emoji-grid-emoji" (click)="addEmoji({emoji: emoji})">{{emoji}}</span>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>

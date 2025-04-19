@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy, AfterViewChecked } from '@angular/core';
 import { TeamControllerService } from 'src/app/services/team-controller.service';
 import { TeamDiscussionControllerService } from 'src/app/services/team-discussion-controller.service';
 import { MessageService } from 'primeng/api';
@@ -7,6 +7,9 @@ import { Team, TeamMembers, TeamDiscussion } from 'src/app/models';
 import { finalize, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { UserControllerService } from 'src/app/services/user-controller.service';
+import { FileUpload } from 'primeng/fileupload';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-get-all-teams',
@@ -14,23 +17,22 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
   styleUrls: ['./get-all-teams.component.scss'],
   providers: [MessageService]
 })
-export class GetAllTeamsComponent implements OnInit, OnDestroy {
+export class GetAllTeamsComponent implements OnInit, OnDestroy, AfterViewChecked {
   teams: Team[] = [];
   team: Team = {};
   selectedTeams: Team[] = [];
   selectedTeam: Team | null = null;
   teamMembers: TeamMembers[] = [];
+  memberOptions: { label: string, value: number }[] = [];
   teamDialog: boolean = false;
   deleteTeamDialog: boolean = false;
   deleteTeamsDialog: boolean = false;
   teamMembersDialog: boolean = false;
-  joinTeamDialog: boolean = false;
-  leaveTeamDialog: boolean = false;
+  addUserDialog: boolean = false;
+  removeUserDialog: boolean = false;
   conversationDialog: boolean = false;
   loadingTeamMember: boolean = false;
   submitted: boolean = false;
-  joinSubmitted: boolean = false;
-  leaveSubmitted: boolean = false;
   loading: boolean = false;
   hackathonId: number | undefined;
   userId: number | null = null;
@@ -38,6 +40,7 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
   currentUser: string | null = null;
   discussions: { [key: number]: TeamDiscussion[] } = {};
   newMessage: string = '';
+  sendingMessage: boolean = false;
   publicOptions = [
     { label: 'Yes', value: true },
     { label: 'No', value: false }
@@ -48,20 +51,64 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
   private readonly maxReconnectAttempts = 5;
   private readonly reconnectDelay = 3000;
 
+  // User selection properties
+  availableUsers: { label: string, value: number }[] = [];
+  selectedUserId: number | null = null;
+  selectedMemberId: number | null = null;
+  manualUserInput: string = '';
+
+  // Enhanced chat properties
+  showSearch: boolean = false;
+  searchQuery: string = '';
+  showPinnedMessages: boolean = false;
+  pinnedMessages: TeamDiscussion[] = [];
+  isSomeoneTyping: boolean = false;
+  typingUser: string = '';
+  typingTimeout: any;
+  quotedMessage: TeamDiscussion | null = null;
+  editingMessage: TeamDiscussion | null = null;
+  emojiPickerVisible: boolean = false;
+  fileUploadVisible: boolean = false;
+  fileUploadType: 'image' | 'file' = 'file';
+  selectedFile: File | null = null;
+
+  // Statistics properties
+  teamStats: {
+    totalTeams: number;
+    totalMembers: number;
+    averageMembersPerTeam: number;
+    mostActiveTeam: { id: number | undefined, name: string | undefined, messageCount: number } | null;
+    teamsWithoutMessages: number;
+    messageCountByTeam: { [key: number]: number };
+  } = {
+    totalTeams: 0,
+    totalMembers: 0,
+    averageMembersPerTeam: 0,
+    mostActiveTeam: null,
+    teamsWithoutMessages: 0,
+    messageCountByTeam: {}
+  };
+  showStatistics: boolean = false;
+  statisticsChartData: any;
+  statisticsChartOptions: any;
+
   @ViewChild('dt') dt!: Table;
   @ViewChild('chatContainer') chatContainer!: ElementRef;
+  @ViewChild('fileUpload') fileUpload!: FileUpload;
 
   constructor(
     private teamService: TeamControllerService,
     private teamDiscussionService: TeamDiscussionControllerService,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserControllerService
   ) {}
 
   ngOnInit(): void {
     this.initializeUserData();
     this.loadTeams();
+    this.loadAvailableUsers();
   }
 
   ngOnDestroy(): void {
@@ -75,21 +122,13 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
 
   private initializeUserData(): void {
     if (!this.authService.isTokenValid()) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Invalid or expired token. Please log in.'
-      });
+      console.error('Invalid or expired token');
       return;
     }
     this.userId = this.authService.getUserId();
     this.currentUser = this.authService.getUsername();
     if (!this.userId || !this.currentUser) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'User information missing. Please log in.'
-      });
+      console.error('User information missing');
     }
   }
 
@@ -122,7 +161,7 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
         next: (msg: any) => {
           console.log('WebSocket message received:', msg);
           const discussion: TeamDiscussion = {
-            id: msg.id,
+            id: msg.id || Date.now(),
             message: msg.message || 'Message missing in WebSocket payload',
             team: { id: teamId },
             teamMember: {
@@ -146,11 +185,6 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('WebSocket error:', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'WebSocket connection failed'
-          });
           this.attemptReconnect(teamId);
         },
         complete: () => console.log('WebSocket subscription completed')
@@ -174,11 +208,6 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
       setTimeout(() => this.initializeWebSocket(teamId), this.reconnectDelay);
     } else {
       console.error('Max WebSocket reconnect attempts reached');
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to reconnect to WebSocket. Please refresh the page.'
-      });
     }
   }
 
@@ -188,6 +217,7 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
     this.teamService.getAllTeams().pipe(
       finalize(() => {
         this.loading = false;
+        this.calculateStatistics(); // Calculate statistics after loading teams
         this.cdr.detectChanges();
       })
     ).subscribe({
@@ -202,10 +232,27 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
+        console.error('Failed to load teams:', error);
+      }
+    });
+  }
+
+  loadAvailableUsers(): void {
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        this.availableUsers = users
+          .filter(user => user.id != null)
+          .map(user => ({
+            label: `${user.name || user.username || 'Unknown'} (${user.email || 'No email'})`,
+            value: user.id!
+          }));
+      },
+      error: (error) => {
+        console.error('Failed to load users:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: error.status === 401 ? 'Unauthorized. Please log in.' : 'Failed to load teams'
+          detail: 'Failed to load available users'
         });
       }
     });
@@ -236,7 +283,12 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
           }
         });
       } else {
-        this.team.hackathon = { id: this.hackathonId };
+        this.team.hackathon = {
+          id: this.hackathonId,
+          title: '',
+          maxTeamSize: 0,
+          teams: []
+        };
         this.teamService.createTeam({
           hackathonId: this.hackathonId,
           leaderId: this.userId!,
@@ -264,214 +316,242 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getTeamMemberId(teamId: number): void {
-    if (!this.userId) {
+  openAddUserDialog(team: Team): void {
+    this.selectedTeam = team;
+    this.selectedUserId = null;
+    this.manualUserInput = '';
+    this.addUserDialog = true;
+  }
+
+  confirmAddUser(): void {
+    if (!this.selectedTeam?.id || !this.selectedUserId || !this.selectedTeam.teamCode) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'User information missing'
+        detail: 'Invalid team or user selection.'
       });
-      this.hideConversationDialog();
       return;
     }
 
-    this.loadingTeamMember = true;
-    this.teamService.getTeamById({ id: teamId }).subscribe({
-      next: (team) => {
-        const teamMember = team.teamMembers?.find(member => member.user?.id === this.userId);
-        if (teamMember?.id) {
-          this.teamMemberId = teamMember.id;
-          console.log('Selected teamMemberId:', this.teamMemberId);
-          this.loadTeamDiscussions(teamId);
-          this.initializeWebSocket(teamId);
-        } else {
-          this.teamMemberId = null;
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Warning',
-            detail: 'You are not a member of this team. Please join first.'
-          });
-          this.hideConversationDialog();
-          this.openJoinTeamDialog(team);
-        }
-      },
-      error: () => {
-        this.teamMemberId = null;
+    this.teamService.joinTeam({
+      teamCode: this.selectedTeam.teamCode,
+      userId: this.selectedUserId
+    }).subscribe({
+      next: () => {
         this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to get team member information'
+          severity: 'success',
+          summary: 'Success',
+          detail: `User added to team ${this.selectedTeam!.teamName}.`
         });
-        this.hideConversationDialog();
-      },
-      complete: () => {
-        this.loadingTeamMember = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  confirmJoinTeam(): void {
-    this.joinSubmitted = true;
-    if (this.selectedTeam?.teamCode && this.userId) {
-      this.teamService.joinTeam({
-        teamCode: this.selectedTeam.teamCode,
-        userId: this.userId
-      }).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: `Successfully joined team ${this.selectedTeam!.teamName}`
-          });
-          this.hideJoinTeamDialog();
-          this.loadTeams();
-          if (this.selectedTeam?.id) {
-            this.openConversationDialog(this.selectedTeam);
-          }
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to join team'
-          });
-        }
-      });
-    }
-  }
-
-  confirmLeaveTeam(): void {
-    this.leaveSubmitted = true;
-    if (this.selectedTeam?.id && this.userId) {
-      this.teamService.leaveTeam(this.userId, this.selectedTeam.id).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: `Successfully left team ${this.selectedTeam!.teamName}`
-          });
-          this.hideLeaveTeamDialog();
-          this.loadTeams();
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to leave team'
-          });
-        }
-      });
-    }
-  }
-
-  loadTeamDiscussions(teamId: number): void {
-    this.teamDiscussionService.getTeamDiscussions({ teamId }).subscribe({
-      next: (response: any) => {
-        console.log('Raw discussions response for team', teamId, response);
-        let discussions: TeamDiscussion[] = [];
-        if (response instanceof Blob) {
-          response.text().then(text => {
-            discussions = JSON.parse(text) || [];
-            this.processDiscussions(teamId, discussions);
-          }).catch(err => {
-            console.error('Failed to parse Blob response:', err);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to parse discussion data'
-            });
-          });
-        } else {
-          discussions = response || [];
-          this.processDiscussions(teamId, discussions);
-        }
+        this.hideAddUserDialog();
+        this.loadTeams();
       },
       error: (error) => {
-        console.error('Failed to load discussions:', error);
+        console.error('Failed to add user to team:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: error.status === 401 ? 'Session expired. Please log in.' : 'Failed to load discussions'
+          detail: error.error?.error || 'Failed to add user to team.'
         });
       }
     });
   }
 
-  private processDiscussions(teamId: number, discussions: TeamDiscussion[]): void {
-    this.discussions[teamId] = discussions.map(d => ({
-      ...d,
-      senderName: d.teamMember?.user?.name || d.teamMember?.user?.username || 'Unknown',
-      senderRole: d.teamMember?.role || 'Unknown'
-    })) || [];
-    console.log('Mapped discussions:', this.discussions[teamId]);
-    this.cdr.detectChanges();
-    this.scrollToBottom();
+  hideAddUserDialog(): void {
+    this.addUserDialog = false;
+    this.selectedTeam = null;
+    this.selectedUserId = null;
+  }
+
+  openRemoveUserDialog(team: Team): void {
+    this.selectedTeam = team;
+    this.selectedMemberId = null;
+    this.teamService.getTeamById({ id: team.id! }).subscribe({
+      next: (teamDetails) => {
+        this.teamMembers = teamDetails.teamMembers || [];
+        this.memberOptions = this.teamMembers
+          .filter(member => member.id != null)
+          .map(member => ({
+            label: member.user?.name || member.user?.username || 'Unknown',
+            value: member.id!
+          }));
+        if (!this.teamMembers.length) {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Info',
+            detail: 'No members to remove from this team.'
+          });
+          return;
+        }
+        this.removeUserDialog = true;
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load team members.'
+        });
+      }
+    });
+  }
+
+  confirmRemoveUser(): void {
+    if (!this.selectedTeam?.id || !this.selectedMemberId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Invalid team or member selection.'
+      });
+      return;
+    }
+
+    const selectedMember = this.teamMembers.find(member => member.id === this.selectedMemberId);
+    if (!selectedMember?.user?.id) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Invalid user selection.'
+      });
+      return;
+    }
+
+    this.teamService.leaveTeam(selectedMember.user.id, this.selectedTeam.id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `User removed from team ${this.selectedTeam!.teamName}.`
+        });
+        this.hideRemoveUserDialog();
+        this.loadTeams();
+      },
+      error: (error) => {
+        console.error('Failed to remove user from team:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error?.error || 'Failed to remove user from team.'
+        });
+      }
+    });
+  }
+
+  hideRemoveUserDialog(): void {
+    this.removeUserDialog = false;
+    this.selectedTeam = null;
+    this.selectedMemberId = null;
+    this.teamMembers = [];
+    this.memberOptions = [];
+  }
+
+  // Bad words filter list (simple example, extend as needed)
+  private badWords: string[] = [
+    'badword1', 'badword2', 'badword3', 'damn', 'shit', 'fuck', 'bitch', 'asshole', 'bastard', 'crap', 'dick', 'piss', 'darn', 'cock', 'pussy', 'slut', 'whore', 'fag', 'cunt', 'nigger', 'retard', 'suck', 'jerk', 'idiot', 'stupid', 'moron', 'gay', 'lesbo', 'homo', 'twat', 'wank', 'bollocks', 'bugger', 'arse', 'prick', 'tosser', 'wanker', 'bollocks', 'arsehole', 'shag', 'git', 'muppet', 'knob', 'bellend', 'nonce', 'slag', 'twat', 'minge', 'pillock', 'plonker', 'numpty', 'berk', 'div', 'spaz', 'mong', 'gimp', 'chav', 'scrubber'
+  ];
+
+  // Checks if a message contains bad words
+  private containsBadWords(message: string): boolean {
+    const msg = message.toLowerCase();
+    return this.badWords.some(word => msg.includes(word));
   }
 
   sendMessage(): void {
-    if (!this.selectedTeam?.id || !this.newMessage.trim() || !this.teamMemberId) {
+    console.log('Attempting to send message:', {
+      teamId: this.selectedTeam?.id,
+      teamMemberId: this.teamMemberId,
+      message: this.newMessage,
+      hasToken: !!this.authService.getToken()
+    });
+
+    if (!this.newMessage.trim()) {
+      console.warn('Message cannot be empty');
+      return;
+    }
+
+    // Bad words filter check
+    if (this.containsBadWords(this.newMessage)) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: !this.teamMemberId ? 'Not a team member' : 'Invalid message or team'
+        detail: 'Your message contains inappropriate language. Please revise your message.'
       });
       return;
     }
 
-    console.log('Sending with teamMemberId:', this.teamMemberId);
-    const payload = { message: this.newMessage.trim() };
+    if (!this.selectedTeam?.id || !this.teamMemberId) {
+      console.error('Invalid team or user');
+      return;
+    }
 
+    const token = this.authService.getToken();
+    if (!token) {
+      console.error('Authentication token missing');
+      this.authService.logout();
+      return;
+    }
+
+    const payload = {
+      message: this.newMessage.trim(),
+      messageType: 'TEXT',
+      teamId: this.selectedTeam.id.toString(),
+      teamMemberId: this.teamMemberId.toString(),
+      createdAt: new Date().toISOString(),
+      status: 'SENT'
+    };
+
+    console.log('Sending message payload:', payload);
+
+    this.sendingMessage = true;
     this.teamDiscussionService.sendMessageRest({
       teamId: this.selectedTeam.id,
       teamMemberId: this.teamMemberId,
       messageType: 'TEXT',
-      Authorization: `Bearer ${this.authService.getToken()}`,
+      Authorization: `Bearer ${token}`,
       body: payload
-    }).subscribe({
-      next: (response: any) => {
-        console.log('Message sent, response:', response);
+    }).pipe(
+      finalize(() => {
+        this.sendingMessage = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (response: TeamDiscussion) => {
+        console.log('Message sent successfully:', response);
         const discussion: TeamDiscussion = {
-          id: response.id,
-          message: response.message || this.newMessage,
-          team: { id: this.selectedTeam!.id },
+          id: response.id ?? Date.now(),
+          message: this.newMessage.trim(),
+          team: { id: this.selectedTeam!.id! },
           teamMember: {
-            id: response.teamMemberId,
+            id: this.teamMemberId!,
             user: {
-              id: response.userId || this.userId,
-              name: response.teamMember?.user?.name || response.senderName || this.currentUser || 'Unknown'
+              id: this.userId!,
+              name: this.currentUser || 'Unknown'
             },
-            role: response.teamMember?.role || response.senderRole || 'Unknown'
+            role: 'MEMBER'
           },
-          messageType: response.messageType || 'TEXT',
-          isRead: response.isRead ?? false,
-          createdAt: response.createdAt || new Date().toISOString(),
-          senderName: response.teamMember?.user?.name || response.senderName || this.currentUser || 'Unknown',
-          senderRole: response.teamMember?.role || response.senderRole || 'Unknown'
+          messageType: 'TEXT',
+          isRead: false,
+          createdAt: new Date().toISOString(),
+          senderName: this.currentUser || 'Unknown',
+          senderRole: 'MEMBER'
         };
-        console.log('Adding sent discussion:', discussion);
         this.discussions[this.selectedTeam!.id!] = [
           ...(this.discussions[this.selectedTeam!.id!] || []),
           discussion
         ];
         this.newMessage = '';
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Message sent.'
+        });
         this.cdr.detectChanges();
         this.scrollToBottom();
       },
       error: (error) => {
-        console.error('Send message error:', error);
-        let errorMessage = 'Failed to send message';
-        if (error.status === 403) {
-          errorMessage = 'Unauthorized or not a team member. Please join the team.';
-          this.openJoinTeamDialog(this.selectedTeam!);
-        } else if (error.status === 401) {
-          errorMessage = 'Session expired. Please log in.';
+        console.error('Failed to send message:', error);
+        if (error.status === 401) {
+          this.authService.logout();
         }
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: errorMessage
-        });
       }
     });
   }
@@ -556,49 +636,83 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  openJoinTeamDialog(team: Team): void {
-    this.selectedTeam = team;
-    this.joinSubmitted = false;
-    this.joinTeamDialog = true;
+  loadTeamDiscussions(teamId: number): void {
+    this.teamDiscussionService.getTeamDiscussions({ teamId }).subscribe({
+      next: (response: any) => {
+        console.log('Raw discussions response for team', teamId, response);
+        let discussions: TeamDiscussion[] = [];
+        if (response instanceof Blob) {
+          response.text().then(text => {
+            discussions = JSON.parse(text) || [];
+            this.processDiscussions(teamId, discussions);
+          }).catch(err => {
+            console.error('Failed to parse Blob response:', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to parse discussion data'
+            });
+          });
+        } else {
+          discussions = response || [];
+          this.processDiscussions(teamId, discussions);
+        }
+      },
+      error: (error) => {
+        console.error('Failed to load discussions:', error);
+      }
+    });
   }
 
-  hideJoinTeamDialog(): void {
-    this.joinTeamDialog = false;
-    this.selectedTeam = null;
-  }
-
-  openLeaveTeamDialog(team: Team): void {
-    this.selectedTeam = team;
-    this.leaveSubmitted = false;
-    this.leaveTeamDialog = true;
-  }
-
-  hideLeaveTeamDialog(): void {
-    this.leaveTeamDialog = false;
-    this.selectedTeam = null;
+  private processDiscussions(teamId: number, discussions: TeamDiscussion[]): void {
+    this.discussions[teamId] = discussions.map(d => ({
+      ...d,
+      senderName: d.teamMember?.user?.name || d.teamMember?.user?.username || 'Unknown',
+      senderRole: d.teamMember?.role || 'Unknown'
+    })) || [];
+    console.log('Mapped discussions:', this.discussions[teamId]);
+    this.cdr.detectChanges();
+    this.scrollToBottom();
   }
 
   openConversationDialog(team: Team): void {
     if (!this.authService.isTokenValid()) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Invalid token. Please log in.'
-      });
+      console.error('Invalid token');
       return;
     }
-    if (!team || !team.id) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Invalid team'
-      });
+    if (!team || typeof team.id !== 'number') {
+      console.error('Invalid team or missing team id');
       return;
     }
     this.selectedTeam = team;
     this.conversationDialog = true;
     this.loadingTeamMember = true;
-    this.getTeamMemberId(team.id);
+    // Allow any user to open any chat: try to find or simulate membership
+    this.teamService.getTeamById({ id: team.id }).subscribe({
+      next: (teamDetails) => {
+        // Try to find the teamMemberId for this user
+        const teamMember = teamDetails.teamMembers?.find(member => member.user?.id === this.userId);
+        if (teamMember?.id) {
+          this.teamMemberId = teamMember.id;
+        } else {
+          // If user is not a member, simulate a temporary teamMemberId (e.g., -1)
+          this.teamMemberId = -1;
+        }
+        if (typeof team.id === 'number') {
+          this.loadTeamDiscussions(team.id);
+          this.initializeWebSocket(team.id);
+        } else {
+          console.error('Cannot load discussions or initialize WebSocket: team id is missing');
+        }
+        this.loadingTeamMember = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Failed to get team details:', error);
+        this.loadingTeamMember = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   hideConversationDialog(): void {
@@ -704,6 +818,10 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
     return !!this.newMessage.trim() && !!this.teamMemberId;
   }
 
+  isOwnMessage(msg: any): boolean {
+    return msg?.teamMember?.user?.id === this.authService.getUserId();
+  }
+
   isCurrentUserMessage(teamMemberId: number | undefined): boolean {
     return teamMemberId === this.teamMemberId;
   }
@@ -719,8 +837,8 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
     return currentDate.toDateString() !== prevDate.toDateString();
   }
 
-  onEnterPress(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && !event.shiftKey) {
+  onEnterPress(event: any): void {
+    if (event && event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       this.sendMessage();
     }
@@ -728,15 +846,396 @@ export class GetAllTeamsComponent implements OnInit, OnDestroy {
 
   private scrollToBottom(): void {
     try {
-      setTimeout(() => {
-        if (this.chatContainer) {
-          const element = this.chatContainer.nativeElement;
-          element.scrollTop = element.scrollHeight;
-          console.log('Scrolled to bottom, scrollHeight:', element.scrollHeight);
-        }
-      }, 100);
+      if (this.chatContainer && this.chatContainer.nativeElement) {
+        this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+      }
     } catch (err) {
       console.error('Error scrolling:', err);
     }
+  }
+
+  toggleSearch(): void {
+    this.showSearch = !this.showSearch;
+    if (!this.showSearch) {
+      this.searchQuery = '';
+      this.onSearch();
+    }
+  }
+
+  onSearch(): void {
+    if (this.searchQuery.trim()) {
+      const teamId = this.selectedTeam?.id;
+      if (teamId) {
+        this.discussions[teamId] = this.discussions[teamId].filter(msg => 
+          msg.message?.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+      }
+    } else {
+      if (this.selectedTeam?.id) {
+        this.loadTeamDiscussions(this.selectedTeam.id);
+      }
+    }
+  }
+
+  togglePinnedMessages(): void {
+    this.showPinnedMessages = !this.showPinnedMessages;
+  }
+
+  pinMessage(message: TeamDiscussion): void {
+    if (!message.isPinned) {
+      message.isPinned = true;
+      this.pinnedMessages.push(message);
+      this.teamDiscussionService.updateMessage({
+        teamId: message.team?.id!,
+        messageId: message.id!,
+        body: { isPinned: true }
+      }).subscribe();
+    }
+  }
+
+  unpinMessage(message: TeamDiscussion): void {
+    message.isPinned = false;
+    this.pinnedMessages = this.pinnedMessages.filter(m => m.id !== message.id);
+    this.teamDiscussionService.updateMessage({
+      teamId: message.team?.id!,
+        messageId: message.id!,
+        body: { isPinned: false }
+      }).subscribe();
+  }
+
+  quoteMessage(message: TeamDiscussion): void {
+    this.quotedMessage = message;
+  }
+
+  editMessage(message: TeamDiscussion): void {
+    this.editingMessage = message;
+    this.newMessage = message.message || '';
+  }
+
+  canEditMessage(message: TeamDiscussion): boolean {
+    return message.teamMember?.id === this.teamMemberId;
+  }
+
+  canDeleteMessage(message: TeamDiscussion): boolean {
+    return message.teamMember?.id === this.teamMemberId || 
+           this.selectedTeam?.teamMembers?.find(m => m.id === this.teamMemberId)?.role === 'LEADER';
+  }
+
+  deleteMessage(message: TeamDiscussion): void {
+    message.isDeleted = true;
+    message.deletedAt = new Date().toISOString();
+    this.teamDiscussionService.updateMessage({
+      teamId: message.team?.id!,
+      messageId: message.id!,
+      body: { isDeleted: true, deletedAt: message.deletedAt }
+    }).subscribe();
+  }
+
+  forwardMessage(message: TeamDiscussion): void {
+    console.log('Forwarding message:', message);
+  }
+
+  getMessageMenuItems(message: TeamDiscussion): MenuItem[] {
+    return [
+      {
+        label: 'Edit',
+        icon: 'pi pi-pencil',
+        command: () => this.editMessage(message),
+        visible: this.canEditMessage(message)
+      },
+      {
+        label: 'Delete',
+        icon: 'pi pi-trash',
+        command: () => this.deleteMessage(message),
+        visible: this.canDeleteMessage(message)
+      },
+      {
+        label: 'Forward',
+        icon: 'pi pi-share-alt',
+        command: () => this.forwardMessage(message)
+      },
+      {
+        label: 'Pin',
+        icon: 'pi pi-pin',
+        command: () => this.pinMessage(message)
+      }
+    ];
+  }
+
+  toggleReaction(message: TeamDiscussion, emoji: string): void {
+    if (!message.reactions) {
+      message.reactions = [];
+    }
+    const reaction = message.reactions.find(r => r.emoji === emoji);
+    if (reaction) {
+      const userIndex = reaction.users.indexOf(this.userId!);
+      if (userIndex > -1) {
+        reaction.users.splice(userIndex, 1);
+        reaction.count--;
+        if (reaction.count === 0) {
+          message.reactions = message.reactions.filter(r => r.emoji !== emoji);
+        }
+      } else {
+        reaction.users.push(this.userId!);
+        reaction.count++;
+      }
+    } else {
+      message.reactions.push({
+        emoji,
+        count: 1,
+        users: [this.userId!]
+      });
+    }
+    this.teamDiscussionService.updateMessage({
+      teamId: message.team?.id!,
+      messageId: message.id!,
+      body: { reactions: message.reactions }
+    }).subscribe();
+  }
+
+  onTyping(): void {
+    if (this.selectedTeam?.id && this.teamMemberId) {
+      this.teamDiscussionService.sendTypingIndicator({
+        teamId: this.selectedTeam.id,
+        teamMemberId: this.teamMemberId
+      }).subscribe();
+
+      if (this.typingTimeout) {
+        clearTimeout(this.typingTimeout);
+      }
+
+      this.typingTimeout = setTimeout(() => {
+        this.isSomeoneTyping = false;
+        this.typingUser = '';
+      }, 3000);
+    }
+  }
+
+  openFileUpload(type: 'image' | 'file'): void {
+    this.fileUploadType = type;
+    this.fileUploadVisible = true;
+  }
+
+  uploadFile(): void {
+    if (this.selectedFile && this.selectedTeam?.id && this.teamMemberId) {
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      formData.append('teamId', this.selectedTeam.id.toString());
+      formData.append('teamMemberId', this.teamMemberId.toString());
+      formData.append('messageType', this.fileUploadType === 'image' ? 'IMAGE' : 'FILE');
+
+      this.teamDiscussionService.uploadFile(formData).subscribe({
+        next: (response: TeamDiscussion) => {
+          this.fileUploadVisible = false;
+          this.selectedFile = null;
+          if (this.selectedTeam?.id) {
+            this.loadTeamDiscussions(this.selectedTeam.id);
+          }
+        },
+        error: (error: any) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to upload file'
+          });
+        }
+      });
+    }
+  }
+
+  openEmojiPicker(): void {
+    this.emojiPickerVisible = true;
+  }
+
+  onEmojiSelect(emoji: string): void {
+    this.newMessage += emoji;
+    this.emojiPickerVisible = false;
+  }
+
+  formatFileSize(bytes: number | undefined): string {
+    if (!bytes) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  openImagePreview(message: TeamDiscussion): void {
+    if (message.fileUrl) {
+      window.open(message.fileUrl, '_blank');
+    }
+  }
+
+  downloadFile(message: TeamDiscussion): void {
+    if (message.fileUrl) {
+      const link = document.createElement('a');
+      link.href = message.fileUrl;
+      link.download = message.message || 'file';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
+  calculateStatistics(): void {
+    // Reset statistics
+    this.teamStats.totalTeams = this.teams.length;
+    this.teamStats.totalMembers = 0;
+    this.teamStats.messageCountByTeam = {};
+    
+    // Calculate total members and message counts
+    this.teams.forEach(team => {
+      if (team.id !== undefined) {
+        // Count team members
+        const memberCount = team.teamMembers?.length || 0;
+        this.teamStats.totalMembers += memberCount;
+        
+        // Count messages per team
+        const messageCount = this.discussions[team.id]?.length || 0;
+        this.teamStats.messageCountByTeam[team.id] = messageCount;
+      }
+    });
+    
+    // Calculate average members per team
+    this.teamStats.averageMembersPerTeam = this.teamStats.totalTeams > 0 
+      ? parseFloat((this.teamStats.totalMembers / this.teamStats.totalTeams).toFixed(2)) 
+      : 0;
+    
+    // Find most active team
+    let maxMessages = 0;
+    let mostActiveTeamId: number | undefined;
+    
+    Object.entries(this.teamStats.messageCountByTeam).forEach(([teamId, count]) => {
+      if (count > maxMessages) {
+        maxMessages = count;
+        mostActiveTeamId = parseInt(teamId);
+      }
+    });
+    
+    if (mostActiveTeamId !== undefined && maxMessages > 0) {
+      const team = this.teams.find(t => t.id === mostActiveTeamId);
+      this.teamStats.mostActiveTeam = {
+        id: mostActiveTeamId,
+        name: team?.teamName,
+        messageCount: maxMessages
+      };
+    } else {
+      this.teamStats.mostActiveTeam = null;
+    }
+    
+    // Count teams without messages
+    this.teamStats.teamsWithoutMessages = this.teams.filter(team => 
+      team.id !== undefined && (!this.teamStats.messageCountByTeam[team.id] || this.teamStats.messageCountByTeam[team.id] === 0)
+    ).length;
+    
+    // Prepare chart data
+    this.prepareChartData();
+  }
+
+  prepareChartData(): void {
+    // Prepare data for team activity chart
+    const teamLabels: string[] = [];
+    const messageData: number[] = [];
+    const memberData: number[] = [];
+    
+    this.teams.forEach(team => {
+      if (team.id !== undefined && team.teamName) {
+        teamLabels.push(team.teamName);
+        messageData.push(this.teamStats.messageCountByTeam[team.id] || 0);
+        memberData.push(team.teamMembers?.length || 0);
+      }
+    });
+    
+    this.statisticsChartData = {
+      labels: teamLabels,
+      datasets: [
+        {
+          label: 'Messages',
+          data: messageData,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgb(75, 192, 192)',
+          borderWidth: 1
+        },
+        {
+          label: 'Members',
+          data: memberData,
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          borderColor: 'rgb(153, 102, 255)',
+          borderWidth: 1
+        }
+      ]
+    };
+    
+    this.statisticsChartOptions = {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      },
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'Team Statistics'
+        }
+      }
+    };
+  }
+
+  toggleStatistics(): void {
+    this.showStatistics = !this.showStatistics;
+    if (this.showStatistics) {
+      this.calculateStatistics();
+    }
+  }
+
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+
+  findUserByIdOrName(): void {
+    if (!this.manualUserInput?.trim()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Input Required',
+        detail: 'Please enter a user ID or username.'
+      });
+      return;
+    }
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        const input = this.manualUserInput.trim().toLowerCase();
+        const found = users.find(u =>
+          u.id?.toString() === input ||
+          u.username?.toLowerCase() === input ||
+          u.name?.toLowerCase() === input
+        );
+        if (found && found.id) {
+          this.selectedUserId = found.id;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'User Found',
+            detail: `User ${found.name || found.username || found.id} selected.`
+          });
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Not Found',
+            detail: 'No user found with that ID or name.'
+          });
+        }
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to search users.'
+        });
+      }
+    });
   }
 }

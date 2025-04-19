@@ -18,4 +18,26 @@ export interface TeamDiscussion {
   teamMember?: TeamMembers;
   senderName?: string; // For UI display
   senderRole?: 'LEADER' | 'MEMBER' | 'MENTOR' | 'Unknown'; // For UI display
+  // New fields
+  reactions?: MessageReaction[];
+  isPinned?: boolean;
+  isEdited?: boolean;
+  isForwarded?: boolean;
+  quotedMessage?: TeamDiscussion;
+  fileUrl?: string;
+  fileSize?: number;
+  fileType?: string;
+  thumbnailUrl?: string;
+  emoji?: string;
+  status?: 'SENT' | 'DELIVERED' | 'READ';
+  isTyping?: boolean;
+  lastEditedAt?: string | Date;
+  deletedAt?: string | Date;
+  isDeleted?: boolean;
+}
+
+export interface MessageReaction {
+  emoji: string;
+  count: number;
+  users: number[];
 }
