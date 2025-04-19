@@ -44,7 +44,7 @@
     </div>
     <div class="intro-text">
       <p>Welcome to Kiberbash! A place where knowledge meets creativity. Here, you'll find workshops designed to ignite your passion, enhance your skills, and inspire innovative thinking.</p>
-      <p>Browse through various themes, topics, and difficulty levels, and embark on a journey of learning. Whether you're an expert or just starting, there’s something to challenge everyone!</p>
+      <p>Browse through various themes, topics, and difficulty levels, and embark on a journey of learning. Whether you're an expert or just starting, there's something to challenge everyone!</p>
     </div>
     
     <!-- Search and Filters Section -->
@@ -63,15 +63,23 @@
       </select>
     </div>
 
-    <!-- Add New Workshop Button -->
-    <div class="add-button-wrapper">
+    <!-- Action Buttons -->
+    <div class="action-buttons">
       <button
         pButton
         label="Add New Workshop"
         icon="pi pi-plus"
         class="p-button-primary"
-        routerLink="/workshopsf/new"
-      ></button>
+        routerLink="/workshopsf/new">
+      </button>
+      <button
+        pButton
+        label="View All Feedbacks"
+        icon="pi pi-comments"
+        class="p-button-secondary"
+        (click)="showAllFeedbacks()"
+        [disabled]="getTotalFeedbackCount() === 0">
+      </button>
     </div>
   </div>
 
@@ -132,8 +140,11 @@
       outline: none;
     }
 
-    .add-button-wrapper {
-      margin-top: 20px;
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
     }
 
     .add-button-wrapper button {
@@ -243,10 +254,338 @@
           tooltipPosition="top"
           *ngIf="isOwner(workshop.user.id)"
         ></button>
+
+        <!-- Feedback Button - Changes based on state -->
+        <button
+          pButton
+          [icon]="hasFeedback(workshop.id) ? 'pi pi-eye' : 'pi pi-comments'"
+          class="p-button-rounded p-button-info"
+          (click)="hasFeedback(workshop.id) ? viewFeedback(workshop.id) : showFeedbackDialog(workshop.id)"
+          [pTooltip]="hasFeedback(workshop.id) ? 'View Workshop Feedback' : 'Submit Workshop Feedback'"
+          tooltipPosition="top"
+        ></button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Feedback Analysis Dialog -->
+<p-dialog 
+  [header]="dialogMode === 'view' ? 'Workshop Feedback Results' : 'Submit Workshop Feedback'" 
+  [(visible)]="feedbackDialogVisible" 
+  [modal]="true" 
+  [style]="{width: '60vw'}"
+  [draggable]="false" 
+  [resizable]="false">
+  
+  <div class="feedback-dialog-content">
+    <!-- Submit Mode -->
+    <div *ngIf="dialogMode === 'submit' && !analysisResult" class="submit-feedback-section">
+      <p class="feedback-instruction">Please share your thoughts about this workshop. Your feedback helps us improve!</p>
+      <span class="p-float-label mt-4">
+        <textarea 
+          id="feedback" 
+          rows="5" 
+          class="w-full" 
+          pInputTextarea 
+          [(ngModel)]="feedbackText"
+          [autoResize]="true">
+        </textarea>
+        <label for="feedback">Enter your workshop feedback</label>
+      </span>
+      <div class="flex justify-content-end mt-4">
+        <button 
+          pButton 
+          label="Analyze & Submit" 
+          icon="pi pi-check" 
+          (click)="analyzeFeedback()"
+          [disabled]="!feedbackText?.trim()"
+          class="p-button-primary">
+        </button>
+      </div>
+    </div>
+
+    <!-- Results View -->
+    <div *ngIf="analysisResult" class="analysis-result">
+      <div class="result-header">
+        <div class="sentiment-badge" [ngClass]="getSentimentClass(analysisResult.sentiment)">
+          {{analysisResult.sentiment}}
+        </div>
+        <div class="rating-container">
+          <span class="rating-label">Rating:</span>
+          <p-rating [ngModel]="analysisResult.rating" [readonly]="true" [cancel]="false"></p-rating>
+          <span class="rating-value">({{analysisResult.rating}}/5)</span>
+        </div>
+      </div>
+
+      <div class="confidence-bar">
+        <label>Analysis Confidence</label>
+        <p-progressBar 
+          [value]="analysisResult.confidence"
+          [showValue]="true"
+          [style]="{'height': '20px'}"
+          [styleClass]="getConfidenceClass(analysisResult.confidence)">
+        </p-progressBar>
+      </div>
+
+      <div class="key-points-section">
+        <h3>Key Insights</h3>
+        <ul>
+          <li *ngFor="let point of analysisResult.key_points">
+            <i class="pi pi-check-circle"></i>
+            {{point}}
+          </li>
+        </ul>
+      </div>
+
+      <div class="original-feedback" *ngIf="analysisResult.feedbackText">
+        <h3>Original Feedback</h3>
+        <p>{{analysisResult.feedbackText}}</p>
+        <small class="feedback-timestamp" *ngIf="analysisResult.timestamp">
+          Submitted on {{analysisResult.timestamp | date:'medium'}}
+        </small>
+      </div>
+
+      <div class="dialog-footer">
+        <button 
+          pButton 
+          label="Close" 
+          icon="pi pi-times" 
+          (click)="closeDialog()"
+          class="p-button-secondary">
+        </button>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- All Feedbacks Dialog -->
+<p-dialog 
+  header="All Workshop Feedbacks" 
+  [(visible)]="allFeedbacksDialogVisible" 
+  [modal]="true" 
+  [style]="{width: '80vw', height: '80vh'}"
+  [maximizable]="true"
+  [draggable]="false" 
+  [resizable]="false">
+  
+  <div class="all-feedbacks-content">
+    <div class="feedback-filters">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input 
+          type="text" 
+          pInputText 
+          [(ngModel)]="feedbackSearchQuery" 
+          placeholder="Search feedbacks..."
+          (input)="filterFeedbacks()">
+      </span>
+      <p-dropdown 
+        [options]="sentimentFilters" 
+        [(ngModel)]="selectedSentimentFilter"
+        (onChange)="filterFeedbacks()"
+        placeholder="Filter by sentiment">
+      </p-dropdown>
+      <p-dropdown 
+        [options]="ratingFilters" 
+        [(ngModel)]="selectedRatingFilter"
+        (onChange)="filterFeedbacks()"
+        placeholder="Filter by rating">
+      </p-dropdown>
+    </div>
+
+    <div class="feedbacks-grid">
+      <div *ngFor="let feedback of filteredFeedbacks" class="feedback-card">
+        <div class="workshop-info">
+          <h3>{{getWorkshopName(feedback.workshopId)}}</h3>
+          <div class="sentiment-badge" [ngClass]="getSentimentClass(feedback.sentiment)">
+            {{feedback.sentiment}}
+          </div>
+        </div>
+        
+        <div class="rating-container">
+          <p-rating [ngModel]="feedback.rating" [readonly]="true" [cancel]="false"></p-rating>
+          <span class="confidence-label">
+            Confidence: {{feedback.confidence}}%
+          </span>
+        </div>
+
+        <div class="feedback-text">
+          <p>{{feedback.feedbackText}}</p>
+        </div>
+
+        <div class="key-points">
+          <ul>
+            <li *ngFor="let point of feedback.key_points">{{point}}</li>
+          </ul>
+        </div>
+
+        <div class="feedback-footer">
+          <small>{{feedback.timestamp | date:'medium'}}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<style>
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .feedback-dialog-content {
+    padding: 1.5rem;
+  }
+
+  .submit-feedback-section {
+    .feedback-instruction {
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .analysis-result {
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .sentiment-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: capitalize;
+      
+      &.very-positive { background: #d4edda; color: #155724; }
+      &.positive { background: #e8f5e9; color: #2e7d32; }
+      &.neutral { background: #f8f9fa; color: #383d41; }
+      &.negative { background: #fff3cd; color: #856404; }
+      &.very-negative { background: #f8d7da; color: #721c24; }
+    }
+
+    .rating-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .rating-label {
+        font-weight: 600;
+      }
+    }
+
+    .confidence-bar {
+      margin: 2rem 0;
+      
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+    }
+
+    .key-points-section {
+      margin: 2rem 0;
+      
+      h3 {
+        color: #495057;
+        margin-bottom: 1rem;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        
+        li {
+          display: flex;
+          align-items: flex-start;
+          margin-bottom: 0.5rem;
+          
+          i {
+            color: #2196F3;
+            margin-right: 0.5rem;
+            margin-top: 0.25rem;
+          }
+        }
+      }
+    }
+
+    .original-feedback {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 2rem 0;
+
+      h3 {
+        color: #495057;
+        margin-bottom: 1rem;
+      }
+
+      .feedback-timestamp {
+        display: block;
+        color: #6c757d;
+        margin-top: 1rem;
+      }
+    }
+  }
+
+  .all-feedbacks-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .feedback-filters {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .feedbacks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      overflow-y: auto;
+      padding: 1rem;
+
+      .feedback-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .workshop-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          h3 {
+            margin: 0;
+            color: #495057;
+          }
+        }
+
+        .feedback-text {
+          color: #666;
+          line-height: 1.5;
+        }
+
+        .feedback-footer {
+          color: #6c757d;
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+</style>
 
 <app-footer></app-footer>
