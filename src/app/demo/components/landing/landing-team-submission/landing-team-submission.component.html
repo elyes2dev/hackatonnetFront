@@ -1,0 +1,86 @@
+<div class="main-container">
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  
+    <!-- Error -->
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+  
+    <!-- Header -->
+    <div class="header">
+      <h1>Team Submissions</h1>
+      <p class="subtitle">Manage your team project submissions</p>
+    </div>
+  
+    <!-- Creation Form -->
+    <div class="section creation-section">
+      <h2>New Submission</h2>
+      <form (ngSubmit)="createSubmission()" class="form-container">
+        <div class="form-group">
+          <label for="projectName">Project Name</label>
+          <input type="text" id="projectName" [(ngModel)]="newSubmission.projectName" name="projectName" required class="form-input" />
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" [(ngModel)]="newSubmission.description" name="description" required class="form-input"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="repoLink">GitHub Link</label>
+          <input type="url" id="repoLink" [(ngModel)]="newSubmission.repoLink" name="repoLink" required class="form-input" />
+        </div>
+        <div class="form-group">
+          <label for="teamMemberId">Team Member ID</label>
+          <input type="number" id="teamMemberId" [(ngModel)]="newSubmission.teamMember!.id" name="teamMemberId" required class="form-input" />
+        </div>
+        <button type="submit" class="btn btn-submit">Submit</button>
+      </form>
+    </div>
+  
+    <!-- Submissions List -->
+    <div class="section submissions-section">
+      <h2>Recent Submissions</h2>
+      <div class="card-container" *ngIf="submissions && submissions.length > 0; else noSubmissions">
+        <div class="card" *ngFor="let submission of submissions">
+          <h3>{{ submission.projectName || 'Not specified' }}</h3>
+          <p><strong>Description:</strong> {{ submission.description || 'No description' }}</p>
+          <p><strong>GitHub Link:</strong> <a href="{{ submission.repoLink }}" target="_blank" class="project-link">{{ submission.repoLink || 'No link' }}</a></p>
+          <p><strong>Member:</strong> {{ submission.teamMember?.id || 'Not available' }}</p>
+          <div class="card-actions">
+            <button class="btn btn-edit" (click)="selectSubmission(submission)">Edit</button>
+            <button class="btn btn-delete" (click)="delete(submission.id!)">Delete</button>
+          </div>
+          <!-- Edit Form under corresponding card -->
+          <div class="modification-section" *ngIf="selectedSubmission && selectedSubmission.id === submission.id">
+            <h2>Edit Submission</h2>
+            <form (ngSubmit)="updateSubmission()" class="form-container">
+              <div class="form-group">
+                <label for="editProjectName-{{ submission.id }}">Project Name</label>
+                <input type="text" id="editProjectName-{{ submission.id }}" [(ngModel)]="selectedSubmission.projectName" name="projectName" required class="form-input" />
+              </div>
+              <div class="form-group">
+                <label for="editDescription-{{ submission.id }}">Description</label>
+                <textarea id="editDescription-{{ submission.id }}" [(ngModel)]="selectedSubmission.description" name="description" required class="form-input"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="editRepoLink-{{ submission.id }}">GitHub Link</label>
+                <input type="url" id="editRepoLink-{{ submission.id }}" [(ngModel)]="selectedSubmission.repoLink" name="repoLink" required class="form-input" />
+              </div>
+              <div class="form-group">
+                <label for="editTeamMemberId-{{ submission.id }}">Team Member ID</label>
+                <input type="number" id="editTeamMemberId-{{ submission.id }}" [(ngModel)]="selectedSubmission.teamMember!.id" name="teamMemberId" required class="form-input" />
+              </div>
+              <button type="submit" class="btn btn-submit">Update</button>
+              <button type="button" class="btn btn-cancel" (click)="cancelModification()">Cancel</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <ng-template #noSubmissions>
+        <p class="no-data" *ngIf="!loading && !error">No submissions found.</p>
+      </ng-template>
+    </div>
+  </div>

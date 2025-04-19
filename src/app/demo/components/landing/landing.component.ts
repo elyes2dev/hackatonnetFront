@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 
@@ -31,7 +31,7 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
                 top:15%;
             }
 
-        #hero > div > p {
+            #hero > div > p {
                 max-width: 450px;
             }
         }
@@ -41,23 +41,30 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
                 height: 600px;
             }
 
-        #hero > img {
-            position:static;
-            transform: scale(1);
-            margin-left: auto;
-        }
+            #hero > img {
+                position:static;
+                transform: scale(1);
+                margin-left: auto;
+            }
 
-        #hero > div {
-            width: 100%;
-        }
+            #hero > div {
+                width: 100%;
+            }
 
-        #hero > div > p {
+            #hero > div > p {
                 width: 100%;
                 max-width: 100%;
             }
         }
     `]
 })
-export class LandingComponent {
-    constructor(public layoutService: LayoutService, public router: Router) { }
+export class LandingComponent implements OnInit {
+    constructor(
+        public layoutService: LayoutService, 
+        public router: Router
+    ) { }
+
+    ngOnInit(): void {
+        // Initialization if needed
+    }
 }
