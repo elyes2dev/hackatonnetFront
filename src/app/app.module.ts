@@ -1,8 +1,11 @@
 import { NgModule } from '@angular/core';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+
+import { CommonModule } from '@angular/common';
+import {HTTP_INTERCEPTORS } from '@angular/common/http';
+
+// Components
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
-import { AppLayoutModule } from './layout/app.layout.module';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
 import { ProductService } from './demo/service/product.service';
 import { CountryService } from './demo/service/country.service';
@@ -15,7 +18,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { UserProfileComponent } from './demo/components/user-profile/user-profile.component';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
-import { SidebarModule } from 'primeng/sidebar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ChartModule } from 'primeng/chart';
 import { PrimeIcons } from 'primeng/api';
@@ -23,16 +25,24 @@ import { PrimeIcons } from 'primeng/api';
 
 //New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
-import { CommonModule } from '@angular/common';
+
+// Modules
+import { AppRoutingModule } from './app-routing.module';
+import { AppLayoutModule } from './layout/app.layout.module';
+import { LandingModule } from './demo/components/landing/landing.module';
+import { TeamModule } from './demo/components/team/team.module';
+
+// PrimeNG Modules
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { SidebarModule } from 'primeng/sidebar';
+import { ToastModule } from 'primeng/toast';
+import { RippleModule } from 'primeng/ripple';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToggleButtonModule } from 'primeng/togglebutton';
-import { RippleModule } from 'primeng/ripple';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
 import { WorkshoplistComponent } from './demo/components/workshop/workshoplist/workshoplist.component';
@@ -115,10 +125,16 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
 import { HackathonInsightsComponent } from './demo/components/Analytics/hackathon-insights/hackathon-insights/hackathon-insights.component';
 import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-dialog/ai-quiz-dialog.component';
 
+// Services
+import { AuthService } from './services/auth.service';
+import { AuthInterceptor } from './interceptor/auth.interceptor';
+import { DialogService } from 'primeng/dynamicdialog';
+import { MenuModule } from 'primeng/menu'; // Added
+
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent, FilterByNameAndThemePipe, ChartsComponent
+        AppComponent, NotfoundComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent, FilterByNameAndThemePipe, ChartsComponent
           , WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent, QuizDetailsComponent, QuizFormComponent, QuizListComponent, QuizResultDialogComponent, QuizScoreAddComponent ,
         ResourceDetailsComponent, WorkshoplistComponent,ResourceListComponent,ResourceFormComponent,SupportTicketComponent,SponsorApplicationFormComponent,
         SponsorApplicationListComponent,
@@ -139,20 +155,35 @@ import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-
 
     ],
     imports: [
+        // Angular Modules
+
+        HttpClientModule,
+        CommonModule,
+        FormsModule,
+        RouterModule,
+
+        // App Modules
         AppRoutingModule,
         AppLayoutModule,
+        TeamModule,
+
+        // PrimeNG Modules
         TableModule,
+        ToastModule,
         CommonModule,
         ReactiveFormsModule,
         RatingModule,
         ButtonModule,
-        SliderModule,
+        SidebarModule,
+        RippleModule,
         InputTextModule,
         ToggleButtonModule,
-        RippleModule,
         MultiSelectModule,
         DropdownModule,
         ProgressBarModule,
+        SliderModule,
+        RatingModule,
+        MenuModule,
         ConfirmDialogModule,
         ToastModule,
         FormsModule,
@@ -205,8 +236,12 @@ import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService
+        PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService,
+        AuthService,
+        DialogService,
     ],
     bootstrap: [AppComponent]
 })

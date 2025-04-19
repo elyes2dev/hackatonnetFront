@@ -1,12 +1,17 @@
+
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { LandingComponent } from './landing.component';
 import { PrizeFormComponent } from '../prize/prize-form/prize-form.component';
+import { TeamFrontofficeComponent } from '../team-frontoffice/team-frontoffice.component';
 
-@NgModule({
-    imports: [RouterModule.forChild([
-        { path: '', component: LandingComponent }
-    ])],
+const routes: Routes = [
+    { path: '', component: LandingComponent },
+    {path: 'landing', component: LandingComponent},
+];
+
+  @NgModule({
+    imports: [RouterModule.forChild(routes)],
     exports: [RouterModule]
-})
-export class LandingRoutingModule { }
+  })
+  export class LandingRoutingModule { }

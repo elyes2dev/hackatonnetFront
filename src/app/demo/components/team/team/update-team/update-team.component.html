@@ -1,0 +1,59 @@
+<div class="update-team-container p-4">
+    <h2 class="text-center">Update Team</h2>
+  
+    <form (ngSubmit)="onSubmit()" class="p-fluid">
+      <div class="field mb-4">
+        <label for="teamName">Team Name</label>
+        <input 
+          pInputText 
+          id="teamName" 
+          type="text" 
+          [(ngModel)]="team.teamName" 
+          name="teamName" 
+          required 
+          placeholder="Enter team name">
+      </div>
+  
+      <div class="field mb-4">
+        <label for="teamCode">Team Code</label>
+        <input 
+          pInputText 
+          id="teamCode" 
+          type="text" 
+          [(ngModel)]="team.teamCode" 
+          name="teamCode" 
+          placeholder="Enter team code (optional)">
+      </div>
+  
+      <div class="field mb-4">
+        <label for="isPublic">Public Team</label>
+        <p-toggleButton 
+          id="isPublic" 
+          [(ngModel)]="team.isPublic" 
+          name="isPublic" 
+          onLabel="Yes" 
+          offLabel="No">
+        </p-toggleButton>
+      </div>
+  
+      <div class="field mb-4">
+        <label for="isFull">Full Team</label>
+        <p-toggleButton 
+          id="isFull" 
+          [(ngModel)]="team.isFull" 
+          name="isFull" 
+          onLabel="Yes" 
+          offLabel="No">
+        </p-toggleButton>
+      </div>
+  
+      <button 
+        pButton 
+        type="submit" 
+        label="Update Team" 
+        class="p-button-raised p-button-success w-full">
+      </button>
+    </form>
+  
+    <p-toast position="top-right"></p-toast>
+  </div>

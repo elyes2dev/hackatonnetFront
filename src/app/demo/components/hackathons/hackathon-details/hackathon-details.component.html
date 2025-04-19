@@ -3,7 +3,16 @@
     <button pButton type="button" icon="pi pi-arrow-left" label="Back to List" routerLink="/hackathons"></button>
   </div>
   <button class="header-button" (click)="goToLiveStream()"><i class="pi pi-video"></i>Live stream</button>
-  
+    <button pButton
+            type="button"
+            [label]="getParticipateButtonLabel()"
+            [icon]="getParticipateButtonIcon()"
+            class="p-button-lg futuristic-button"
+            [class.neon-purple]="!userTeam"
+            [class.neon-cyan]="userTeam"
+            [disabled]="loading || loadingDialog"
+            (click)="participate()"></button>
+
 </div>
 
 <div *ngIf="hackathon as h" class="hackathon-details-container">
@@ -59,7 +68,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-value">
-          <p-avatar [label]="h.createdBy.name.charAt(0) + h.createdBy.lastname.charAt(0)" 
+          <p-avatar [label]="h.createdBy.name.charAt(0) + h.createdBy.lastname.charAt(0)"
                    size="large" shape="circle"></p-avatar>
         </div>
         <div class="organizer-info">
@@ -104,7 +113,7 @@
 <div class="posts-section-container">
   <div class="buttons-container">
     <div class="add-post-button-container">
-      <button pButton type="button" label="Add Post" icon="pi pi-plus" class="p-button-primary" 
+      <button pButton type="button" label="Add Post" icon="pi pi-plus" class="p-button-primary"
               (click)="showPostForm()"></button>
     </div>
   </div>
@@ -115,9 +124,9 @@
 </div>
 
 <!-- Add Post Dialog -->
-<p-dialog header="Add New Post" [(visible)]="displayPostForm" [modal]="true" [style]="{ width: '50vw' }" 
+<p-dialog header="Add New Post" [(visible)]="displayPostForm" [modal]="true" [style]="{ width: '50vw' }"
           [breakpoints]="{ '960px': '75vw', '640px': '90vw' }">
-  <app-post-form 
+  <app-post-form
     *ngIf="hackathon"
     [hackathon]="hackathon"
     (postCreated)="onPostCreated()"

@@ -1,0 +1,38 @@
+<div class="join-team-container p-4">
+    <h2 class="text-center">Join a Team</h2>
+  
+    <form (ngSubmit)="onSubmit()" class="p-fluid">
+      <div class="field mb-4">
+        <label for="teamCode">Team Code</label>
+        <input 
+          pInputText 
+          id="teamCode" 
+          type="text" 
+          [(ngModel)]="teamCode" 
+          name="teamCode" 
+          required 
+          placeholder="Enter team code">
+      </div>
+  
+      <div class="field mb-4">
+        <label for="userId">User ID</label>
+        <input 
+          pInputText 
+          id="userId" 
+          type="number" 
+          [(ngModel)]="userId" 
+          name="userId" 
+          required 
+          placeholder="Enter your user ID">
+      </div>
+  
+      <button 
+        pButton 
+        type="submit" 
+        label="Join Team" 
+        class="p-button-raised p-button-primary w-full">
+      </button>
+    </form>
+  
+    <p-toast position="top-right"></p-toast>
+  </div>

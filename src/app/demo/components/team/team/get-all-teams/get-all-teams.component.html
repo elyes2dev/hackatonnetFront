@@ -1,0 +1,409 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6 hackathon-card">
+      <p-toast position="top-right"></p-toast>
+      <p-toolbar styleClass="mb-4 hackathon-toolbar">
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="New Team" icon="pi pi-plus" class="p-button-success mr-2 hackathon-btn" 
+                  (click)="openNew()"></button>
+          <button pButton pRipple label="Delete Selected" icon="pi pi-trash" class="p-button-danger hackathon-btn" 
+                  (click)="deleteSelectedTeams()" [disabled]="!selectedTeams.length"></button>
+        </ng-template>
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="Statistics" icon="pi pi-chart-bar" class="p-button-info mr-2 hackathon-btn" 
+                  (click)="toggleStatistics()"></button>
+          <button pButton pRipple label="Import Teams" icon="pi pi-upload" class="p-button-help hackathon-btn" 
+                  (click)="onImport($event)"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <!-- Statistics Section -->
+      <div *ngIf="showStatistics" class="statistics-section mb-4 animated fadeIn">
+        <p-card header="Team Statistics" styleClass="shadow-4 hackathon-stats-card">
+          <div class="grid">
+            <div class="col-12 md:col-6 lg:col-3">
+              <p-card styleClass="bg-blue-50 hackathon-metric-card">
+                <div class="flex flex-column align-items-center">
+                  <span class="text-xl font-bold mb-2">Total Teams</span>
+                  <span class="text-5xl font-bold text-blue-500">{{teamStats.totalTeams}}</span>
+                </div>
+              </p-card>
+            </div>
+            <div class="col-12 md:col-6 lg:col-3">
+              <p-card styleClass="bg-green-50 hackathon-metric-card">
+                <div class="flex flex-column align-items-center">
+                  <span class="text-xl font-bold mb-2">Total Members</span>
+                  <span class="text-5xl font-bold text-green-500">{{teamStats.totalMembers}}</span>
+                </div>
+              </p-card>
+            </div>
+            <div class="col-12 md:col-6 lg:col-3">
+              <p-card styleClass="bg-yellow-50 hackathon-metric-card">
+                <div class="flex flex-column align-items-center">
+                  <span class="text-xl font-bold mb-2">Avg. Members/Team</span>
+                  <span class="text-5xl font-bold text-yellow-500">{{teamStats.averageMembersPerTeam}}</span>
+                </div>
+              </p-card>
+            </div>
+            <div class="col-12 md:col-6 lg:col-3">
+              <p-card styleClass="bg-purple-50 hackathon-metric-card">
+                <div class="flex flex-column align-items-center">
+                  <span class="text-xl font-bold mb-2">Teams w/o Messages</span>
+                  <span class="text-5xl font-bold text-purple-500">{{teamStats.teamsWithoutMessages}}</span>
+                </div>
+              </p-card>
+            </div>
+          </div>
+
+          <div class="mt-4" *ngIf="teamStats.mostActiveTeam">
+            <p-card header="Most Active Team" styleClass="bg-orange-50 hackathon-metric-card">
+              <div class="flex flex-column align-items-center">
+                <span class="text-xl font-bold mb-2 hackathon-highlight">{{teamStats.mostActiveTeam.name}}</span>
+                <span class="text-lg">with <span class="font-bold text-orange-500">{{teamStats.mostActiveTeam.messageCount}}</span> messages</span>
+              </div>
+            </p-card>
+          </div>
+
+          <div class="mt-4">
+            <p-chart type="bar" [data]="statisticsChartData" [options]="statisticsChartOptions" styleClass="hackathon-chart"></p-chart>
+          </div>
+
+          <div class="mt-4">
+            <h3 class="hackathon-section-title">Team Activity Breakdown</h3>
+            <p-table [value]="teams" styleClass="p-datatable-sm hackathon-table" [tableStyle]="{'min-width': '50rem'}">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Team Name</th>
+                  <th>Members</th>
+                  <th>Messages</th>
+                  <th>Activity Level</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-team>
+                <tr>
+                  <td>
+                    <span class="pi pi-users hackathon-team-icon mr-2"></span>
+                    <span class="font-bold hackathon-team-name">{{team.teamName}}</span>
+                  </td>
+                  <td>
+                    <span class="pi pi-user mr-1"></span>
+                    {{team.teamMembers?.length || 0}}
+                  </td>
+                  <td>
+                    <span class="pi pi-comments mr-1"></span>
+                    {{team.id ? (teamStats.messageCountByTeam[team.id] || 0) : 0}}
+                  </td>
+                  <td>
+                    <p-progressBar [value]="team.id ? (teamStats.messageCountByTeam[team.id] || 0) : 0" 
+                                  [showValue]="false" 
+                                  [style]="{'height': '8px'}"
+                                  styleClass="hackathon-progress"></p-progressBar>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-card>
+      </div>
+      <!-- End Statistics Section -->
+
+      <p-table #dt [value]="teams" responsiveLayout="scroll" [rows]="10" [paginator]="true" 
+               [rowsPerPageOptions]="[5, 10, 20]" [showCurrentPageReport]="true" 
+               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} teams" 
+               styleClass="hackathon-main-table animated fadeIn">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th>Team</th>
+            <th>Members</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-team let-rowIndex="rowIndex">
+          <tr [ngClass]="{'hackathon-row': true, 'highlight-row': selectedTeam?.id === team.id}">
+            <td>
+              <p-tableCheckbox [value]="team"></p-tableCheckbox>
+            </td>
+            <td>
+              <span class="pi pi-users hackathon-team-icon mr-2"></span>
+              <span class="font-bold hackathon-team-name">{{team.teamName}}</span>
+              <span *ngIf="team.isPublic" class="team-badge status-public ml-2">Public</span>
+              <span *ngIf="!team.isPublic" class="team-badge status-private ml-2">Private</span>
+              <span *ngIf="team.teamMembers?.length === team.hackathon?.maxTeamSize" class="team-badge status-full ml-2">Full</span>
+            </td>
+            <td>
+              <span class="pi pi-user mr-1"></span>
+              <span>{{team.teamMembers?.length || 0}}</span>
+            </td>
+            <td>
+              <span [ngClass]="{'team-badge': true, 'status-public': team.isPublic, 'status-private': !team.isPublic, 'status-full': team.teamMembers?.length === team.hackathon?.maxTeamSize, 'status-available': team.teamMembers?.length < team.hackathon?.maxTeamSize}">
+                {{ team.teamMembers?.length === team.hackathon?.maxTeamSize ? 'Full' : (team.isPublic ? 'Public' : 'Private') }}
+              </span>
+            </td>
+            <td>
+              <button pButton icon="pi pi-eye" class="p-button-rounded p-button-info mr-2 hackathon-btn" pTooltip="View Members" (click)="viewTeamMembers(team)"></button>
+              <button pButton icon="pi pi-comments" class="p-button-rounded p-button-warning mr-2 hackathon-btn" pTooltip="Open Chat" (click)="openConversationDialog(team)"></button>
+              <button pButton icon="pi pi-user-plus" class="p-button-rounded p-button-success mr-2 hackathon-btn" pTooltip="Add User" (click)="openAddUserDialog(team)"></button>
+              <button pButton icon="pi pi-user-minus" class="p-button-rounded p-button-danger mr-2 hackathon-btn" pTooltip="Remove User" (click)="openRemoveUserDialog(team)"></button>
+              <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-help mr-2 hackathon-btn" pTooltip="Edit Team" (click)="editTeam(team)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger hackathon-btn" pTooltip="Delete Team" (click)="deleteTeam(team)"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center">
+              <span class="pi pi-info-circle mr-2"></span> No teams available. Create your first hackathon team!
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- Create/Edit Team Dialog -->
+      <p-dialog [(visible)]="teamDialog" [style]="{width: '450px'}" [modal]="true" styleClass="p-fluid hackathon-dialog animated fadeIn">
+        <ng-template pTemplate="header">
+          <div class="hackathon-dialog-header chat-dialog-header-blue">
+            <span class="pi pi-users hackathon-dialog-icon chat-dialog-icon-blue"></span>
+            <span class="hackathon-dialog-title chat-dialog-title-blue">{{ team.id ? 'Edit Team' : 'Create Team' }}</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="field">
+            <label for="teamName">Team Name</label>
+            <input pInputText id="teamName" [(ngModel)]="team.teamName" maxlength="40" class="hackathon-input" autofocus />
+          </div>
+          <div class="field">
+            <label for="hackathonId">Hackathon</label>
+            <input pInputText id="hackathonId" [(ngModel)]="hackathonId" class="hackathon-input" placeholder="Hackathon ID" />
+          </div>
+          <div class="field">
+            <label for="isPublic">Public?</label>
+            <p-dropdown id="isPublic" [options]="publicOptions" [(ngModel)]="team.isPublic" class="hackathon-input"></p-dropdown>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton label="Cancel" icon="pi pi-times" class="p-button-text hackathon-btn" (click)="hideDialog()"></button>
+          <button pButton label="Save" icon="pi pi-check" class="p-button-success hackathon-btn" (click)="saveTeam()"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Delete Team Dialog -->
+      <p-dialog [(visible)]="deleteTeamDialog" [style]="{width: '450px'}" [modal]="true" styleClass="p-fluid hackathon-dialog animated fadeIn">
+        <ng-template pTemplate="header">
+          <div class="hackathon-dialog-header chat-dialog-header-blue">
+            <span class="pi pi-trash hackathon-dialog-icon chat-dialog-icon-blue"></span>
+            <span class="hackathon-dialog-title chat-dialog-title-blue">Confirm Delete</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+            <span *ngIf="team">Are you sure you want to delete <b>{{team.teamName}}</b>?</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton label="No" icon="pi pi-times" class="p-button-text hackathon-btn" (click)="deleteTeamDialog = false"></button>
+          <button pButton label="Yes" icon="pi pi-check" class="p-button-danger hackathon-btn" (click)="confirmDelete()"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Delete Selected Teams Dialog -->
+      <p-dialog [(visible)]="deleteTeamsDialog" [style]="{width: '450px'}" [modal]="true" styleClass="p-fluid hackathon-dialog animated fadeIn">
+        <ng-template pTemplate="header">
+          <div class="hackathon-dialog-header chat-dialog-header-blue">
+            <span class="pi pi-trash hackathon-dialog-icon chat-dialog-icon-blue"></span>
+            <span class="hackathon-dialog-title chat-dialog-title-blue">Confirm Delete</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+            <span>Are you sure you want to delete the selected teams?</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton label="No" icon="pi pi-times" class="p-button-text hackathon-btn" (click)="deleteTeamsDialog = false"></button>
+          <button pButton label="Yes" icon="pi pi-check" class="p-button-danger hackathon-btn" (click)="confirmDeleteSelected()"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Team Members Dialog -->
+      <p-dialog [(visible)]="teamMembersDialog" [style]="{width: '500px'}" [modal]="true" styleClass="p-fluid hackathon-dialog animated fadeIn">
+        <ng-template pTemplate="header">
+          <div class="hackathon-dialog-header chat-dialog-header-blue">
+            <span class="pi pi-users hackathon-dialog-icon chat-dialog-icon-blue"></span>
+            <span class="hackathon-dialog-title chat-dialog-title-blue">Team Members</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <p-table [value]="teamMembers" responsiveLayout="scroll" styleClass="p-datatable-striped">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined At</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-member>
+              <tr>
+                <td>{{ member.id }}</td>
+                <td>
+                  <div class="flex align-items-center">
+                    <span class="member-avatar mr-2">{{ getInitials(member.user?.name) }}</span>
+                    <span>{{ member.user?.name || 'N/A' }}</span>
+                  </div>
+                </td>
+                <td>{{ member.user?.email || 'N/A' }}</td>
+                <td>
+                  <p-tag [severity]="member.role === 'LEADER' ? 'success' : 'info'" 
+                         [value]="member.role"></p-tag>
+                </td>
+                <td>{{ member.joinedAt | date:'medium' }}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="text-center">
+                  <div class="empty-state">
+                    <i class="pi pi-users" style="font-size: 2rem"></i>
+                    <p>No members found in this team.</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton label="Close" icon="pi pi-times" class="p-button-text hackathon-btn" (click)="hideDialog()"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Add User to Team Dialog -->
+      <p-dialog [(visible)]="addUserDialog" [style]="{width: '500px'}" [modal]="true" styleClass="p-fluid hackathon-dialog animated fadeIn">
+        <ng-template pTemplate="header">
+          <div class="hackathon-dialog-header chat-dialog-header-blue">
+            <span class="pi pi-user-plus hackathon-dialog-icon chat-dialog-icon-blue"></span>
+            <span class="hackathon-dialog-title chat-dialog-title-blue">Add User to Team</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="add-user-content">
+            <p>Enter user ID or username to add to this team:</p>
+            <div class="p-inputgroup mb-3">
+              <input type="text" pInputText [(ngModel)]="manualUserInput" placeholder="User ID or username" class="hackathon-input" />
+              <button pButton icon="pi pi-search" class="p-button-info" (click)="findUserByIdOrName()"></button>
+            </div>
+            <p-dropdown [options]="availableUsers" [(ngModel)]="selectedUserId" placeholder="Select a user" class="hackathon-input"></p-dropdown>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton label="Cancel" icon="pi pi-times" class="p-button-text hackathon-btn" (click)="hideAddUserDialog()"></button>
+          <button pButton label="Add" icon="pi pi-user-plus" class="p-button-success hackathon-btn" (click)="confirmAddUser()" [disabled]="!selectedUserId"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Remove User from Team Dialog -->
+      <p-dialog [(visible)]="removeUserDialog" [style]="{width: '500px'}" [modal]="true" styleClass="p-fluid hackathon-dialog animated fadeIn">
+        <ng-template pTemplate="header">
+          <div class="hackathon-dialog-header chat-dialog-header-blue">
+            <span class="pi pi-user-minus hackathon-dialog-icon chat-dialog-icon-blue"></span>
+            <span class="hackathon-dialog-title chat-dialog-title-blue">Remove User from Team</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="remove-user-content">
+            <div class="team-info mb-4">
+              <span class="font-bold">Team:</span> {{selectedTeam?.teamName}}
+            </div>
+            <p-dropdown [options]="memberOptions" [(ngModel)]="selectedMemberId" placeholder="Select a member" class="hackathon-input"></p-dropdown>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton label="Cancel" icon="pi pi-times" class="p-button-text hackathon-btn" (click)="hideRemoveUserDialog()"></button>
+          <button pButton label="Remove" icon="pi pi-user-minus" class="p-button-danger hackathon-btn" (click)="confirmRemoveUser()" [disabled]="!selectedMemberId"></button>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Enhanced Chat Dialog -->
+      <p-dialog [(visible)]="conversationDialog" [style]="{width: '600px', height: '80vh'}"
+                [modal]="true" styleClass="p-fluid chat-popup hackathon-dialog animated fadeIn" (onHide)="hideConversationDialog()">
+        <ng-template pTemplate="header">
+          <div class="hackathon-dialog-header chat-dialog-header-blue">
+            <span class="pi pi-comments hackathon-dialog-icon chat-dialog-icon-blue"></span>
+            <span class="hackathon-dialog-title chat-dialog-title-blue">Team Conversation</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="chat-popup-container">
+            <!-- Pinned Messages Area -->
+            <div *ngIf="pinnedMessages && pinnedMessages.length" class="pinned-messages-area mb-3">
+              <div class="pinned-header">
+                <span style="font-size:1.25rem; background:transparent; border:none; padding:0; margin-right:0.5rem;">📍</span>
+                <span>Pinned Messages</span>
+              </div>
+              <div class="pinned-messages-list">
+                <div *ngFor="let pinned of pinnedMessages" class="pinned-message-item">
+                  <span class="pinned-message-content">{{ pinned.message }}</span>
+                  <span class="pinned-message-meta">— {{ pinned.senderName }} • {{ getMessageTime(pinned.createdAt) }}</span>
+                  <button *ngIf="!pinned.isPinned" class="pin-emoji-btn p-button-rounded p-button-text ml-2" style="background:transparent; border:none;" (click)="pinMessage(pinned)" pTooltip="Pin message">
+                    <span style="font-size:1.1rem;">📍</span>
+                  </button>
+                  <button class="pin-emoji-btn p-button-rounded p-button-text ml-2" style="background:transparent; border:none;" (click)="unpinMessage(pinned)" pTooltip="Unpin">
+                    <span style="font-size:1.1rem;">🗑️</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chat-header-enhanced">
+              <div class="team-info">
+                <h3 class="chat-team-name">{{selectedTeam?.teamName}}</h3>
+                <div class="team-meta">
+                  <span><i class="pi pi-users"></i> {{selectedTeam?.teamMembers?.length || 0}} members</span>
+                  <span><i class="pi pi-hashtag"></i> {{selectedTeam?.teamCode}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="chat-messages-area" #chatContainer>
+              <ng-container *ngFor="let msg of getDiscussionsForTeam(selectedTeam?.id); let i = index">
+                <div class="chat-bubble-wrapper" [ngClass]="{'own-message': isOwnMessage(msg), 'other-message': !isOwnMessage(msg)}">
+                  <div class="chat-avatar" *ngIf="!isOwnMessage(msg)">
+                    <i class="pi pi-user"></i>
+                  </div>
+                  <div class="chat-bubble">
+                    <div class="bubble-header">
+                      <span class="sender-name">{{msg.senderName}}</span>
+                      <span class="bubble-timestamp">{{getMessageTime(msg.createdAt)}}</span>
+                      <button *ngIf="!msg.isPinned" class="pin-emoji-btn p-button-rounded p-button-text ml-2" style="background:transparent; border:none;" (click)="pinMessage(msg)" pTooltip="Pin message">
+                        <span style="font-size:1.1rem;">📍</span>
+                      </button>
+                      <span *ngIf="msg.isPinned" class="pinned-indicator ml-2" pTooltip="Pinned">
+                        <span style="font-size:1.1rem;">📍</span>
+                      </span>
+                    </div>
+                    <div class="bubble-content">{{msg.message}}</div>
+                  </div>
+                  <div class="chat-avatar" *ngIf="isOwnMessage(msg)">
+                    <i class="pi pi-user"></i>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <div class="chat-typing-indicator" *ngIf="isSomeoneTyping">
+              <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+              <span class="typing-user">{{ typingUser }} is typing...</span>
+            </div>
+            <div class="chat-input-area">
+              <textarea pInputTextarea rows="2" [(ngModel)]="newMessage" class="hackathon-input chat-message-input" (keydown.enter)="onEnterPress($event)" (input)="onTyping()" placeholder="Type a message... (Shift+Enter for newline)"></textarea>
+              <button pButton icon="pi pi-send" class="p-button-rounded p-button-success hackathon-btn ml-2" (click)="sendMessage()" [disabled]="!canSendMessage()"></button>
+            </div>
+          </div>
+        </ng-template>
+      </p-dialog>
+    </div>
+  </div>
+</div>

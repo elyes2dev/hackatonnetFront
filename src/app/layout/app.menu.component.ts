@@ -123,6 +123,22 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-fw pi-circle-off',
                         routerLink: ['/pages/empty']
                     },
+                    {
+                        label: 'Team',
+                        icon: 'pi pi-fw pi-users',
+                        items: [
+                            {
+                                label: 'All Teams',
+                                icon: 'pi pi-fw pi-list',
+                                routerLink: ['/teams']
+                            },
+                            {
+                                label: 'Create Team',
+                                icon: 'pi pi-fw pi-plus',
+                                routerLink: ['/teams/create']
+                            }
+                        ]
+                    }
                 ]
             },
             {

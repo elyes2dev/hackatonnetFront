@@ -32,6 +32,7 @@ import { TableModule } from 'primeng/table';
         AppMenuComponent,
         AppSidebarComponent,
         AppLayoutComponent,
+        
     ],
     imports: [
         BrowserModule,
