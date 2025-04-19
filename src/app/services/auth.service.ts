@@ -57,7 +57,7 @@ export class AuthService {
     if (!token) return null;
     try {
       const decoded: any = jwtDecode(token);
-      return decoded.userId || 9; // Fallback to 5 for "gg"
+      return decoded.userId || 3; // Fallback to 5 for "gg"
     } catch {
       return null;
     }

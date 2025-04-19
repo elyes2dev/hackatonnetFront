@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IlRhc25pbSIsImlhdCI6MTc0NDg4MDQ0OSwiZXhwIjoxNzQ0OTY2ODQ5fQ.oa1dUL6RP8SECJsDWAfB79aSYqvM8PxHGj4-OKBaUP17hL2A9asp2OuFbXlb4WgdqMfUUqCEr9I1Eb_5wawHPg');
+    const token = localStorage.getItem('eyJhbGciOiJIUzUxMiJ9.eyJyb2xlcyI6IltdIiwidXNlcmlkIjoiMyIsInN1YiI6IlRhc25pbSIsImlhdCI6MTc0NTA4MDY4NCwiZXhwIjoxNzQ1MTY3MDg0fQ.F9CjZCsPfnPwaXBa0yEUIpfRGZoTbFt_LsFuxfBPxDJn3eSfskioxtgIKqxgIz-XpJD0f4m8I2U-9HFrvsI_fA');
     
     if (token) {
       const cloned = request.clone({

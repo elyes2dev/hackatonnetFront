@@ -24,7 +24,6 @@ import { PrimeIcons } from 'primeng/api';
 
 
 //New TODO mydasboard
-import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
 
 // Modules
 import { AppRoutingModule } from './app-routing.module';
@@ -148,10 +147,11 @@ import { MenuModule } from 'primeng/menu'; // Added
          MentorApplicationListComponent, MentorApplicationDetailsComponent, MentorApplicationFormComponent, PreviousExperienceListComponent, PreviousExperienceFormComponent, MentorEvaluationListComponent, MentorEvaluationFormComponent, ListMentorListComponent, ListMentorFormComponent,
         ListMentorFormAdminComponent,
         MentorEvaluationListUserComponent,
-        MydashboardComponent,
         UserProfileComponent,
         HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent, HackathonCategorizationAnalyticsComponent, HackathonInsightsComponent,
-        AiQuizDialogComponent
+
+        AiQuizDialogComponent,
+        FooterComponent
 
     ],
     imports: [
