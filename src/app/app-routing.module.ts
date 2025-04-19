@@ -61,6 +61,8 @@ import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackath
 import { HackathonCategorizationAnalyticsComponent } from './demo/components/Analytics/hackathon-categorization-analytics/hackathon-categorization-analytics.component';
 import { TeamSubmissionComponent } from './demo/components/team-submission/team-submission.component';  // Import du composant
 import { ProjectEvaluationComponent } from './demo/components/project-evaluation/project-evaluation.component';
+import { LandingProjectEvaluationComponent } from './demo/components/landing/landing-project-evaluation/landing-project-evaluation.component';
+import { LandingTeamSubmissionComponent } from './demo/components/landing/landing-team-submission/landing-team-submission.component';
 
 
 
@@ -129,6 +131,7 @@ import { ProjectEvaluationComponent } from './demo/components/project-evaluation
                     // User Management Route
                     { path: 'users', component: UserComponent },  // Add UserComponent Route
 
+                  
                     { path: 'mentor-applications', component: MentorApplicationListComponent },
                     { path: 'mentor-applications-admin/:id', component: MentorApplicationDetailsAdminComponent },
                     { path: 'list-mentors', component: ListMentorListComponent },
@@ -172,6 +175,16 @@ import { ProjectEvaluationComponent } from './demo/components/project-evaluation
                         path: 'workshops/:workshopId/quizzes/:quizId/score-add',
                         component: QuizScoreAddComponent // Replace with your actual component
                       },
+
+                      {
+                        path: 'landing/team-submission',
+                        component: LandingProjectEvaluationComponent
+                    },
+                    {
+                        path: 'landing/project-evaluation',
+                        component: LandingProjectEvaluationComponent
+                    },
+        
                     { path: 'live-stream/:id', component: LiveStreamComponent },
                     { path: ':hackathonId/call/:roomId', component: VideoRoomComponent },
                     { path: 'mydashboard', component: MydashboardComponent },
@@ -241,8 +254,7 @@ import { ProjectEvaluationComponent } from './demo/components/project-evaluation
             { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },
             { path: 'mentor-evaluations-user', component: MentorEvaluationListUserComponent },
             { path: 'profile', component: UserProfileComponent },
-
-
+ 
             { path: 'mentor-form', component: ListMentorFormComponent },
             { path: 'mentor-evaluation/new', component: MentorEvaluationFormComponent },
             { path: 'mentor-evaluation/:id/edit', component: MentorEvaluationFormComponent },

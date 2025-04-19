@@ -6,6 +6,8 @@ import { PrizeFormComponent } from '../prize/prize-form/prize-form.component';
 import { TeamFrontofficeComponent } from '../team-frontoffice/team-frontoffice.component';
 import { LandingTeamSubmissionComponent } from './landing-team-submission/landing-team-submission.component';
 import { LandingProjectEvaluationComponent } from './landing-project-evaluation/landing-project-evaluation.component';
+import { FormsModule } from '@angular/forms'; // ✅ Needed for ngModel
+
 const routes: Routes = [
     { path: '', component: LandingComponent,
         children: [

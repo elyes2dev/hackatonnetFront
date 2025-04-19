@@ -173,6 +173,8 @@ import { ComponentsComponent } from './components/components.component';
         RouterModule,
         SliderModule,
         RippleModule,
+        FormsModule,  // Add this line
+
 
         // App Modules
         AppRoutingModule,

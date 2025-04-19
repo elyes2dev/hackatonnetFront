@@ -40,7 +40,8 @@ import { LandingTeamSubmissionComponent } from './landing-team-submission/landin
         InputTextModule
 
     ],
-    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent,NavbarComponent,
-        FooterComponent]
+    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent,    LandingProjectEvaluationComponent, // Ajouté
+        LandingTeamSubmissionComponent     
+        ]
 })
 export class LandingModule { }
