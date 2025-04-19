@@ -15,6 +15,10 @@ export class SponsorApplicationDetailComponent implements OnInit {
   application: SponsorApplication | null = null;
   loading = false;
   isProcessing = false;
+  
+  // Properties for verification results
+  showVerificationResults: boolean = false;
+  verificationResults: any = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -131,11 +135,17 @@ export class SponsorApplicationDetailComponent implements OnInit {
     this.sponsorService.aiVerifyApplication(this.applicationId).subscribe({
       next: (response) => {
         this.isProcessing = false;
+        
+        // Set verification results and show dialog
+        this.showVerificationResultsDialog(response);
+        
+        // Show appropriate message based on verification result
         this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: response
+          severity: response.success ? 'success' : 'warn',
+          summary: response.status,
+          detail: response.message
         });
+        
         // Reload the application to reflect the new status
         this.loadApplicationDetails();
       },
@@ -143,24 +153,77 @@ export class SponsorApplicationDetailComponent implements OnInit {
         console.error('Error during AI verification', error);
         this.isProcessing = false;
         
-        // Extracting the error message from the response
-        let errorMessage = 'Failed to verify application. Please try again later.';
+        // Extract error details
+        let errorResponse = {
+          success: false,
+          status: 'Verification Failed',
+          message: 'Failed to verify application. Please try again later.',
+          fieldMatches: {},
+          errorDetails: {}
+        };
         
-        if (error.error && error.error.message) {
-          // If the error object has a nested message property
-          errorMessage = error.error.message;
-        } else if (typeof error.error === 'string') {
-          // If error.error is just a string
-          errorMessage = error.error;
+        if (error.error) {
+          // If the server returned structured error data
+          if (typeof error.error === 'object') {
+            errorResponse = {
+              ...errorResponse,
+              ...error.error,
+              message: error.error.message || errorResponse.message,
+              status: error.error.status || errorResponse.status
+            };
+          } else if (typeof error.error === 'string') {
+            // Try to parse error string as JSON
+            try {
+              const parsedError = JSON.parse(error.error);
+              errorResponse = {
+                ...errorResponse,
+                ...parsedError,
+                message: parsedError.message || errorResponse.message,
+                status: parsedError.status || errorResponse.status
+              };
+            } catch (e) {
+              // If not valid JSON, use as message
+              errorResponse.message = error.error;
+            }
+          }
         }
         
+        // Show verification results dialog with error data
+        this.showVerificationResultsDialog(errorResponse);
+        
+        // Also show toast message
         this.messageService.add({
           severity: 'error',
           summary: 'Verification Failed',
-          detail: errorMessage
+          detail: errorResponse.message
         });
       }
     });
+  }
+
+  // Show verification results in a dialog
+  showVerificationResultsDialog(results: any): void {
+    this.verificationResults = results;
+    this.showVerificationResults = true;
+  }
+
+  // Get field match entries for iteration in template
+  getFieldMatchEntries(): {key: string, value: boolean}[] {
+    if (!this.verificationResults?.fieldMatches) return [];
+    return Object.entries(this.verificationResults.fieldMatches).map(([key, value]) => ({key, value: value as boolean}));
+  }
+
+  // Format field name for display
+  formatFieldName(field: string): string {
+    return field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  // Get error details for a specific field
+  getErrorDetails(field: string): string | null {
+    if (this.verificationResults?.errorDetails && this.verificationResults.errorDetails[field]) {
+      return this.verificationResults.errorDetails[field];
+    }
+    return null;
   }
 
   goBack(): void {

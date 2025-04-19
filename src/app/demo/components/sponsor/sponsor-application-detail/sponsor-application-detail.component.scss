@@ -201,3 +201,34 @@
       max-width: 230px;
     }
   }
+
+  
+/* Field match styling for verification results */
+.field-match {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.field-match i {
+  margin-right: 10px;
+  font-size: 1.1rem;
+}
+
+.text-green-500 {
+  color: #22c55e;
+}
+
+.text-red-500 {
+  color: #ef4444;
+}
+
+.verification-fields {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+}

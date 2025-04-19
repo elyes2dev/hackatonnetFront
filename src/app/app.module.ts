@@ -12,6 +12,7 @@ import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
 
 //New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
@@ -73,6 +74,7 @@ import { FooterComponent } from './demo/components/landing/footer/footer.compone
         ProgressBarModule,
         ConfirmDialogModule,
         ToastModule,
+        DialogModule,
         FormsModule,
         ReactiveFormsModule,
     ],

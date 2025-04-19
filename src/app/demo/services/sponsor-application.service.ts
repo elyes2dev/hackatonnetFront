@@ -10,7 +10,7 @@ export class SponsorApplicationService {
   private baseUrl = 'http://localhost:9100/sponsor-application';
   
   // For testing without authentication - static user ID
-  private staticUserId = 17; // Change this to your test user ID
+  private staticUserId = 4; // Change this to your test user ID
 
   constructor(private http: HttpClient) { }
 
@@ -40,9 +40,10 @@ export class SponsorApplicationService {
   }
 
   // AI Verify application
-  aiVerifyApplication(id: number): Observable<string> {
-    return this.http.put<string>(`${this.baseUrl}/${id}/ai-verify`, {});
-  }
+  // Replace this method
+aiVerifyApplication(id: number): Observable<any> {
+  return this.http.put<any>(`${this.baseUrl}/${id}/ai-verify`, {});
+}
 
   // Delete application
   deleteApplication(id: number): Observable<any> {
