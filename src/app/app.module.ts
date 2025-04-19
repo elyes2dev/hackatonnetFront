@@ -12,6 +12,7 @@ import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 
 //New TODO mydasboard
 import { MydashboardComponent } from './demo/components/mydashboard/mydashboard.component';
@@ -73,6 +74,12 @@ import { SponsorLeaderboardComponent } from './demo/components/sponsor/sponsor-l
 import { SponsorPrizesComponent } from './demo/components/prize/sponsor-prizes/sponsor-prizes.component';
 import { NavbarComponent } from './demo/components/landing/navbar/navbar.component';
 import { FooterComponent } from './demo/components/landing/footer/footer.component';
+import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-dialog/ai-quiz-dialog.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MessageModule } from 'primeng/message';
+import { AccordionModule } from 'primeng/accordion';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { QuizService } from './demo/services/quiz.service';
 
 @NgModule({
     declarations: [
@@ -86,6 +93,7 @@ import { FooterComponent } from './demo/components/landing/footer/footer.compone
         PrizeDetailComponent,
         SponsorLeaderboardComponent,
         SponsorPrizesComponent,
+        AiQuizDialogComponent
     ],
     imports: [
         AppRoutingModule,
@@ -112,12 +120,18 @@ import { FooterComponent } from './demo/components/landing/footer/footer.compone
         InputTextModule,
         NgChartsModule,
         FileUploadModule,
-        BrowserModule
+        BrowserModule,
+        BrowserAnimationsModule,
+        MessageModule,
+        AccordionModule,
+        DynamicDialogModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService
+        PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService,
+        QuizService,
+        DialogService
     ],
     bootstrap: [AppComponent]
 })

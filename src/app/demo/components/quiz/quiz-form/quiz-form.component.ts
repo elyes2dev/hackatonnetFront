@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizService } from 'src/app/demo/services/quiz.service';
 import { QuestionService } from 'src/app/demo/services/question.service';
+import { AiQuizService } from 'src/app/demo/services/ai-quiz.service';
 import { Quiz } from 'src/app/demo/models/quiz.model';
 import { Question } from 'src/app/demo/models/question.model';
 import { Observable } from 'rxjs';
@@ -19,13 +20,15 @@ export class QuizFormComponent implements OnInit {
   quizId?: number;
   loading = false;
   error = '';
+  isGenerating = false;
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     public router: Router,
     private quizService: QuizService,
-    private questionService: QuestionService
+    private questionService: QuestionService,
+    private aiQuizService: AiQuizService
   ) {
     this.quizForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
@@ -196,4 +199,42 @@ export class QuizFormComponent implements OnInit {
         this.router.navigate([`/workshops/${workshopId}/quizzes`]);
       }
     }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.isGenerating = true;
+      this.error = '';
+
+      this.aiQuizService.generateQuizFromPDF(file).subscribe({
+        next: (response) => {
+          if (response.success && response.questions) {
+            // Clear existing questions
+            while (this.questionsArray.length) {
+              this.questionsArray.removeAt(0);
+            }
+
+            // Add generated questions
+            response.questions.forEach(question => {
+              const questionGroup = this.fb.group({
+                questionText: [question.questionText, Validators.required],
+                correctAnswerIndex: [question.correctAnswerIndex, Validators.required],
+                answers: this.fb.array(
+                  question.answers.map(answer => this.fb.control(answer, Validators.required))
+                )
+              });
+              this.questionsArray.push(questionGroup);
+            });
+          }
+          this.isGenerating = false;
+        },
+        error: (error) => {
+          this.error = error.message;
+          this.isGenerating = false;
+        }
+      });
+    } else {
+      this.error = 'Please select a valid PDF file.';
+    }
+  }
 }

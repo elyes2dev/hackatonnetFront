@@ -1,0 +1,89 @@
+<div class="ai-quiz-dialog">
+    <div class="dialog-header">
+        <h2>Generate Quiz from PDF</h2>
+        <button class="close-button" (click)="cancel()">
+            <i class="pi pi-times"></i>
+        </button>
+    </div>
+
+    <div class="dialog-content">
+        <!-- File Upload Section -->
+        <div class="upload-section" *ngIf="!generatedQuestions.length">
+            <div class="file-upload">
+                <label class="upload-label">
+                    <i class="pi pi-file-pdf"></i>
+                    <span>Choose PDF File</span>
+                    <input type="file" (change)="onFileSelected($event)" accept=".pdf" class="hidden-input">
+                </label>
+                <span class="selected-file" *ngIf="selectedFile">{{ selectedFile.name }}</span>
+            </div>
+
+            <div class="error-message" *ngIf="error">
+                <i class="pi pi-exclamation-triangle"></i>
+                {{ error }}
+            </div>
+
+            <div class="actions">
+                <button pButton 
+                    [label]="loading ? 'Generating...' : 'Generate Quiz'" 
+                    [icon]="loading ? 'pi pi-spin pi-spinner' : 'pi pi-bolt'"
+                    (click)="generateQuiz()"
+                    [disabled]="!selectedFile || loading"
+                    [loading]="loading"
+                    class="p-button-primary">
+                </button>
+                <button pButton label="Cancel" 
+                    icon="pi pi-times" 
+                    (click)="cancel()" 
+                    class="p-button-secondary"
+                    [disabled]="loading">
+                </button>
+            </div>
+        </div>
+
+        <!-- Generated Questions Section -->
+        <div class="questions-section" *ngIf="generatedQuestions.length">
+            <div class="questions-container">
+                <div class="question-card" *ngFor="let question of generatedQuestions; let i = index">
+                    <div class="question-header">
+                        <span class="question-number">Question {{ i + 1 }}</span>
+                    </div>
+                    <div class="question-content">
+                        <p class="question-text">{{ question.questionText }}</p>
+                        
+                        <div class="answers-list">
+                            <div class="answer-option" 
+                                *ngFor="let answer of question.answers; let j = index"
+                                [class.correct]="j === question.correctAnswerIndex">
+                                <span class="answer-marker">{{ ['A', 'B', 'C', 'D'][j] }}</span>
+                                <span class="answer-text">{{ answer }}</span>
+                                <i class="pi" 
+                   [class.pi-check-circle]="j === question.correctAnswerIndex"
+                   [class.correct-icon]="j === question.correctAnswerIndex">
+                                </i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dialog-footer">
+                <button pButton 
+                    label="Save Quiz" 
+                    icon="pi pi-save"
+                    (click)="saveQuiz()"
+                    [loading]="loading"
+                    [disabled]="loading"
+                    class="p-button-success">
+                </button>
+                <button pButton 
+                    label="Cancel" 
+                    icon="pi pi-times"
+                    (click)="cancel()"
+                    [disabled]="loading"
+                    class="p-button-secondary">
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
