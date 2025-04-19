@@ -6,11 +6,14 @@ import { Quiz } from 'src/app/demo/models/quiz.model';
 import { QuestionService } from 'src/app/demo/services/question.service';
 import { Question } from 'src/app/demo/models/question.model';
 import { StorageService } from 'src/app/demo/services/storage.service'; // Import StorageService
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { AiQuizDialogComponent } from './ai-quiz-dialog/ai-quiz-dialog.component';
 
 @Component({
   selector: 'app-quiz-list',
   templateUrl: './quiz-list.component.html',
-  styleUrls: ['./quiz-list.component.scss']
+  styleUrls: ['./quiz-list.component.scss'],
+  providers: [DialogService]
 })
 export class QuizListComponent implements OnInit {
   quizzes: Quiz[] = [];
@@ -20,6 +23,7 @@ export class QuizListComponent implements OnInit {
   currentUserId: string | null = null; // Store user ID here
   quizStatusMap: { [key: number]: boolean } = {};
   showResultsDialog = false;
+  showAiQuizDialog = false; // Added this property
   currentQuizResults: any = {
     score: 0,
     totalQuestions: 0,
@@ -27,6 +31,7 @@ export class QuizListComponent implements OnInit {
     questions: []
   };
   hasQuiz: boolean = false; // Track if the user has a quiz
+  private dialogRef: DynamicDialogRef | undefined;
 
   constructor(
     private quizService: QuizService,
@@ -34,7 +39,8 @@ export class QuizListComponent implements OnInit {
     private questionService: QuestionService,
     private route: ActivatedRoute,
     private router: Router,
-    private storageService: StorageService // Inject StorageService
+    private storageService: StorageService, // Inject StorageService
+    private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
@@ -168,5 +174,20 @@ export class QuizListComponent implements OnInit {
   goBackToWorkshopList() {
     // Navigate back to the workshop list
     this.router.navigate(['/workshops']);  // Adjust the route as needed
+  }
+
+  openAiQuizDialog() {
+    this.showAiQuizDialog = true;
+  }
+
+  onAiQuizDialogClose() {
+    this.showAiQuizDialog = false;
+    this.fetchQuizzes();
+  }
+
+  ngOnDestroy() {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
   }
 }

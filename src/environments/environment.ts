@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:8080' 
+  apiUrl: 'http://localhost:9100',
+  quizGenerationEndpoint: '/quiz/generate'
 };
 
 /*
