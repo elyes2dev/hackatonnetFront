@@ -45,4 +45,20 @@ export class QuizfResultDialogComponent implements OnInit {
       }
     });
   }
+
+  getCorrectAnswersCount(): number {
+    return this.questions.filter(q => q.isCorrect).length;
+  }
+
+  getTimeTaken(): string {
+    // This is a placeholder. You should implement actual time tracking
+    return '10 minutes'; // Replace with actual time calculation
+  }
+
+  downloadCertificate(): void {
+    if (this.score >= 70) {
+      // Implement certificate download logic here
+      console.log('Downloading certificate...');
+    }
+  }
 }

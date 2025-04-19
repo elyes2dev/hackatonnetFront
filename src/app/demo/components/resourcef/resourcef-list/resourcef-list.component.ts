@@ -20,7 +20,7 @@ export class ResourcefListComponent implements OnInit {
   error: string | null = null;
   filePreviews: { 
     [resourceId: number]: {
-      images: { id: number, url: SafeUrl }[],
+      images: { id: number, url: SafeUrl, path: string, type: string }[],
       pdfs: ImageModel[],
       otherFiles: ImageModel[]
     }
@@ -127,7 +127,9 @@ export class ResourcefListComponent implements OnInit {
         }
         this.filePreviews[resourceId].images.push({
           id: file.id_image,
-          url: this.sanitizer.bypassSecurityTrustUrl(url)
+          url: this.sanitizer.bypassSecurityTrustUrl(url),
+          path: file.path,
+          type: file.type
         });
       },
       error: (err) => {
@@ -259,5 +261,21 @@ export class ResourcefListComponent implements OnInit {
       });
     }
 }
+
+  // Add this method to handle file names
+  getFileName(file: any): string {
+    if (!file) return '';
+    return file.path || file.name || 'Untitled';
+  }
+
+  // Helper method to check if files exist for a resource
+  hasFiles(resourceId: number, fileType: 'images' | 'pdfs' | 'otherFiles'): boolean {
+    return !!this.filePreviews[resourceId]?.[fileType]?.length;
+  }
+
+  // Helper method to safely get files for a resource
+  getFiles(resourceId: number, fileType: 'images' | 'pdfs' | 'otherFiles'): any[] {
+    return this.filePreviews[resourceId]?.[fileType] || [];
+  }
 
 }

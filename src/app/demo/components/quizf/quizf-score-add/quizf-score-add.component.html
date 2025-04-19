@@ -1,42 +1,75 @@
 <app-navbar></app-navbar>
-<br>
-<div *ngIf="quiz">
-  <h2 class="quiz-title">Quiz: {{ quiz.title }}</h2>
 
-  <!-- Timer and Progress Bar -->
-  <div class="quiz-timer">
-    <p>Time Left: {{ remainingTime }} seconds</p>
-    <div class="progress-bar">
-      <div class="progress" [style.width.%]="progress"></div>
-    </div>
+<div class="quiz-container">
+  <!-- Loading State -->
+  <div *ngIf="!quiz" class="loading-state">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>Loading quiz...</p>
   </div>
 
-  <form (ngSubmit)="onSubmit()" class="quiz-form">
-    <div *ngFor="let question of quiz.questions; let qIndex = index" class="question-container">
-      <h4 class="question-number">Question {{ qIndex + 1 }}:</h4>
-      <p class="question-text">{{ question.questionText }}</p>
-
-      <div *ngFor="let answer of question.answers; let i = index" class="answer-option">
-        <label>
-          <input
-            type="radio"
-            [name]="question.id_question ? question.id_question.toString() : ''"
-            [value]="i"
-            [(ngModel)]="userAnswers[question.id_question!]"/>
-          <span class="answer-text">{{ answer }}</span>
-        </label>
+  <div *ngIf="quiz" class="quiz-content">
+    <div class="quiz-header">
+      <div class="header-content">
+        <h1>{{ quiz.title }}</h1>
+        <div class="timer-section">
+          <div class="timer-display">
+            <i class="pi pi-clock"></i>
+            <span>Time Remaining: {{ remainingTime }} seconds</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress" [style.width.%]="progress"></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <button type="submit" pButton label="Submit" class="p-button-success mt-3 submit-button"></button>
-    <button pButton label="Return" class="p-button-failed mt-3 submit-button" (click)="onReturn()"></button>
-  </form>
+    <form (ngSubmit)="onSubmit()" class="quiz-form">
+      <div class="questions-list">
+        <div *ngFor="let question of quiz.questions; let qIndex = index" class="question-card">
+          <div class="question-header">
+            <span class="question-number">Question {{ qIndex + 1 }}</span>
+          </div>
+          
+          <div class="question-content">
+            <p class="question-text">{{ question.questionText }}</p>
+            
+            <div class="answers-list">
+              <div *ngFor="let answer of question.answers; let i = index" class="answer-option">
+                <label class="custom-radio">
+                  <input
+                    type="radio"
+                    [name]="question.id_question ? question.id_question.toString() : ''"
+                    [value]="i"
+                    [(ngModel)]="userAnswers[question.id_question!]"
+                  />
+                  <span class="radio-mark"></span>
+                  <span class="answer-text">{{ answer }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="button" 
+          pButton 
+          label="Return to Quiz List" 
+          icon="pi pi-arrow-left"
+          class="p-button-secondary" 
+          (click)="onReturn()">
+        </button>
+        <button 
+          type="submit" 
+          pButton 
+          label="Submit Quiz" 
+          icon="pi pi-check"
+          class="p-button-success">
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 
-<!-- Loading state -->
-<div *ngIf="!quiz" class="loading-state">
-  Loading quiz...
-</div>
-
-<br><br><br><br>
 <app-footer></app-footer>

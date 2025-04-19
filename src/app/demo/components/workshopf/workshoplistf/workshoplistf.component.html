@@ -154,116 +154,102 @@
     }
   </style>
 
-<!-- Workshops Cards -->
-<div class="cards-container">
-  <div
-    class="nft"
-    *ngFor="let workshop of workshops | filterByNameAndTheme:searchName:selectedTheme"
-  >
-    <div class="main">
-      <img
-        class="tokenImage"
-        [src]="workshop.photo || 'assets/images/placeholder-workshop.png'"
-        alt="Workshop"
-      />
-      <h2>{{ workshop.name }}</h2>
-      <p class="description">
-        {{ workshop.description || 'No description provided.' }}
-      </p>
-
-      <div class="tokenInfo">
-        <div class="price">
-          <ins>🎯</ins>
-          <p>{{ workshop.theme || 'No Theme' }}</p>
+<!-- Workshops Section -->
+<div class="workshops-container">
+  <div class="workshops-list">
+    <div class="workshop-item" *ngFor="let workshop of workshops | filterByNameAndTheme:searchName:selectedTheme">
+      <div class="workshop-main">
+        <div class="workshop-image">
+          <img [src]="workshop.photo || 'assets/images/placeholder-workshop.png'" alt="Workshop">
+          <div class="image-overlay">
+            <button pButton 
+              class="p-button-rounded p-button-text overlay-btn"
+              [class.active]="favorites.includes(workshop.id)"
+              (click)="toggleFavorite(workshop.id)"
+              pTooltip="{{favorites.includes(workshop.id) ? 'Remove from favorites' : 'Add to favorites'}}">
+              <i class="pi" [ngClass]="favorites.includes(workshop.id) ? 'pi-star-fill' : 'pi-star'"></i>
+            </button>
+          </div>
         </div>
-        <div class="duration">
-          <ins>📅</ins>
-          <p>{{ workshop.date || 'Unknown Date' }}</p>
+
+        <div class="workshop-info">
+          <div class="info-header">
+            <h3 class="workshop-title">{{ workshop.name }}</h3>
+            <div class="workshop-meta">
+              <span class="theme-tag" *ngIf="workshop.theme">
+                <i class="pi pi-tag"></i>
+                {{ workshop.theme }}
+              </span>
+              <span class="date-tag" *ngIf="workshop.date">
+                <i class="pi pi-calendar"></i>
+                {{ workshop.date }}
+              </span>
+            </div>
+          </div>
+
+          <p class="workshop-description">{{ workshop.description || 'No description provided.' }}</p>
+
+          <div class="workshop-footer">
+            <div class="host-info">
+              <img [src]="workshop.user.photo || 'assets/images/default-user.png'" alt="Host" class="host-avatar">
+              <span class="host-name">{{ workshop.user.name || 'Unknown' }}</span>
+            </div>
+
+            <div class="action-buttons">
+              <!-- Main Actions -->
+              <div class="button-group">
+                <button pButton 
+                  class="p-button-outlined action-btn"
+                  [routerLink]="['/workshopsf', workshop.id, 'resources']"
+                  pTooltip="View resources">
+                  <i class="pi pi-folder-open"></i>
+                  Resources
+                </button>
+
+                <button pButton 
+                  class="p-button-outlined action-btn"
+                  [routerLink]="['/workshopsf', workshop.id, 'quizzes']"
+                  pTooltip="View quizzes">
+                  <i class="pi pi-list"></i>
+                  Quizzes
+                </button>
+
+                <button pButton 
+                  class="p-button-outlined action-btn"
+                  [ngClass]="{'p-button-success': hasFeedback(workshop.id)}"
+                  (click)="hasFeedback(workshop.id) ? viewFeedback(workshop.id) : showFeedbackDialog(workshop.id)"
+                  [pTooltip]="hasFeedback(workshop.id) ? 'View Feedback' : 'Give Feedback'">
+                  <i class="pi" [ngClass]="hasFeedback(workshop.id) ? 'pi-eye' : 'pi-comments'"></i>
+                  {{ hasFeedback(workshop.id) ? 'View Feedback' : 'Give Feedback' }}
+                </button>
+              </div>
+
+              <!-- Admin Actions -->
+              <div class="admin-buttons" *ngIf="isOwner(workshop.user.id)">
+                <button pButton 
+                  class="p-button-text p-button-warning"
+                  [routerLink]="['/workshopsf', workshop.id, 'edit']"
+                  pTooltip="Edit workshop">
+                  <i class="pi pi-pencil"></i>
+                </button>
+
+                <button pButton 
+                  class="p-button-text p-button-danger"
+                  (click)="deleteWorkshop(workshop.id)"
+                  pTooltip="Delete workshop">
+                  <i class="pi pi-trash"></i>
+                </button>
+
+                <button pButton 
+                  class="p-button-text p-button-success"
+                  [routerLink]="['/workshopsf', workshop.id, 'quizzes', 'new']"
+                  pTooltip="Add new quiz">
+                  <i class="pi pi-plus"></i>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <hr />
-
-      <div class="creator">
-        <div class="wrapper">
-          <img
-            [src]="workshop.user.photo || 'assets/images/default-user.png'"
-            alt="Creator"
-          />
-        </div>
-        <p><ins>Hosted by</ins> {{ workshop.user.name || 'Unknown' }}</p>
-      </div>
-
-      <div class="card-buttons">
-        <!-- Favorite Button -->
-        <button
-          pButton
-          icon="pi pi-star"
-          class="p-button-rounded p-button-warning"
-          [class.favorited]="favorites.includes(workshop.id)"
-          (click)="toggleFavorite(workshop.id)"
-          pTooltip="Favorite this workshop"
-          tooltipPosition="top"
-        >
-          {{ favorites.includes(workshop.id) ? ' Unfavorite' : ' Favorite' }}
-        </button>
-
-        <!-- Edit Button (Only show if user is the owner of the workshop) -->
-        <button
-          pButton
-          icon="pi pi-pencil"
-          class="p-button-rounded p-button-success"
-          [routerLink]="['/workshopsf', workshop.id, 'edit']"
-          *ngIf="isOwner(workshop.user.id)"
-        ></button>
-
-        <!-- Delete Button (Only show if user is the owner of the workshop) -->
-        <button
-          pButton
-          icon="pi pi-trash"
-          class="p-button-rounded p-button-danger"
-          (click)="deleteWorkshop(workshop.id)"
-          *ngIf="isOwner(workshop.user.id)"
-        ></button>
-
-        <!-- View Resources Button -->
-        <button
-          pButton
-          icon="pi pi-list"
-          class="p-button-rounded p-button-info"
-          [routerLink]="['/workshopsf', workshop.id, 'resources']"
-        ></button>
-
-        <!-- View Quizzes Button -->
-        <button
-          pButton
-          icon="pi pi-question-circle"
-          class="p-button-rounded p-button-help"
-          [routerLink]="['/workshopsf', workshop.id, 'quizzes']"
-          pTooltip="View quizzes"
-          tooltipPosition="top"
-        ></button>
-
-        <!-- Add New Quiz Button (Only show if user is the owner of the workshop) -->
-        <button
-          pButton
-          icon="pi pi-plus"
-          class="p-button-rounded p-button-warning"
-          [routerLink]="['/workshopsf', workshop.id, 'quizzes', 'new']"
-          pTooltip="Add new quiz"
-          tooltipPosition="top"
-          *ngIf="isOwner(workshop.user.id)"
-        ></button>
-
-        <!-- Feedback Button - Changes based on state -->
-        <button
-          pButton
-          [icon]="hasFeedback(workshop.id) ? 'pi pi-eye' : 'pi pi-comments'"
-          class="p-button-rounded p-button-info"
-          (click)="hasFeedback(workshop.id) ? viewFeedback(workshop.id) : showFeedbackDialog(workshop.id)"
-          [pTooltip]="hasFeedback(workshop.id) ? 'View Workshop Feedback' : 'Submit Workshop Feedback'"
-          tooltipPosition="top"
-        ></button>
       </div>
     </div>
   </div>
@@ -271,7 +257,7 @@
 
 <!-- Feedback Analysis Dialog -->
 <p-dialog 
-  [header]="dialogMode === 'view' ? 'Workshop Feedback Results' : 'Submit Workshop Feedback'" 
+  [header]="dialogMode === 'view' ? currentWorkshopName + ' - Feedback Results' : 'Submit Feedback for ' + currentWorkshopName" 
   [(visible)]="feedbackDialogVisible" 
   [modal]="true" 
   [style]="{width: '60vw'}"
@@ -281,7 +267,7 @@
   <div class="feedback-dialog-content">
     <!-- Submit Mode -->
     <div *ngIf="dialogMode === 'submit' && !analysisResult" class="submit-feedback-section">
-      <p class="feedback-instruction">Please share your thoughts about this workshop. Your feedback helps us improve!</p>
+      <p class="feedback-instruction">Please share your thoughts about {{currentWorkshopName}}. Your feedback helps us improve!</p>
       <span class="p-float-label mt-4">
         <textarea 
           id="feedback" 
@@ -307,6 +293,9 @@
 
     <!-- Results View -->
     <div *ngIf="analysisResult" class="analysis-result">
+      <div class="workshop-info" *ngIf="dialogMode === 'view'">
+        <h3>{{analysisResult.workshopName}}</h3>
+      </div>
       <div class="result-header">
         <div class="sentiment-badge" [ngClass]="getSentimentClass(analysisResult.sentiment)">
           {{analysisResult.sentiment}}
@@ -347,13 +336,23 @@
       </div>
 
       <div class="dialog-footer">
-        <button 
-          pButton 
-          label="Close" 
-          icon="pi pi-times" 
-          (click)="closeDialog()"
-          class="p-button-secondary">
-        </button>
+        <div class="flex justify-content-between align-items-center w-full">
+          <button 
+            pButton 
+            icon="pi pi-trash" 
+            label="Remove Feedback"
+            class="p-button-danger"
+            (click)="removeFeedback(currentWorkshopId)"
+            *ngIf="dialogMode === 'view' && currentWorkshopId">
+          </button>
+          <button 
+            pButton 
+            label="Close" 
+            icon="pi pi-times" 
+            (click)="closeDialog()"
+            class="p-button-secondary">
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -371,33 +370,40 @@
   
   <div class="all-feedbacks-content">
     <div class="feedback-filters">
-      <span class="p-input-icon-left">
+      <span class="p-input-icon-left search-box">
         <i class="pi pi-search"></i>
         <input 
           type="text" 
           pInputText 
           [(ngModel)]="feedbackSearchQuery" 
-          placeholder="Search feedbacks..."
-          (input)="filterFeedbacks()">
+          (input)="filterFeedbacks()"
+          placeholder="Search in workshop name, feedback text, sentiment, or key points..."
+          class="w-full">
       </span>
       <p-dropdown 
         [options]="sentimentFilters" 
         [(ngModel)]="selectedSentimentFilter"
         (onChange)="filterFeedbacks()"
-        placeholder="Filter by sentiment">
+        placeholder="Filter by sentiment"
+        styleClass="sentiment-filter">
       </p-dropdown>
       <p-dropdown 
         [options]="ratingFilters" 
         [(ngModel)]="selectedRatingFilter"
         (onChange)="filterFeedbacks()"
-        placeholder="Filter by rating">
+        placeholder="Filter by rating"
+        styleClass="rating-filter">
       </p-dropdown>
+    </div>
+
+    <div *ngIf="filteredFeedbacks.length === 0" class="no-results">
+      <p>No feedbacks found matching your search criteria.</p>
     </div>
 
     <div class="feedbacks-grid">
       <div *ngFor="let feedback of filteredFeedbacks" class="feedback-card">
         <div class="workshop-info">
-          <h3>{{getWorkshopName(feedback.workshopId)}}</h3>
+          <h3>{{feedback.workshopName}}</h3>
           <div class="sentiment-badge" [ngClass]="getSentimentClass(feedback.sentiment)">
             {{feedback.sentiment}}
           </div>
@@ -421,11 +427,70 @@
         </div>
 
         <div class="feedback-footer">
-          <small>{{feedback.timestamp | date:'medium'}}</small>
+          <div class="flex justify-content-between align-items-center">
+            <small>{{feedback.timestamp | date:'medium'}}</small>
+            <button 
+              pButton 
+              icon="pi pi-trash" 
+              class="p-button-danger p-button-text p-button-sm"
+              (click)="removeFeedback(feedback.workshopId)"
+              pTooltip="Remove feedback"
+              tooltipPosition="left">
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <style>
+    .search-box {
+      flex: 1;
+      min-width: 300px;
+      
+      input {
+        width: 100%;
+        padding: 0.75rem 2.5rem;
+      }
+    }
+
+    .sentiment-filter, .rating-filter {
+      min-width: 200px;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      font-style: italic;
+    }
+
+    .workshop-info h3 {
+      font-size: 1.2rem;
+      color: #2196F3;
+      margin-bottom: 0.5rem;
+    }
+
+    .feedback-filters {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      flex-wrap: wrap;
+    }
+
+    @media screen and (max-width: 768px) {
+      .feedback-filters {
+        flex-direction: column;
+        
+        .search-box, .sentiment-filter, .rating-filter {
+          width: 100%;
+          min-width: 100%;
+        }
+      }
+    }
+  </style>
 </p-dialog>
 
 <style>
@@ -587,5 +652,7 @@
     }
   }
 </style>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
 <app-footer></app-footer>

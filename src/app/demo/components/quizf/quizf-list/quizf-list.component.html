@@ -1,138 +1,156 @@
 <app-navbar></app-navbar>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
-<div class="quiz-container">
-  <div *ngIf="loading" class="loading-spinner">
-    <i class="fas fa-spinner fa-spin"></i> Loading quizzes...
-  </div>
-  
-  <div *ngIf="error" class="error-message">
-    <i class="fas fa-exclamation-circle"></i> {{ error }}
+<div class="quiz-dashboard">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Loading quiz...</p>
   </div>
 
-  <div class="quiz-header">
-    <h2>Quizzes for Workshop #{{ workshopId }}</h2>
+  <!-- Error State -->
+  <div *ngIf="error" class="error-state">
+    <i class="fas fa-exclamation-circle"></i>
+    <p>{{ error }}</p>
+  </div>
 
-        <!-- Go Back to Workshop Button -->
-    <button (click)="goBackToWorkshopList()" class="btn btn-back">
-      <i class="fas fa-arrow-left"></i> Go Back to Workshop
-    </button>
-    
-    <button *ngIf="!hasQuiz && userIsOwner" (click)="goToAdd()" class="btn btn-add">
-      <i class="fas fa-plus"></i> Add New Quiz
-    </button>
-    
-    
-    <div *ngIf="hasQuiz" class="no-new-quiz-message">
-      <i class="fas fa-info-circle"></i> You already have a quiz for this workshop.
+  <!-- Main Content -->
+  <div class="dashboard-content" *ngIf="!loading && !error">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+      <div class="header-content">
+        <h1>Workshop Quiz</h1>
+        <p class="workshop-id">Workshop #{{ workshopId }}</p>
+      </div>
+      <button (click)="goBackToWorkshopList()" class="btn-back">
+        <i class="fas fa-arrow-left"></i>
+        Back to Workshop
+      </button>
+    </div>
+
+    <!-- No Quiz State -->
+    <div *ngIf="!hasQuiz && userIsOwner" class="no-quiz-state">
+      <div class="empty-state-content">
+        <i class="fas fa-clipboard-list"></i>
+        <h2>No Quiz Created Yet</h2>
+        <p>Create a quiz for your workshop to test participants' knowledge.</p>
+        <button (click)="goToAdd()" class="btn-create">
+          <i class="fas fa-plus"></i>
+          Create Quiz
+        </button>
+      </div>
+    </div>
+
+    <!-- Quiz Display -->
+    <div *ngIf="quizzes.length > 0" class="quiz-content">
+      <div *ngFor="let quiz of quizzes" class="quiz-card">
+        <div class="quiz-card-header">
+          <div class="quiz-info">
+            <h2>{{ quiz.title }}</h2>
+            <span class="quiz-status" [class.published]="quiz.isPublished">
+              <i class="fas" [class.fa-check-circle]="quiz.isPublished" [class.fa-clock]="!quiz.isPublished"></i>
+              {{ quiz.isPublished ? 'Published' : 'Draft' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="quiz-card-body">
+          <div class="quiz-actions">
+            <!-- Owner Actions -->
+            <div class="action-group" *ngIf="userIsOwner">
+              <button (click)="goToDetails(quiz.id_quiz!)" class="btn-action btn-view">
+                <i class="fas fa-eye"></i>
+                <span>View Details</span>
+              </button>
+              <button (click)="goToEdit(quiz.id_quiz!)" class="btn-action btn-edit">
+                <i class="fas fa-edit"></i>
+                <span>Edit Quiz</span>
+              </button>
+              <button (click)="deleteQuiz(quiz.id_quiz!)" class="btn-action btn-delete">
+                <i class="fas fa-trash-alt"></i>
+                <span>Delete</span>
+              </button>
+            </div>
+
+            <!-- Participant Actions -->
+            <div class="action-group" *ngIf="!userIsOwner">
+              <button *ngIf="!quizStatusMap[quiz.id_quiz!]" 
+                      (click)="goToTakeQuiz(quiz.id_quiz!)" 
+                      class="btn-action btn-take">
+                <i class="fas fa-pen"></i>
+                <span>Take Quiz</span>
+              </button>
+              <button *ngIf="quizStatusMap[quiz.id_quiz!]" 
+                      (click)="goToEdit(quiz.id_quiz!)" 
+                      class="btn-action btn-results">
+                <i class="fas fa-trophy"></i>
+                <span>View Results</span>
+              </button>
+              <button *ngIf="userScoresMap[quiz.id_quiz!]" 
+                      (click)="downloadCertificate(quiz.id_quiz!, quiz.title)" 
+                      class="btn-action btn-certificate">
+                <i class="fas fa-award"></i>
+                <span>Get Certificate</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="table-responsive">
-    <table *ngIf="quizzes.length > 0" class="quiz-table">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let quiz of quizzes">
-          <td data-label="Title">{{ quiz.title }}</td>
-          <td data-label="Status">
-            <span [class.published]="quiz.isPublished" [class.unpublished]="!quiz.isPublished">
-              {{ quiz.isPublished ? 'Published' : 'Not Published' }}
-            </span>
-          </td>
-          <td data-label="Actions" class="actions">
-            <button *ngIf="userIsOwner" (click)="goToDetails(quiz.id_quiz!)" class="btn btn-view" title="View Details">
-              <i class="fas fa-eye"></i>
-            </button>
-            
-            <button *ngIf="userIsOwner || quizStatusMap[quiz.id_quiz!]" 
-            (click)="goToEdit(quiz.id_quiz!)" 
-            class="btn btn-edit"
-            [title]="quizStatusMap[quiz.id_quiz!] ? 'View Results' : 'Edit Quiz'">
-      
-      <i [class]="quizStatusMap[quiz.id_quiz!] ? 'fas fa-trophy' : 'fas fa-edit'"></i>
-    </button>
-    
-            
-            <button *ngIf="userIsOwner" (click)="deleteQuiz(quiz.id_quiz!)" class="btn btn-delete" title="Delete Quiz">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-            
-            <button *ngIf="!quizStatusMap[quiz.id_quiz!]" 
-                    (click)="goToTakeQuiz(quiz.id_quiz!)" 
-                    class="btn btn-take" title="Take Quiz">
-              <i class="fas fa-pen"></i>
-            </button>
-
-            <button 
-            *ngIf="userScoresMap[quiz.id_quiz!]" 
-            (click)="downloadCertificate(quiz.id_quiz!, quiz.title)" 
-            class="btn btn-certificate" 
-            title="Download Certificate">
-            <i class="fas fa-award"></i>
-          </button>
-          
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="!loading && quizzes.length === 0" class="no-quizzes">
-    <i class="fas fa-book-open"></i> No quizzes found for this workshop.
-  </div>
-
-  <!-- Results Dialog -->
+  <!-- Results Modal -->
   <div *ngIf="showResultsDialog" class="results-modal">
     <div class="modal-content">
       <div class="modal-header">
         <h3>Quiz Results</h3>
-        <button (click)="closeResultsDialog()" class="close-btn">&times;</button>
+        <button (click)="closeResultsDialog()" class="close-btn">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
       
       <div class="score-summary">
-        <div class="score-display">
-          <span class="score">{{ currentQuizResults.correctAnswers }}</span>
-          <span class="score-separator">/</span>
-          <span class="total">{{ currentQuizResults.totalQuestions }}</span>
+        <div class="score-circle">
+          <div class="score-number">{{ currentQuizResults.score }}%</div>
+          <div class="score-label">Score</div>
         </div>
-        <div class="percentage">
-          {{ currentQuizResults.score }}% Correct
+        <div class="score-details">
+          <div class="score-item">
+            <span class="label">Correct Answers:</span>
+            <span class="value">{{ currentQuizResults.correctAnswers }}/{{ currentQuizResults.totalQuestions }}</span>
+          </div>
         </div>
       </div>
 
-      <div class="questions-results">
+      <div class="questions-review">
         <div *ngFor="let question of currentQuizResults.questions; let i = index" 
-             class="question-result" [class.correct]="question.isCorrect">
+             class="question-item" 
+             [class.correct]="question.isCorrect">
           <div class="question-header">
             <span class="question-number">Question {{ i + 1 }}</span>
             <span class="result-indicator">
-              <i *ngIf="question.isCorrect" class="fas fa-check-circle correct"></i>
-              <i *ngIf="!question.isCorrect" class="fas fa-times-circle incorrect"></i>
+              <i *ngIf="question.isCorrect" class="fas fa-check"></i>
+              <i *ngIf="!question.isCorrect" class="fas fa-times"></i>
             </span>
           </div>
-          <div class="question-text">{{ question.questionText }}</div>
           
-          <div class="answers">
-            <div *ngFor="let answer of question.answers; let j = index" 
-                 class="answer" 
-                 [class.correct-answer]="j === question.correctAnswerIndex"
-                 [class.user-answer]="j === question.userAnswer">
-              {{ answer }}
-              <span *ngIf="j === question.correctAnswerIndex" class="correct-mark">✓ Correct</span>
-              <span *ngIf="j === question.userAnswer && !question.isCorrect" class="incorrect-mark">✗ Your Answer</span>
+          <div class="question-content">
+            <p class="question-text">{{ question.questionText }}</p>
+            <div class="answers-list">
+              <div *ngFor="let answer of question.answers; let j = index" 
+                   class="answer-item"
+                   [class.correct-answer]="j === question.correctAnswerIndex"
+                   [class.user-answer]="j === question.userAnswer">
+                {{ answer }}
+                <span *ngIf="j === question.correctAnswerIndex" class="answer-badge correct">Correct</span>
+                <span *ngIf="j === question.userAnswer && !question.isCorrect" class="answer-badge incorrect">Your Answer</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button (click)="closeResultsDialog()" class="btn btn-close">Close</button>
+        <button (click)="closeResultsDialog()" class="btn-close">Close Results</button>
       </div>
     </div>
   </div>

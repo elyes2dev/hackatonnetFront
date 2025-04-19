@@ -12,6 +12,7 @@ import { SelectItem } from 'primeng/api';
 
 interface FeedbackResult {
   workshopId: string;
+  workshopName: string;
   sentiment: string;
   rating: number;
   confidence: number;
@@ -40,6 +41,7 @@ export class WorkshoplistfComponent implements OnInit {
   feedbackText: string = '';
   analysisResult: any = null;
   currentWorkshopId: string | null = null;
+  currentWorkshopName: string | null = null;
   dialogMode: 'submit' | 'view' = 'submit';
 
   // Feedback filtering
@@ -50,20 +52,20 @@ export class WorkshoplistfComponent implements OnInit {
 
   sentimentFilters: SelectItem[] = [
     { label: 'All Sentiments', value: '' },
-    { label: 'Very Positive', value: 'very positive' },
-    { label: 'Positive', value: 'positive' },
+    { label: 'Very Satisfied', value: 'very satisfied' },
+    { label: 'Satisfied', value: 'satisfied' },
     { label: 'Neutral', value: 'neutral' },
-    { label: 'Negative', value: 'negative' },
-    { label: 'Very Negative', value: 'very negative' }
+    { label: 'Unsatisfied', value: 'unsatisfied' },
+    { label: 'Very Unsatisfied', value: 'very unsatisfied' }
   ];
 
   ratingFilters: SelectItem[] = [
     { label: 'All Ratings', value: null },
-    { label: '5 Stars', value: 5 },
-    { label: '4 Stars', value: 4 },
-    { label: '3 Stars', value: 3 },
-    { label: '2 Stars', value: 2 },
-    { label: '1 Star', value: 1 }
+    { label: '★★★★★ (Excellent)', value: 5 },
+    { label: '★★★★ (Good)', value: 4 },
+    { label: '★★★ (Average)', value: 3 },
+    { label: '★★ (Poor)', value: 2 },
+    { label: '★ (Very Poor)', value: 1 }
   ];
 
   constructor(
@@ -159,24 +161,36 @@ export class WorkshoplistfComponent implements OnInit {
     return userId ? parseInt(userId) === workshopOwnerId : false;
   }
 
-  showFeedbackDialog(workshopId: string) {
-    this.currentWorkshopId = workshopId;
+  showFeedbackDialog(workshopId: number) {
+    const workshop = this.workshops.find(w => w.id === workshopId);
+    if (!workshop) {
+      console.error('Workshop not found:', workshopId);
+      return;
+    }
+    this.currentWorkshopId = workshopId.toString();
+    this.currentWorkshopName = workshop.name;
     this.dialogMode = 'submit';
     this.feedbackDialogVisible = true;
     this.feedbackText = '';
     this.analysisResult = null;
   }
 
-  viewFeedback(workshopId: string) {
-    this.currentWorkshopId = workshopId;
+  viewFeedback(workshopId: number) {
+    const workshop = this.workshops.find(w => w.id === workshopId);
+    if (!workshop) {
+      console.error('Workshop not found:', workshopId);
+      return;
+    }
+    this.currentWorkshopId = workshopId.toString();
+    this.currentWorkshopName = workshop.name;
     this.dialogMode = 'view';
     this.feedbackDialogVisible = true;
-    this.analysisResult = this.getFeedbackFromStorage(workshopId);
+    this.analysisResult = this.getFeedbackFromStorage(this.currentWorkshopId);
     this.feedbackText = this.analysisResult.feedbackText;
   }
 
   async analyzeFeedback() {
-    if (!this.feedbackText?.trim() || !this.currentWorkshopId) {
+    if (!this.feedbackText?.trim() || !this.currentWorkshopId || !this.currentWorkshopName) {
       return;
     }
 
@@ -197,10 +211,11 @@ export class WorkshoplistfComponent implements OnInit {
 
       const result = await response.json();
       
-      // Add the feedback text and timestamp to the result
+      // Add workshop info and other metadata to the result
       this.analysisResult = {
         ...result,
         workshopId: this.currentWorkshopId,
+        workshopName: this.currentWorkshopName,
         feedbackText: this.feedbackText,
         timestamp: Date.now()
       };
@@ -229,6 +244,7 @@ export class WorkshoplistfComponent implements OnInit {
     this.feedbackText = '';
     this.analysisResult = null;
     this.currentWorkshopId = null;
+    this.currentWorkshopName = null;
   }
 
   showAllFeedbacks() {
@@ -241,38 +257,55 @@ export class WorkshoplistfComponent implements OnInit {
     const allFeedbacks = this.getAllFeedbacks();
     
     this.filteredFeedbacks = allFeedbacks.filter(feedback => {
-      const matchesSearch = !this.feedbackSearchQuery || 
-        feedback.feedbackText.toLowerCase().includes(this.feedbackSearchQuery.toLowerCase()) ||
-        this.getWorkshopName(feedback.workshopId).toLowerCase().includes(this.feedbackSearchQuery.toLowerCase());
+      // Search functionality - check multiple fields
+      const searchQuery = this.feedbackSearchQuery?.toLowerCase().trim() || '';
+      const matchesSearch = !searchQuery || [
+        feedback.workshopName,
+        feedback.feedbackText,
+        feedback.sentiment,
+        ...(feedback.key_points || [])
+      ].some(field => 
+        field?.toLowerCase().includes(searchQuery)
+      );
       
+      // Sentiment filter
       const matchesSentiment = !this.selectedSentimentFilter || 
-        feedback.sentiment.toLowerCase() === this.selectedSentimentFilter.toLowerCase();
+        feedback.sentiment.toLowerCase().includes(this.selectedSentimentFilter.toLowerCase());
       
-      const matchesRating = !this.selectedRatingFilter || 
-        feedback.rating === this.selectedRatingFilter;
+      // Rating filter
+      const matchesRating = this.selectedRatingFilter === null || 
+        Math.round(feedback.rating) === this.selectedRatingFilter;
 
       return matchesSearch && matchesSentiment && matchesRating;
     });
+
+    // Sort by most recent first
+    this.filteredFeedbacks.sort((a, b) => b.timestamp - a.timestamp);
   }
 
   getWorkshopName(workshopId: string): string {
+    const feedback = this.getFeedbackFromStorage(workshopId);
+    if (feedback?.workshopName) {
+      return feedback.workshopName;
+    }
     const workshop = this.workshops.find(w => w.id.toString() === workshopId);
-    return workshop ? workshop.name : 'Unknown Workshop';
+    return workshop?.name || 'Unknown Workshop';
   }
 
   getSentimentClass(sentiment: string): string {
     const normalizedSentiment = sentiment.toLowerCase();
-    if (normalizedSentiment.includes('very positive') || normalizedSentiment.includes('very happy')) {
+    if (normalizedSentiment.includes('very satisfied')) {
       return 'very-positive';
-    } else if (normalizedSentiment.includes('positive') || normalizedSentiment.includes('satisfied')) {
+    } else if (normalizedSentiment.includes('satisfied')) {
       return 'positive';
-    } else if (normalizedSentiment.includes('neutral') || normalizedSentiment.includes('content')) {
+    } else if (normalizedSentiment.includes('neutral')) {
       return 'neutral';
-    } else if (normalizedSentiment.includes('very negative') || normalizedSentiment.includes('very frustrated')) {
+    } else if (normalizedSentiment.includes('very unsatisfied')) {
       return 'very-negative';
-    } else {
+    } else if (normalizedSentiment.includes('unsatisfied')) {
       return 'negative';
     }
+    return 'neutral';
   }
 
   getConfidenceClass(confidence: number): string {
@@ -286,8 +319,8 @@ export class WorkshoplistfComponent implements OnInit {
     return this.getAllFeedbacks().length;
   }
 
-  hasFeedback(workshopId: string): boolean {
-    const feedback = this.getFeedbackFromStorage(workshopId);
+  hasFeedback(workshopId: number): boolean {
+    const feedback = this.getFeedbackFromStorage(workshopId.toString());
     return feedback !== null;
   }
 
@@ -312,5 +345,39 @@ export class WorkshoplistfComponent implements OnInit {
       }
     }
     return feedbacks.sort((a, b) => b.timestamp - a.timestamp);
+  }
+
+  removeFeedback(workshopId: string | null) {
+    if (!workshopId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Workshop ID is missing'
+      });
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to remove this feedback?',
+      header: 'Confirm Removal',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        const key = `workshop_feedback_${workshopId}`;
+        localStorage.removeItem(key);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Feedback removed successfully'
+        });
+        // If we're in the all feedbacks dialog, refresh the list
+        if (this.allFeedbacksDialogVisible) {
+          this.filterFeedbacks();
+        }
+        // If we're viewing a specific feedback, close the dialog
+        if (this.feedbackDialogVisible && this.currentWorkshopId === workshopId) {
+          this.closeDialog();
+        }
+      }
+    });
   }
 }

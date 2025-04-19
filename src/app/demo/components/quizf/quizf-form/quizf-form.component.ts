@@ -30,7 +30,7 @@ export class QuizfFormComponent implements OnInit {
     this.quizForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       isPublished: [false],
-      questions: this.fb.array([])  // Initialize an empty form array for questions
+      questions: this.fb.array([])
     });
   }
 

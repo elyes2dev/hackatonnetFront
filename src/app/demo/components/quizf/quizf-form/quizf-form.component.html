@@ -1,107 +1,181 @@
 <app-navbar></app-navbar>
-<br>
-<br>
-<div *ngIf="loading" class="loading-overlay">
-    <div class="loading-spinner">Loading...</div>
+
+<div class="quiz-form-container">
+  <div class="form-header">
+    <div class="header-content">
+      <h2>{{ isEditMode ? 'Edit Quiz' : 'Create New Quiz' }}</h2>
+      <p class="subtitle">{{ isEditMode ? 'Update quiz details and questions' : 'Create a new quiz for your workshop' }}</p>
+    </div>
   </div>
-  
+
   <form [formGroup]="quizForm" (ngSubmit)="onSubmit()" class="quiz-form">
-    <div class="form-group">
-      <label for="title" class="form-label">Quiz Title</label>
-      <input
-        id="title"
-        formControlName="title"
-        class="form-control"
-        [ngClass]="{'invalid': quizForm.get('title')?.invalid && quizForm.get('title')?.touched}"
-        placeholder="Enter quiz title"
-      />
-      <div *ngIf="quizForm.get('title')?.invalid && quizForm.get('title')?.touched" class="validation-error">
-        <div *ngIf="quizForm.get('title')?.hasError('required')">Title is required.</div>
-        <div *ngIf="quizForm.get('title')?.hasError('minlength')">Title must be at least 3 characters long.</div>
-      </div>
-    </div>
-  
-    <div class="form-check form-switch">
-      <input
-        id="isPublished"
-        formControlName="isPublished"
-        type="checkbox"
-        class="form-check-input"
-      />
-      <label for="isPublished" class="form-check-label">Published</label>
-    </div>
-  
-    <div formArrayName="questions">
-      <div *ngFor="let questionControl of questionsArray.controls; let i = index" [formGroupName]="i" class="question">
-        <div class="question-header">
-          <h4>Question {{ i + 1 }}</h4>
-          <button type="button" (click)="removeQuestion(i)" class="delete-button">Delete</button>
+    <!-- Basic Information Section -->
+    <div class="form-section">
+      <h3 class="section-title">Basic Information</h3>
+      
+      <div class="form-group">
+        <label for="title">Quiz Title</label>
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          [class.invalid]="quizForm.get('title')?.invalid && quizForm.get('title')?.touched"
+          placeholder="Enter quiz title"
+        />
+        <div class="validation-messages" *ngIf="quizForm.get('title')?.invalid && quizForm.get('title')?.touched">
+          <p *ngIf="quizForm.get('title')?.hasError('required')">
+            <i class="pi pi-exclamation-circle"></i> Title is required
+          </p>
+          <p *ngIf="quizForm.get('title')?.hasError('minlength')">
+            <i class="pi pi-exclamation-circle"></i> Title must be at least 3 characters
+          </p>
         </div>
-  
-        <div class="form-group">
-          <label for="questionText-{{ i }}" class="form-label">Question Text</label>
-          <input
-            id="questionText-{{ i }}"
-            formControlName="questionText"
-            class="form-control"
-            [ngClass]="{'invalid': questionControl.get('questionText')?.invalid && questionControl.get('questionText')?.touched}"
-            placeholder="Enter the question text"
-          />
-          <div *ngIf="questionControl.get('questionText')?.invalid && questionControl.get('questionText')?.touched" class="validation-error">
-            <div *ngIf="questionControl.get('questionText')?.hasError('required')">Question text is required.</div>
+      </div>
+
+      <div class="form-group publish-status">
+        <div class="checkbox-wrapper">
+          <label class="custom-checkbox">
+            <input
+              type="checkbox"
+              id="isPublished"
+              formControlName="isPublished"
+            />
+            <span class="checkmark"></span>
+            <span class="label-text">Publish Quiz</span>
+          </label>
+          <div class="status-badge" [class.published]="quizForm.get('isPublished')?.value">
+            <i class="pi" [ngClass]="quizForm.get('isPublished')?.value ? 'pi-check-circle' : 'pi-clock'"></i>
+            {{ quizForm.get('isPublished')?.value ? 'Published' : 'Draft' }}
           </div>
         </div>
-  
-        <div formArrayName="answers">
-          <div *ngFor="let answerControl of getAnswers(i).controls; let j = index" class="answer-row">
+        <p class="status-description">
+          {{ quizForm.get('isPublished')?.value ? 
+            'Quiz is visible to participants and ready to be taken.' : 
+            'Quiz is in draft mode and only visible to you.' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Questions Section -->
+    <div class="form-section questions-section" formArrayName="questions">
+      <div class="section-header">
+        <h3 class="section-title">Questions</h3>
+        <button type="button" class="add-button" (click)="addQuestion()">
+          <i class="pi pi-plus"></i>
+          Add Question
+        </button>
+      </div>
+
+      <div class="questions-list" *ngIf="questionsArray.length > 0">
+        <div *ngFor="let questionControl of questionsArray.controls; let i = index" 
+             [formGroupName]="i" 
+             class="question-card">
+          <div class="question-header">
+            <h4>Question {{ i + 1 }}</h4>
+            <button type="button" class="delete-button" (click)="removeQuestion(i)">
+              <i class="pi pi-trash"></i>
+            </button>
+          </div>
+
+          <div class="question-content">
             <div class="form-group">
-              <label for="answer-{{ i }}-{{ j }}" class="form-label">Answer {{ j + 1 }}</label>
+              <label for="questionText-{{ i }}">Question Text</label>
               <input
-                id="answer-{{ i }}-{{ j }}"
-                [formControlName]="j"
-                class="form-control"
-                [ngClass]="{'invalid': answerControl.invalid && answerControl.touched}"
-                placeholder="Enter answer option"
+                id="questionText-{{ i }}"
+                type="text"
+                formControlName="questionText"
+                [class.invalid]="questionControl.get('questionText')?.invalid && questionControl.get('questionText')?.touched"
+                placeholder="Enter your question"
               />
-              <div *ngIf="answerControl.invalid && answerControl.touched" class="validation-error">
-                Answer is required.
+              <div class="validation-messages" *ngIf="questionControl.get('questionText')?.invalid && questionControl.get('questionText')?.touched">
+                <p *ngIf="questionControl.get('questionText')?.hasError('required')">
+                  <i class="pi pi-exclamation-circle"></i> Question text is required
+                </p>
+              </div>
+            </div>
+
+            <div class="answers-section" formArrayName="answers">
+              <div class="answers-header">
+                <h5>Answer Options</h5>
+                <button type="button" class="add-answer-button" (click)="addAnswer(i)">
+                  <i class="pi pi-plus"></i>
+                  Add Option
+                </button>
+              </div>
+
+              <div class="answers-list">
+                <div *ngFor="let answerControl of getAnswers(i).controls; let j = index" 
+                     class="answer-item">
+                  <div class="answer-input-group">
+                    <div class="answer-number">{{ j + 1 }}</div>
+                    <input
+                      [id]="'answer-' + i + '-' + j"
+                      type="text"
+                      [formControlName]="j"
+                      [class.invalid]="answerControl.invalid && answerControl.touched"
+                      placeholder="Enter answer option"
+                    />
+                    <button type="button" class="remove-answer-button" (click)="removeAnswer(i, j)">
+                      <i class="pi pi-times"></i>
+                    </button>
+                  </div>
+                  <div class="validation-messages" *ngIf="answerControl.invalid && answerControl.touched">
+                    <p><i class="pi pi-exclamation-circle"></i> Answer text is required</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group correct-answer-group">
+              <label for="correctAnswerIndex-{{ i }}">Correct Answer</label>
+              <select
+                id="correctAnswerIndex-{{ i }}"
+                formControlName="correctAnswerIndex"
+                [class.invalid]="questionControl.get('correctAnswerIndex')?.invalid && questionControl.get('correctAnswerIndex')?.touched"
+              >
+                <option value="">Select correct answer</option>
+                <option *ngFor="let answer of getAnswers(i).controls; let j = index" [value]="j">
+                  Option {{ j + 1 }}
+                </option>
+              </select>
+              <div class="validation-messages" *ngIf="questionControl.get('correctAnswerIndex')?.invalid && questionControl.get('correctAnswerIndex')?.touched">
+                <p><i class="pi pi-exclamation-circle"></i> Please select the correct answer</p>
               </div>
             </div>
           </div>
-          <button type="button" (click)="addAnswer(i)" class="add-answer">+ Add Answer</button>
-        </div>
-  
-        <div class="form-group">
-          <label for="correctAnswerIndex-{{ i }}" class="form-label">Correct Answer Index</label>
-          <input
-            id="correctAnswerIndex-{{ i }}"
-            formControlName="correctAnswerIndex"
-            type="number"
-            class="form-control"
-            [ngClass]="{'invalid': questionControl.get('correctAnswerIndex')?.invalid && questionControl.get('correctAnswerIndex')?.touched}"
-            placeholder="Enter the correct answer index"
-          />
-          <div *ngIf="questionControl.get('correctAnswerIndex')?.invalid && questionControl.get('correctAnswerIndex')?.touched" class="validation-error">
-            <div *ngIf="questionControl.get('correctAnswerIndex')?.hasError('required')">Correct answer index is required.</div>
-          </div>
         </div>
       </div>
-    </div>
-  
-    <button type="button" (click)="addQuestion()" class="add-question">+ Add Question</button>
-  
-    <button type="submit" [disabled]="loading" class="submit-button">
-      {{ isEditMode ? 'Update' : 'Create' }} Quiz
-    </button>
 
-          <!-- Button to navigate back to Quiz List -->
-  <button type="button" (click)="navigateBackToQuizList()" class="back-button">
-    Back to Quiz List
-  </button>
-  
+      <div class="no-questions" *ngIf="questionsArray.length === 0">
+        <i class="pi pi-info-circle"></i>
+        <p>No questions added yet. Click the "Add Question" button to start creating your quiz.</p>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" class="secondary-button" (click)="navigateBackToQuizList()">
+        <i class="pi pi-arrow-left"></i>
+        Back to Quizzes
+      </button>
+      <button 
+        type="submit" 
+        class="primary-button" 
+        [disabled]="quizForm.invalid || loading"
+      >
+        <i class="pi" [ngClass]="{'pi-save': !loading, 'pi-spinner pi-spin': loading}"></i>
+        {{ isEditMode ? 'Update Quiz' : 'Create Quiz' }}
+      </button>
+    </div>
   </form>
-  
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-  
-  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <app-footer></app-footer>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    <div class="error-content">
+      <i class="pi pi-exclamation-circle"></i>
+      <span>{{ error }}</span>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
