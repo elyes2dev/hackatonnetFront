@@ -1,159 +1,118 @@
 <app-navbar></app-navbar>
 
 <div class="quiz-dashboard">
-  <!-- Loading State -->
-  <div *ngIf="loading" class="loading-state">
-    <i class="fas fa-spinner fa-spin"></i>
-    <p>Loading quiz...</p>
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="error" class="error-state">
-    <i class="fas fa-exclamation-circle"></i>
-    <p>{{ error }}</p>
-  </div>
-
-  <!-- Main Content -->
-  <div class="dashboard-content" *ngIf="!loading && !error">
-    <!-- Header Section -->
     <div class="dashboard-header">
-      <div class="header-content">
-        <h1>Workshop Quiz</h1>
-        <p class="workshop-id">Workshop #{{ workshopId }}</p>
-      </div>
-      <button (click)="goBackToWorkshopList()" class="btn-back">
-        <i class="fas fa-arrow-left"></i>
-        Back to Workshop
-      </button>
-    </div>
-
-    <!-- No Quiz State -->
-    <div *ngIf="!hasQuiz && userIsOwner" class="no-quiz-state">
-      <div class="empty-state-content">
-        <i class="fas fa-clipboard-list"></i>
-        <h2>No Quiz Created Yet</h2>
-        <p>Create a quiz for your workshop to test participants' knowledge.</p>
-        <button (click)="goToAdd()" class="btn-create">
-          <i class="fas fa-plus"></i>
-          Create Quiz
-        </button>
-      </div>
-    </div>
-
-    <!-- Quiz Display -->
-    <div *ngIf="quizzes.length > 0" class="quiz-content">
-      <div *ngFor="let quiz of quizzes" class="quiz-card">
-        <div class="quiz-card-header">
-          <div class="quiz-info">
-            <h2>{{ quiz.title }}</h2>
-            <span class="quiz-status" [class.published]="quiz.isPublished">
-              <i class="fas" [class.fa-check-circle]="quiz.isPublished" [class.fa-clock]="!quiz.isPublished"></i>
-              {{ quiz.isPublished ? 'Published' : 'Draft' }}
-            </span>
-          </div>
+        <div class="header-content">
+            <h1>Quiz Management</h1>
+            <p class="subtitle">Manage and organize quizzes for your workshop</p>
         </div>
+        <div class="header-actions">
+            <button pButton 
+                    *ngIf="!hasQuiz"
+                    label="Create Quiz" 
+                    icon="pi pi-plus"
+                    class="p-button-primary"
+                    (click)="createNewQuiz()">
+            </button>
+            <button pButton 
+                    label="Back" 
+                    icon="pi pi-arrow-left"
+                    class="p-button-outlined"
+                    (click)="goBackToWorkshopList()">
+            </button>
+        </div>
+    </div>
 
-        <div class="quiz-card-body">
-          <div class="quiz-actions">
-            <!-- Owner Actions -->
-            <div class="action-group" *ngIf="userIsOwner">
-              <button (click)="goToDetails(quiz.id_quiz!)" class="btn-action btn-view">
-                <i class="fas fa-eye"></i>
-                <span>View Details</span>
-              </button>
-              <button (click)="goToEdit(quiz.id_quiz!)" class="btn-action btn-edit">
-                <i class="fas fa-edit"></i>
-                <span>Edit Quiz</span>
-              </button>
-              <button (click)="deleteQuiz(quiz.id_quiz!)" class="btn-action btn-delete">
-                <i class="fas fa-trash-alt"></i>
-                <span>Delete</span>
-              </button>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+        <p-progressSpinner></p-progressSpinner>
+        <p>Loading quizzes...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && (!quizzes || quizzes.length === 0)" class="empty-state">
+        <div class="empty-state-content">
+            <i class="pi pi-book"></i>
+            <h2>No Quizzes Available</h2>
+            <p>Start by creating your first quiz for this workshop</p>
+            <button pButton 
+                    *ngIf="!hasQuiz"
+                    label="Create New Quiz" 
+                    icon="pi pi-plus"
+                    class="p-button-primary"
+                    (click)="createNewQuiz()">
+            </button>
+            <p *ngIf="hasQuiz" class="info-message">
+                You already have a quiz for this workshop.
+            </p>
+        </div>
+    </div>
+
+    <!-- Quiz List -->
+    <div *ngIf="!loading && quizzes && quizzes.length > 0" class="quiz-content">
+        <div class="quiz-grid">
+            <div *ngFor="let quiz of quizzes" class="quiz-card">
+                <div class="quiz-card-header">
+                    <div class="quiz-info">
+                        <h2>{{ quiz.title }}</h2>
+                        <span class="quiz-status" [class.published]="quiz.isPublished">
+                            {{ quiz.isPublished ? 'Published' : 'Draft' }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="quiz-card-body">
+                    <div class="quiz-details">
+                        <div class="detail-item">
+                            <i class="pi pi-clock"></i>
+                            <span>10 minutes</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="pi pi-check-circle"></i>
+                            <span>70% passing score</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="pi pi-list"></i>
+                            <span>{{ quiz.questions?.length || 0 }} questions</span>
+                        </div>
+                    </div>
+
+                    <p class="quiz-description">{{ quiz.description || 'No description available' }}</p>
+
+                    <div class="quiz-topics" *ngIf="quiz.topics?.length">
+                        <span class="topic-tag" *ngFor="let topic of quiz.topics">
+                            {{ topic }}
+                        </span>
+                    </div>
+
+                    <div class="quiz-actions">
+                        <div class="action-group">
+                            <button pButton 
+                                    class="btn-action btn-view"
+                                    icon="pi pi-eye"
+                                    pTooltip="View Quiz"
+                                    (click)="viewQuizDetails(quiz)">
+                            </button>
+                            <button pButton 
+                                    class="btn-action btn-edit"
+                                    icon="pi pi-pencil"
+                                    pTooltip="Edit Quiz"
+                                    (click)="editQuiz(quiz)">
+                            </button>
+                            <button pButton 
+                                    class="btn-action btn-delete"
+                                    icon="pi pi-trash"
+                                    pTooltip="Delete Quiz"
+                                    (click)="deleteQuiz(quiz.id_quiz!)">
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Participant Actions -->
-            <div class="action-group" *ngIf="!userIsOwner">
-              <button *ngIf="!quizStatusMap[quiz.id_quiz!]" 
-                      (click)="goToTakeQuiz(quiz.id_quiz!)" 
-                      class="btn-action btn-take">
-                <i class="fas fa-pen"></i>
-                <span>Take Quiz</span>
-              </button>
-              <button *ngIf="quizStatusMap[quiz.id_quiz!]" 
-                      (click)="goToEdit(quiz.id_quiz!)" 
-                      class="btn-action btn-results">
-                <i class="fas fa-trophy"></i>
-                <span>View Results</span>
-              </button>
-              <button *ngIf="userScoresMap[quiz.id_quiz!]" 
-                      (click)="downloadCertificate(quiz.id_quiz!, quiz.title)" 
-                      class="btn-action btn-certificate">
-                <i class="fas fa-award"></i>
-                <span>Get Certificate</span>
-              </button>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
-
-  <!-- Results Modal -->
-  <div *ngIf="showResultsDialog" class="results-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Quiz Results</h3>
-        <button (click)="closeResultsDialog()" class="close-btn">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      
-      <div class="score-summary">
-        <div class="score-circle">
-          <div class="score-number">{{ currentQuizResults.score }}%</div>
-          <div class="score-label">Score</div>
-        </div>
-        <div class="score-details">
-          <div class="score-item">
-            <span class="label">Correct Answers:</span>
-            <span class="value">{{ currentQuizResults.correctAnswers }}/{{ currentQuizResults.totalQuestions }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="questions-review">
-        <div *ngFor="let question of currentQuizResults.questions; let i = index" 
-             class="question-item" 
-             [class.correct]="question.isCorrect">
-          <div class="question-header">
-            <span class="question-number">Question {{ i + 1 }}</span>
-            <span class="result-indicator">
-              <i *ngIf="question.isCorrect" class="fas fa-check"></i>
-              <i *ngIf="!question.isCorrect" class="fas fa-times"></i>
-            </span>
-          </div>
-          
-          <div class="question-content">
-            <p class="question-text">{{ question.questionText }}</p>
-            <div class="answers-list">
-              <div *ngFor="let answer of question.answers; let j = index" 
-                   class="answer-item"
-                   [class.correct-answer]="j === question.correctAnswerIndex"
-                   [class.user-answer]="j === question.userAnswer">
-                {{ answer }}
-                <span *ngIf="j === question.correctAnswerIndex" class="answer-badge correct">Correct</span>
-                <span *ngIf="j === question.userAnswer && !question.isCorrect" class="answer-badge incorrect">Your Answer</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button (click)="closeResultsDialog()" class="btn-close">Close Results</button>
-      </div>
-    </div>
-  </div>
 </div>
+
+<p-toast></p-toast>
 
 <app-footer></app-footer>

@@ -1,84 +1,84 @@
-<div class="quiz-results">
-  <!-- Loading State -->
-  <div *ngIf="loading" class="loading-state">
-    <i class="pi pi-spin pi-spinner"></i>
-    <p>Loading results...</p>
-  </div>
-
-  <!-- Results Content -->
-  <div *ngIf="!loading" class="results-content">
-    <div class="results-header">
-      <h2>Quiz Results</h2>
-      <button class="close-button" (click)="ref.close()">
-        <i class="pi pi-times"></i>
-      </button>
+<div class="quiz-result-dialog">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+        <p-progressSpinner></p-progressSpinner>
+        <span>Loading quiz results...</span>
     </div>
 
-    <div class="score-summary">
-      <div class="score-circle">
-        <div class="score-value">{{ score }}%</div>
-        <div class="score-label">Score</div>
-      </div>
-      <div class="score-details">
-        <div class="detail-item">
-          <i class="pi pi-check-circle"></i>
-          <span>Correct Answers: {{ getCorrectAnswersCount() }}/{{ questions.length }}</span>
-        </div>
-        <div class="detail-item">
-          <i class="pi pi-clock"></i>
-          <span>Time Taken: {{ getTimeTaken() }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="questions-review">
-      <div *ngFor="let question of questions; let i = index" class="question-card" [class.correct]="question.isCorrect">
-        <div class="question-header">
-          <div class="question-info">
-            <span class="question-number">Question {{ i + 1 }}</span>
-            <span class="points">{{ question.isCorrect ? '+1' : '0' }} point</span>
-          </div>
-          <div class="result-indicator">
-            <i class="pi" [ngClass]="question.isCorrect ? 'pi-check-circle' : 'pi-times-circle'"></i>
-          </div>
-        </div>
-
-        <div class="question-content">
-          <p class="question-text">{{ question.questionText }}</p>
-          
-          <div class="answers-list">
-            <div *ngFor="let answer of question.answers; let j = index" 
-                 class="answer-item"
-                 [class.correct-answer]="j === question.correctAnswerIndex"
-                 [class.user-answer]="j === question.userAnswer"
-                 [class.incorrect-answer]="j === question.userAnswer && j !== question.correctAnswerIndex">
-              <span class="answer-text">{{ answer }}</span>
-              <span *ngIf="j === question.correctAnswerIndex" class="answer-badge correct">
-                <i class="pi pi-check"></i> Correct Answer
-              </span>
-              <span *ngIf="j === question.userAnswer && j !== question.correctAnswerIndex" class="answer-badge incorrect">
-                <i class="pi pi-times"></i> Your Answer
-              </span>
+    <!-- Results Content -->
+    <div *ngIf="!loading" class="results-content">
+        <!-- Score Summary -->
+        <div class="score-summary">
+            <div class="score-circle">
+                <div class="score">{{ score }}</div>
+                <div class="label">Score</div>
             </div>
-          </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <i class="pi pi-check-circle"></i>
+                    <span>{{ score }} correct answers</span>
+                </div>
+                <div class="stat-item">
+                    <i class="pi pi-clock"></i>
+                    <span>10 minutes</span>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="dialog-footer">
-      <button pButton 
-              label="Close" 
-              icon="pi pi-times"
-              class="p-button-secondary"
-              (click)="ref.close()">
-      </button>
-      <button pButton 
-              label="Download Certificate" 
-              icon="pi pi-download"
-              class="p-button-success"
-              *ngIf="score >= 70"
-              (click)="downloadCertificate()">
-      </button>
+        <!-- Questions Review -->
+        <div class="questions-review">
+            <h3>Questions Review</h3>
+            
+            <div *ngFor="let question of questions; let i = index" class="question-card" [class.correct]="question.isCorrect">
+                <div class="question-header">
+                    <div class="question-info">
+                        <span class="question-number">Question {{ i + 1 }}</span>
+                        <span class="points">{{ question.isCorrect ? '+1' : '0' }} point</span>
+                    </div>
+                    <div class="result-indicator">
+                        <i class="pi" [ngClass]="question.isCorrect ? 'pi-check-circle' : 'pi-times-circle'"></i>
+                    </div>
+                </div>
+
+                <div class="question-content">
+                    <p class="question-text">{{ question.questionText }}</p>
+                    
+                    <div class="answers-list">
+                        <div *ngFor="let answer of question.answers; let j = index" 
+                             class="answer-item"
+                             [class.correct-answer]="j === question.correctAnswerIndex"
+                             [class.user-answer]="j === question.userAnswer"
+                             [class.incorrect-answer]="j === question.userAnswer && j !== question.correctAnswerIndex">
+                            
+                            <span class="answer-text">{{ answer }}</span>
+                            
+                            <span *ngIf="j === question.correctAnswerIndex" class="answer-badge correct">
+                                Correct Answer
+                            </span>
+                            <span *ngIf="j === question.userAnswer && j !== question.correctAnswerIndex" class="answer-badge incorrect">
+                                Your Answer
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="dialog-actions">
+            <button pButton 
+                    label="Download Certificate" 
+                    icon="pi pi-download" 
+                    class="p-button-success"
+                    (click)="downloadCertificate()"
+                    *ngIf="score >= 70">
+            </button>
+            <button pButton 
+                    label="Close" 
+                    icon="pi pi-times" 
+                    class="p-button-outlined"
+                    (click)="close()">
+            </button>
+        </div>
     </div>
-  </div>
 </div>

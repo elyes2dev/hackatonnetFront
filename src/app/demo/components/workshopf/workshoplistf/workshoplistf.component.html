@@ -243,7 +243,8 @@
                 <button pButton 
                   class="p-button-text p-button-success"
                   [routerLink]="['/workshopsf', workshop.id, 'quizzes', 'new']"
-                  pTooltip="Add new quiz">
+                  pTooltip="Add new quiz"
+                  *ngIf="!workshop.quiz">
                   <i class="pi pi-plus"></i>
                 </button>
               </div>

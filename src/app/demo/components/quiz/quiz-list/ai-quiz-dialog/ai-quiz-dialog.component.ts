@@ -86,7 +86,10 @@ export class AiQuizDialogComponent {
             const quiz: Quiz = {
               title: 'AI Generated Quiz',
               isPublished: false,
-              workshop: workshop
+              workshop: workshop,
+              topics: ['AI Generated'], // Default topic for AI generated quiz
+              duration: 30, // Default duration of 30 minutes
+              passingScore: 70, // Default passing score of 70%
             };
 
             // Transform the AI-generated questions to match your Question model format
