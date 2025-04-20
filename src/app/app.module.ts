@@ -65,6 +65,8 @@ import { ListMentorFormComponent } from './demo/components/list-mentor/list-ment
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+// Include this in your module imports
+import { CarouselModule } from 'primeng/carousel';
 // PrimeNG Modules
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -142,6 +144,7 @@ import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-
         AppRoutingModule,
         AppLayoutModule,
         TableModule,
+        CarouselModule,
         CommonModule,
         ReactiveFormsModule,
         RatingModule,

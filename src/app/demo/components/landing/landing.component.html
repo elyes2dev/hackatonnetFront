@@ -20,22 +20,23 @@
 
                     <li><a (click)="router.navigate(['/pages/landing'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">Pricing</a></li>
                     <li><a (click)="router.navigate(['/workshopsf'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">Workshops</a></li>
-                    <li>
+                    <li li *ngIf="isSponsor">
                         <a (click)="router.navigate(['/prize-form'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
                             <span>Add a prize</span>
                         </a>
                       </li>
 
-                    <li>
-                        <a (click)="router.navigate(['/sponsor-prizes'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                            <span>My prizes</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a (click)="router.navigate(['/sponsor-application-form'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                            <span>Apply as a sponsor</span>
-                        </a>
-                    </li>
+                    <!-- In your navigation links section -->
+<li *ngIf="!isSponsor">
+    <a (click)="router.navigate(['/sponsor-application-form'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+        <span>Apply as a sponsor</span>
+    </a>
+</li>
+<li *ngIf="isSponsor">
+    <a (click)="router.navigate(['/sponsor-prizes'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+        <span>My prizes</span>
+    </a>
+</li>
                     <li>
                         <a (click)="router.navigate(['/sponsors-leaderboard'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
                             <span>Sponsor Leaderboard</span>

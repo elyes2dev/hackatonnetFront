@@ -1,24 +1,28 @@
 <app-navbar></app-navbar>
-<div class="container py-4">
+<div class="container">
   <!-- Add PrimeNG Toast and ConfirmDialog components -->
   <p-toast></p-toast>
   <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
   
-  <!-- Form with space theme - centered -->
+  <!-- Form with professional design -->
   <div class="form-container">
+    <!-- Form Header -->
+    <div class="form-header">
+      <h2 class="form-title">Add New Prize</h2>
+      <p class="form-subtitle">Fill in the details below to create your prize</p>
+    </div>
+    
     <form [formGroup]="prizeForm" (ngSubmit)="onSubmit()" class="form">
-      <div class="form-title"><span>Add new</span></div>
-      <div class="title-2"><span>PRIZE</span></div>
-      
       <!-- Prize Type -->
-      <div class="input-container mb-3">
+      <div class="input-container">
+        <label for="prizeType" class="form-label">Prize Type</label>
         <select id="prizeType" formControlName="prizeType" class="input-mail" 
                 [ngClass]="{'is-invalid': isFieldInvalid('prizeType')}">
           <option value="" disabled>Select prize type</option>
           <option *ngFor="let type of prizeTypes" [value]="type">{{ type }}</option>
         </select>
-        <div class="text-light small mt-1" *ngIf="!isFieldInvalid('prizeType')">Choose between money or product prizes</div>
-        <div class="text-danger small mt-1" *ngIf="isFieldInvalid('prizeType')">
+        <div class="text-light" *ngIf="!isFieldInvalid('prizeType')">Choose between money or product prizes</div>
+        <div class="text-danger" *ngIf="isFieldInvalid('prizeType')">
           Please select a prize type
         </div>
       </div>
@@ -26,12 +30,13 @@
       <!-- Money Type Fields -->
       <div *ngIf="prizeForm.get('prizeType')?.value === 'MONEY'">
         <div class="input-container">
+          <label for="amount" class="form-label">Prize Amount</label>
           <div class="input-group">
             <span class="input-group-text">$</span>
-            <input type="number" id="amount" formControlName="amount" class="input-mail" 
-                   placeholder="Enter amount">
+            <input type="number" id="amount" formControlName="amount" 
+                   placeholder="Enter amount" [ngClass]="{'is-invalid': isFieldInvalid('amount')}">
           </div>
-          <div class="text-danger small mt-1" *ngIf="isFieldInvalid('amount')">
+          <div class="text-danger" *ngIf="isFieldInvalid('amount')">
             <span *ngIf="prizeForm.get('amount')?.errors?.['required']">Amount is required</span>
             <span *ngIf="prizeForm.get('amount')?.errors?.['min']">Amount must be greater than 0</span>
           </div>
@@ -41,17 +46,23 @@
       <!-- Product Type Fields -->
       <div *ngIf="prizeForm.get('prizeType')?.value === 'PRODUCT'">
         <div class="input-container">
-          <input type="text" id="productName" formControlName="productName" class="input-mail" 
-                 placeholder="Enter product name">
-          <div class="text-danger small mt-1" *ngIf="isFieldInvalid('productName')">
+          <label for="productName" class="form-label">Product Name</label>
+          <span class="input-wrapper">
+            <input type="text" id="productName" formControlName="productName" class="input-mail" 
+                  placeholder="Enter product name" [ngClass]="{'is-invalid': isFieldInvalid('productName')}">
+          </span>
+          <div class="text-danger" *ngIf="isFieldInvalid('productName')">
             Product name is required
           </div>
         </div>
         
         <div class="input-container">
-          <textarea id="productDescription" formControlName="productDescription" class="input-mail" 
-                    rows="3" placeholder="Describe the product"></textarea>
-          <div class="text-danger small mt-1" *ngIf="isFieldInvalid('productDescription')">
+          <label for="productDescription" class="form-label">Product Description</label>
+          <span class="input-wrapper">
+            <textarea id="productDescription" formControlName="productDescription" class="input-mail" 
+                     rows="3" placeholder="Describe the product" [ngClass]="{'is-invalid': isFieldInvalid('productDescription')}"></textarea>
+          </span>
+          <div class="text-danger" *ngIf="isFieldInvalid('productDescription')">
             Product description is required
           </div>
         </div>
@@ -59,6 +70,7 @@
       
       <!-- Prize Category -->
       <div class="input-container">
+        <label for="prizeCategory" class="form-label">Prize Category</label>
         <select id="prizeCategory" formControlName="prizeCategory" class="input-mail" 
                 [ngClass]="{'is-invalid': isFieldInvalid('prizeCategory')}">
           <option value="" disabled selected>Select category</option>
@@ -66,13 +78,13 @@
             {{ formatCategory(category) }}
           </option>
         </select>
-        <div class="text-danger small mt-1" *ngIf="isFieldInvalid('prizeCategory')">
+        <div class="text-danger" *ngIf="isFieldInvalid('prizeCategory')">
           Category is required
         </div>
       </div>
       
       <!-- Submission status -->
-      <div *ngIf="submitting" class="text-light mb-3">
+      <div *ngIf="submitting" class="text-light">
         <div class="d-flex align-items-center">
           <div class="spinner-border spinner-border-sm me-2" role="status">
             <span class="visually-hidden">Loading...</span>
@@ -82,22 +94,14 @@
       </div>
       
       <!-- Form Actions -->
-      <div class="d-flex gap-2 justify-content-between mt-3">
+      <div class="d-flex gap-2">
         <button type="button" class="submit cancel-button" routerLink="/prizes">
-          <span class="sign-text">Cancel</span>
+          <span>Cancel</span>
         </button>
-        <button type="submit" class="submit" [disabled]="prizeForm.invalid || submitting">
-          <span class="sign-text">Submit Prize</span>
+        <button type="submit" [disabled]="prizeForm.invalid || submitting">
+          <span>Submit Prize</span>
         </button>
       </div>
-      
-      <!-- Stars animation -->
-      <section class="bg-stars">
-        <span class="star"></span>
-        <span class="star"></span>
-        <span class="star"></span>
-        <span class="star"></span>
-      </section>
     </form>
   </div>
 </div>
