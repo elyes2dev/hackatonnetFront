@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/demo/services/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { jwtDecode } from 'jwt-decode';
 import { StorageService } from 'src/app/demo/services/storage.service';
+import { SocialUser } from '@abacritt/angularx-social-login';
 
 
 @Component({
@@ -38,9 +39,32 @@ export class LoginComponent {
     password: string = '';
     token: string = "";
     error: string | null = null;
+    socialUser!: SocialUser;
 
   constructor(private authService: AuthService, public layoutService: LayoutService, private router: Router,private storageService : StorageService) {}
 
+
+  ngOnInit() {
+    // listen once for the credential event
+    window.addEventListener('google-credential', this.onGoogleCredential);
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('google-credential', this.onGoogleCredential);
+  }
+
+  // arrow fn to preserve `this`
+  private onGoogleCredential = (evt: any) => {
+    const idToken = evt.detail as string;
+    // call your service with the ID token
+    this.authService.loginWithGoogle(idToken).subscribe({
+      next: resp => {
+        console.log('Google login successful', resp);
+        // …your post‑login routing & storage…
+      },
+      error: err => console.error('Google login failed', err)
+    });
+  };
 
   onSignIn(): void {
     this.authService.login(this.name, this.password).subscribe({
@@ -75,5 +99,7 @@ export class LoginComponent {
   forgetpassword(): void {
     this.router.navigate(['/auth/reset-password']);
   }
+
+ 
   
 }

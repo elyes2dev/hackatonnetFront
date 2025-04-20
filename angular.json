@@ -79,7 +79,11 @@
                             "browserTarget": "sakai:build:development"
                         }
                     },
-                    "defaultConfiguration": "development"
+                    "defaultConfiguration": "development",
+                    "headers": {
+                                "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+                                "Cross-Origin-Embedder-Policy": "require-corp"
+                                }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",

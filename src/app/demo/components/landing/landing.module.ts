@@ -9,6 +9,9 @@ import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
+import { AuthService } from '../../services/auth.service';
+import { AuthModule } from '../auth/auth.module';
+import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 
 @NgModule({
     imports: [
@@ -18,8 +21,25 @@ import { FooterComponent } from './footer/footer.component';
         StyleClassModule,
         ChartModule,
         PanelModule,
-        ButtonModule
+        ButtonModule,
+        AuthModule
     ],
+    providers: [
+        AuthService ,
+        {
+            provide: 'SocialAuthServiceConfig',
+            useValue: {
+              autoLogin: false,
+              providers: [
+                {
+                  id: GoogleLoginProvider.PROVIDER_ID,
+                  provider: new GoogleLoginProvider('421274310229-bbgvpfgp8qt47571dast98f1kdvpdabp.apps.googleusercontent.com')
+                }
+              ],
+            } as SocialAuthServiceConfig,
+          }
+      ],    
+    
     declarations: [LandingComponent]
 })
 export class LandingModule { 

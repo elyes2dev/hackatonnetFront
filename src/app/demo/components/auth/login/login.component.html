@@ -1,3 +1,13 @@
+<script>
+    function handleGoogleCredential(response) {
+      // dispatch a browser event carrying the credential payload
+      window.dispatchEvent(new CustomEvent('google-credential', {
+        detail: response.credential
+      }));
+    }
+  </script>
+  
+
 <div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
     <div class="grid justify-content-center p-2 lg:p-0" style="min-width:80%">
         <div class="col-12 mt-5 xl:mt-0 text-center">
@@ -25,6 +35,25 @@
                         <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)" (click)="forgetpassword()">Forgot password?</a>
                     </div>
                     <button pButton pRipple label="Sign In" class="w-full p-3 text-xl" (click)="onSignIn()"></button>
+                    <div id="g_id_onload"
+     data-client_id="421274310229-kmmf1gkts302hlivl21oq2ip6588gib4.apps.googleusercontent.com"
+     data-context="signin"
+     data-ux_mode="popup"
+     data-login_uri="http://localhost:9100/auth/social-login"
+     data-auto_select="true"
+     data-itp_support="true">
+</div>
+
+<div class="g_id_signin"
+     data-type="standard"
+     data-shape="rectangular"
+     data-theme="filled_blue"
+     data-text="signin_with"
+     data-size="large"
+     data-logo_alignment="left">
+</div>
+
+
                 </div>
             </div>
         </div>

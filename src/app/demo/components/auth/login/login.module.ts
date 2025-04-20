@@ -7,6 +7,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
+import { AuthService } from 'src/app/demo/services/auth.service';
+import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 
 @NgModule({
     imports: [
@@ -17,7 +19,7 @@ import { InputTextModule } from 'primeng/inputtext';
         InputTextModule,
         FormsModule,
         PasswordModule
-    ],
+    ],   
     declarations: [LoginComponent]
 })
 export class LoginModule { }
