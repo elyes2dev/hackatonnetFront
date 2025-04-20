@@ -54,6 +54,8 @@ import { LandingHackathonListComponent } from './demo/components/landing/Hackath
 import { LandingHackathonDetailsComponent } from './demo/components/landing/Hackathon/landing-hackathon-details/landing-hackathon-details.component';
 import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackathon-analytics/hackathon-analytics.component';
 import { HackathonCategorizationAnalyticsComponent } from './demo/components/Analytics/hackathon-categorization-analytics/hackathon-categorization-analytics.component';
+import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-list/access-denied/access-denied.component';
+import { AdminGuard } from './demo/services/hackathon/AuthGuard/auth-guard.service';
 
 
 
@@ -63,6 +65,7 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
     imports: [
         RouterModule.forRoot([
             {
+            
                 path: '', component: AppLayoutComponent,
                 children: [
                     { path: '', loadChildren: () => import('./demo/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
@@ -129,16 +132,26 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
                         component: QuizScoreAddComponent // Replace with your actual component
                       },
                     { path: 'live-stream/:id', component: LiveStreamComponent },
-                    { path: ':hackathonId/call/:roomId', component: VideoRoomComponent },
+                    
                     { path: 'mydashboard', component: MydashboardComponent },
-                    { path: 'hackathons', component: HackathonListComponent },
+                    // { path: 'hackathons', component: HackathonListComponent },
+                    {
+                      path: 'hackathons', // Update with your actual path
+                      component: HackathonListComponent,
+                      canActivate: [AdminGuard] // Add this guard
+                    },
                     { path: 'hackathon/:id', component: HackathonDetailsComponent },
                     { path: 'hackathon-analytics', component: HackathonAnalyticsComponent },
                     { path: 'hackathon-categorization', component: HackathonCategorizationAnalyticsComponent },
-
+                    {
+                      path: 'access-denied',
+                      component: AccessDeniedComponent
+                    },
 
                 ],
             },
+
+            { path: ':hackathonId/call/:roomId', component: VideoRoomComponent },
 
 
 

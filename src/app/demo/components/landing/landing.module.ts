@@ -15,6 +15,10 @@ import { AvatarModule } from 'primeng/avatar';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { AppModule } from 'src/app/app.module';
+import { LandingLiveStreamComponent } from './Hackathon/landing-live-stream/landing-live-stream.component';
+import { LandingPostComponent } from './Hackathon/landing-hackathon-details/landing-post/landing-post.component';
+import { LandingCommentComponent } from './Hackathon/landing-hackathon-details/landing-post/landing-comment/landing-comment.component';
 
 
 @NgModule({
@@ -32,6 +36,6 @@ import { InputTextModule } from 'primeng/inputtext';
         InputTextModule
 
     ],
-    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent]
+    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent, LandingLiveStreamComponent, LandingPostComponent, LandingCommentComponent]
 })
 export class LandingModule { }

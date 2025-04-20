@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HackathonService } from 'src/app/demo/services/hackathon/hackathon.service';
 import { Router } from '@angular/router';
 import { Hackathon } from 'src/app/demo/models/hackathon';
+import { AuthService } from 'src/app/demo/services/auth.service'; // Import AuthService
 
 @Component({
   selector: 'app-hackathon-form',
@@ -13,16 +14,17 @@ export class HackathonFormComponent implements OnInit {
   hackathonForm: FormGroup;
   @Input() hackathon: Hackathon | null = null;  // Input for edit mode
   @Output() hideSidebar = new EventEmitter<void>();  // Event to notify parent to hide sidebar
-
+  
   constructor(
     private fb: FormBuilder,
     private hackathonService: HackathonService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService // Inject existing AuthService
   ) {
     this.hackathonForm = this.buildForm();
   }
 
- private formatDate(dateString: string): string {
+  private formatDate(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toISOString().slice(0, 16); // Format for datetime-local
@@ -58,8 +60,29 @@ export class HackathonFormComponent implements OnInit {
         this.hackathonForm.patchValue(formattedData);
       } else {
         this.hackathonForm.reset();
+        // Reset form but maintain the user ID
+        this.hackathonForm.get('createdBy.id')?.setValue(this.getUserIdFromToken());
       }
     }
+  }
+  
+  // Helper method to extract user ID from token or localStorage
+  private getUserIdFromToken(): number {
+    // This implementation will depend on how your token stores user information
+    // You might need to decode a JWT token or get the ID from localStorage
+    
+    // Option 1: If you store user ID in localStorage
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      return parseInt(userId, 10);
+    }
+    
+    // Option 2: If you can access info from the token
+    // This is just a placeholder - implement according to your token structure
+    // You might need to parse a JWT token or use some other method
+    
+    // Default fallback to user ID 1 if we can't determine the current user
+    return 1;
   }
   
   onSubmit(): void {
@@ -109,6 +132,9 @@ export class HackathonFormComponent implements OnInit {
   }
 
   buildForm(): FormGroup {
+    const userId = this.getUserIdFromToken();
+    console.log('Building form with user ID:', userId);
+    
     return this.fb.group({
       title: ['', Validators.required],
       description: [''],
@@ -119,9 +145,8 @@ export class HackathonFormComponent implements OnInit {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       createdBy: this.fb.group({
-        id: [1, Validators.required] // Assuming a static user id for now
+        id: [userId, Validators.required] // Dynamic user ID
       })
     });
   }
-
 }

@@ -114,6 +114,7 @@ import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackath
 import { HackathonCategorizationAnalyticsComponent } from './demo/components/Analytics/hackathon-categorization-analytics/hackathon-categorization-analytics.component';
 import { HackathonInsightsComponent } from './demo/components/Analytics/hackathon-insights/hackathon-insights/hackathon-insights.component';
 import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-dialog/ai-quiz-dialog.component';
+import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-list/access-denied/access-denied.component';
 
 
 @NgModule({
@@ -135,7 +136,8 @@ import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-
         MydashboardComponent,
         UserProfileComponent,
         HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent, HackathonCategorizationAnalyticsComponent, HackathonInsightsComponent,
-        AiQuizDialogComponent
+        AiQuizDialogComponent,
+        AccessDeniedComponent
 
     ],
     imports: [
