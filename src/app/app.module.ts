@@ -80,6 +80,10 @@ import { MessageModule } from 'primeng/message';
 import { AccordionModule } from 'primeng/accordion';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { QuizService } from './demo/services/quiz.service';
+import { PanelModule } from 'primeng/panel';
+import { PasswordModule } from 'primeng/password';
+import { CalendarModule } from 'primeng/calendar';
+import { TagModule } from 'primeng/tag';
 
 @NgModule({
     declarations: [
@@ -124,7 +128,11 @@ import { QuizService } from './demo/services/quiz.service';
         BrowserAnimationsModule,
         MessageModule,
         AccordionModule,
-        DynamicDialogModule
+        DynamicDialogModule,
+        PanelModule,     // ✅ Required for <p-panel>
+        PasswordModule,  // ✅ Required for <p-password>
+        CalendarModule,
+        TagModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
