@@ -99,9 +99,15 @@
   <div class="back-button-container">
     <button pButton type="button" icon="pi pi-arrow-left" label="Back to List" routerLink="/landing-hackathons"></button>
   </div>
-  <button class="header-button" (click)="JoinLiveStream()"><i class="pi pi-video"></i>Join Live stream</button>
-  
+  <div class="header-actions">
+    <button class="header-button" (click)="JoinLiveStream()"><i class="pi pi-video"></i>Join Live stream</button>
+    <button *ngIf="isSponsor" pButton type="button" icon="pi pi-plus-circle" label="Add a Prize"
+            class="p-button-success header-button"
+            (click)="addPrize(hackathon?.id)">
+    </button>
+  </div>
 </div>
+
 
 <div *ngIf="hackathon as h" class="hackathon-details-container">
     <!-- Hero Section with Gradient Overlay -->

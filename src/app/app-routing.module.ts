@@ -200,7 +200,7 @@ import { AdminGuard } from './demo/services/hackathon/AuthGuard/auth-guard.servi
             { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
             { path: 'landing-hackathons', component: LandingHackathonListComponent},
             { path: 'landing-hackathon/:id', component: LandingHackathonDetailsComponent},
-            { path: 'prize-form', component: PrizeFormComponent },
+            { path: 'prize-form/:hackathonId', component: PrizeFormComponent },
             { path: 'sponsors-leaderboard', component: SponsorLeaderboardComponent },
             { path: 'sponsor-prizes', component: SponsorPrizesComponent },
             { path: 'sponsor-application-form', component: SponsorApplicationFormComponent },

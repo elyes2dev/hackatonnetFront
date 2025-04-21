@@ -18,11 +18,11 @@ export class PrizeService {
   constructor(private http: HttpClient,private storageService: StorageService) { }
 
 
-  createPrize(prize: Prize): Observable<Prize> {
+  createPrize(prize: Prize, hackathonId: number): Observable<Prize> {
     const userId = this.storageService.getLoggedInUserId();
-    const hackathonId = 1; // Replace with dynamic if needed
     return this.http.post<Prize>(`${this.baseUrl}/${userId}/${hackathonId}/create`, prize);
   }
+  
 
   getAllPrizes(): Observable<Prize[]> {
     return this.http.get<Prize[]>(`${this.baseUrl}/getallprizes`);

@@ -5,11 +5,18 @@
 <p-toast></p-toast>
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
-<div class="sponsor-prizes-container">
-  <div class="sponsor-header" *ngIf="sponsorInfo">
-    <p>Prizes sponsored by {{ sponsorInfo.companyName || 'your company' }}</p>
+<div class="sponsor-prizes-wrapper">
+  <div class="intro-section">
+    <div class="header">
+      <h2>Sponsor Prizes</h2>
+    </div>
+    <div class="intro-text">
+      <p *ngIf="sponsorInfo">Prizes sponsored by {{ sponsorInfo.companyName || 'your company' }}</p>
+      <p>Browse through our collection of prizes sponsored for various hackathons and competitions.</p>
+    </div>
   </div>
 
+  <!-- Loading and Error States -->
   <div class="loading-container" *ngIf="loading">
     <div class="spinner"></div>
     <p>Loading prizes...</p>
@@ -23,62 +30,114 @@
     <p>No prizes have been added yet.</p>
   </div>
 
-  <div class="prizes-grid" *ngIf="!loading && prizes.length > 0">
-    <!-- Money Prizes -->
-    <div class="brutalist-card money-prize" *ngFor="let prize of prizes" [ngClass]="{'cancelled': prize.status === 'CANCELED'}" [hidden]="prize.prizeType !== PrizeType.MONEY">
-      <div class="brutalist-card__header">
-        <div class="brutalist-card__icon">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12.164 7.165c-1.15.191-1.702 1.233-1.231 2.328.498 1.155 1.921 1.895 3.094 1.603 1.039-.255 1.766-1.605 1.536-2.668-.255-1.172-1.151-1.71-3.399-1.263zm10.43 2.866c0 3.133-2.396 6.815-6.451 6.815-4.054 0-6.449-3.682-6.449-6.815 0-3.132 2.395-5.815 6.449-5.815 4.055 0 6.451 2.683 6.451 5.815zm-7.739-3.198c.634 0 1.248.322 1.248 1.123 0 .636-.425.934-.658.983-.492.08-.816-.328-.816-.948 0-.503.335-1.158.226-1.158zm3.823 3.198c0-1.024-.855-1.605-1.858-1.605-1.393 0-2.794.804-2.794 1.605 0 .495.987.835 1.97.835 1.282 0 2.682-.34 2.682-.835zm-5.926.238c-.401 0-.633-.203-.633-.552 0-.348.232-.551.633-.551.402 0 .634.203.634.551 0 .349-.232.552-.634.552zm1.729.552c.111-.067.155-.236.091-.398 0 0-.28-.593-.28-1.088 0-.265.111-1.14.842-1.14.335 0 .517.204.517.204 1.072.33 2.082.802 2.082 1.088 0 .286-.168.286-.168.286-1.117.438-1.878.79-2.759.79-.503 0-.821-.194-.325-.742z"></path>
-          </svg>
-        </div>
-        <div class="brutalist-card__alert">{{ getCategoryLabel(prize.prizeCategory) }}</div>
-        <div class="prize-status" [ngClass]="prize.status?.toLowerCase()">{{ prize.status }}</div>
-      </div>
-      <div class="hackathon-title" *ngIf="prize.hackathon">
-        <h4>{{ prize.hackathon.title }}</h4>
-      </div>
-      <div class="brutalist-card__message">
-        <h3>Cash Prize</h3>
-        <p class="prize-amount">{{ prize.amount | currency }}</p>
-      </div>
-      <div class="brutalist-card__actions">
-        <button class="brutalist-card__button brutalist-card__button--mark" 
-                (click)="cancelPrize(prize.id!)" 
-                [disabled]="isCancelDisabled(prize)">
-          Cancel Prize
-        </button>
-        <span class="submission-date">Submitted: {{ prize.submittedAt | date }}</span>
-      </div>
-    </div>
+  <!-- Prizes Section -->
+  <div class="prizes-container" *ngIf="!loading && prizes.length > 0">
+    <div class="prizes-list">
+      <!-- Money Prizes -->
+      <div class="prize-item" *ngFor="let prize of prizes" [ngClass]="{'cancelled': prize.status === 'CANCELED'}" [hidden]="prize.prizeType !== PrizeType.MONEY">
+        <div class="prize-main">
+          <div class="prize-image">
+            <img src="assets/images/money3.png" alt="Money Prize">
+            <div class="image-overlay">
+              <div class="prize-status" [ngClass]="prize.status?.toLowerCase()">{{ prize.status }}</div>
+            </div>
+          </div>
 
-    <!-- Product Prizes -->
-    <div class="brutalist-card product-prize" *ngFor="let prize of prizes" [ngClass]="{'cancelled': prize.status === 'CANCELED'}" [hidden]="prize.prizeType !== PrizeType.PRODUCT">
-      <div class="brutalist-card__header">
-        <div class="brutalist-card__icon">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M22 12v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h1v2H4v8h16v-8h-1v-2h1a2 2 0 0 1 2 2M15 2H9C8.1 2 7.39 2.48 7.11 3.18L5 7H19L16.89 3.18C16.61 2.48 15.9 2 15 2M15 4l1.04 2H7.96L9 4h6m-5 4v2h2V8H10m4 0v2h2V8h-2Z"></path>
-          </svg>
+          <div class="prize-info">
+            <div class="info-header">
+              <h3 class="prize-title">Cash Prize: {{ prize.amount | currency }}</h3>
+              <div class="prize-meta">
+                <span class="theme-tag" *ngIf="prize.prizeCategory">
+                  <i class="pi pi-tag"></i>
+                  {{ getCategoryLabel(prize.prizeCategory) }}
+                </span>
+                <span class="date-tag" *ngIf="prize.submittedAt">
+                  <i class="pi pi-calendar"></i>
+                  {{ prize.submittedAt | date }}
+                </span>
+              </div>
+            </div>
+
+            <div class="hackathon-info" *ngIf="prize.hackathon">
+              <h4>{{ prize.hackathon.title }}</h4>
+            </div>
+
+            <div class="prize-footer">
+              <div class="sponsor-info" *ngIf="sponsorInfo">
+                <span class="sponsor-name">{{ sponsorInfo.companyName }}</span>
+              </div>
+
+              <div class="action-buttons">
+                <div class="button-group">
+                  <button pButton 
+                    class="p-button-outlined action-btn"
+                    (click)="cancelPrize(prize.id!)" 
+                    [disabled]="isCancelDisabled(prize)"
+                    pTooltip="Cancel this prize">
+                    <i class="pi pi-times"></i>
+                    Cancel Prize
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="brutalist-card__alert">{{ getCategoryLabel(prize.prizeCategory) }}</div>
-        <div class="prize-status" [ngClass]="prize.status?.toLowerCase()">{{ prize.status }}</div>
       </div>
-      <div class="hackathon-title" *ngIf="prize.hackathon">
-        <h4>{{ prize.hackathon.title }}</h4>
-      </div>
-      <div class="brutalist-card__message">
-        <h3>{{ prize.productName }}</h3>
-        <p class="product-description">{{ prize.productDescription }}</p>
-      </div>
-      <div class="brutalist-card__actions">
-        <button class="brutalist-card__button brutalist-card__button--mark" 
-                (click)="cancelPrize(prize.id!)" 
-                [disabled]="isCancelDisabled(prize)">
-          Cancel Prize
-        </button>
-        <span class="submission-date">Submitted: {{ prize.submittedAt | date }}</span>
+
+      <!-- Product Prizes -->
+      <div class="prize-item" *ngFor="let prize of prizes" [ngClass]="{'cancelled': prize.status === 'CANCELED'}" [hidden]="prize.prizeType !== PrizeType.PRODUCT">
+        <div class="prize-main">
+          <div class="prize-image">
+            <img src="assets/images/product.png" alt="Product Prize">
+            <div class="image-overlay">
+              <div class="prize-status" [ngClass]="prize.status?.toLowerCase()">{{ prize.status }}</div>
+            </div>
+          </div>
+
+          <div class="prize-info">
+            <div class="info-header">
+              <h3 class="prize-title">{{ prize.productName }}</h3>
+              <div class="prize-meta">
+                <span class="theme-tag" *ngIf="prize.prizeCategory">
+                  <i class="pi pi-tag"></i>
+                  {{ getCategoryLabel(prize.prizeCategory) }}
+                </span>
+                <span class="date-tag" *ngIf="prize.submittedAt">
+                  <i class="pi pi-calendar"></i>
+                  {{ prize.submittedAt | date }}
+                </span>
+              </div>
+            </div>
+
+            <p class="prize-description">{{ prize.productDescription }}</p>
+
+            <div class="hackathon-info" *ngIf="prize.hackathon">
+              <h4>{{ prize.hackathon.title }}</h4>
+            </div>
+
+            <div class="prize-footer">
+              <div class="sponsor-info" *ngIf="sponsorInfo">
+                <span class="sponsor-name">{{ sponsorInfo.companyName }}</span>
+              </div>
+
+              <div class="action-buttons">
+                <div class="button-group">
+                  <button pButton 
+                    class="p-button-outlined action-btn"
+                    (click)="cancelPrize(prize.id!)" 
+                    [disabled]="isCancelDisabled(prize)"
+                    pTooltip="Cancel this prize">
+                    <i class="pi pi-times"></i>
+                    Cancel Prize
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
 <app-footer></app-footer>

@@ -1,7 +1,7 @@
 // src/app/components/prize-form/prize-form.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { Prize, PrizeCategory, PrizeType } from 'src/app/demo/models/prize';
 import { PrizeService } from 'src/app/demo/services/prize.service';
@@ -28,10 +28,14 @@ export class PrizeFormComponent implements OnInit {
     private prizeService: PrizeService,
     private router: Router,
     private messageService: MessageService, // Add PrimeNG MessageService
-    private storageService: StorageService // ✅ Inject here
+    private storageService: StorageService, // ✅ Inject here
+    private route: ActivatedRoute // ✅ Inject this
   ) { }
 
+  hackathonId!: number; // ✅ store dynamic hackathon ID
+
   ngOnInit(): void {
+    this.hackathonId = +this.route.snapshot.paramMap.get('hackathonId')!;
     this.initForm();
     
     // Listen for prize type changes to adjust form validation
@@ -123,7 +127,7 @@ export class PrizeFormComponent implements OnInit {
       prize.productDescription = formValue.productDescription;
     }
   
-    this.prizeService.createPrize(prize)
+    this.prizeService.createPrize(prize, this.hackathonId) // pass dynamic hackathonId
       .pipe(finalize(() => {
         this.submitting = false;
       }))
