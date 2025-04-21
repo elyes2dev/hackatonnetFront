@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { User } from 'src/app/demo/models/user.model';
+import { StorageService } from 'src/app/demo/services/storage.service';
 import { UserService } from 'src/app/demo/services/user.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 
@@ -9,20 +10,33 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit{
+export class NavbarComponent implements OnInit {
   user!: User;
+  isSponsor: boolean = false;
 
-  constructor(public router: Router, public layoutService: LayoutService, private userService: UserService) {}
+  constructor(
+    public router: Router, 
+    public layoutService: LayoutService, 
+    private userService: UserService,
+    private storageService: StorageService
+  ) {}
 
   ngOnInit(): void {
-    this.userService.getUserById(1).subscribe((data) => {
-      this.user = data;
-    });
+    const userId = this.storageService.getLoggedInUserId();
+    
+    if (userId) {
+      this.userService.getUserById(userId).subscribe((data) => {
+        this.user = data;
+        // Check if user has SPONSOR role
+        this.isSponsor = this.user.roles?.some(role => role.name === 'SPONSOR') || false;
+      });
+    }
   }
 
   navigateToLanding() {
-    this.router.navigate(['/landing']);  // Redirect to '/landings'
+    this.router.navigate(['/landing']);
   }
+  
   getBadgeIcon(): string {
     const badgeIcons: { [key: string]: string } = {
       JUNIOR_COACH: 'assets/demo/images/avatar/JUNIOR_COACH.png',

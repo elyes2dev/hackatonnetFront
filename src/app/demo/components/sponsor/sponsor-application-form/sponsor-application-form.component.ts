@@ -29,6 +29,40 @@ export class SponsorApplicationFormComponent implements OnInit {
   // For file upload progress
   logoUploadProgress = 0;
   documentUploadProgress = 0;
+  
+  // Benefits carousel items
+  benefitItems = [
+    {
+      title: 'Increase Brand Visibility',
+      description: 'Showcase your brand to thousands of active users daily and boost recognition within our community.',
+      icon: 'pi pi-eye',
+      bgGradient: 'linear-gradient(135deg, #6B46C1 0%, #8B5CF6 100%)'
+    },
+    {
+      title: 'Climb the Leaderboard',
+      description: 'The more you sponsor, the higher you climb on our sponsors leaderboard, gaining additional exposure and recognition.',
+      icon: 'pi pi-chart-line',
+      bgGradient: 'linear-gradient(135deg, #3182CE 0%, #63B3ED 100%)'
+    },
+    {
+      title: 'Exclusive Partner Events',
+      description: 'Get invited to exclusive networking events and gain direct access to our community of industry professionals.',
+      icon: 'pi pi-users',
+      bgGradient: 'linear-gradient(135deg, #2F855A 0%, #48BB78 100%)'
+    },
+    {
+      title: 'Custom Integration Options',
+      description: 'Unlock custom integration options and showcase your products or services directly within our platform.',
+      icon: 'pi pi-cog',
+      bgGradient: 'linear-gradient(135deg, #DD6B20 0%, #F6AD55 100%)'
+    },
+    {
+      title: 'Premium Support',
+      description: 'Get priority support and dedicated account management to maximize your sponsorship benefits.',
+      icon: 'pi pi-star',
+      bgGradient: 'linear-gradient(135deg, #9F7AEA 0%, #B794F4 100%)'
+    }
+  ];
 
   constructor(
     private fb: FormBuilder,

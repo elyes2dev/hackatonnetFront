@@ -1,124 +1,176 @@
 <app-navbar></app-navbar>
-<!-- src/app/sponsor-application-form/sponsor-application-form.component.html -->
+
+<!-- Benefits Carousel - Added between navbar and form -->
+<div class="benefits-carousel-container">
+  <p-carousel [value]="benefitItems" [numVisible]="1" [numScroll]="1" [circular]="true" [autoplayInterval]="5000" [showNavigators]="false">
+    <ng-template let-benefit pTemplate="item">
+      <div class="benefit-item" [style.background]="benefit.bgGradient">
+        <div class="benefit-content">
+          <div class="benefit-icon">
+            <i [class]="benefit.icon"></i>
+          </div>
+          <div class="benefit-text">
+            <h3>{{benefit.title}}</h3>
+            <p>{{benefit.description}}</p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-carousel>
+</div>
+
 <div class="card-container">
-  <!-- Add PrimeNG Toast component -->
+  <!-- PrimeNG Toast -->
   <p-toast></p-toast>
   
   <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="form">
-    <div class="title">Sponsor Application<br><span>Fill out the form to continue</span></div>
-    
-    <!-- Company Name -->
-    <input
-      type="text"
-      class="input"
-      id="companyName"
-      formControlName="companyName"
-      placeholder="Company Name*"
-      [ngClass]="{'input-invalid': applicationForm.get('companyName')?.invalid && applicationForm.get('companyName')?.touched}">
-    <div 
-      *ngIf="applicationForm.get('companyName')?.invalid && applicationForm.get('companyName')?.touched" 
-      class="error-message">
-      <span *ngIf="applicationForm.get('companyName')?.errors?.['required']">Company name is required</span>
-      <span *ngIf="applicationForm.get('companyName')?.errors?.['minlength']">Company name must be at least 2 characters</span>
-      <span *ngIf="applicationForm.get('companyName')?.errors?.['maxlength']">Company name cannot exceed 100 characters</span>
+    <!-- Form Header -->
+    <div class="title">
+      Sponsor Application
+      <span>Fill out the form to continue</span>
     </div>
-    
-    <!-- Registration Number -->
-    <input
-      type="text"
-      class="input"
-      id="registrationNumber"
-      formControlName="registrationNumber"
-      placeholder="Business Registration Number*"
-      [ngClass]="{'input-invalid': applicationForm.get('registrationNumber')?.invalid && applicationForm.get('registrationNumber')?.touched}">
-    <div 
-      *ngIf="applicationForm.get('registrationNumber')?.invalid && applicationForm.get('registrationNumber')?.touched" 
-      class="error-message">
-      <span *ngIf="applicationForm.get('registrationNumber')?.errors?.['required']">Registration number is required</span>
-      <span *ngIf="applicationForm.get('registrationNumber')?.errors?.['pattern']">Registration number must contain only digits</span>
-    </div>
-    
-    <!-- Website URL -->
-    <input
-      type="url"
-      class="input"
-      id="websiteUrl"
-      formControlName="websiteUrl"
-      placeholder="Website URL (https://www.example.com)"
-      [ngClass]="{'input-invalid': applicationForm.get('websiteUrl')?.invalid && applicationForm.get('websiteUrl')?.touched}">
-    <div 
-      *ngIf="applicationForm.get('websiteUrl')?.invalid && applicationForm.get('websiteUrl')?.touched" 
-      class="error-message">
-      Please enter a valid URL
-    </div>
-    
-    <!-- Company Logo -->
-    <div class="file-input-container">
-      <label for="companyLogo" class="file-input-label">Company Logo</label>
-      <input
-        type="file"
-        class="file-input"
-        id="companyLogo"
-        (change)="onLogoSelected($event)"
-        accept="image/jpeg,image/png,image/gif">
-    </div>
-    <div *ngIf="selectedLogo" class="file-info">
-      <div class="file-preview">
-        <span>{{selectedLogo.name}} ({{(selectedLogo.size / 1024).toFixed(2)}} KB)</span>
-        <button type="button" class="delete-btn" (click)="selectedLogo = null; logoPreview = null">
-          ×
+
+    <div class="form-content">
+      <!-- Left Column - Text Inputs -->
+      <div class="form-left">
+        <!-- Company Name -->
+        <div class="input-wrapper">
+          <i class="pi pi-building input-icon"></i>
+          <input
+            type="text"
+            class="input"
+            id="companyName"
+            formControlName="companyName"
+            placeholder="Company Name*"
+            [ngClass]="{'input-invalid': applicationForm.get('companyName')?.invalid && applicationForm.get('companyName')?.touched}">
+          <div 
+            *ngIf="applicationForm.get('companyName')?.invalid && applicationForm.get('companyName')?.touched" 
+            class="error-message">
+            <span *ngIf="applicationForm.get('companyName')?.errors?.['required']">Company name is required</span>
+            <span *ngIf="applicationForm.get('companyName')?.errors?.['minlength']">Company name must be at least 2 characters</span>
+            <span *ngIf="applicationForm.get('companyName')?.errors?.['maxlength']">Company name cannot exceed 100 characters</span>
+          </div>
+        </div>
+        
+        <!-- Registration Number -->
+        <div class="input-wrapper">
+          <i class="pi pi-id-card input-icon"></i>
+          <input
+            type="text"
+            class="input"
+            id="registrationNumber"
+            formControlName="registrationNumber"
+            placeholder="Business Registration Number*"
+            [ngClass]="{'input-invalid': applicationForm.get('registrationNumber')?.invalid && applicationForm.get('registrationNumber')?.touched}">
+          <div 
+            *ngIf="applicationForm.get('registrationNumber')?.invalid && applicationForm.get('registrationNumber')?.touched" 
+            class="error-message">
+            <span *ngIf="applicationForm.get('registrationNumber')?.errors?.['required']">Registration number is required</span>
+            <span *ngIf="applicationForm.get('registrationNumber')?.errors?.['pattern']">Registration number must contain only digits</span>
+          </div>
+        </div>
+        
+        <!-- Website URL -->
+        <div class="input-wrapper">
+          <i class="pi pi-globe input-icon"></i>
+          <input
+            type="url"
+            class="input"
+            id="websiteUrl"
+            formControlName="websiteUrl"
+            placeholder="Website URL (https://www.example.com)"
+            [ngClass]="{'input-invalid': applicationForm.get('websiteUrl')?.invalid && applicationForm.get('websiteUrl')?.touched}">
+          <div 
+            *ngIf="applicationForm.get('websiteUrl')?.invalid && applicationForm.get('websiteUrl')?.touched" 
+            class="error-message">
+            Please enter a valid URL
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column - File Uploads -->
+      <div class="form-right">
+        <!-- Company Logo -->
+        <div>
+          <label class="file-input-label">Company Logo</label>
+          <div class="file-upload-area">
+            <i class="pi pi-image upload-icon"></i>
+            <span class="upload-text">Drop your logo here or click to browse</span>
+            <span class="upload-hint">Recommended formats: JPG, PNG, GIF (max 2MB)</span>
+            <input
+              type="file"
+              class="file-input"
+              id="companyLogo"
+              (change)="onLogoSelected($event)"
+              accept="image/jpeg,image/png,image/gif">
+          </div>
+          <div *ngIf="selectedLogo" class="file-info">
+            <div class="file-preview">
+              <span>{{selectedLogo.name}} ({{(selectedLogo.size / 1024).toFixed(2)}} KB)</span>
+              <button type="button" class="delete-btn" (click)="selectedLogo = null; logoPreview = null">
+                ×
+              </button>
+            </div>
+            <img [src]="logoPreview" class="preview-image">
+          </div>
+          
+          <!-- Upload progress for logo -->
+          <div *ngIf="isSubmitting && selectedLogo && logoUploadProgress > 0" class="progress-container">
+            <div class="progress-bar" [style.width.%]="logoUploadProgress">
+              {{logoUploadProgress}}%
+            </div>
+          </div>
+        </div>
+        
+        <!-- Business Document -->
+        <div>
+          <label class="file-input-label">Business Document*</label>
+          <div class="file-upload-area">
+            <i class="pi pi-file-pdf upload-icon"></i>
+            <span class="upload-text">Drop your document here or click to browse</span>
+            <span class="upload-hint">Accepted formats: PDF, DOC, DOCX (max 10MB)</span>
+            <input
+              type="file"
+              class="file-input"
+              id="documentPath"
+              (change)="onDocumentSelected($event)"
+              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          </div>
+          <div 
+            *ngIf="isDocumentRequired && !selectedDocument && applicationForm.touched" 
+            class="error-message">
+            Business document is required
+          </div>
+          <div *ngIf="selectedDocument" class="file-info">
+            <div class="file-preview">
+              <span class="file-badge">Document Selected</span>
+              <span>{{selectedDocument.name}} ({{(selectedDocument.size / 1024).toFixed(2)}} KB)</span>
+              <button type="button" class="delete-btn" (click)="selectedDocument = null">
+                ×
+              </button>
+            </div>
+          </div>
+          
+          <!-- Upload progress for document -->
+          <div *ngIf="isSubmitting && selectedDocument && documentUploadProgress > 0" class="progress-container">
+            <div class="progress-bar" [style.width.%]="documentUploadProgress">
+              {{documentUploadProgress}}%
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="button-confirm"
+          [disabled]="applicationForm.invalid || isSubmitting || !selectedDocument">
+          <span *ngIf="isSubmitting" class="spinner" role="status" aria-hidden="true"></span>
+          {{isSubmitting ? 'Submitting...' : 'Submit Application →'}}
         </button>
       </div>
-      <img [src]="logoPreview" class="preview-image">
     </div>
-    
-    <!-- Upload progress for logo -->
-    <div *ngIf="isSubmitting && selectedLogo && logoUploadProgress > 0" class="progress-container">
-      <div class="progress-bar" [style.width.%]="logoUploadProgress">
-        {{logoUploadProgress}}%
-      </div>
-    </div>
-    
-    <!-- Business Document -->
-    <div class="file-input-container">
-      <label for="documentPath" class="file-input-label">Business Document*</label>
-      <input
-        type="file"
-        class="file-input"
-        id="documentPath"
-        (change)="onDocumentSelected($event)"
-        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-    </div>
-    <div 
-      *ngIf="isDocumentRequired && !selectedDocument && applicationForm.touched" 
-      class="error-message">
-      Business document is required
-    </div>
-    <div *ngIf="selectedDocument" class="file-info">
-      <div class="file-preview">
-        <span class="file-badge">Document Selected</span>
-        <span>{{selectedDocument.name}} ({{(selectedDocument.size / 1024).toFixed(2)}} KB)</span>
-        <button type="button" class="delete-btn" (click)="selectedDocument = null">
-          ×
-        </button>
-      </div>
-    </div>
-    
-    <!-- Upload progress for document -->
-    <div *ngIf="isSubmitting && selectedDocument && documentUploadProgress > 0" class="progress-container">
-      <div class="progress-bar" [style.width.%]="documentUploadProgress">
-        {{documentUploadProgress}}%
-      </div>
-    </div>
-    
-    <!-- Submit Button -->
-    <button 
-      type="submit" 
-      class="button-confirm"
-      [disabled]="applicationForm.invalid || isSubmitting || !selectedDocument">
-      <span *ngIf="isSubmitting" class="spinner" role="status" aria-hidden="true"></span>
-      {{isSubmitting ? 'Submitting...' : 'Submit Application →'}}
-    </button>
   </form>
 </div>
 
