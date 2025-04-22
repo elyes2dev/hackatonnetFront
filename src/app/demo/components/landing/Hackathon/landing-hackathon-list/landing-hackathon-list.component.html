@@ -1,3 +1,4 @@
+
 <div class="surface-0 flex justify-content-center h-full">
   <div id="home" class="landing-wrapper overflow-hidden w-full h-full">
 
@@ -11,7 +12,7 @@
   </a>
   <div class="align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2" style="top:85%">
       <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
-        
+
 
           <li>
               <a (click)="router.navigate(['/pages/landing'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
@@ -100,13 +101,13 @@
     <div class="search-container">
       <span class="p-input-icon-left">
         <i class="pi pi-search"></i>
-        <input type="text" pInputText [(ngModel)]="searchTerm" 
-               (input)="filterHackathons()" 
+        <input type="text" pInputText [(ngModel)]="searchTerm"
+               (input)="filterHackathons()"
                placeholder="Search by name..." />
       </span>
-  
-      <p-dropdown [options]="eventTypeOptions" [(ngModel)]="selectedEventType" 
-                  (onChange)="filterHackathons()" 
+
+      <p-dropdown [options]="eventTypeOptions" [(ngModel)]="selectedEventType"
+                  (onChange)="filterHackathons()"
                   placeholder="Filter by type" [showClear]="true">
       </p-dropdown>
     </div>
@@ -123,11 +124,11 @@
             <img [src]="hackathon.logo" alt="Hackathon Logo" class="card-logo">
           </div>
         </div>
-        
+
         <!-- Card Content -->
         <div class="card-content" [routerLink]="['/landing-hackathon', hackathon.id]">
           <h3 class="card-title">{{ hackathon.title }}</h3>
-          
+
           <div class="card-meta">
             <span class="meta-item location">
               <i class="pi pi-map-marker"></i> {{ hackathon.location }}
@@ -136,9 +137,9 @@
               <i class="pi pi-calendar"></i> {{ hackathon.startDate | date:'MMM d' }} - {{ hackathon.endDate | date:'MMM d' }}
             </span>
           </div>
-          
+
           <p class="card-description">{{ (hackathon.description) || 'No description provided' }}</p>
-          
+
           <div class="card-footer">
             <span class="event-type" [ngClass]="{'online': hackathon.isOnline, 'onsite': !hackathon.isOnline}">
               <i class="pi" [ngClass]="hackathon.isOnline ? 'pi-globe' : 'pi-building'"></i>
@@ -153,5 +154,4 @@
     </div>
   </div>
   </div>
-  
-  
+

@@ -1,24 +1,26 @@
+
+
 <div class="main-container">
     <!-- Loading -->
     <div *ngIf="loading" class="loading-overlay">
       <div class="spinner"></div>
       <p>Loading...</p>
     </div>
-  
+
     <!-- Error/Success Messages -->
     <div *ngIf="error" class="alert alert-error">
       <p>{{ error }}</p>
     </div>
-  
+
     <div *ngIf="donationSuccess" class="alert alert-success">
       <p>Donation successful!</p>
     </div>
-  
+
     <!-- Header -->
     <div class="header">
       <h1>Project Evaluations</h1>
     </div>
-  
+
     <!-- Main Grid Content -->
     <div class="grid-container">
       <!-- Left Column -->
@@ -31,36 +33,33 @@
               <label for="score">Score</label>
               <input type="number" id="score" [(ngModel)]="newEvaluation.score" name="score" required class="form-control" min="0" max="100" />
             </div>
-            
+
             <div class="form-group">
               <label for="feedback">Feedback</label>
               <textarea id="feedback" [(ngModel)]="newEvaluation.feedback" name="feedback" class="form-control" rows="3"></textarea>
             </div>
-            
+
             <div class="form-group">
               <label for="evaluationDate">Date</label>
               <input type="datetime-local" id="evaluationDate" [(ngModel)]="newEvaluation.evaluationDate" name="evaluationDate" required class="form-control" />
             </div>
-            
-            <div class="form-group">
-              <label for="projectName">Project Name</label>
-              <input type="text" id="projectName" [(ngModel)]="newEvaluation.projectName" name="projectName" class="form-control" />
-            </div>
-            
+
+
+
             <div class="form-group">
               <label for="teamSubmissionId">Submission ID</label>
               <input type="number" id="teamSubmissionId" [(ngModel)]="newEvaluation.teamSubmission!.id" name="teamSubmissionId" required class="form-control" />
             </div>
-            
+
             <div class="form-group">
               <label for="evaluatorId">Evaluator ID</label>
               <input type="number" id="evaluatorId" [(ngModel)]="newEvaluation.evaluator!.id" name="evaluatorId" required class="form-control" />
             </div>
-            
+
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </div>
-  
+
         <!-- Score Filter -->
         <div class="card">
           <h2>Filter by Score</h2>
@@ -71,7 +70,7 @@
           </div>
         </div>
       </div>
-  
+
       <!-- Right Column -->
       <div class="right-column">
         <!-- Evaluations List -->
@@ -86,13 +85,13 @@
                   <button class="btn btn-danger" (click)="delete(evaluation.id!)">Delete</button>
                 </div>
               </div>
-              
+
               <div class="evaluation-details">
                 <p><strong>Evaluator:</strong> {{ evaluation.evaluator?.id || 'Not available' }}</p>
                 <p><strong>Score:</strong> <span class="highlight">{{ evaluation.score }}</span></p>
                 <p><strong>Feedback:</strong> {{ evaluation.feedback || 'No feedback' }}</p>
               </div>
-  
+
               <!-- Edit Form -->
               <div *ngIf="selectedEvaluation && selectedEvaluation.id === evaluation.id" class="modification-form">
                 <h3>Edit Evaluation</h3>
@@ -101,17 +100,17 @@
                     <label [attr.for]="'editScore-' + evaluation.id">Score</label>
                     <input type="number" [id]="'editScore-' + evaluation.id" [(ngModel)]="selectedEvaluation.score" name="score" required class="form-control" />
                   </div>
-                  
+
                   <div class="form-group">
                     <label [attr.for]="'editFeedback-' + evaluation.id">Feedback</label>
                     <textarea [id]="'editFeedback-' + evaluation.id" [(ngModel)]="selectedEvaluation.feedback" name="feedback" required class="form-control"></textarea>
                   </div>
-                  
+
                   <div class="form-group">
                     <label [attr.for]="'editProjectName-' + evaluation.id">Project Name</label>
                     <input type="text" [id]="'editProjectName-' + evaluation.id" [(ngModel)]="selectedEvaluation.projectName" name="projectName" class="form-control" />
                   </div>
-                  
+
                   <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Update</button>
                     <button type="button" class="btn btn-secondary" (click)="cancelModification()">Cancel</button>
@@ -120,14 +119,14 @@
               </div>
             </div>
           </div>
-          
+
           <ng-template #noEvaluations>
             <p *ngIf="!loading && !error" class="no-data">No evaluations found.</p>
           </ng-template>
         </div>
       </div>
     </div>
-  
+
     <!-- Top Rated Projects -->
     <div class="card top-rated-section">
       <h2>Top Rated Projects</h2>
@@ -137,27 +136,29 @@
           <p><strong>Evaluator:</strong> {{ evaluation.evaluator?.id || 'Not available' }}</p>
           <p><strong>Score:</strong> <span class="highlight">{{ evaluation.score }}</span></p>
           <p><strong>Feedback:</strong> {{ evaluation.feedback || 'No feedback' }}</p>
-          
+
           <button class="btn btn-donate" (click)="showDonationForm(evaluation.id!)">Make a Donation</button>
-          
+
           <!-- Donation Form -->
           <div *ngIf="donationEvaluationId === evaluation.id" class="donation-form">
             <div class="form-group">
               <label [attr.for]="'donationAmount-' + evaluation.id">Amount (€)</label>
               <input type="number" [id]="'donationAmount-' + evaluation.id" [(ngModel)]="donationAmount" name="donationAmount" min="1" step="0.01" required class="form-control" />
             </div>
-            
+
             <button class="btn btn-primary" (click)="initiateDonation(evaluation.id!)">Continue</button>
           </div>
-          
+
           <div [id]="'card-element-' + evaluation.id" class="card-element"></div>
-          
+
           <button *ngIf="clientSecret && cardElement" class="btn btn-success" (click)="confirmDonation(evaluation.id!)">Confirm Donation</button>
         </div>
       </div>
-      
+
       <ng-template #noTopRated>
         <p *ngIf="!loading && !error" class="no-data">No top rated projects found.</p>
       </ng-template>
     </div>
   </div>
+
+

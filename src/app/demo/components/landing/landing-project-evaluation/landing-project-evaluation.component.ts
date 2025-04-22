@@ -27,7 +27,7 @@ export class LandingProjectEvaluationComponent implements OnInit {
     score: 0,
     feedback: '',
     evaluationDate: new Date(),
-    projectName: '',
+  //  projectName: '',
     teamSubmission: { id: 0, projectName: '', description: '', repoLink: '' },
     evaluator: { id: 0 }
   };
@@ -84,7 +84,7 @@ export class LandingProjectEvaluationComponent implements OnInit {
           score: 0,
           feedback: '',
           evaluationDate: new Date(),
-          projectName: '',
+        //  projectName: '',
           teamSubmission: { id: 0, projectName: '', description: '', repoLink: '' },
           evaluator: { id: 0 }
         };
@@ -104,19 +104,35 @@ export class LandingProjectEvaluationComponent implements OnInit {
 
   updateEvaluation(): void {
     if (this.selectedEvaluation && this.selectedEvaluation.id) {
-      this.projectEvaluationService.updateEvaluation(this.selectedEvaluation.id, this.selectedEvaluation).subscribe({
+      // Create a clean payload without projectName
+      const payload = {
+        id: this.selectedEvaluation.id,
+        score: this.selectedEvaluation.score,
+        feedback: this.selectedEvaluation.feedback,
+        evaluationDate: this.selectedEvaluation.evaluationDate,
+        teamSubmission: this.selectedEvaluation.teamSubmission,
+        evaluator: this.selectedEvaluation.evaluator
+        // Only include fields that exist in your backend entity
+      };
+
+      this.projectEvaluationService.updateEvaluation(
+          this.selectedEvaluation.id,
+          payload
+      ).subscribe({
         next: () => {
           alert('Évaluation mise à jour avec succès !');
           this.selectedEvaluation = null;
           this.loadEvaluations();
+          this.cdr.detectChanges();
         },
         error: (err) => {
           this.error = 'Erreur lors de la mise à jour : ' + (err.message || 'Erreur réseau');
+          console.error('Erreur :', err);
+          this.cdr.detectChanges();
         }
       });
     }
   }
-
   delete(id: number): void {
     if (id == null || id === undefined) {
       this.error = 'L\'ID de l\'évaluation est invalide.';

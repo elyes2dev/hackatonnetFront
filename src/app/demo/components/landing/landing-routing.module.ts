@@ -4,26 +4,12 @@ import { LandingComponent } from './landing.component';
 import { PrizeFormComponent } from '../prize/prize-form/prize-form.component';
 import { LandingTeamSubmissionComponent } from './landing-team-submission/landing-team-submission.component';
 import { LandingProjectEvaluationComponent } from './landing-project-evaluation/landing-project-evaluation.component';
-
-const routes: Routes = [
-    {
-        path: '',
-        component: LandingComponent,
-        children: [
-            {
-                path: 'team-submission',
-                component: LandingTeamSubmissionComponent
-            },
-            {
-                path: 'project-evaluation',
-                component: LandingProjectEvaluationComponent
-            }
-        ]
-    }
-];
+import { Routes } from '@angular/router';
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild([
+        { path: '', component: LandingComponent }
+    ])],
+    exports: [RouterModule]
 })
 export class LandingRoutingModule { }

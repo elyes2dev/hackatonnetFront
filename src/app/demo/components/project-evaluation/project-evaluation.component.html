@@ -36,10 +36,7 @@
         <label for="evaluationDate">Date</label>
         <input type="datetime-local" id="evaluationDate" [(ngModel)]="newEvaluation.evaluationDate" name="evaluationDate" required class="form-input" />
       </div>
-      <div class="form-group">
-        <label for="projectName">Nom du projet</label>
-        <input type="text" id="projectName" [(ngModel)]="newEvaluation.projectName" name="projectName" class="form-input" />
-      </div>
+
       <div class="form-group">
         <label for="teamSubmissionId">ID Soumission</label>
         <input type="number" id="teamSubmissionId" [(ngModel)]="newEvaluation.teamSubmission!.id" name="teamSubmissionId" required class="form-input" />
@@ -76,10 +73,6 @@
             <div class="form-group">
               <label for="editFeedback-{{ evaluation.id }}">Feedback</label>
               <textarea id="editFeedback-{{ evaluation.id }}" [(ngModel)]="selectedEvaluation.feedback" name="feedback" required class="form-input"></textarea>
-            </div>
-            <div class="form-group">
-              <label for="editProjectName-{{ evaluation.id }}">Nom du projet</label>
-              <input type="text" id="editProjectName-{{ evaluation.id }}" [(ngModel)]="selectedEvaluation.projectName" name="projectName" class="form-input" />
             </div>
             <button type="submit" class="btn btn-success">Mettre à jour</button>
             <button type="button" class="btn btn-cancel" (click)="cancelModification()">Annuler</button>

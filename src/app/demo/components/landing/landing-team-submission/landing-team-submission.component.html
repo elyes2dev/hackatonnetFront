@@ -1,21 +1,22 @@
+
 <div class="main-container">
     <!-- Loading -->
     <div *ngIf="loading" class="loading-overlay">
       <div class="spinner"></div>
       <p>Loading...</p>
     </div>
-  
+
     <!-- Error -->
     <div *ngIf="error" class="error-message">
       <p>{{ error }}</p>
     </div>
-  
+
     <!-- Header -->
     <div class="header">
       <h1>Team Submissions</h1>
       <p class="subtitle">Manage your team project submissions</p>
     </div>
-  
+
     <!-- Creation Form -->
     <div class="section creation-section">
       <h2>New Submission</h2>
@@ -39,7 +40,7 @@
         <button type="submit" class="btn btn-submit">Submit</button>
       </form>
     </div>
-  
+
     <!-- Submissions List -->
     <div class="section submissions-section">
       <h2>Recent Submissions</h2>

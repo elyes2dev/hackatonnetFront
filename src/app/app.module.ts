@@ -119,11 +119,11 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
 import { HackathonInsightsComponent } from './demo/components/Analytics/hackathon-insights/hackathon-insights/hackathon-insights.component';
 import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-dialog/ai-quiz-dialog.component';
 import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-list/access-denied/access-denied.component';
-import { FormsModule } from '@angular/forms';
 import { TeamSubmissionComponent } from './demo/components/team-submission/team-submission.component';
 import { ProjectEvaluationComponent } from './demo/components/project-evaluation/project-evaluation.component';
 import { PaymentComponent } from './components/payment/payment.component';
 import { ComponentsComponent } from './components/components.component';
+import {LandingModule} from "./demo/components/landing/landing.module";
 
 
 @NgModule({
@@ -142,6 +142,7 @@ import { ComponentsComponent } from './components/components.component';
          MentorApplicationListComponent, MentorApplicationDetailsComponent, MentorApplicationFormComponent, PreviousExperienceListComponent, PreviousExperienceFormComponent, MentorEvaluationListComponent, MentorEvaluationFormComponent, ListMentorListComponent, ListMentorFormComponent,
         ListMentorFormAdminComponent,
         MentorEvaluationListUserComponent,
+
         MydashboardComponent,
         UserProfileComponent,
         HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent, HackathonCategorizationAnalyticsComponent, HackathonInsightsComponent,

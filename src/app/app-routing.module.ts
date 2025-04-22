@@ -59,6 +59,12 @@ import { AdminGuard } from './demo/services/hackathon/AuthGuard/auth-guard.servi
 
 import { TeamSubmissionComponent } from './demo/components/team-submission/team-submission.component';  // Import du composant
 import { ProjectEvaluationComponent } from './demo/components/project-evaluation/project-evaluation.component';
+import {
+    LandingProjectEvaluationComponent
+} from "./demo/components/landing/landing-project-evaluation/landing-project-evaluation.component";
+import {
+    LandingTeamSubmissionComponent
+} from "./demo/components/landing/landing-team-submission/landing-team-submission.component";
 
 
 
@@ -216,7 +222,14 @@ import { ProjectEvaluationComponent } from './demo/components/project-evaluation
             { path: 'mentor-evaluations-user', component: MentorEvaluationListUserComponent },
             { path: 'profile', component: UserProfileComponent },
 
-
+            {
+                path: 'landing/team-submission',
+                component: LandingTeamSubmissionComponent
+            },
+            {
+                path: 'landing/project-evaluation',
+                component: LandingProjectEvaluationComponent
+            },
             { path: 'mentor-form', component: ListMentorFormComponent },
             { path: 'mentor-evaluation/new', component: MentorEvaluationFormComponent },
             { path: 'mentor-evaluation/:id/edit', component: MentorEvaluationFormComponent },

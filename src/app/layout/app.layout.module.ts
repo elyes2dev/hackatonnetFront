@@ -52,6 +52,6 @@ import { TableModule } from 'primeng/table';
         ButtonModule,
         TableModule
     ],
-    exports: [AppLayoutComponent]
+    exports: [AppLayoutComponent, AppFooterComponent]
 })
 export class AppLayoutModule { }

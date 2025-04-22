@@ -7,8 +7,7 @@ import { DividerModule } from 'primeng/divider';
 import { ChartModule } from 'primeng/chart';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
-import { NavbarComponent } from './navbar/navbar.component';
-import { FooterComponent } from './footer/footer.component';
+
 import { LandingHackathonListComponent } from './Hackathon/landing-hackathon-list/landing-hackathon-list.component';
 import { LandingHackathonDetailsComponent } from './Hackathon/landing-hackathon-details/landing-hackathon-details.component';
 import { AvatarModule } from 'primeng/avatar';
@@ -20,11 +19,8 @@ import { LandingLiveStreamComponent } from './Hackathon/landing-live-stream/land
 import { LandingPostComponent } from './Hackathon/landing-hackathon-details/landing-post/landing-post.component';
 import { LandingCommentComponent } from './Hackathon/landing-hackathon-details/landing-post/landing-comment/landing-comment.component';
 import { RippleModule } from 'primeng/ripple';
-import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ToastModule } from 'primeng/toast';
-import { NavbarComponent } from './navbar/navbar.component';
-import { FooterComponent } from './footer/footer.component';
 import { LandingProjectEvaluationComponent } from './landing-project-evaluation/landing-project-evaluation.component'; // Nouveau
 import { LandingTeamSubmissionComponent } from './landing-team-submission/landing-team-submission.component'; // Nouveau
 
@@ -48,8 +44,7 @@ import { LandingTeamSubmissionComponent } from './landing-team-submission/landin
         ToastModule
 
     ],
-    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent, LandingLiveStreamComponent, LandingPostComponent, LandingCommentComponent,    NavbarComponent,
-        FooterComponent,
+    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent, LandingLiveStreamComponent, LandingPostComponent, LandingCommentComponent,
         LandingProjectEvaluationComponent,
         LandingTeamSubmissionComponent     ]
 })

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { UserService } from 'src/app/demo/services/user.service';
 import { User } from 'src/app/demo/models/user.model';
+import {NavbarComponent} from "../../navbar/navbar.component";
 
 @Component({
   selector: 'app-landing-hackathon-list',
@@ -12,11 +13,11 @@ import { User } from 'src/app/demo/models/user.model';
   styleUrls: ['./landing-hackathon-list.component.scss']
 })
 export class LandingHackathonListComponent {
-  hackathons: Hackathon[] = [];  
+  hackathons: Hackathon[] = [];
   filteredHackathons: Hackathon[] = [];
   searchTerm: string = '';
   selectedEventType: string | null = null;
-  
+
   user!: User;
 
 
@@ -44,15 +45,15 @@ export class LandingHackathonListComponent {
   filterHackathons() {
     this.filteredHackathons = this.hackathons.filter(hackathon => {
       const matchesSearch = hackathon.title.toLowerCase().includes(this.searchTerm.toLowerCase());
-      const matchesType = !this.selectedEventType || 
-                         (this.selectedEventType === 'online' && hackathon.isOnline) || 
+      const matchesType = !this.selectedEventType ||
+                         (this.selectedEventType === 'online' && hackathon.isOnline) ||
                          (this.selectedEventType === 'onsite' && !hackathon.isOnline);
-      
+
       return matchesSearch && matchesType;
     });
   }
 
- 
+
   navigateToLanding() {
     this.router.navigate(['/landing']);  // Redirect to '/landings'
   }

@@ -5,6 +5,7 @@ import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
+import { OnInit } from '@angular/core';
 
 @Component({
     selector: 'app-landing',
