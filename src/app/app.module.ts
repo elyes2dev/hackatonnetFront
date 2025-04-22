@@ -124,6 +124,12 @@ import { ProjectEvaluationComponent } from './demo/components/project-evaluation
 import { PaymentComponent } from './components/payment/payment.component';
 import { ComponentsComponent } from './components/components.component';
 import {LandingModule} from "./demo/components/landing/landing.module";
+import {
+    LandingTeamSubmissionComponent
+} from "./demo/components/landing/landing-team-submission/landing-team-submission.component";
+import {
+    LandingProjectEvaluationComponent
+} from "./demo/components/landing/landing-project-evaluation/landing-project-evaluation.component";
 
 
 @NgModule({
@@ -132,7 +138,7 @@ import {LandingModule} from "./demo/components/landing/landing.module";
           , WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent, QuizDetailsComponent, QuizFormComponent, QuizListComponent, QuizResultDialogComponent, QuizScoreAddComponent ,
         ResourceDetailsComponent, WorkshoplistComponent,ResourceListComponent,ResourceFormComponent,SupportTicketComponent,SponsorApplicationFormComponent,
         SponsorApplicationListComponent,
-        SponsorApplicationDetailComponent,
+        SponsorApplicationDetailComponent,LandingTeamSubmissionComponent,LandingProjectEvaluationComponent,
         PrizeFormComponent,
         PrizeListComponent,
         PrizeDetailComponent,

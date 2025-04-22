@@ -44,8 +44,6 @@ import { LandingTeamSubmissionComponent } from './landing-team-submission/landin
         ToastModule
 
     ],
-    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent, LandingLiveStreamComponent, LandingPostComponent, LandingCommentComponent,
-        LandingProjectEvaluationComponent,
-        LandingTeamSubmissionComponent     ]
+    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent, LandingLiveStreamComponent, LandingPostComponent, LandingCommentComponent]
 })
 export class LandingModule { }
