@@ -94,14 +94,15 @@
       </div>
       
       <!-- Form Actions -->
-      <div class="d-flex gap-2">
-        <button type="button" class="submit cancel-button" routerLink="/prizes">
-          <span>Cancel</span>
-        </button>
-        <button type="submit" [disabled]="prizeForm.invalid || submitting">
-          <span>Submit Prize</span>
-        </button>
-      </div>
+      <!-- Form Actions -->
+<div class="d-flex gap-2">
+  <button type="button" class="submit cancel-button" (click)="cancelForm()">
+    <span>Cancel</span>
+  </button>
+  <button type="submit" [disabled]="prizeForm.invalid || submitting">
+    <span>Submit Prize</span>
+  </button>
+</div>
     </form>
   </div>
 </div>

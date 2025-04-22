@@ -87,6 +87,11 @@ export class PrizeFormComponent implements OnInit {
     return category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
+  cancelForm(): void {
+    // Navigate back to the hackathon details page with the hackathon ID
+    this.router.navigate(['/landing-hackathon', this.hackathonId]);
+  }
+
   // These methods are no longer needed as we use PrimeNG toast
   // But keep them empty for compatibility with existing code
   clearSuccessMessage(): void {}
