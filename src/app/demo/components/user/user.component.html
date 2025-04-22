@@ -1,0 +1,22 @@
+<div class="user-management">
+  <h1>User Management</h1>
+
+  <!-- Form to Create or Edit User -->
+  <form (ngSubmit)="selectedUser ? updateUser() : createUser()" #userForm="ngForm">
+    <input type="text" [(ngModel)]="newUser.name" placeholder="Name" name="name" required />
+    <input type="text" [(ngModel)]="newUser.lastname" placeholder="Lastname" name="lastname" required />
+    <input type="email" [(ngModel)]="newUser.email" placeholder="Email" name="email" required />
+    <input type="text" [(ngModel)]="newUser.username" placeholder="Username" name="username" required />
+    <button type="submit">{{ selectedUser ? 'Update' : 'Create' }}</button>
+    <button type="button" *ngIf="selectedUser" (click)="clearSelection()">Cancel</button>
+  </form>
+
+  <!-- Display User List -->
+  <ul>
+    <li *ngFor="let user of users">
+      <span>{{ user.name }} {{ user.lastname }}</span>
+      <button (click)="selectUser(user)">Edit</button>
+      <button *ngIf="user.id !== undefined" (click)="deleteUser(user.id)">Delete</button>
+    </li>
+  </ul>
+</div>

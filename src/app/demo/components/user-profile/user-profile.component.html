@@ -1,0 +1,75 @@
+<div *ngIf="user; else emptyUser" class="profile-container card">
+  <div class="profile-header">
+    <img *ngIf="profileImageUrl; else defaultAvatar" [src]="profileImageUrl" class="profile-avatar" alt="Profile Image">
+    <ng-template #defaultAvatar>
+      <div class="profile-avatar default-avatar"></div>
+    </ng-template>
+    <h2 class="profile-name">{{ user.name || '' }} {{ user.lastname || '' }}</h2>
+    <p class="profile-email">{{ user.email || '' }}</p>
+  </div>
+  
+  <div class="profile-details">
+    <p><strong>Birthdate:</strong> {{ user.birthdate ? (user.birthdate | date : 'shortDate') : 'Not specified' }}</p>
+    <p><strong>Description:</strong> {{ user.description || 'Not specified' }}</p>
+    <p><strong>Score:</strong> {{ user.score !== undefined ? user.score : 'Not specified' }}</p>
+    <p><strong>Joined:</strong> {{ user.createdAt ? (user.createdAt | date : 'short') : 'Unknown' }}</p>
+    <p><strong>Badge:</strong> {{ getBadgeLabel(user.badge) || 'None' }}</p>
+    <p><strong>Monitor Points:</strong> {{ user.monitorPoints !== undefined ? user.monitorPoints : 'Not specified' }}</p>
+  </div>
+
+  <div class="profile-lists">
+    <div class="list-section">
+      <h3>Roles</h3>
+      <ul>
+        <li *ngFor="let role of safeArray(user.roles)">
+          {{ role.name || '' }}
+        </li>
+        <li *ngIf="!user.roles || user.roles.length === 0">No roles</li>
+      </ul>
+    </div>
+    
+    <div class="list-section">
+      <h3>Skills</h3>
+      <ul>
+        <li *ngFor="let skill of safeArray(user.skills)">
+          {{ skill.name || '' }}
+        </li>
+        <li *ngIf="!user.skills || user.skills.length === 0">No skills</li>
+      </ul>
+    </div>
+    
+    <div class="list-section">
+      <h3>Hackathons</h3>
+      <ul>
+        <li *ngFor="let hackathon of safeArray(user.hackathons)">
+          {{ hackathon.title || '' }}
+        </li>
+        <li *ngIf="!user.hackathons || user.hackathons.length === 0">No hackathons</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="profile-nested">
+    <div class="nested-section">
+      <h3>Sponsor Application</h3>
+      <span *ngIf="user.sponsorApplication; else noApp">
+        {{ user.sponsorApplication | json }}
+      </span>
+      <ng-template #noApp>No sponsor application</ng-template>
+    </div>
+    
+    <div class="nested-section">
+      <h3>Sponsor Reward</h3>
+      <span *ngIf="user.sponsorReward; else noReward">
+        {{ user.sponsorReward | json }}
+      </span>
+      <ng-template #noReward>No sponsor reward</ng-template>
+    </div>
+  </div>
+</div>
+
+<ng-template #emptyUser>
+  <div class="profile-container card">
+    <p>No user data available.</p>
+  </div>
+</ng-template>

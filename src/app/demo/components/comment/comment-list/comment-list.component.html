@@ -1,0 +1,40 @@
+<div class="comments-section">
+    <div class="comment-form">
+      <textarea [(ngModel)]="newCommentText" 
+                placeholder="Write a comment..."
+                rows="2"></textarea>
+      <button (click)="addComment()" [disabled]="!newCommentText.trim()">
+        Post
+      </button>
+    </div>
+  
+    <div class="comments-container">
+      <div *ngIf="post.comments.length > 2 && !showAllComments" 
+           class="view-comments" 
+           (click)="showAllComments = true">
+        View all {{ post.comments.length }} comments
+      </div>
+  
+      <div *ngFor="let comment of visibleComments" class="comment">
+        <img [src]="comment.userPicture || 'assets/images/default-avatar.png'" 
+        alt="Avatar" class="comment-avatar">
+   
+        
+        <div class="comment-content">
+          <div class="comment-header">
+            <div class="comment-info">
+              <strong>{{ comment.userFullName }}</strong>
+              <span class="comment-time">{{ comment.createdAt | date:'shortTime' }}</span>
+            </div>
+
+            
+          </div>
+          
+          <p>{{ comment.content }}</p>
+        </div>
+        <div class="comment-actions">
+          <i class="pi pi-trash" (click)="deleteComment(comment)"></i>
+        </div>
+      </div>
+    </div>
+  </div>

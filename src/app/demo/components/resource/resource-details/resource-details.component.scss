@@ -1,0 +1,847 @@
+// Modern variables for consistent design
+$primary-color: #4a6cf7;
+$secondary-color: #6f42c1;
+$success-color: #2dce89;
+$warning-color: #ffc107;
+$danger-color: #f5365c;
+$light-gray: #f8f9fa;
+$border-color: #e9ecef;
+$text-primary: #344767;
+$text-secondary: #67748e;
+$card-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+$transition-default: all 0.3s ease;
+
+// Font configuration
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+
+.resource-details-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 20px;
+  font-family: 'Poppins', sans-serif;
+  color: $text-primary;
+  
+  // Loading state
+  .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba($primary-color, 0.2);
+      border-radius: 50%;
+      border-top: 4px solid $primary-color;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    
+    p {
+      color: $text-secondary;
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+  
+  // Error message
+  .error-message {
+    background-color: rgba($danger-color, 0.1);
+    color: $danger-color;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    button {
+      background-color: $danger-color;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: $transition-default;
+      box-shadow: 0 4px 10px rgba($danger-color, 0.3);
+      
+      &:hover {
+        background-color: darken($danger-color, 10%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba($danger-color, 0.4);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+  
+  // Main content container
+  .resource-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: $card-shadow;
+    overflow: hidden;
+  }
+  
+  // Resource header
+  .resource-header {
+    background: linear-gradient(120deg, $primary-color, $secondary-color);
+    padding: 40px 30px;
+    color: white;
+    position: relative;
+    
+    h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 25px;
+      position: relative;
+      
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background-color: rgba(255, 255, 255, 0.5);
+      }
+    }
+    
+    .workshop-info {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+      
+      .workshop-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+      
+      .workshop-details {
+        h3 {
+          font-size: 20px;
+          font-weight: 600;
+          margin-bottom: 10px;
+        }
+        
+        p {
+          font-size: 15px;
+          margin-bottom: 5px;
+          opacity: 0.9;
+        }
+      }
+    }
+  }
+  
+  // Resource body content
+  .resource-body {
+    padding: 30px;
+    
+    // Description section
+    .resource-description {
+      margin-bottom: 40px;
+      padding: 25px;
+      background-color: $light-gray;
+      border-radius: 12px;
+      
+      h3 {
+        color: $text-primary;
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        position: relative;
+        padding-left: 15px;
+        
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 4px;
+          background-color: $primary-color;
+          border-radius: 4px;
+        }
+      }
+      
+      p {
+        line-height: 1.8;
+        color: $text-secondary;
+        font-size: 16px;
+      }
+    }
+    
+    // Skill level section
+    .skill-level {
+      margin-bottom: 40px;
+      
+      h3 {
+        color: $text-primary;
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        position: relative;
+        padding-left: 15px;
+        
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 4px;
+          background-color: $primary-color;
+          border-radius: 4px;
+        }
+      }
+      
+      .skill-tag {
+        padding: 10px 20px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 30px;
+        color: white;
+        display: inline-block;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        
+        &.beginner {
+          background: linear-gradient(45deg, $success-color, darken($success-color, 10%));
+        }
+        
+        &.intermediate {
+          background: linear-gradient(45deg, $warning-color, darken($warning-color, 15%));
+          color: #212529;
+        }
+        
+        &.expert, &.advanced {
+          background: linear-gradient(45deg, $danger-color, darken($danger-color, 10%));
+        }
+      }
+    }
+    
+    // Files section
+    .resource-files {
+      .files-section {
+        margin-bottom: 40px;
+        background-color: white;
+        border-radius: 12px;
+        border: 1px solid $border-color;
+        overflow: hidden;
+        
+        h3 {
+          background-color: $light-gray;
+          color: $text-primary;
+          font-size: 20px;
+          font-weight: 600;
+          margin: 0;
+          padding: 20px;
+          position: relative;
+          border-bottom: 1px solid $border-color;
+          
+          &:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: $primary-color;
+          }
+        }
+        
+        // Image gallery
+        .image-gallery {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 20px;
+          padding: 25px;
+          
+          .image-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: $transition-default;
+            
+            &:hover {
+              transform: translateY(-5px);
+              box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            }
+            
+            .image-container {
+              height: 180px;
+              overflow: hidden;
+              cursor: pointer;
+              
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease;
+                
+                &:hover {
+                  transform: scale(1.05);
+                }
+              }
+              
+              .loading-placeholder {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: $light-gray;
+                color: $text-secondary;
+                font-size: 14px;
+              }
+            }
+            
+            .image-actions {
+              display: flex;
+              justify-content: space-between;
+              padding: 10px;
+              background-color: rgba(255, 255, 255, 0.9);
+              
+              button {
+                border: none;
+                padding: 6px 10px;
+                border-radius: 6px;
+                font-size: 12px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: $transition-default;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                
+                i {
+                  font-size: 12px;
+                }
+                
+                &.preview-btn {
+                  background-color: $primary-color;
+                  color: white;
+                  
+                  &:hover {
+                    background-color: darken($primary-color, 10%);
+                  }
+                }
+                
+                &.download-btn {
+                  background-color: white;
+                  color: $text-primary;
+                  border: 1px solid $border-color;
+                  
+                  &:hover {
+                    background-color: $light-gray;
+                  }
+                }
+              }
+            }
+            
+            .image-name {
+              padding: 8px 10px;
+              font-size: 14px;
+              color: $text-primary;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              background-color: $light-gray;
+              border-top: 1px solid $border-color;
+            }
+          }
+        }
+        
+        // PDF list and other files
+        .pdf-list, .file-list {
+          padding: 20px;
+          
+          .pdf-item, .file-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: $light-gray;
+            border-radius: 10px;
+            transition: $transition-default;
+            
+            &:last-child {
+              margin-bottom: 0;
+            }
+            
+            &:hover {
+              background-color: darken($light-gray, 3%);
+              transform: translateX(5px);
+            }
+            
+            .file-icon {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 50px;
+              height: 50px;
+              background-color: white;
+              border-radius: 8px;
+              margin-right: 15px;
+              box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+              
+              i {
+                font-size: 24px;
+                
+                &.fa-file-pdf {
+                  color: $danger-color;
+                }
+                
+                &.fa-file-image {
+                  color: $primary-color;
+                }
+                
+                &.fa-file-archive {
+                  color: $warning-color;
+                }
+                
+                &.fa-file-word {
+                  color: #4285F4;
+                }
+                
+                &.fa-file-excel {
+                  color: #0F9D58;
+                }
+                
+                &.fa-file {
+                  color: $text-secondary;
+                }
+              }
+            }
+            
+            .file-details {
+              flex-grow: 1;
+              display: flex;
+              flex-direction: column;
+              
+              .file-name {
+                font-size: 16px;
+                color: $text-primary;
+                font-weight: 500;
+                margin-bottom: 5px;
+              }
+              
+              .file-type {
+                font-size: 12px;
+                color: $text-secondary;
+                margin-bottom: 10px;
+              }
+              
+              .file-actions {
+                display: flex;
+                gap: 10px;
+                
+                button {
+                  border: none;
+                  padding: 6px 12px;
+                  border-radius: 6px;
+                  font-weight: 500;
+                  font-size: 13px;
+                  cursor: pointer;
+                  transition: $transition-default;
+                  display: flex;
+                  align-items: center;
+                  gap: 5px;
+                  
+                  i {
+                    font-size: 13px;
+                  }
+                  
+                  &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                  }
+                  
+                  &:active {
+                    transform: translateY(0);
+                  }
+                }
+                
+                .preview-btn {
+                  background-color: $primary-color;
+                  color: white;
+                  
+                  &:hover {
+                    background-color: darken($primary-color, 8%);
+                  }
+                }
+                
+                .download-btn {
+                  background-color: white;
+                  color: $text-primary;
+                  border: 1px solid $border-color;
+                  
+                  &:hover {
+                    background-color: $light-gray;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Footer section
+  .resource-footer {
+    margin-top: 40px;
+    padding: 0 30px 30px;
+    display: flex;
+    justify-content: center;
+    
+    .back-btn {
+      background-color: white;
+      color: $text-primary;
+      border: 2px solid $border-color;
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition-default;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      
+      &:hover {
+        background-color: $light-gray;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
+    
+    .home-btn {
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition-default;
+      box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+      
+      &:hover {
+        background-color: darken($primary-color, 10%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba($primary-color, 0.4);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+  
+  // Button styles for resource actions
+  .resource-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+    
+    button {
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition-default;
+      
+      &.approve-btn {
+        background-color: $success-color;
+        color: white;
+        
+        &:hover {
+          background-color: darken($success-color, 10%);
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+      }
+      
+      &.decline-btn {
+        background-color: $danger-color;
+        color: white;
+        
+        &:hover {
+          background-color: darken($danger-color, 10%);
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}
+
+// Additional responsiveness for mobile view
+@media (max-width: 768px) {
+  .resource-details-container {
+    padding: 0 10px;
+  }
+  
+  .resource-header {
+    padding: 30px 20px;
+  }
+  
+  .resource-header h2 {
+    font-size: 24px;
+  }
+  
+  .resource-body {
+    padding: 20px;
+  }
+  
+  .resource-description, .skill-level, .files-section {
+    margin-bottom: 20px;
+  }
+  
+  .image-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  
+  .file-list, .pdf-list {
+    padding: 15px;
+  }
+  
+  .file-item, .pdf-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .resource-footer {
+    padding: 0 20px 20px;
+  }
+  
+  .resource-actions {
+    flex-direction: column;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+}
+// Modal styles for image preview
+// File Preview Modal SCSS
+.file-preview-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+    
+    .modal-container {
+      position: relative;
+      width: 90%;
+      max-width: 900px;
+      max-height: 90vh;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1001;
+      
+      .modal-header {
+        padding: 1rem 1.5rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        h3 {
+          margin: 0;
+          font-size: 1.2rem;
+          color: #333;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 80%;
+        }
+        
+        .close-btn {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          color: #6c757d;
+          cursor: pointer;
+          transition: color 0.2s;
+          
+          &:hover {
+            color: #343a40;
+          }
+        }
+      }
+      
+      .modal-body {
+        flex: 1;
+        overflow: auto;
+        padding: 1.5rem;
+        
+        // Image Preview
+        .image-preview {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 300px;
+          max-height: 70vh;
+          
+          img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          }
+        }
+        
+        // PDF Preview
+        .pdf-preview {
+          width: 100%;
+          height: 70vh;
+          border: 1px solid #e9ecef;
+          border-radius: 4px;
+          overflow: hidden;
+          
+          iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+          }
+        }
+        
+        // Other File Preview
+        .other-preview {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 300px;
+          
+          .file-info {
+            text-align: center;
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            max-width: 80%;
+            
+            p {
+              margin: 0.5rem 0;
+              color: #495057;
+              
+              strong {
+                color: #212529;
+              }
+            }
+          }
+        }
+      }
+      
+      .modal-footer {
+        padding: 1rem 1.5rem;
+        background-color: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        
+        button {
+          padding: 0.5rem 1rem;
+          border-radius: 4px;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          
+          &.download-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            
+            &:hover {
+              background-color: #218838;
+            }
+          }
+          
+          &.close-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            
+            &:hover {
+              background-color: #5a6268;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .file-preview-modal {
+      .modal-container {
+        width: 95%;
+        max-height: 85vh;
+        
+        .modal-body {
+          padding: 1rem;
+          
+          .image-preview,
+          .pdf-preview {
+            max-height: 60vh;
+          }
+        }
+        
+        .modal-footer {
+          justify-content: center;
+        }
+      }
+    }
+  }

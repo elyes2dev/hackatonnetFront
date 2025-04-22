@@ -1,0 +1,29 @@
+<div class="quiz-results">
+    <h3>Your Quiz Results</h3>
+    <div class="score-summary">
+      <p>Your Score: <strong>{{ score }}%</strong></p>
+    </div>
+  
+    <div *ngIf="loading">Loading results...</div>
+  
+    <div *ngFor="let question of questions" class="question-result">
+      <h4>{{ question.questionText }}</h4>
+      <div class="answers">
+        <div *ngFor="let answer of question.answers; let i = index" 
+             class="answer" 
+             [class.correct]="i === question.correctAnswerIndex"
+             [class.incorrect]="question.userAnswer === i && i !== question.correctAnswerIndex">
+          {{ answer }}
+          <span *ngIf="i === question.correctAnswerIndex" class="correct-badge">✓ Correct</span>
+          <span *ngIf="question.userAnswer === i && i !== question.correctAnswerIndex" class="incorrect-badge">✗ Your Answer</span>
+        </div>
+      </div>
+      <div class="points">
+        Points: {{ question.isCorrect ? '1' : '0' }}/1
+      </div>
+    </div>
+  
+    <div class="dialog-footer">
+      <button pButton label="Close" (click)="ref.close()"></button>
+    </div>
+  </div>

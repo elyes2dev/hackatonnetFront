@@ -1,0 +1,63 @@
+<div class="grid p-fluid">
+    <div class="col-12 md:col-6">
+        <div class="card">
+            <h5>Create Workshop</h5>
+            <p>Fill out the form to create or edit a workshop</p>
+            <form [formGroup]="workshopForm" (ngSubmit)="onSubmit()" class="grid p-fluid mt-3">
+                <!-- Workshop Name -->
+                <div class="field col-12">
+                    <span class="p-float-label">
+                        <input pInputText id="name" formControlName="name" [(ngModel)]="workshopForm.value.name" required>
+                        <label for="name">Workshop Name</label>
+                    </span>
+                </div>
+
+                <!-- Workshop Theme -->
+                <div class="field col-12">
+                    <span class="p-float-label">
+                        <p-dropdown inputId="theme" [options]="themes" formControlName="theme" 
+                                   [(ngModel)]="workshopForm.value.theme" placeholder="Select Theme">
+                        </p-dropdown>
+                        <label for="theme">Theme</label>
+                    </span>
+                </div>
+
+                <!-- Workshop Description -->
+                <div class="field col-12">
+                    <span class="p-float-label">
+                        <textarea pInputTextarea id="description" formControlName="description" 
+                                 [(ngModel)]="workshopForm.value.description" rows="5"></textarea>
+                        <label for="description">Description</label>
+                    </span>
+                </div>
+
+                <!-- Photo Upload -->
+                <div class="field col-12">
+                    <div class="p-float-label file-upload-container">
+                        <p-fileUpload mode="basic" name="photo" 
+                                    accept="image/*" 
+                                    chooseLabel="Import Image"
+                                    (onSelect)="onFileSelected($event)"
+                                    [showUploadButton]="false"
+                                    [showCancelButton]="false">
+                        </p-fileUpload>
+                        <label></label>
+                    </div>
+                </div>
+
+                <!-- Image Preview -->
+                <div *ngIf="imagePreview" class="p-field">
+                    <img [src]="imagePreview" alt="Image Preview" style="width: 150px; height: auto;" />
+                </div>
+
+                <!-- Buttons - Now aligned horizontally -->
+                <div class="field col-12 flex justify-content-between">
+                    <button pButton type="button" label="Return" class="p-button grey-button" (click)="cancel()"></button>
+
+                    <button pButton type="submit" label="Save" [disabled]="!workshopForm.valid" 
+                            class="p-button-success"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

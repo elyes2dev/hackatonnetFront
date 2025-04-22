@@ -1,0 +1,157 @@
+<div class="surface-0 flex justify-content-center h-full">
+  <div id="home" class="landing-wrapper overflow-hidden w-full h-full">
+
+<div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
+  <a (click)="navigateToLanding()" class="flex align-items-center">
+      <img src="assets/layout/images/hackathonnetlogo.png" alt="Logo" height="50" class="mr-0 lg:mr-2">
+  </a>
+
+  <a pRipple class="cursor-pointer block lg:hidden text-700" pStyleClass="@next" enterClass="hidden" leaveToClass="hidden" >
+      <i class="pi pi-bars text-4xl"></i>
+  </a>
+  <div class="align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2" style="top:85%">
+      <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
+        
+
+          <li>
+              <a (click)="router.navigate(['/pages/landing'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Pricing</span>
+              </a>
+          </li>
+          <li>
+              <a (click)="router.navigate(['/workshopsf'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Workshops</span>
+              </a>
+          </li>
+
+          <li>
+              <a (click)="router.navigate(['/prize-form'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Add a prize</span>
+              </a>
+          </li>
+          <li>
+              <a (click)="router.navigate(['/sponsor-prizes'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>My prizes</span>
+              </a>
+          </li>
+          <li>
+              <a (click)="router.navigate(['/sponsor-application-form'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Apply as a sponsor</span>
+              </a>
+          </li>
+          <li>
+              <a (click)="router.navigate(['/sponsors-leaderboard'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Sponsor Leaderboard</span>
+              </a>
+          </li>
+
+          <li>
+              <a [routerLink]="['/mentor-applications/new']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Apply</span>
+              </a>
+          </li>
+
+          <li>
+              <a (click)="router.navigate(['mentor-evaluation/new'], {fragment: 'features'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Evaluate</span>
+              </a>
+          </li>
+          <li>
+              <a [routerLink]="['/mentor-form']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Participate</span>
+              </a>
+          </li>
+
+          <li>
+              <a [routerLink]="['/mentor-evaluations-user']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>my evaluations</span>
+              </a>
+          </li>
+
+          <li>
+              <a (click)="router.navigate(['/landing-hackathons'], {fragment: 'hackathons'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Hackathons</span>
+              </a>
+          </li>
+
+
+      </ul>
+      <div class="flex justify-content-between lg:flex-row lg:align-items-center border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
+          <div class="badge-icon ml-auto mr-1" *ngIf="user">
+              <img [src]="getBadgeIcon()" [alt]="user.badge" />
+          </div>
+          <button (click)="router.navigate(['/user-profile'])"
+                  pButton pRipple
+                  label="Profile"
+                  class="p-button-rounded border-none ml-1 font-light line-height-2 bg-green-500 text-white"
+                  *ngIf="user">
+          </button>
+          <button pButton pRipple label="Login" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></button>
+          <button pButton pRipple label="Register" class="p-button-rounded border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></button>
+      </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+
+  <div class="fixed-header">
+    <div class="search-container">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input type="text" pInputText [(ngModel)]="searchTerm" 
+               (input)="filterHackathons()" 
+               placeholder="Search by name..." />
+      </span>
+  
+      <p-dropdown [options]="eventTypeOptions" [(ngModel)]="selectedEventType" 
+                  (onChange)="filterHackathons()" 
+                  placeholder="Filter by type" [showClear]="true">
+      </p-dropdown>
+    </div>
+  </div>
+
+  <!-- Display the Hackathons -->
+  <div class="hackathon-list-container">
+    <div class="col-12 md:col-12">
+    <div class="hackathon-grid">
+      <div class="hackathon-card" *ngFor="let hackathon of filteredHackathons">
+        <!-- Card Header with Logo -->
+        <div class="card-header">
+          <div class="logo-container">
+            <img [src]="hackathon.logo" alt="Hackathon Logo" class="card-logo">
+          </div>
+        </div>
+        
+        <!-- Card Content -->
+        <div class="card-content" [routerLink]="['/landing-hackathon', hackathon.id]">
+          <h3 class="card-title">{{ hackathon.title }}</h3>
+          
+          <div class="card-meta">
+            <span class="meta-item location">
+              <i class="pi pi-map-marker"></i> {{ hackathon.location }}
+            </span>
+            <span class="meta-item date">
+              <i class="pi pi-calendar"></i> {{ hackathon.startDate | date:'MMM d' }} - {{ hackathon.endDate | date:'MMM d' }}
+            </span>
+          </div>
+          
+          <p class="card-description">{{ (hackathon.description) || 'No description provided' }}</p>
+          
+          <div class="card-footer">
+            <span class="event-type" [ngClass]="{'online': hackathon.isOnline, 'onsite': !hackathon.isOnline}">
+              <i class="pi" [ngClass]="hackathon.isOnline ? 'pi-globe' : 'pi-building'"></i>
+              {{ hackathon.isOnline ? 'Online' : 'Onsite' }}
+            </span>
+            <span class="participants">
+              <i class="pi pi-users"></i> {{ hackathon.maxMembers }} max
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  
+  

@@ -39,14 +39,25 @@ export class AppMenuComponent implements OnInit {
                     { label: 'File', icon: 'pi pi-fw pi-file', routerLink: ['/uikit/file'] },
                     { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/uikit/charts'] },
                     { label: 'Misc', icon: 'pi pi-fw pi-circle', routerLink: ['/uikit/misc'] },
-                    { label: 'MyDashBoard', icon: 'pi pi-fw pi-id-card', routerLink: ['/mydashboard'] }
+                    { label: 'MyDashBoard', icon: 'pi pi-fw pi-id-card', routerLink: ['/mydashboard'] },
+                    { label: 'SponsorApplications', icon: 'pi pi-fw pi-id-card', routerLink: ['/sponsor-application'] },
+                    { label: 'Prizes', icon: 'pi pi-fw pi-id-card', routerLink: ['/prizes'] },
+                    { label: 'Workshop', icon: 'pi pi-fw pi-id-card', routerLink: ['/workshops'] },
+                    { label: 'User', icon: 'pi pi-fw pi-id-card', routerLink: ['/users'] },
+                    { label: 'Support-Ticket', icon: 'pi pi-fw pi-id-card', routerLink: ['/support-tickets'] },
+                    { label: 'Hackathons', icon: 'pi pi-fw pi-id-card', routerLink: ['/hackathons'] }
                 ]
             },
             {
-                label: 'Prime Blocks',
+                label: 'mentor admin Components',
                 items: [
                     { label: 'Free Blocks', icon: 'pi pi-fw pi-eye', routerLink: ['/blocks'], badge: 'NEW' },
                     { label: 'All Blocks', icon: 'pi pi-fw pi-globe', url: ['https://www.primefaces.org/primeblocks-ng'], target: '_blank' },
+                    { label: 'Mentor Applications', icon: 'pi pi-fw pi-file', routerLink: ['/mentor-applications'] },
+                    { label: 'List Mentors', icon: 'pi pi-fw pi-users', routerLink: ['/list-mentors'] },
+                    { label: 'mentor-form', icon: 'pi pi-fw pi-user-edit', routerLink: ['/mentor/edit', 1] },
+                    { label: 'Mentor Evaluations', icon: 'pi pi-fw pi-star', routerLink: ['/mentor-evaluations'] },
+
                 ]
             },
             {
@@ -74,6 +85,11 @@ export class AppMenuComponent implements OnInit {
                                 label: 'Login',
                                 icon: 'pi pi-fw pi-sign-in',
                                 routerLink: ['/auth/login']
+                            },
+                            {
+                                label: 'Register',
+                                icon: 'pi pi-fw pi-user-plus',
+                                routerLink: ['/auth/register']
                             },
                             {
                                 label: 'Error',

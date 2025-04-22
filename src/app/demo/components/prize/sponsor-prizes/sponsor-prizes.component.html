@@ -1,0 +1,143 @@
+<app-navbar></app-navbar>
+<!-- src/app/components/sponsor-prizes/sponsor-prizes.component.html -->
+
+<!-- Add PrimeNG Toast and ConfirmDialog components -->
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+<div class="sponsor-prizes-wrapper">
+  <div class="intro-section">
+    <div class="header">
+      <h2>Sponsor Prizes</h2>
+    </div>
+    <div class="intro-text">
+      <p *ngIf="sponsorInfo">Prizes sponsored by {{ sponsorInfo.companyName || 'your company' }}</p>
+      <p>Here are the prizes you've sponsored for various hackathons and competitions. Manage and track your contributions below.</p>
+    </div>
+  </div>
+
+  <!-- Loading and Error States -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading prizes...</p>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    <p>{{ error }}</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && prizes.length === 0">
+    <p>No prizes have been added yet.</p>
+  </div>
+
+  <!-- Prizes Section -->
+  <div class="prizes-container" *ngIf="!loading && prizes.length > 0">
+    <div class="prizes-list">
+      <!-- Money Prizes -->
+      <div class="prize-item" *ngFor="let prize of prizes" [ngClass]="{'cancelled': prize.status === 'CANCELED'}" [hidden]="prize.prizeType !== PrizeType.MONEY">
+        <div class="prize-main">
+          <div class="prize-image">
+            <img src="assets/images/money3.png" alt="Money Prize">
+            <div class="image-overlay">
+              <div class="prize-status" [ngClass]="prize.status?.toLowerCase()">{{ prize.status }}</div>
+            </div>
+          </div>
+
+          <div class="prize-info">
+            <div class="info-header">
+              <h3 class="prize-title">Cash Prize: {{ prize.amount | currency }}</h3>
+              <div class="prize-meta">
+                <span class="theme-tag" *ngIf="prize.prizeCategory">
+                  <i class="pi pi-tag"></i>
+                  {{ getCategoryLabel(prize.prizeCategory) }}
+                </span>
+                <span class="date-tag" *ngIf="prize.submittedAt">
+                  <i class="pi pi-calendar"></i>
+                  {{ prize.submittedAt | date }}
+                </span>
+              </div>
+            </div>
+
+            <div class="hackathon-info" *ngIf="prize.hackathon">
+              <h4>{{ prize.hackathon.title }}</h4>
+            </div>
+
+            <div class="prize-footer">
+              <div class="sponsor-info" *ngIf="sponsorInfo">
+                <span class="sponsor-name">{{ sponsorInfo.companyName }}</span>
+              </div>
+
+              <div class="action-buttons">
+                <div class="button-group">
+                  <button pButton 
+                    class="p-button-outlined action-btn"
+                    (click)="cancelPrize(prize.id!)" 
+                    [disabled]="isCancelDisabled(prize)"
+                    pTooltip="Cancel this prize">
+                    <i class="pi pi-times"></i>
+                    Cancel Prize
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Prizes -->
+      <div class="prize-item" *ngFor="let prize of prizes" [ngClass]="{'cancelled': prize.status === 'CANCELED'}" [hidden]="prize.prizeType !== PrizeType.PRODUCT">
+        <div class="prize-main">
+          <div class="prize-image">
+            <img src="assets/images/product.png" alt="Product Prize">
+            <div class="image-overlay">
+              <div class="prize-status" [ngClass]="prize.status?.toLowerCase()">{{ prize.status }}</div>
+            </div>
+          </div>
+
+          <div class="prize-info">
+            <div class="info-header">
+              <h3 class="prize-title">{{ prize.productName }}</h3>
+              <div class="prize-meta">
+                <span class="theme-tag" *ngIf="prize.prizeCategory">
+                  <i class="pi pi-tag"></i>
+                  {{ getCategoryLabel(prize.prizeCategory) }}
+                </span>
+                <span class="date-tag" *ngIf="prize.submittedAt">
+                  <i class="pi pi-calendar"></i>
+                  {{ prize.submittedAt | date }}
+                </span>
+              </div>
+            </div>
+
+            <p class="prize-description">{{ prize.productDescription }}</p>
+
+            <div class="hackathon-info" *ngIf="prize.hackathon">
+              <h4>{{ prize.hackathon.title }}</h4>
+            </div>
+
+            <div class="prize-footer">
+              <div class="sponsor-info" *ngIf="sponsorInfo">
+                <span class="sponsor-name">{{ sponsorInfo.companyName }}</span>
+              </div>
+
+              <div class="action-buttons">
+                <div class="button-group">
+                  <button pButton 
+                    class="p-button-outlined action-btn"
+                    (click)="cancelPrize(prize.id!)" 
+                    [disabled]="isCancelDisabled(prize)"
+                    pTooltip="Cancel this prize">
+                    <i class="pi pi-times"></i>
+                    Cancel Prize
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

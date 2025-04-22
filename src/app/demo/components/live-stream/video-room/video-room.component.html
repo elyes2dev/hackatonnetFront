@@ -1,0 +1,133 @@
+<!-- Video Room Container -->
+<div class="video-room">
+    <!-- Loading State -->
+    <div class="loading-overlay" *ngIf="!localStream">
+      <div class="spinner"></div>
+      <p>Connecting to room...</p>
+    </div>
+  
+    <!-- Main Room Content -->
+    <div *ngIf="localStream" class="room-content">
+      <!-- Room Header -->
+      <div class="room-header">
+        <h2>Room: {{ roomId }}</h2>
+        <div class="participant-count">
+          <i class="pi pi-user"></i> {{ participants.length + 1 }}
+        </div>
+      </div>
+  
+   <!-- Gesture Indicator -->
+<div class="gesture-indicator" *ngIf="currentGesture" @fadeInOut>
+    <span [ngSwitch]="currentGesture">
+      <span *ngSwitchCase="'thumbs_up'" class="thumbs-up-animation">
+        <i class="pi pi-thumbs-up"></i> Thumbs Up Detected!
+      </span>
+      <span *ngSwitchCase="'open_palm'">
+        <i class="pi pi-hand"></i> Hand Raised
+      </span>
+      <span *ngSwitchCase="'heart'" class="heart-animation">
+        <i class="pi pi-heart"></i> Heart Gesture Detected!
+      </span>
+      <span *ngSwitchCase="'peace'" class="peace-animation">
+        <i class="pi pi-check"></i> Peace Sign Detected!
+      </span>
+      <span *ngSwitchDefault>
+        <i class="pi pi-info-circle"></i> {{ currentGesture }}
+      </span>
+    </span>
+  </div>
+  
+      <!-- Video Grid -->
+      <div class="video-grid">
+        <!-- Local Video -->
+        <div class="video-container local" [class.screen-sharing]="isSharingScreen">
+          <video #localVideo autoplay muted playsinline [srcObject]="localStream"></video>
+          <div class="user-info">
+            <span class="user-name">You</span>
+            <div class="user-status">
+              <i class="pi" [ngClass]="{
+                'pi-microphone-slash': isMicMuted,
+                'pi-microphone': !isMicMuted
+              }"></i>
+              <i class="pi" [ngClass]="{
+                'pi-video-slash': isCameraOff,
+                'pi-video': !isCameraOff
+              }"></i>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Remote Participants -->
+        <div class="video-container remote" *ngFor="let p of participants">
+          <video [srcObject]="p.stream" autoplay playsinline></video>
+          <div class="user-info">
+            <span class="user-name">{{ p.name }}</span>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Controls -->
+      <div class="control-bar">
+        <button (click)="toggleMic()" [class.active]="!isMicMuted" title="Toggle Microphone">
+          <i class="pi" [ngClass]="{
+            'pi-microphone-slash': isMicMuted,
+            'pi-microphone': !isMicMuted
+          }"></i>
+        </button>
+        
+        <button (click)="toggleCamera()" [class.active]="!isCameraOff" title="Toggle Camera">
+          <i class="pi" [ngClass]="{
+            'pi-video-slash': isCameraOff,
+            'pi-video': !isCameraOff
+          }"></i>
+        </button>
+        
+        <button (click)="toggleScreenShare()" [class.active]="isSharingScreen" title="Share Screen">
+          <i class="pi pi-desktop"></i>
+        </button>
+        
+        <button class="end-call" (click)="leaveCall()" title="Leave Call">
+          <i class="pi pi-phone"></i>
+        </button>
+      </div>
+    </div>
+  
+    <!-- Chat Sidebar -->
+    <div class="chat-sidebar" [class.visible]="showChat">
+      <div class="chat-header">
+        <h3>Chat</h3>
+        <button (click)="toggleChat()" class="close-chat" title="Close Chat">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+      
+      <div class="chat-messages">
+        <div *ngFor="let msg of messages" class="message" 
+            [class.hand-raised]="msg.isHandRaised">
+          <strong>{{ msg.sender }}:</strong> 
+          <span>{{ msg.text }}</span>
+          <i *ngIf="msg.isHandRaised" class="pi pi-hand-stop"></i>
+        </div>
+      </div>
+      
+      <div class="chat-input">
+        <input [(ngModel)]="newMessage" placeholder="Type message..." 
+            (keyup.enter)="sendMessage()">
+        <button (click)="sendMessage()" title="Send Message">
+          <i class="pi pi-send"></i>
+        </button>
+        <button (click)="toggleHandRaise()" [class.active]="isHandRaised" 
+                class="raise-hand" title="Raise Hand">
+          <i class="pi pi-thumbs-up"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Chat Toggle Button -->
+    <button (click)="toggleChat()" class="chat-toggle" title="Toggle Chat">
+      <i class="pi pi-comments"></i>
+      <span *ngIf="messages.length > 0" class="notification-badge">
+        {{ messages.length }}
+      </span>
+    </button>
+  </div>

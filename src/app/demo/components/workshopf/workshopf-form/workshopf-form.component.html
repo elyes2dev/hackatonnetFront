@@ -1,0 +1,50 @@
+<app-navbar></app-navbar>
+
+<div class="form-container">
+    <div class="card p-fluid">
+        <h5 class="form-title">Create Workshop</h5>
+        <form [formGroup]="workshopForm" (ngSubmit)="onSubmit()">
+            <!-- Workshop Name -->
+            <div class="p-field">
+                <label for="name" class="form-label">Name</label>
+                <input pInputText id="name" formControlName="name" placeholder="Enter Workshop Name" required class="form-input" />
+            </div>
+
+            <!-- Workshop Theme -->
+            <div class="p-field">
+                <label for="theme" class="form-label">Theme</label>
+                <p-dropdown [options]="themes" formControlName="theme" placeholder="Select Theme" class="form-input"></p-dropdown>
+            </div>
+
+            <!-- Workshop Description -->
+            <div class="p-field">
+                <label for="description" class="form-label">Description</label>
+                <textarea pInputTextarea id="description" formControlName="description" rows="5" placeholder="Enter Workshop Description" class="form-textarea"></textarea>
+            </div>
+
+            <!-- Photo Upload (File Input with Custom Button) -->
+            <div class="p-field">
+                <label for="photo" class="form-label">Upload Photo</label>
+                <div class="file-upload-container">
+                    <label class="custom-file-upload">
+                        <input type="file" (change)="onFileSelected($event)" />
+                        Choose a File
+                    </label>
+                </div>
+            </div>
+
+            <!-- Image Preview -->
+            <div *ngIf="imagePreview" class="p-field">
+                <img [src]="imagePreview" alt="Image Preview" class="image-preview" />
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button pButton type="submit" label="Save" [disabled]="!workshopForm.valid" class="p-button-lg p-button-success"></button>
+                <button pButton type="button" label="Cancel" class="p-button-lg p-button-danger" (click)="cancel()"></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<app-footer></app-footer>

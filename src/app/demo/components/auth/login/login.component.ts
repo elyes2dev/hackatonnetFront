@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/demo/services/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
+import { jwtDecode } from 'jwt-decode';
+import { StorageService } from 'src/app/demo/services/storage.service';
+
 
 @Component({
     selector: 'app-login',
@@ -28,20 +32,48 @@ export class LoginComponent {
 
     valCheck: string[] = ['remember'];
 
-    password!: string;
+  
 
-    constructor(public layoutService: LayoutService, private router: Router) { }
+    name: string = '';
+    password: string = '';
+    token: string = "";
+    error: string | null = null;
 
-    // Mock sign-in method
-    onSignIn() {
-        // Perform your sign-in logic here
+  constructor(private authService: AuthService, public layoutService: LayoutService, private router: Router,private storageService : StorageService) {}
 
-        // Example sign-in success
-        const isSignInSuccessful = true;  // Replace this logic with real authentication
 
-        if (isSignInSuccessful) {
-            // Navigate to the 'mydashboard' route upon successful sign-in
-            this.router.navigate(['/mydashboard']);
+  onSignIn(): void {
+    this.authService.login(this.name, this.password).subscribe({
+      next: (response) => {
+        if (response.jwtToken) {
+          this.token = response.jwtToken;
+          this.authService.storeToken(this.token);
+
+          const decodedToken: any = jwtDecode(this.token);
+          const userId = decodedToken.userid;
+          const roles: string[] = decodedToken.roles || [];
+
+          // Use the service to set the user ID in local storage
+          this.storageService.setUserId(userId);
+
+          if (roles.includes('admin')) {
+            this.router.navigate(['/']);
+          } else {
+            this.router.navigate(['/landing']);
+          }
+        } else {
+          console.error('JWT token is not in the response');
         }
-    }
+      },
+      error: (err) => {
+        this.error = 'Login failed';
+        console.error('Error during login:', err);
+      },
+    });
+  }
+
+  forgetpassword(): void {
+    this.router.navigate(['/auth/reset-password']);
+  }
+  
 }

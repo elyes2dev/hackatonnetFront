@@ -1,0 +1,233 @@
+/* Variables */
+$primary-color: #4318FF;
+$error-color: #dc3545;
+$success-color: #28a745;
+$border-radius: 16px;
+$box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+/* Page Layout */
+.container {
+    min-height: calc(100vh - 140px);
+    background-color: #f8f9fa;
+    padding: 2rem;
+}
+
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    overflow: hidden;
+}
+
+/* Form Header */
+.form-header {
+    padding: 2rem 3rem;
+    background: linear-gradient(to right, #4318FF, #868CFF);
+    color: white;
+
+    .form-title {
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 0;
+    }
+}
+
+/* Form Container */
+.form {
+    padding: 2rem 3rem;
+}
+
+/* Form Groups */
+.input-container {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+/* Input Styling */
+.input-wrapper {
+    position: relative;
+    display: block;
+
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        z-index: 1;
+    }
+}
+
+.input-mail, select, textarea, .input-group {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    &:focus {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba(67, 24, 255, 0.1);
+        outline: none;
+    }
+
+    &.is-invalid {
+        border-color: $error-color;
+    }
+}
+
+textarea.input-mail {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Input Group for Money */
+.input-group {
+    display: flex;
+    padding: 0;
+
+    .input-group-text {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        font-weight: 400;
+        color: #495057;
+        text-align: center;
+        white-space: nowrap;
+        background-color: #e9ecef;
+        border: 1px solid #dee2e6;
+        border-radius: 8px 0 0 8px;
+        border-right: none;
+    }
+
+    input {
+        flex: 1;
+        width: auto;
+        border-radius: 0 8px 8px 0;
+        padding: 0.75rem 1rem;
+        border: 1px solid #dee2e6;
+        outline: none;
+
+        &:focus {
+            border-color: $primary-color;
+            box-shadow: 0 0 0 2px rgba(67, 24, 255, 0.1);
+        }
+    }
+}
+
+/* Form Actions */
+.d-flex.gap-2 {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.submit {
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    color: #495057;
+    text-transform: none;
+    text-shadow: none;
+
+    &:hover:not([disabled]) {
+        box-shadow: 0 0 0 2px rgba(67, 24, 255, 0.1);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.cancel-button {
+    background-color: white;
+    border: 1px solid #dee2e6;
+}
+
+button[type="submit"] {
+    background-color: $primary-color;
+    border-color: $primary-color;
+    color: white;
+
+    &:hover:not([disabled]) {
+        background-color: darken($primary-color, 5%);
+        border-color: darken($primary-color, 5%);
+    }
+}
+
+/* Error Messages */
+.text-danger {
+    color: $error-color;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: block;
+}
+
+.text-light {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* Spinner */
+.spinner-border {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 0.2em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .form-container {
+        border-radius: 12px;
+    }
+
+    .form-header {
+        padding: 1.5rem 2rem;
+
+        .form-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    .form {
+        padding: 1.5rem;
+    }
+}

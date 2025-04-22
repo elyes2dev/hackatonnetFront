@@ -1,0 +1,42 @@
+<app-navbar></app-navbar>
+<br>
+<div *ngIf="quiz">
+  <h2 class="quiz-title">Quiz: {{ quiz.title }}</h2>
+
+  <!-- Timer and Progress Bar -->
+  <div class="quiz-timer">
+    <p>Time Left: {{ remainingTime }} seconds</p>
+    <div class="progress-bar">
+      <div class="progress" [style.width.%]="progress"></div>
+    </div>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="quiz-form">
+    <div *ngFor="let question of quiz.questions; let qIndex = index" class="question-container">
+      <h4 class="question-number">Question {{ qIndex + 1 }}:</h4>
+      <p class="question-text">{{ question.questionText }}</p>
+
+      <div *ngFor="let answer of question.answers; let i = index" class="answer-option">
+        <label>
+          <input
+            type="radio"
+            [name]="question.id_question ? question.id_question.toString() : ''"
+            [value]="i"
+            [(ngModel)]="userAnswers[question.id_question!]"/>
+          <span class="answer-text">{{ answer }}</span>
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" pButton label="Submit" class="p-button-success mt-3 submit-button"></button>
+    <button pButton label="Return" class="p-button-failed mt-3 submit-button" (click)="onReturn()"></button>
+  </form>
+</div>
+
+<!-- Loading state -->
+<div *ngIf="!quiz" class="loading-state">
+  Loading quiz...
+</div>
+
+<br><br><br><br>
+<app-footer></app-footer>

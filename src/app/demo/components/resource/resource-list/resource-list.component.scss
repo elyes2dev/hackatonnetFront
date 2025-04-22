@@ -1,0 +1,105 @@
+.resource-list-container {
+    padding: 20px;
+  }
+  
+  .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+  }
+  
+  .error-message {
+    margin: 20px 0;
+    padding: 15px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .no-resources {
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+  }
+  
+  .resource-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .resource-table table {
+    width: 100%;
+    border-spacing: 0;
+  }
+  
+  .resource-table th, .resource-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .resource-table th {
+    background-color: #f8f9fa;
+    color: #333;
+  }
+  
+  .actions button {
+    margin-left: 5px;
+  }
+  
+  .file-previews {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .file-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .preview-image {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+  
+  .file-button {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    
+    &.pdf {
+      background-color: #e74c3c;
+      border-color: #e74c3c;
+      
+      &:hover {
+        background-color: #c0392b !important;
+        border-color: #c0392b !important;
+      }
+    }
+  }
+  
+  .file-name {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-align: center;
+    max-width: 80px;
+    word-break: break-all;
+  }
+  
+  .resource-table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+  

@@ -7,6 +7,19 @@ import { DividerModule } from 'primeng/divider';
 import { ChartModule } from 'primeng/chart';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
+import { NavbarComponent } from './navbar/navbar.component';
+import { FooterComponent } from './footer/footer.component';
+import { LandingHackathonListComponent } from './Hackathon/landing-hackathon-list/landing-hackathon-list.component';
+import { LandingHackathonDetailsComponent } from './Hackathon/landing-hackathon-details/landing-hackathon-details.component';
+import { AvatarModule } from 'primeng/avatar';
+import { FormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { AppModule } from 'src/app/app.module';
+import { LandingLiveStreamComponent } from './Hackathon/landing-live-stream/landing-live-stream.component';
+import { LandingPostComponent } from './Hackathon/landing-hackathon-details/landing-post/landing-post.component';
+import { LandingCommentComponent } from './Hackathon/landing-hackathon-details/landing-post/landing-comment/landing-comment.component';
+
 
 @NgModule({
     imports: [
@@ -16,8 +29,13 @@ import { ButtonModule } from 'primeng/button';
         StyleClassModule,
         ChartModule,
         PanelModule,
-        ButtonModule
+        ButtonModule,
+        AvatarModule,
+        FormsModule,
+        DropdownModule,
+        InputTextModule
+
     ],
-    declarations: [LandingComponent]
+    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent, LandingLiveStreamComponent, LandingPostComponent, LandingCommentComponent]
 })
 export class LandingModule { }

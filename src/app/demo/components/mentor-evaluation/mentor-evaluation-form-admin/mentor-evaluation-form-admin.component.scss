@@ -1,0 +1,15 @@
+:host ::ng-deep {
+    .p-rating .p-rating-icon {
+      color: #FFD700; // Gold color for stars
+    }
+    
+    .p-rating .p-rating-icon.pi-star-fill {
+      color: #FFD700;
+    }
+    
+    .p-error {
+      color: #f44336;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+  }

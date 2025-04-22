@@ -1,0 +1,110 @@
+<div class="surface-section px-4 py-8 md:px-6 lg:px-8">
+    <div class="surface-section">
+        <div class="flex align-items-center justify-content-between mb-4">
+            <div>
+                <div class="font-medium text-3xl text-900 mb-1">Mentor Application Details</div>
+                <div class="text-500">View mentor application information</div>
+            </div>
+            <button 
+            *ngIf="application && !loading"
+            pButton 
+            pRipple 
+            type="button" 
+            icon="pi pi-trash" 
+            label="Delete Application" 
+            class="p-button-danger" 
+            (click)="deleteApplication()">
+        </button>
+        </div>
+        
+        <p-card *ngIf="application && !loading">
+            <div class="grid">
+                <div class="col-12">
+                    <ul class="list-none p-0 m-0">
+                        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+                            <div class="text-500 w-6 md:w-2 font-medium">Applicant</div>
+                            <div class="text-900 w-full md:w-10">
+                                {{ application.user.name }} {{ application.user.lastname }}
+                            </div>
+                        </li>
+                        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+                            <div class="text-500 w-6 md:w-2 font-medium">Status</div>
+                            <div class="text-900 w-full md:w-10">
+                                <p-tag [severity]="getStatusSeverity(application.status)" [value]="application.status"></p-tag>
+                            </div>
+                        </li>
+                        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+                            <div class="text-500 w-6 md:w-2 font-medium">Experience</div>
+                            <div class="text-900 w-full md:w-10">
+                                <p-tag [severity]="application.hasPreviousExperience ? 'success' : 'warning'" 
+                                    [value]="application.hasPreviousExperience ? 'Has Experience' : 'No Experience'">
+                                </p-tag>
+                            </div>
+                        </li>
+                        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+                            <div class="text-500 w-6 md:w-2 font-medium">Application Date</div>
+                            <div class="text-900 w-full md:w-10">
+                                {{ application.createdAt | date:'medium' }}
+                            </div>
+                        </li>
+                        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+                            <div class="text-500 w-6 md:w-2 font-medium">CV</div>
+                            <div class="text-900 w-full md:w-10">
+                                <a *ngIf="application?.cv"
+                                   href="javascript:void(0)"
+                                   (click)="downloadCv(application.id!, application.cv.split('/').pop() || 'cv.pdf')"
+                                   class="text-primary">
+                                    <i class="pi pi-file-pdf mr-2"></i>Download CV
+                                </a>
+                                <span *ngIf="!application?.cv">No CV uploaded</span>
+                            </div>
+                        </li>
+                        
+                        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+                            <div class="text-500 w-6 md:w-2 font-medium">Upload Paper</div>
+                            <div class="text-900 w-full md:w-10">
+                                <a *ngIf="application?.uploadPaper"
+                                   href="javascript:void(0)"
+                                   (click)="downloadUploadPaper(application.id!, application.uploadPaper.split('/').pop() || 'paper.pdf')"
+                                   class="text-primary">
+                                    <i class="pi pi-file mr-2"></i>Download Paper
+                                </a>
+                                <span *ngIf="!application?.uploadPaper">No paper uploaded</span>
+                            </div>
+                        </li>
+                        
+                        <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+                            <div class="text-500 w-6 md:w-2 font-medium">Links</div>
+                            <div class="text-900 w-full md:w-10">
+                                <div *ngIf="application.links && application.links.length > 0; else noLinks">
+                                    <a *ngFor="let link of application.links" [href]="link" target="_blank" class="block text-primary mb-1">
+                                        <i class="pi pi-external-link mr-2"></i>{{ link }}
+                                    </a>
+                                </div>
+                                <ng-template #noLinks>
+                                    No links provided
+                                </ng-template>
+                            </div>
+                        </li>
+                        <li class="flex align-items-start py-3 px-2 border-top-1 border-bottom-1 surface-border flex-wrap">
+                            <div class="text-500 w-6 md:w-2 font-medium">Application Text</div>
+                            <div class="text-900 w-full md:w-10 line-height-3 whitespace-pre-line">
+                                {{ application.applicationText }}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </p-card>
+
+        <!-- Previous Experiences Section -->
+        <div class="mt-5" *ngIf="application?.hasPreviousExperience">
+            <div class="font-medium text-2xl text-900 mb-3">Previous Experiences</div>
+            <app-previous-experience-list [experiences]="previousExperiences"></app-previous-experience-list>
+        </div>
+
+        <div *ngIf="loading" class="flex justify-content-center p-5">
+            <p-progressSpinner></p-progressSpinner>
+        </div>
+    </div>
+</div>

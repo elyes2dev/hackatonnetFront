@@ -1,0 +1,195 @@
+<div class="surface-0 flex justify-content-center h-full">
+  <div id="home" class="landing-wrapper overflow-hidden w-full h-full">
+
+<div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
+  <a (click)="navigateToLanding()" class="flex align-items-center">
+      <img src="assets/layout/images/hackathonnetlogo.png" alt="Logo" height="50" class="mr-0 lg:mr-2">
+  </a>
+
+  <a pRipple class="cursor-pointer block lg:hidden text-700" pStyleClass="@next" enterClass="hidden" leaveToClass="hidden" >
+      <i class="pi pi-bars text-4xl"></i>
+  </a>
+  <div class="align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2" style="top:85%">
+      <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
+        
+
+          <li>
+              <a (click)="router.navigate(['/pages/landing'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Pricing</span>
+              </a>
+          </li>
+          <li>
+              <a (click)="router.navigate(['/workshopsf'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Workshops</span>
+              </a>
+          </li>
+
+          <li>
+              <a (click)="router.navigate(['/prize-form'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Add a prize</span>
+              </a>
+          </li>
+          <li>
+              <a (click)="router.navigate(['/sponsor-prizes'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>My prizes</span>
+              </a>
+          </li>
+          <li>
+              <a (click)="router.navigate(['/sponsor-application-form'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Apply as a sponsor</span>
+              </a>
+          </li>
+          <li>
+              <a (click)="router.navigate(['/sponsors-leaderboard'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Sponsor Leaderboard</span>
+              </a>
+          </li>
+
+          <li>
+              <a [routerLink]="['/mentor-applications/new']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Apply</span>
+              </a>
+          </li>
+
+          <li>
+              <a (click)="router.navigate(['mentor-evaluation/new'], {fragment: 'features'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Evaluate</span>
+              </a>
+          </li>
+          <li>
+              <a [routerLink]="['/mentor-form']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Participate</span>
+              </a>
+          </li>
+
+          <li>
+              <a [routerLink]="['/mentor-evaluations-user']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>my evaluations</span>
+              </a>
+          </li>
+
+          <li>
+              <a (click)="router.navigate(['/landing-hackathons'], {fragment: 'hackathons'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                  <span>Hackathons</span>
+              </a>
+          </li>
+
+
+      </ul>
+      <div class="flex justify-content-between lg:flex-row lg:align-items-center border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
+          <div class="badge-icon ml-auto mr-1" *ngIf="user">
+              <img [src]="getBadgeIcon()" [alt]="user.badge" />
+          </div>
+          <button (click)="router.navigate(['/user-profile'])"
+                  pButton pRipple
+                  label="Profile"
+                  class="p-button-rounded border-none ml-1 font-light line-height-2 bg-green-500 text-white"
+                  *ngIf="user">
+          </button>
+          <button pButton pRipple label="Login" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></button>
+          <button pButton pRipple label="Register" class="p-button-rounded border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></button>
+      </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div class="fixed-header">
+  <div class="back-button-container">
+    <button pButton type="button" icon="pi pi-arrow-left" label="Back to List" routerLink="/landing-hackathons"></button>
+  </div>
+  <div class="header-actions">
+    <button class="header-button" (click)="JoinLiveStream()"><i class="pi pi-video"></i>Join Live stream</button>
+    <button *ngIf="isSponsor" pButton type="button" icon="pi pi-plus-circle" label="Add a Prize"
+            class="p-button-success header-button"
+            (click)="addPrize(hackathon?.id)">
+    </button>
+  </div>
+</div>
+
+
+<div *ngIf="hackathon as h" class="hackathon-details-container">
+    <!-- Hero Section with Gradient Overlay -->
+    <div class="hero-section" [style.backgroundImage]="'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url(' + h.logo + ')'">
+      <div class="hero-content">
+        <div class="logo-container">
+          <img class="logo" [src]="h.logo" alt="Hackathon Logo" />
+        </div>
+        <div class="header-content">
+          <h1>{{ h.title }}</h1>
+          <div class="meta-info">
+            <span class="location">
+              <i class="pi pi-map-marker"></i> {{ h.location }} • {{ h.isOnline ? 'Online' : 'Onsite' }}
+            </span>
+            <span class="date">
+              <i class="pi pi-calendar"></i> {{ h.startDate | date:'MMM d' }} - {{ h.endDate | date:'MMM d, y' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Main Content Section -->
+    <div class="content-section">
+      <!-- Description Card -->
+      <div class="card description-card">
+        <h2>About This Hackathon</h2>
+        <p>{{ h.description }}</p>
+      </div>
+  
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">{{ h.maxMembers }}</div>
+          <div class="stat-label">Max Team Size</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ (h.prizes ?? []).length }}</div>
+          <div class="stat-label">Prizes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ h.teams.length }}</div>
+          <div class="stat-label">Teams</div>
+        </div>
+        
+      </div>
+  
+      <!-- Prizes Section -->
+      <div class="card prizes-section" *ngIf="h.prizes && h.prizes.length > 0">
+        <h2>Prizes</h2>
+        <div class="prizes-grid">
+          <div class="prize-card" *ngFor="let prize of h.prizes; let i = index">
+            <div class="prize-rank">{{ i + 1 }}</div>
+            <div class="prize-details">
+              <h3>{{ prize.productName }}</h3>
+              <p>{{ prize.productDescription }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Teams Section -->
+      <div class="card teams-section" *ngIf="h.teams && h.teams.length > 0">
+        <h2>Participating Teams</h2>
+        <div class="teams-grid">
+          <div class="team-card" *ngFor="let team of h.teams">
+            <div class="team-avatar">
+              <p-avatar [label]="team.teamName.charAt(0)" size="large" shape="circle"></p-avatar>
+            </div>
+            <div class="team-info">
+              <h3>{{ team.teamName }}</h3>
+              <p>{{ team.teamMembers.length }} members</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="posts-section-container">
+    <h2>Community Posts</h2>
+    <div class="posts-scroll-container">
+      <app-landing-post *ngIf="hackathon" [hackathonId]="hackathon.id"></app-landing-post>
+    </div>
+  </div>

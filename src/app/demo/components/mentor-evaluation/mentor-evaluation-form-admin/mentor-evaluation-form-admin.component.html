@@ -1,0 +1,87 @@
+
+<div class="surface-section px-4 py-8 md:px-6 lg:px-8">
+    <div class="grid justify-content-center">
+        <div class="col-12 md:col-8 lg:col-6">
+            <div class="flex align-items-center justify-content-between mb-4">
+                <div>
+                    <div class="font-medium text-3xl text-900 mb-1">{{ isEditMode ? 'Edit' : 'New' }} Mentor Evaluation</div>
+                    <div class="text-500">{{ isEditMode ? 'Update your mentor evaluation' : 'Submit a new mentor evaluation' }}</div>
+                </div>
+                <div class="flex gap-2">
+                    <button pButton 
+                            pRipple 
+                            icon="pi pi-arrow-left" 
+                            label="Back" 
+                            class="p-button-text" 
+                            (click)="cancelEdit()">
+                    </button>
+                </div>
+            </div>
+            
+            <p-card>
+                <p-toast></p-toast>
+                <form (ngSubmit)="submitEvaluation()" class="p-fluid">
+                    <div class="grid">
+                        <div class="col-12">
+                            <!-- Rating -->
+                            <div class="field mb-4">
+                                <label for="rating" class="text-500 font-medium mb-2 block">Rating (0-5)*</label>
+                                <p-rating
+                                    [(ngModel)]="evaluation.rating"
+                                    id="rating"
+                                    name="rating"
+                                    [cancel]="true"
+                                    [stars]="5"
+                                    [required]="true"
+                                    style="font-size: 1.5rem">
+                                </p-rating>
+                                <small *ngIf="submitted && (evaluation.rating < 0 || evaluation.rating > 5)" class="p-error">
+                                    Rating must be between 0 and 5
+                                </small>
+                            </div>
+                            
+                            <!-- Feedback -->
+                            <div class="field mb-4">
+                                <label for="feedback" class="text-500 font-medium mb-2 block">Feedback*</label>
+                                <textarea
+                                    pInputTextarea
+                                    id="feedback"
+                                    rows="5"
+                                    [(ngModel)]="evaluation.feedbackText"
+                                    name="feedbackText"
+                                    required
+                                    [class.ng-invalid]="submitted && !evaluation.feedbackText"
+                                    [class.ng-dirty]="submitted && !evaluation.feedbackText">
+                                </textarea>
+                                <small *ngIf="submitted && !evaluation.feedbackText" class="p-error">
+                                    Feedback is required
+                                </small>
+                            </div>
+                            
+                            <!-- Submit and Cancel Buttons -->
+                            <div class="flex justify-content-between mt-4 pt-3 border-top-1 surface-border">
+                                <button 
+                                    pButton 
+                                    pRipple 
+                                    type="button" 
+                                    label="Cancel" 
+                                    class="p-button-secondary"
+                                    (click)="cancelEdit()">
+                                </button>
+                                
+                                <button 
+                                    pButton 
+                                    pRipple 
+                                    type="submit" 
+                                    [label]="isEditMode ? 'Update Evaluation' : 'Submit Evaluation'" 
+                                    class="p-button-primary">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </p-card>
+        </div>
+    </div>
+</div>
+
