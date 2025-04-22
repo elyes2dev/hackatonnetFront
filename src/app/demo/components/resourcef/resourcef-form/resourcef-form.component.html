@@ -1,67 +1,137 @@
 <app-navbar></app-navbar>
+
 <div class="resource-form-container">
-    <h2 *ngIf="!isEditMode">Add Resource</h2>
-    <h2 *ngIf="isEditMode">Edit Resource</h2>
-  
-    <form [formGroup]="resourceForm" (ngSubmit)="onSubmit()">
-      <div class="form-field">
-        <label for="name">Resource Name</label>
-        <input id="name" type="text" formControlName="name" />
-        <small class="error-message" *ngIf="resourceForm.get('name')?.invalid && resourceForm.get('name')?.touched">
-          Resource name is required.
-        </small>
-      </div>
-  
-      <div class="form-field">
-        <label for="description">Description</label>
-        <textarea id="description" rows="3" formControlName="description"></textarea>
-      </div>
-  
-      <div class="form-field">
-        <label for="niveau">Skill Level</label>
-        <select id="niveau" formControlName="niveau">
-          <option value="">Select skill level</option>
-          <option *ngFor="let level of skillLevels" [value]="level">{{level}}</option>
-        </select>
-        <small class="error-message" *ngIf="resourceForm.get('niveau')?.invalid && resourceForm.get('niveau')?.touched">
-          Skill level is required.
-        </small>
-      </div>
-  
-      <div class="form-field">
-        <label for="files">Upload Files</label>
-        <input id="files" type="file" (change)="onFileSelected($event)" multiple 
-               accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" />
+  <div class="form-header">
+    <div class="header-content">
+      <h2>{{ isEditMode ? 'Edit Resource' : 'Add New Resource' }}</h2>
+      <p class="subtitle">{{ isEditMode ? 'Update the resource details and files' : 'Create a new resource for your workshop' }}</p>
+    </div>
+  </div>
+
+  <form [formGroup]="resourceForm" (ngSubmit)="onSubmit()">
+    <div class="form-content">
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">Basic Information</h3>
         
-        <div class="file-preview-container">
-          <!-- Selected files -->
-          <div *ngIf="selectedFiles.length > 0" class="file-list">
-            <h4>New Files</h4>
+        <div class="form-field">
+          <label for="name">Resource Name</label>
+          <input 
+            id="name" 
+            type="text" 
+            formControlName="name" 
+            placeholder="Enter resource name"
+            [class.error]="resourceForm.get('name')?.invalid && resourceForm.get('name')?.touched"
+          />
+          <small class="error-message" *ngIf="resourceForm.get('name')?.invalid && resourceForm.get('name')?.touched">
+            Resource name is required
+          </small>
+        </div>
+    
+        <div class="form-field">
+          <label for="description">Description</label>
+          <textarea 
+            id="description" 
+            rows="4" 
+            formControlName="description" 
+            placeholder="Describe your resource"
+          ></textarea>
+        </div>
+    
+        <div class="form-field">
+          <label for="niveau">Skill Level</label>
+          <div class="select-wrapper">
+            <select 
+              id="niveau" 
+              formControlName="niveau"
+              [class.error]="resourceForm.get('niveau')?.invalid && resourceForm.get('niveau')?.touched"
+            >
+              <option value="">Select skill level</option>
+              <option *ngFor="let level of skillLevels" [value]="level">{{level}}</option>
+            </select>
+          </div>
+          <small class="error-message" *ngIf="resourceForm.get('niveau')?.invalid && resourceForm.get('niveau')?.touched">
+            Skill level is required
+          </small>
+        </div>
+      </div>
+
+      <!-- File Upload Section -->
+      <div class="form-section">
+        <h3 class="section-title">Resource Files</h3>
+        
+        <div class="file-upload-area">
+          <div class="upload-zone" (click)="fileInput.click()">
+            <input 
+              #fileInput
+              type="file" 
+              (change)="onFileSelected($event)" 
+              multiple 
+              accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+              style="display: none;"
+            />
+            <i class="pi pi-cloud-upload"></i>
+            <p>Click to upload or drag files here</p>
+            <span class="supported-formats">Supported formats: Images, PDF, DOC, XLS</span>
+          </div>
+        </div>
+
+        <!-- Selected Files Preview -->
+        <div class="files-preview" *ngIf="selectedFiles.length > 0">
+          <h4>New Files to Upload</h4>
+          <div class="files-grid">
             <div *ngFor="let file of selectedFiles; let i = index" class="file-item">
-              <span [class]="getFileIcon(file.type)"></span>
-              <span class="file-name">{{ file.name }}</span>
-              <button type="button" class="remove-btn" (click)="removeSelectedFile(i)">×</button>
+              <div class="file-preview">
+                <div class="file-icon" [ngClass]="getFileIcon(file.type)">
+                  <i class="pi" [ngClass]="getFileIconClass(file.type)"></i>
+                </div>
+                <div class="file-info">
+                  <span class="file-name">{{ file.name }}</span>
+                  <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                </div>
+                <button type="button" class="remove-btn" (click)="removeSelectedFile(i)">
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
             </div>
           </div>
-  
-          <!-- Existing files (edit mode) -->
-          <div *ngIf="isEditMode && existingFiles.length > 0" class="file-list">
-            <h4>Existing Files</h4>
+        </div>
+
+        <!-- Existing Files Preview (Edit Mode) -->
+        <div class="files-preview" *ngIf="isEditMode && existingFiles.length > 0">
+          <h4>Existing Files</h4>
+          <div class="files-grid">
             <div *ngFor="let file of existingFiles; let i = index" class="file-item">
-              <span [class]="getFileIcon(file.type)"></span>
-              <span class="file-name">{{ file.path }}</span>
-            <!--      <button type="button" class="remove-btn" (click)="removeExistingFile(i)">×</button> -->
-  
+              <div class="file-preview">
+                <div class="file-icon" [ngClass]="getFileIcon(file.type)">
+                  <i class="pi" [ngClass]="getFileIconClass(file.type)"></i>
+                </div>
+                <div class="file-info">
+                  <span class="file-name">{{ getFileName(file.path) }}</span>
+                  <span class="file-type">{{ getFileType(file.type) }}</span>
+                </div>
+                <button type="button" class="remove-btn" (click)="removeExistingFile(i)">
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-  
-      <div class="form-actions">
-        <button type="submit" [disabled]="resourceForm.invalid">Save</button>
-        <button type="button" class="cancel-btn" (click)="onCancel()">Cancel</button>
-      </div>
-    </form>
-  </div>
+    </div>
 
-  <app-footer></app-footer>
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" class="cancel-btn" (click)="onCancel()">
+        <i class="pi pi-times"></i>
+        Cancel
+      </button>
+      <button type="submit" [disabled]="resourceForm.invalid || (!selectedFiles.length && !existingFiles.length)">
+        <i class="pi pi-save"></i>
+        {{ isEditMode ? 'Update Resource' : 'Create Resource' }}
+      </button>
+    </div>
+  </form>
+</div>
+
+<app-footer></app-footer>

@@ -9,4 +9,10 @@ export interface Quiz {
   questions?: Question[];
   isPublished: boolean;
   userQuizScores?: UserQuizScore[];
+  topics: string[];
+  duration: number;  // Duration in minutes
+  passingScore: number;  // Score required to pass the quiz (percentage)
+  description?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
