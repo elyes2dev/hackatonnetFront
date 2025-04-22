@@ -1,0 +1,266 @@
+/* Conteneur principal */
+.main-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Arial', sans-serif;
+    background: #e6f0fa !important; /* Fond bleu clair forcé */
+  }
+  
+  /* En-tête */
+  .header {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  h3 {
+    color: #2c3e50; /* Bleu foncé pour les titres */
+    font-weight: 600;
+  }
+  
+  /* Sections */
+  .section {
+    margin-bottom: 20px;
+    background: #ffffff; /* Fond blanc par défaut pour les sections */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Couleurs des sections */
+  .creation-section {
+    background: #d4e6f1 !important; /* Bleu clair pour la création */
+  }
+  
+  .submissions-section {
+    background: #f5f5f5 !important; /* Gris clair pour la liste */
+  }
+  
+  .modification-section {
+    background: #fef9e7 !important; /* Jaune clair pour la modification */
+    margin-top: 15px; /* Espacement au-dessus du formulaire de modification */
+    padding: 15px; /* Padding réduit pour s'intégrer dans la carte */
+    border-radius: 8px; /* Bordures arrondies */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre légère */
+  }
+  
+  /* Formulaire */
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .form-input:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+  }
+  
+  textarea.form-input {
+    height: 100px;
+    resize: vertical;
+  }
+  
+  label {
+    margin-bottom: 5px;
+    color: #2c3e50; /* Bleu foncé pour les labels */
+    font-weight: 500;
+  }
+  
+  /* Boutons */
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #fff !important; /* Texte blanc pour tous les boutons */
+    background: #3498db !important; /* Bleu pour tous les boutons */
+    transition: background 0.3s ease;
+  }
+  
+  /* Effet de survol pour tous les boutons */
+  .btn:hover {
+    background: #2c3e50 !important; /* Bleu plus foncé au survol */
+  }
+  
+  /* Bouton "Créer" */
+  .btn-create {
+    background: #3498db !important; /* Bleu */
+  }
+  
+  /* Bouton "Modifier" */
+  .btn-edit {
+    background: #3498db !important; /* Bleu */
+  }
+  
+  /* Bouton "Supprimer" */
+  .btn-delete {
+    background: #3498db !important; /* Bleu */
+  }
+  
+  /* Bouton "Mettre à jour" */
+  .btn-update {
+    background: #3498db !important; /* Bleu */
+  }
+  
+  /* Bouton "Annuler" */
+  .btn-cancel {
+    background: #3498db !important; /* Bleu */
+  }
+  
+  /* Actions du formulaire de modification */
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  /* Conteneur de cartes */
+  .card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espacement entre les cartes */
+  }
+  
+  /* Style des cartes */
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 5px solid #3498db; /* Bordure gauche bleue pour un accent */
+  }
+  
+  /* Effet de survol sur les cartes */
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Style des éléments dans les cartes */
+  .card h4 {
+    margin: 0 0 5px;
+    color: #7f8c8d; /* Gris pour l'ID */
+    font-size: 14px;
+  }
+  
+  .card h3 {
+    margin: 0 0 10px;
+    color: #2c3e50; /* Bleu foncé pour le nom du projet */
+    font-size: 18px;
+  }
+  
+  .card p {
+    margin: 5px 0;
+    color: #333; /* Texte en gris foncé */
+    font-size: 14px;
+  }
+  
+  /* Lien "Voir le projet" */
+  .project-link {
+    color: #3498db; /* Bleu pour le lien */
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .project-link:hover {
+    color: #2c3e50; /* Bleu foncé au survol */
+    text-decoration: underline;
+  }
+  
+  /* Colonne des actions */
+  .actions {
+    display: flex;
+    gap: 30px; /* Espacement entre "Modifier" et "Supprimer" */
+    margin-top: 15px;
+  }
+  
+  /* Chargement */
+  .loading-overlay {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #3498db;
+    padding: 20px;
+  }
+  
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Messages d'erreur */
+  .error-message {
+    background: #fce4e4 !important;
+    color: #e74c3c;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Ligne de séparation */
+  hr {
+    border: 0;
+    border-top: 1px solid #e0e0e0;
+    margin: 20px 0;
+  }
+  
+  /* Responsivité pour les cartes */
+  @media (max-width: 768px) {
+    .card-container {
+      gap: 15px;
+    }
+  
+    .card {
+      padding: 15px;
+    }
+  
+    .card h3 {
+      font-size: 16px;
+    }
+  
+    .card p {
+      font-size: 13px;
+    }
+  
+    .actions {
+      gap: 20px; /* Réduire l'espacement sur mobile */
+    }
+  
+    .btn {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+  
+    .modification-section {
+      padding: 10px;
+    }
+  }

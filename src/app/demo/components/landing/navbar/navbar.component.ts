@@ -15,15 +15,15 @@ export class NavbarComponent implements OnInit {
   isSponsor: boolean = false;
 
   constructor(
-    public router: Router, 
-    public layoutService: LayoutService, 
+    public router: Router,
+    public layoutService: LayoutService,
     private userService: UserService,
     private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
     const userId = this.storageService.getLoggedInUserId();
-    
+
     if (userId) {
       this.userService.getUserById(userId).subscribe((data) => {
         this.user = data;
@@ -36,7 +36,10 @@ export class NavbarComponent implements OnInit {
   navigateToLanding() {
     this.router.navigate(['/landing']);
   }
-  
+
+    navigateToTeamSubmission(): void {
+        this.router.navigate(['/team-submission']); // Navigation directe vers /team-submission
+    }
   getBadgeIcon(): string {
     const badgeIcons: { [key: string]: string } = {
       JUNIOR_COACH: 'assets/demo/images/avatar/JUNIOR_COACH.png',

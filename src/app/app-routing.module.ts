@@ -57,6 +57,8 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
 import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-list/access-denied/access-denied.component';
 import { AdminGuard } from './demo/services/hackathon/AuthGuard/auth-guard.service';
 
+import { TeamSubmissionComponent } from './demo/components/team-submission/team-submission.component';  // Import du composant
+import { ProjectEvaluationComponent } from './demo/components/project-evaluation/project-evaluation.component';
 
 
 
@@ -65,7 +67,7 @@ import { AdminGuard } from './demo/services/hackathon/AuthGuard/auth-guard.servi
     imports: [
         RouterModule.forRoot([
             {
-            
+
                 path: '', component: AppLayoutComponent,
                 children: [
                     { path: '', loadChildren: () => import('./demo/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
@@ -79,7 +81,10 @@ import { AdminGuard } from './demo/services/hackathon/AuthGuard/auth-guard.servi
                     { path: 'support-tickets', component: SupportTicketComponent },  // Add support ticket component route
                     { path: 'mydashboard', component: MydashboardComponent },
                     { path: 'profile', component: UserProfileComponent },  // User profile route
+                    { path: 'project-evaluations', component: ProjectEvaluationComponent },
 
+                    // Nouvelle route pour accéder au composant TeamSubmission
+                    { path: 'team-submission', component: TeamSubmissionComponent },  // Ajout de la route
                     { path: 'prizes', component: PrizeListComponent },
                     { path: 'prizes/:id', component: PrizeDetailComponent },
                     { path: 'sponsor-application', component: SponsorApplicationListComponent },
@@ -132,7 +137,7 @@ import { AdminGuard } from './demo/services/hackathon/AuthGuard/auth-guard.servi
                         component: QuizScoreAddComponent // Replace with your actual component
                       },
                     { path: 'live-stream/:id', component: LiveStreamComponent },
-                    
+
                     { path: 'mydashboard', component: MydashboardComponent },
                     // { path: 'hackathons', component: HackathonListComponent },
                     {
@@ -222,4 +227,5 @@ import { AdminGuard } from './demo/services/hackathon/AuthGuard/auth-guard.servi
     ],
     exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

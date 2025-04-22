@@ -1,0 +1,109 @@
+/* Conteneur principal */
+.payment-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #ffffff; /* Fond blanc pour le conteneur */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère */
+  border-left: 5px solid #3498db; /* Bordure gauche bleue pour un accent */
+}
+
+/* Bouton "Faire un don" */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff !important; /* Texte blanc */
+  background: #3498db !important; /* Bleu cohérent avec les autres composants */
+  transition: background 0.3s ease;
+  display: block; /* Centrer le bouton */
+  margin: 0 auto 20px; /* Espacement en bas */
+}
+
+.btn:hover {
+  background: #2c3e50 !important; /* Bleu plus foncé au survol */
+}
+
+.btn-donate {
+  background: #3498db !important; /* Bleu */
+}
+
+/* Champ de carte Stripe */
+.card-element {
+  position: relative;
+  padding: 12px 12px 12px 40px; /* Espace à gauche pour l'icône */
+  border: 2px solid #3498db; /* Bordure bleue */
+  border-radius: 8px;
+  background: #ffffff; /* Fond blanc */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre légère */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Icône de carte à gauche */
+.card-element::before {
+  content: '\1F4B3'; /* Emoji carte de crédit (Unicode) */
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #3498db; /* Couleur de l'icône */
+}
+
+/* Effet au focus */
+.card-element:focus-within {
+  border-color: #2c3e50; /* Bordure plus foncée au focus */
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.5); /* Ombre bleue plus prononcée */
+}
+
+/* Message d'erreur Stripe */
+.card-errors {
+  color: #e74c3c; /* Rouge pour les erreurs */
+  margin-top: 10px;
+  font-size: 14px;
+  text-align: center;
+  background: #fce4e4; /* Fond rouge clair pour les erreurs */
+  padding: 8px;
+  border-radius: 5px;
+}
+
+/* Message de statut */
+.payment-status {
+  margin-top: 15px;
+  padding: 10px;
+  background: #d4e6f1; /* Bleu clair pour le statut */
+  border-radius: 5px;
+  text-align: center;
+  color: #2c3e50; /* Texte bleu foncé */
+  font-weight: 500;
+}
+
+/* Responsivité */
+@media (max-width: 768px) {
+  .payment-container {
+    padding: 15px;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .card-element {
+    padding: 10px 10px 10px 35px; /* Réduire l'espace pour l'icône sur mobile */
+  }
+
+  .card-element::before {
+    font-size: 18px; /* Réduire la taille de l'icône sur mobile */
+    left: 8px;
+  }
+
+  .card-errors,
+  .payment-status {
+    font-size: 13px;
+    padding: 6px;
+  }
+}

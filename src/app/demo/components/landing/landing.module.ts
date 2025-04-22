@@ -19,6 +19,14 @@ import { AppModule } from 'src/app/app.module';
 import { LandingLiveStreamComponent } from './Hackathon/landing-live-stream/landing-live-stream.component';
 import { LandingPostComponent } from './Hackathon/landing-hackathon-details/landing-post/landing-post.component';
 import { LandingCommentComponent } from './Hackathon/landing-hackathon-details/landing-post/landing-comment/landing-comment.component';
+import { RippleModule } from 'primeng/ripple';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ToastModule } from 'primeng/toast';
+import { NavbarComponent } from './navbar/navbar.component';
+import { FooterComponent } from './footer/footer.component';
+import { LandingProjectEvaluationComponent } from './landing-project-evaluation/landing-project-evaluation.component'; // Nouveau
+import { LandingTeamSubmissionComponent } from './landing-team-submission/landing-team-submission.component'; // Nouveau
 
 
 @NgModule({
@@ -33,9 +41,16 @@ import { LandingCommentComponent } from './Hackathon/landing-hackathon-details/l
         AvatarModule,
         FormsModule,
         DropdownModule,
-        InputTextModule
+        InputTextModule,
+        RippleModule,
+        InputTextModule,
+        InputTextareaModule,
+        ToastModule
 
     ],
-    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent, LandingLiveStreamComponent, LandingPostComponent, LandingCommentComponent]
+    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent, LandingLiveStreamComponent, LandingPostComponent, LandingCommentComponent,    NavbarComponent,
+        FooterComponent,
+        LandingProjectEvaluationComponent,
+        LandingTeamSubmissionComponent     ]
 })
 export class LandingModule { }

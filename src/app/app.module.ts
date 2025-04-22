@@ -19,6 +19,8 @@ import { SidebarModule } from 'primeng/sidebar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ChartModule } from 'primeng/chart';
 import { PrimeIcons } from 'primeng/api';
+import { ProjectEvaluationService } from './demo/service/project-evaluation.service'; // Ajout
+import { TeamSubmissionService } from './demo/service/team-submission.service'; // Ajout
 
 
 //New TODO mydasboard
@@ -117,6 +119,11 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
 import { HackathonInsightsComponent } from './demo/components/Analytics/hackathon-insights/hackathon-insights/hackathon-insights.component';
 import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-dialog/ai-quiz-dialog.component';
 import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-list/access-denied/access-denied.component';
+import { FormsModule } from '@angular/forms';
+import { TeamSubmissionComponent } from './demo/components/team-submission/team-submission.component';
+import { ProjectEvaluationComponent } from './demo/components/project-evaluation/project-evaluation.component';
+import { PaymentComponent } from './components/payment/payment.component';
+import { ComponentsComponent } from './components/components.component';
 
 
 @NgModule({
@@ -138,7 +145,10 @@ import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-li
         MydashboardComponent,
         UserProfileComponent,
         HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent, HackathonCategorizationAnalyticsComponent, HackathonInsightsComponent,
-        AiQuizDialogComponent,
+        AiQuizDialogComponent,    TeamSubmissionComponent,
+        ProjectEvaluationComponent,
+        PaymentComponent,
+        ComponentsComponent,
         AccessDeniedComponent
 
     ],
@@ -211,7 +221,9 @@ import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-li
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService
+        PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService,
+        ProjectEvaluationService, // Ajouté
+        TeamSubmissionService
     ],
     bootstrap: [AppComponent]
 })
