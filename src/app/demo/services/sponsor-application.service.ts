@@ -38,6 +38,12 @@ export class SponsorApplicationService {
     return this.http.put<SponsorApplication>(`${this.baseUrl}/${id}/reject`, {});
   }
 
+    // AI Verify application
+  // Replace this method
+aiVerifyApplication(id: number): Observable<any> {
+  return this.http.put<any>(`${this.baseUrl}/${id}/ai-verify`, {});
+}
+
   // Delete application
   deleteApplication(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/deleteapplication/${id}`);
