@@ -143,50 +143,98 @@ export class GestureService {
 
 
 // Add to GestureService.ts
-
 private isHeartGesture(landmarks: any): boolean {
   if (!landmarks || landmarks.length < 21) return false;
   
-  // Get the relevant landmarks for the heart gesture
+  // Get relevant landmarks for all fingers
   const thumbTip = landmarks[4];
   const indexTip = landmarks[8];
+  const middleTip = landmarks[12];
+  const ringTip = landmarks[16];
+  const pinkyTip = landmarks[20];
   
-  // Get landmarks for the base of the thumb and index
-  const thumbBase = landmarks[1];
-  const indexBase = landmarks[5];
+  // Get the base landmarks
+  const wrist = landmarks[0];
+  const thumbCmc = landmarks[1]; // Thumb base
+  const indexMcp = landmarks[5]; // Index finger base
   
-  // For a heart gesture:
-  // 1. Both thumbs and index fingers should be extended
-  // 2. The tips of thumb and index should be close to each other
-  // 3. The distance between the bases should be significant to form the "V" shape
+  // For a heart shape:
+  // 1. Thumb and index should form a curved shape
+  // 2. Middle, ring, and pinky fingers should be curled
+  // 3. The thumb and index tips should be close but not touching
+  
+  // Check if middle, ring, and pinky are curled
+  const middleCurled = middleTip.y > landmarks[9].y; // Middle finger curled
+  const ringCurled = ringTip.y > landmarks[13].y;    // Ring finger curled
+  const pinkyCurled = pinkyTip.y > landmarks[17].y;  // Pinky finger curled
   
   // Check if thumb and index are extended
-  const thumbExtended = thumbTip.y < thumbBase.y;
-  const indexExtended = indexTip.y < indexBase.y;
+  const thumbExtended = (thumbTip.y < thumbCmc.y);
+  const indexExtended = (indexTip.y < indexMcp.y);
   
-  // Check if the tips are close to each other (forming the top of the heart)
-  const distanceBetweenTips = Math.sqrt(
-    Math.pow(thumbTip.x - indexTip.x, 2) + 
-    Math.pow(thumbTip.y - indexTip.y, 2)
-  );
+  // Calculate the angle between thumb tip, wrist, and index tip
+  // This is key for detecting the curved heart shape
+  const angle = this.calculateAngle(thumbTip, wrist, indexTip);
   
-  // Check if the bases are far enough apart (forming the bottom of the heart)
-  const distanceBetweenBases = Math.sqrt(
-    Math.pow(thumbBase.x - indexBase.x, 2) + 
-    Math.pow(thumbBase.y - indexBase.y, 2)
-  );
+  // The distance between thumb and index tips should be small but not zero
+  const tipDistance = this.distanceBetweenPoints(thumbTip, indexTip);
   
-  // The ratio between tips and bases helps identify the heart shape
-  // Tips should be close, bases should be far apart
-  const heartShapeRatio = distanceBetweenTips / distanceBetweenBases;
+  // For debugging
+  console.log("Heart detection values:", {
+    angle,
+    tipDistance,
+    thumbExt: thumbExtended,
+    indexExt: indexExtended,
+    middleCurled,
+    ringCurled,
+    pinkyCurled
+  });
   
-  // Determine if fingers are in a heart-like formation
-  return thumbExtended && 
+  // Heart gesture conditions:
+  // - Angle between 30-90 degrees (forming heart curve)
+  // - Thumb and index extended
+  // - Other fingers curled
+  // - Tips at an appropriate distance
+  return (angle >= 30 && angle <= 90) &&
+         thumbExtended && 
          indexExtended && 
-         heartShapeRatio < 0.5 && // Tips are close relative to bases
-         distanceBetweenBases > 0.15; // Bases are sufficiently apart
+         middleCurled && 
+         ringCurled && 
+         pinkyCurled &&
+         tipDistance < 0.2 && 
+         tipDistance > 0.02;
 }
 
+// Helper methods for heart gesture detection
+private calculateAngle(pointA: any, pointB: any, pointC: any): number {
+  // Calculate vectors
+  const vectorBA = { 
+    x: pointA.x - pointB.x, 
+    y: pointA.y - pointB.y 
+  };
+  const vectorBC = { 
+    x: pointC.x - pointB.x, 
+    y: pointC.y - pointB.y 
+  };
+  
+  // Calculate dot product
+  const dotProduct = (vectorBA.x * vectorBC.x) + (vectorBA.y * vectorBC.y);
+  
+  // Calculate magnitudes
+  const magnitudeBA = Math.sqrt(vectorBA.x * vectorBA.x + vectorBA.y * vectorBA.y);
+  const magnitudeBC = Math.sqrt(vectorBC.x * vectorBC.x + vectorBC.y * vectorBC.y);
+  
+  // Calculate angle in radians and convert to degrees
+  const angleRadians = Math.acos(dotProduct / (magnitudeBA * magnitudeBC));
+  return angleRadians * (180 / Math.PI);
+}
+
+private distanceBetweenPoints(pointA: any, pointB: any): number {
+  return Math.sqrt(
+    Math.pow(pointA.x - pointB.x, 2) + 
+    Math.pow(pointA.y - pointB.y, 2)
+  );
+}
 
 private isPeaceGesture(landmarks: any): boolean {
   if (!landmarks || landmarks.length < 21) return false;
