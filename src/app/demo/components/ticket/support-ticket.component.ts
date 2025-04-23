@@ -5,6 +5,7 @@ import { TicketService } from '../../services/ticket.service';
 import { StorageService } from '../../services/storage.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { UserService } from '../../services/user.service';
+import { TicketAIService } from '../../services/ticket-ai.service';
 
 interface DropdownOption {
   label: string;
@@ -49,7 +50,8 @@ export class SupportTicketComponent implements OnInit {
     private storageService: StorageService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private userService: UserService
+    private userService: UserService,
+    private ticketAIService: TicketAIService
   ) {}
 
   ngOnInit(): void {
@@ -104,19 +106,36 @@ export class SupportTicketComponent implements OnInit {
     }
     
     this.loading = true;
-    
     const formData = this.ticketForm.value;
+    /*
     const ticketData: Ticket = {
       ...formData,
       user: this.userService.getUserById(this.storageService.getLoggedInUserId()),
       updatedAt: new Date()
     };
-    
+    console.log(ticketData);
+    if (this.isUpdating) {
+      this.updateTicket(ticketData);
+    } else {
+      this.createTicket(ticketData);
+    }*/
+      this.userService.getUserById(this.storageService.getLoggedInUserId()).subscribe({
+        next: req => { const ticketData: Ticket = {
+          ...formData,
+          userId: req.id,
+          updatedAt: new Date()
+        };
+        console.log(ticketData);
     if (this.isUpdating) {
       this.updateTicket(ticketData);
     } else {
       this.createTicket(ticketData);
     }
+      },
+        error : err => { console.log(err)},
+        complete : () => {console.log("complete")}        
+      });
+
   }
 
   createTicket(ticketData: Ticket): void {
@@ -134,6 +153,17 @@ export class SupportTicketComponent implements OnInit {
           summary: 'Success',
           detail: 'Ticket created successfully'
         });
+        this.ticketAIService.geTicketDesc(newTicket).subscribe({
+          next: (req) => {
+            console.log(req);
+          },
+          error: (err) => {
+            console.error(err);
+          },
+          complete: () => {
+            console.log("AI description retrieval complete");
+          }
+        });
       },
       error: (error) => {
         this.loading = false;
@@ -144,6 +174,8 @@ export class SupportTicketComponent implements OnInit {
         });
       }
     });
+
+
   }
 
   updateTicket(ticketData: Ticket): void {
