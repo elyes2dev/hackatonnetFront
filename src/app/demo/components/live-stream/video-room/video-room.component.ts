@@ -1,9 +1,10 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Peer, MediaConnection } from 'peerjs';
 import { ChatService } from 'src/app/demo/services/live-stream/chat/chat.service';
 import { GestureService } from 'src/app/demo/services/live-stream/gesture/gesture.service';
+import { FacialAnalysisService } from 'src/app/demo/services/live-stream/facial-analysis/facial-analysis.service';
 
 interface Participant {
   id: string;
@@ -24,11 +25,16 @@ interface Participant {
     ])
   ]
 })
-export class VideoRoomComponent implements OnInit, OnDestroy {
+export class VideoRoomComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('localVideo', { static: false }) localVideo!: ElementRef<HTMLVideoElement>;
   currentGesture: string | null = null;
   isGestureDetectionReady = false;
   gestureDisplayTimeout: any = null;
+  
+  // New facial analysis flags
+  isFacialAnalysisEnabled = false;
+  isFacialAnalysisReady = false;
+  showFacialMetrics = false;
   
   // Streams
   localStream!: MediaStream;
@@ -48,7 +54,13 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   isHandRaised = false;
   messages: any[] = [];
 
-  constructor(private chatService: ChatService, private route: ActivatedRoute, private router: Router, private gestureService: GestureService) {}
+  constructor(
+    private chatService: ChatService, 
+    private route: ActivatedRoute, 
+    private router: Router, 
+    private gestureService: GestureService,
+    private facialAnalysisService: FacialAnalysisService
+  ) {}
   
   // PeerJS
   private peer!: Peer;
@@ -67,6 +79,40 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
     this.chatService.messages$.subscribe(messages => {
       this.messages = messages;
     });
+    
+    // Initialize facial analysis models
+    this.initializeFacialAnalysis();
+  }
+
+  async initializeFacialAnalysis() {
+    try {
+      await this.facialAnalysisService.loadModels();
+      this.isFacialAnalysisReady = true;
+      console.log('Facial analysis models loaded successfully');
+    } catch (error) {
+      console.error('Failed to load facial analysis models:', error);
+    }
+  }
+  
+  toggleFacialAnalysis() {
+    if (!this.isFacialAnalysisReady || !this.localVideo?.nativeElement) {
+      console.warn('Facial analysis not ready or video element not available');
+      return;
+    }
+    
+    this.isFacialAnalysisEnabled = !this.isFacialAnalysisEnabled;
+    
+    if (this.isFacialAnalysisEnabled) {
+      this.facialAnalysisService.startAnalysis(this.localVideo.nativeElement);
+      this.showFacialMetrics = true;
+    } else {
+      this.facialAnalysisService.stopAnalysis();
+      this.showFacialMetrics = false;
+    }
+  }
+  
+  toggleFacialMetrics() {
+    this.showFacialMetrics = !this.showFacialMetrics;
   }
 
   ngAfterViewInit() {
@@ -200,6 +246,12 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   toggleCamera() {
     this.isCameraOff = !this.isCameraOff;
     this.localStream.getVideoTracks()[0].enabled = !this.isCameraOff;
+    
+    // If camera is turned off, also stop facial analysis
+    if (this.isCameraOff && this.isFacialAnalysisEnabled) {
+      this.isFacialAnalysisEnabled = false;
+      this.facialAnalysisService.stopAnalysis();
+    }
   }
 
   async toggleScreenShare() {
@@ -229,6 +281,12 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       });
 
       this.isSharingScreen = true;
+      
+      // Stop facial analysis when screen sharing
+      if (this.isFacialAnalysisEnabled) {
+        this.isFacialAnalysisEnabled = false;
+        this.facialAnalysisService.stopAnalysis();
+      }
     } catch (err) {
       console.error('Screen share failed:', err);
     }
@@ -257,6 +315,11 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
       clearTimeout(this.gestureDisplayTimeout);
     }
     
+    // Stop facial analysis
+    if (this.isFacialAnalysisEnabled) {
+      this.facialAnalysisService.stopAnalysis();
+    }
+    
     this.participants.forEach(p => {
       p.stream.getTracks().forEach(track => track.stop());
     });
@@ -271,6 +334,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.leaveCall();
     this.gestureService.stopDetection();
+    this.facialAnalysisService.stopAnalysis();
   }
 
   toggleChat() {
@@ -284,11 +348,9 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  // This is the only method that should add a hand raise to the chat
   toggleHandRaise() {
     this.isHandRaised = !this.isHandRaised;
     if (this.isHandRaised) {
-      // Only add to chat when button is clicked
       this.chatService.raiseHand('You');
     }
   }
