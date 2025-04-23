@@ -23,14 +23,14 @@ export class AppMenuComponent implements OnInit {
                 ]
             },
             {
-                label: 'UI Components',
+                label: 'Admin Modules',
                 items: [
                     { label: 'Sponsor Applications', icon: 'pi pi-fw pi-user-plus', routerLink: ['/sponsor-application'] },
-                    { label: 'Prizes', icon: 'pi pi-fw pi-trophy', routerLink: ['/prizes'] },
+                    { label: 'Prizes', icon: 'pi pi-fw pi-slack', routerLink: ['/prizes'] },
                     { label: 'Workshop', icon: 'pi pi-fw pi-folder', routerLink: ['/workshops'] },
                     { label: 'User', icon: 'pi pi-fw pi-user', routerLink: ['/users'] },
                     { label: 'Support-Ticket', icon: 'pi pi-fw pi-id-card', routerLink: ['/support-tickets'] },
-                    { label: 'Hackathons', icon: 'pi pi-fw pi-calendar-times', routerLink: ['/hackathons'] }
+                    { label: 'Hackathons', icon: 'pi pi-fw pi-calendar', routerLink: ['/hackathons'] }
                 ]
             },
             {
