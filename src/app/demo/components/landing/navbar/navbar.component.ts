@@ -64,7 +64,8 @@ export class NavbarComponent implements OnInit {
 
   logout()
   {
-      this.authService.logout()
+      this.authService.logout();
+      this.storageService.clearAll();
       window.location.reload();
       this.userMenuVisible = false;
   }

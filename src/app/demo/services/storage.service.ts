@@ -44,4 +44,8 @@ export class StorageService {
         return [];
     }
 }
+
+clearAll(): void {
+  localStorage.clear();
+}
 }
