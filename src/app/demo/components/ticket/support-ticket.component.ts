@@ -24,6 +24,8 @@ export class SupportTicketComponent implements OnInit {
   
   isUpdating: boolean = false;
   loading: boolean = false;
+
+  
   
   statusOptions: DropdownOption[] = [
     { label: 'Open', value: 'Open' },

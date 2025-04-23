@@ -26,6 +26,18 @@ import { StorageService } from 'src/app/demo/services/storage.service';
             margin-right: 1rem;
             color: var(--primary-color) !important;
         }
+            .floating-logo {
+    animation: floatUpDown 3s ease-in-out infinite;
+  }
+  
+  @keyframes floatUpDown {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
     `]
 })
 export class LoginComponent {

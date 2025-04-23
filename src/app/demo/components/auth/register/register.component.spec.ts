@@ -1,21 +1,51 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component } from '@angular/core';
+import { AuthService } from '../../../services/auth.service';
+import { Router } from '@angular/router';
+import { LayoutService } from '../../../../layout/service/app.layout.service';
 
-import { RegisterComponent } from './register.component';
+@Component({
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss']
+})
+export class RegisterComponent {
+  registrationData = {
+    name: '',
+    lastname: '',
+    email: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
+    birthdate: null,
+    picture: '',
+    description: '',
+    badge: 'ROLE_USER'
+  };
 
-describe('RegisterComponent', () => {
-  let component: RegisterComponent;
-  let fixture: ComponentFixture<RegisterComponent>;
+  errorMessage: string | null = null;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [RegisterComponent]
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    public layoutService: LayoutService
+  ) {}
+
+  registerUser() {
+    const { password, confirmPassword } = this.registrationData;
+
+    if (password !== confirmPassword) {
+      this.errorMessage = 'Passwords do not match.';
+      return;
+    }
+
+    this.authService.register(this.registrationData).subscribe({
+      next: (response) => {
+        this.authService.storeToken(response.token);
+        this.router.navigate(['/dashboard']);
+      },
+      error: () => {
+        this.errorMessage = 'Registration failed. Please try again.';
+      }
     });
-    fixture = TestBed.createComponent(RegisterComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  }
+}

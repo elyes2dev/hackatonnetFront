@@ -230,7 +230,8 @@ import { PasswordModule } from 'primeng/password';
         TagModule,
         TableModule,
         DropdownModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        
 
     ],
     providers: [
