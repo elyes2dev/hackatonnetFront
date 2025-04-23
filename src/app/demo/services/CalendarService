@@ -1,0 +1,23 @@
+// src/app/demo/services/calendar.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CalendarService {
+  private apiUrl = 'http://localhost:9100/api/mentor-calendar';
+
+  constructor(private http: HttpClient) { }
+
+  syncHackathonToCalendar(listMentorId: number, recreate: boolean = false): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/sync/${listMentorId}`, null, {
+      params: { recreate: recreate.toString() }
+    });
+  }
+
+  getCalendarSyncStatus(listMentorId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/status/${listMentorId}`);
+  }
+}
