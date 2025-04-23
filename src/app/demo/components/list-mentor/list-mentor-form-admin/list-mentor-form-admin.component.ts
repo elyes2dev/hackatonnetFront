@@ -75,20 +75,8 @@ export class ListMentorFormAdminComponent implements OnInit {
           console.error('Error updating mentor listing:', err);
         }
       });
-    } else {
-      // Create new mentor listing
-      this.listMentorService.createListMentor(numberOfTeams).subscribe({
-        next: () => {
-          this.isSubmitting = false;
-          this.router.navigate(['/landing']); // Navigate to landing page
-        },
-        error: (err) => {
-          this.isSubmitting = false;
-          this.errorMessage = 'Failed to create mentor listing. Please try again.';
-          console.error('Error creating mentor listing:', err);
-        }
-      });
-    }
+    } 
+    
   }
   cancel(): void {
     if (this.isEditMode) {

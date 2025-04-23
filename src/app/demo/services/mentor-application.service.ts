@@ -33,7 +33,7 @@ export class MentorApplicationService {
     );
   }
 
-  createApplication(application: MentorApplication, cvFile: File, uploadPaperFile?: File): Observable<MentorApplication> {
+  createApplication(userId: number, application: MentorApplication, cvFile: File, uploadPaperFile?: File): Observable<MentorApplication> {
     const formData = new FormData();
 
     // Add each field individually
@@ -55,7 +55,7 @@ export class MentorApplicationService {
       formData.append('uploadPaperFile', uploadPaperFile);
     }
 
-    return this.http.post<MentorApplication>(this.apiUrl, formData);
+    return this.http.post<MentorApplication>(`${this.apiUrl}/${userId}/submit`, formData);
   }
 
   updateApplicationStatus(id: number, status: ApplicationStatus): Observable<MentorApplication> {
@@ -91,10 +91,7 @@ export class MentorApplicationService {
     }
 
     return this.http.put<MentorApplication>(`${this.apiUrl}/${id}`, formData);
-}
-
-// You can remove updateApplicationFormData and just use the above method
-
+  }
 
   downloadCv(id: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${id}/cv`, {

@@ -12,17 +12,14 @@ export class ListMentorService {
 
   constructor(private http: HttpClient) { }
 
-  // Create a new mentor listing
-  // Create a new mentor listing (simplified for your static user/hackathon case)
-  createListMentor(numberOfTeams: number): Observable<ListMentor> {
-    // The backend will set the static user and hackathon, so we only need to send numberOfTeams
+  // Create a new mentor listing with specific user and hackathon
+  createListMentor(userId: number, hackathonId: number, numberOfTeams: number): Observable<ListMentor> {
     const listMentor = {
       numberOfTeams: numberOfTeams,
-      // These will be overwritten by the backend, but providing empty objects to match the interface
-      mentor: {} as any,
-      hackathon: {} as any
+      mentor: { id: userId },
+      hackathon: { id: hackathonId }
     };
-    
+
     return this.http.post<ListMentor>(this.baseUrl, listMentor);
   }
 

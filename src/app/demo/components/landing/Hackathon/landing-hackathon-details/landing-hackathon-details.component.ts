@@ -8,11 +8,17 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { UserService } from 'src/app/demo/services/user.service';
 import { User } from 'src/app/demo/models/user.model';
 import { StorageService } from 'src/app/demo/services/storage.service';
+import { MessageService } from 'primeng/api';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ListMentorService } from 'src/app/demo/services/list-mentor.service';
+import { ListMentorFormComponent } from '../../../list-mentor/list-mentor-form/list-mentor-form.component';
 
 @Component({
   selector: 'app-landing-hackathon-details',
   templateUrl: './landing-hackathon-details.component.html',
-  styleUrls: ['./landing-hackathon-details.component.scss']
+  styleUrls: ['./landing-hackathon-details.component.scss'],
+  providers: [DialogService, MessageService]
+
 })
 export class LandingHackathonDetailsComponent implements OnInit {
   @ViewChild(PostListComponent) postListComponent!: PostListComponent;
@@ -22,6 +28,9 @@ export class LandingHackathonDetailsComponent implements OnInit {
   
   user!: User;
   isSponsor: boolean = false;
+  isAlreadyMentor: boolean = false;
+  existingMentorListing: any = null;
+  dialogRef: DynamicDialogRef | undefined;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,7 +38,10 @@ export class LandingHackathonDetailsComponent implements OnInit {
     public router: Router,
     public layoutService: LayoutService, 
     private userService: UserService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private dialogService: DialogService,
+    private listMentorService: ListMentorService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
@@ -39,6 +51,8 @@ export class LandingHackathonDetailsComponent implements OnInit {
       // Fetch the hackathon details based on the ID
       this.hackathonService.getHackathonById(hackathonId).subscribe((data: Hackathon) => {
         this.hackathon = data;
+        this.checkMentorStatus();
+
       });
     }
 
@@ -64,6 +78,42 @@ export class LandingHackathonDetailsComponent implements OnInit {
         },
         error: (err) => console.error('Error fetching user data:', err)
       });
+    }
+  }
+
+  checkMentorStatus(): void {
+    const userId = this.storageService.getLoggedInUserId();
+    const hackathonId = this.hackathon?.id;
+    
+    // Reset mentor status when checking a new hackathon
+    this.isAlreadyMentor = false;
+    this.existingMentorListing = null;
+    
+    if (userId && hackathonId) {
+      // Get mentors for this hackathon
+      this.listMentorService.getListMentorsByHackathonId(hackathonId).subscribe(
+        mentorListings => {
+          // Check if current user is already a mentor for THIS hackathon
+          const userListing = mentorListings.find(
+            listing => listing.mentor && listing.mentor.id === userId
+          );
+          
+          if (userListing) {
+            this.isAlreadyMentor = true;
+            this.existingMentorListing = userListing;
+            console.log('Found existing mentor listing:', userListing);
+          } else {
+            this.isAlreadyMentor = false;
+            this.existingMentorListing = null;
+            console.log('No existing mentor listing found for this hackathon');
+          }
+        },
+        error => {
+          console.error('Error checking mentor status:', error);
+          this.isAlreadyMentor = false;
+          this.existingMentorListing = null;
+        }
+      );
     }
   }
 
@@ -93,5 +143,49 @@ export class LandingHackathonDetailsComponent implements OnInit {
   addPrize(hackathonId: number | undefined) {
     if (!hackathonId) return;
     this.router.navigate(['/prize-form', hackathonId]);
+  }
+
+  applyAsMentor() {
+    if (!this.hackathon || !this.user) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'You must be logged in to apply as a mentor'
+      });
+      return;
+    }
+  
+    // Only pass mentorListingId if there's a valid existing mentor listing for THIS hackathon
+    const mentorListingId = this.isAlreadyMentor && this.existingMentorListing ? 
+      this.existingMentorListing.id : null;
+  
+    // Show the dialog
+    this.dialogRef = this.dialogService.open(ListMentorFormComponent, {
+      header: this.isAlreadyMentor ? 'Update Mentor Application' : 'Apply as Mentor',
+      width: '450px',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10000,
+      data: {
+        hackathonId: this.hackathon.id,
+        mentorListingId: mentorListingId
+      }
+    });
+
+    // Handle the dialog close event
+    this.dialogRef.onClose.subscribe((result) => {
+      if (result) {
+        // Success - refresh mentor status
+        this.checkMentorStatus();
+        
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: this.isAlreadyMentor 
+            ? 'Your mentor application has been updated!'
+            : 'Your mentor application has been submitted!'
+        });
+      }
+    });
   }
 }

@@ -12,12 +12,6 @@
     <div class="align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2" style="top:85%">
         <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
 
-
-            <li>
-                <a (click)="router.navigate(['/pages/landing'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                    <span>Pricing</span>
-                </a>
-            </li>
             <li>
                 <a (click)="router.navigate(['/workshopsf'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
                     <span>Workshops</span>
@@ -43,24 +37,31 @@
                 </a>
             </li>
 
-            <li>
-                <a [routerLink]="['/mentor-applications/new']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                    <span>Apply</span>
-                </a>
-            </li>
+<ng-container *ngIf="!isMentor">
+    <li>
+        <a [routerLink]="['/mentor-applications/new']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+            <span>Apply as Mentor</span>
+        </a>
+    </li>
+</ng-container>
+
+<li>
+    <a (click)="viewOrCreateMentorApplication()" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 cursor-pointer">
+        <span>{{ isMentor ? 'My Mentor Application' : 'Apply as Mentor' }}</span>
+    </a>
+</li>
+
+
 
             <li>
                 <a (click)="router.navigate(['mentor-evaluation/new'], {fragment: 'features'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
                     <span>Evaluate</span>
                 </a>
             </li>
-            <li>
-                <a [routerLink]="['/mentor-form']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                    <span>Participate</span>
-                </a>
-            </li>
 
-            <li>
+        
+
+            <li  *ngIf="isMentor" >
                 <a [routerLink]="['/mentor-evaluations-user']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
                     <span>my evaluations</span>
                 </a>

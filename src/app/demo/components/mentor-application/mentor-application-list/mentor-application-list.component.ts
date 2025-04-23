@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { Table } from 'primeng/table';
 import { ApplicationStatus, MentorApplication } from 'src/app/demo/models/mentor-application.model';
 import { MentorApplicationService } from 'src/app/demo/services/mentor-application.service';
+import { MessageService, ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-mentor-application-list',
@@ -22,7 +23,9 @@ export class MentorApplicationListComponent implements OnInit {
 
   constructor(
     private mentorApplicationService: MentorApplicationService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit() {
@@ -72,6 +75,21 @@ export class MentorApplicationListComponent implements OnInit {
     });
   }
 
+  confirmAction(action: 'approve' | 'reject', id: number): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to ${action} this mentor application?`,
+      header: 'Confirm Action',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        if (action === 'approve') {
+          this.updateStatus(id, ApplicationStatus.APPROVED);
+        } else {
+          this.updateStatus(id, ApplicationStatus.REJECTED);
+        }
+      }
+    });
+  }
+
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
@@ -95,5 +113,12 @@ export class MentorApplicationListComponent implements OnInit {
       },
       error: (err) => console.error('Error updating status:', err)
     });
+  }
+
+  private updateApplicationStatusLocally(id: number, status: ApplicationStatus): void {
+    const application = this.applications.find(app => app.id === id);
+    if (application) {
+      application.status = status;
+    }
   }
 }

@@ -5,6 +5,8 @@ import { ListMentor } from 'src/app/demo/models/list-mentor.model';
 import { ListMentorService } from 'src/app/demo/services/list-mentor.service';
 import { User } from 'src/app/demo/models/user.model';
 import { Hackathon } from 'src/app/demo/models/hackathon.model';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { StorageService } from 'src/app/demo/services/storage.service';
 
 @Component({
   selector: 'app-list-mentor-form',
@@ -17,20 +19,37 @@ export class ListMentorFormComponent implements OnInit {
   mentorId: number = 0;
   isSubmitting = false;
   errorMessage: string = '';
+  hackathonId: number;
   
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private listMentorService: ListMentorService
+    private listMentorService: ListMentorService,
+    private storageService: StorageService,
+    public ref: DynamicDialogRef,
+    public config: DynamicDialogConfig
   ) {
     this.mentorForm = this.fb.group({
       numberOfTeams: [1, [Validators.required, Validators.min(1)]]
     });
+
+  // Get hackathon ID from dialog config
+  this.hackathonId = this.config.data?.hackathonId;
+  
+  // Check if we have a valid mentor listing ID for THIS hackathon
+  if (this.config.data?.mentorListingId) {
+    this.isEditMode = true;
+    this.mentorId = this.config.data.mentorListingId;
+  } else {
+    this.isEditMode = false;
+    this.mentorId = 0;
   }
+}
+
 
   ngOnInit(): void {
-    // Check if we're in edit mode by looking for an ID parameter
+  if (!this.config.data) {
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.isEditMode = true;
@@ -39,8 +58,18 @@ export class ListMentorFormComponent implements OnInit {
       }
     });
   }
+    if (this.isEditMode && this.mentorId) {
+    this.loadMentorData();
+  }
+  }
 
   loadMentorData(): void {
+    if (!this.mentorId) {
+      console.warn('Cannot load mentor data: No mentor ID provided');
+      this.isEditMode = false; // Force to create mode if no valid ID
+      return;
+    }
+  
     this.listMentorService.getListMentorById(this.mentorId).subscribe({
       next: (data: ListMentor) => {
         this.mentorForm.patchValue({
@@ -48,8 +77,13 @@ export class ListMentorFormComponent implements OnInit {
         });
       },
       error: (err) => {
-        this.errorMessage = 'Failed to load mentor data. Please try again.';
         console.error('Error loading mentor data:', err);
+        this.errorMessage = 'Failed to load mentor data. Please try again.';
+        // Reset to create mode if the mentor listing can't be found
+        if (err.status === 404) {
+          this.isEditMode = false;
+          this.mentorId = 0;
+        }
       }
     });
   }
@@ -61,13 +95,14 @@ export class ListMentorFormComponent implements OnInit {
   
     this.isSubmitting = true;
     const numberOfTeams = this.mentorForm.get('numberOfTeams')?.value;
-  
+    const userId = this.storageService.getLoggedInUserId()!; // The '!' tells TypeScript to treat this as non-null
+
     if (this.isEditMode) {
       // Update existing mentor listing
       this.listMentorService.updateListMentor(this.mentorId, numberOfTeams).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.router.navigate(['/list-mentors']); // Navigate to edit route
+          this.ref.close(true); // Close with success status
         },
         error: (err) => {
           this.isSubmitting = false;
@@ -77,10 +112,10 @@ export class ListMentorFormComponent implements OnInit {
       });
     } else {
       // Create new mentor listing
-      this.listMentorService.createListMentor(numberOfTeams).subscribe({
+      this.listMentorService.createListMentor(userId, this.hackathonId, numberOfTeams).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.router.navigate(['/landing']); // Navigate to landing page
+          this.ref.close(true); // Close with success status
         },
         error: (err) => {
           this.isSubmitting = false;
@@ -91,9 +126,6 @@ export class ListMentorFormComponent implements OnInit {
     }
   }
   cancel(): void {
-    if (this.isEditMode) {
-      this.router.navigate(['/list-mentors']); // Back to list for edit
-    } else {
-      this.router.navigate(['/landing']); // Back to landing for creation
-    }
+    this.ref.close(false); // Close without saving
+  
   }}

@@ -7,6 +7,7 @@ import { PreviousExperience } from 'src/app/demo/models/previous-experience.mode
 import { User } from 'src/app/demo/models/user.model';
 import { MentorApplicationService } from 'src/app/demo/services/mentor-application.service';
 import { PreviousExperienceService } from 'src/app/demo/services/previous-experience.service';
+import { StorageService } from 'src/app/demo/services/storage.service'; // Import StorageService
 import { switchMap, of, forkJoin, tap, catchError, finalize, EMPTY, map } from 'rxjs';
 
 @Component({
@@ -23,12 +24,12 @@ export class MentorApplicationFormComponent implements OnInit {
   loading = false;
   errorMessage: string | null = null;
   applicationStatus = ApplicationStatus;
-  
+
   // Edit mode properties
   isEditMode = false;
   applicationId: number | null = null;
   existingApplication: MentorApplication | null = null;
-  
+
   // For displaying existing files
   existingCvFileName: string | null = null;
   existingPaperFileName: string | null = null;
@@ -39,7 +40,8 @@ export class MentorApplicationFormComponent implements OnInit {
     private previousExperienceService: PreviousExperienceService,
     private messageService: MessageService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private storageService: StorageService // Inject StorageService
   ) {
     this.applicationForm = this.fb.group({
       applicationText: ['', [Validators.required, Validators.minLength(100)]],
@@ -51,7 +53,7 @@ export class MentorApplicationFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupFormListeners();
-    
+
     // Check if we're in edit mode by examining the route parameters
     this.route.params.subscribe(params => {
       if (params['id']) {
@@ -64,29 +66,29 @@ export class MentorApplicationFormComponent implements OnInit {
 
   private loadExistingApplication(id: number): void {
     this.loading = true;
-    
+
     forkJoin([
       this.mentorAppService.getApplicationById(id),
       this.previousExperienceService.getExperiencesByApplicationId(id)
     ]).pipe(
       tap(([application, experiences]) => {
         this.existingApplication = application;
-        
+
         // Set file names
         if (application.cv) {
           this.existingCvFileName = this.extractFileName(application.cv);
         }
-        
+
         if (application.uploadPaper) {
           this.existingPaperFileName = this.extractFileName(application.uploadPaper);
         }
-        
+
         // Populate the form
         this.applicationForm.patchValue({
           applicationText: application.applicationText,
           hasPreviousExperience: application.hasPreviousExperience
         });
-        
+
         // Handle links
         this.clearLinks();
         if (application.links && application.links.length > 0) {
@@ -98,7 +100,7 @@ export class MentorApplicationFormComponent implements OnInit {
             }
           });
         }
-        
+
         // Handle previous experiences
         this.clearExperiences();
         if (application.hasPreviousExperience && experiences.length > 0) {
@@ -123,9 +125,8 @@ export class MentorApplicationFormComponent implements OnInit {
       })
     ).subscribe();
   }
-  
+
   private extractFileName(path: string): string {
-    // Extract just the filename from a full path
     return path.split('/').pop() || path;
   }
 
@@ -133,7 +134,7 @@ export class MentorApplicationFormComponent implements OnInit {
     this.applicationForm.get('hasPreviousExperience')?.valueChanges.subscribe(value => {
       console.log('hasPreviousExperience changed to:', value);
       console.log('Current experiences count:', this.previousExperiences.length);
-      
+
       if (value) {
         if (this.previousExperiences.length === 0) {
           console.log('Adding initial experience form');
@@ -149,19 +150,18 @@ export class MentorApplicationFormComponent implements OnInit {
   get links(): FormArray {
     return this.applicationForm.get('links') as FormArray;
   }
-  
+
   clearLinks(): void {
     while (this.links.length > 0) {
       this.links.removeAt(0);
     }
-    this.addLink(); // Add one empty link
+    this.addLink();
   }
 
   get previousExperiences(): FormArray {
     return this.applicationForm.get('previousExperiences') as FormArray;
   }
 
-  // Helper method to safely get a FormGroup from the FormArray
   getFormGroupAt(index: number): FormGroup {
     return this.previousExperiences.at(index) as FormGroup;
   }
@@ -212,7 +212,7 @@ export class MentorApplicationFormComponent implements OnInit {
   onSubmit(): void {
     // In edit mode, CV may not be required if one exists already
     const isCvRequired = !this.isEditMode || !this.existingCvFileName;
-    
+
     if (this.applicationForm.invalid || (isCvRequired && !this.cvFile)) {
       this.errorMessage = 'Please fill all required fields' + (isCvRequired ? ' and upload your CV' : '');
       this.messageService.add({
@@ -223,11 +223,22 @@ export class MentorApplicationFormComponent implements OnInit {
       return;
     }
 
+    // Get logged-in user ID
+    const userId = this.storageService.getLoggedInUserId();
+    if (!userId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'User Not Logged In',
+        detail: 'You must be logged in to submit a mentor application.'
+      });
+      return;
+    }
+
     this.submitting = true;
     this.errorMessage = null;
 
     const formValue = this.applicationForm.value;
-    
+
     // Create the application object
     const application: MentorApplication = {
       id: this.isEditMode ? this.applicationId! : undefined,
@@ -237,8 +248,8 @@ export class MentorApplicationFormComponent implements OnInit {
       status: this.isEditMode ? this.existingApplication?.status || ApplicationStatus.PENDING : ApplicationStatus.PENDING,
       previousExperiences: [], // Empty array as we will handle previous experiences separately
       user: this.isEditMode && this.existingApplication?.user ? this.existingApplication.user : {} as User,
-      cv: this.isEditMode && this.existingCvFileName ? this.existingApplication?.cv || '' : '', // Will be set by the backend
-      uploadPaper: this.isEditMode && this.existingPaperFileName ? this.existingApplication?.uploadPaper || '' : '' // Will be set by the backend if file is uploaded
+      cv: this.isEditMode && this.existingCvFileName ? this.existingApplication?.cv || '' : '',
+      uploadPaper: this.isEditMode && this.existingPaperFileName ? this.existingApplication?.uploadPaper || '' : ''
     };
 
     // Log the application object to verify the data
@@ -247,12 +258,12 @@ export class MentorApplicationFormComponent implements OnInit {
     if (this.isEditMode) {
       this.updateApplication(application);
     } else {
-      this.createApplication(application);
+      this.createApplication(userId, application);
     }
   }
-  
-  private createApplication(application: MentorApplication): void {
-    this.mentorAppService.createApplication(application, this.cvFile!, this.uploadPaperFile || undefined)
+
+  private createApplication(userId: number, application: MentorApplication): void {
+    this.mentorAppService.createApplication(userId, application, this.cvFile!, this.uploadPaperFile || undefined)
       .subscribe({
         next: (createdApp) => {
           if (application.hasPreviousExperience && this.previousExperiences.length > 0) {
@@ -266,10 +277,10 @@ export class MentorApplicationFormComponent implements OnInit {
         }
       });
   }
-  
+
   private updateApplication(application: MentorApplication): void {
     console.log('Updating application:', application);
-    
+
     this.mentorAppService.updateApplication(
         this.applicationId!, 
         application, 
@@ -284,10 +295,9 @@ export class MentorApplicationFormComponent implements OnInit {
         }),
         switchMap(updatedApp => {
             console.log('Application updated successfully:', updatedApp);
-            
+
             if (application.hasPreviousExperience) {
                 console.log('Handling previous experiences');
-                // First delete existing experiences
                 return this.previousExperienceService.deleteExperiencesByApplicationId(this.applicationId!)
                     .pipe(
                         tap(() => console.log('Deleted existing experiences')),
@@ -296,7 +306,6 @@ export class MentorApplicationFormComponent implements OnInit {
                             this.handleSubmissionError(err);
                             return EMPTY;
                         }),
-                        // Then save new ones if there are any
                         switchMap(() => {
                             if (this.previousExperiences.length > 0) {
                                 this.savePreviousExperiences(this.applicationId!);
@@ -307,7 +316,6 @@ export class MentorApplicationFormComponent implements OnInit {
                         })
                     );
             } else {
-                // If no previous experience, just delete any existing ones
                 return this.previousExperienceService.deleteExperiencesByApplicationId(this.applicationId!)
                     .pipe(
                         tap(() => this.handleSuccessfulSubmission(this.applicationId!, 'updated')),
@@ -327,26 +335,25 @@ export class MentorApplicationFormComponent implements OnInit {
   private savePreviousExperiences(applicationId: number): void {
     const experiences = this.previousExperiences.value as PreviousExperience[];
     console.log('Saving experiences:', experiences);
-    
+
     if (experiences.length === 0) {
         console.log('No experiences to save');
         this.handleSuccessfulSubmission(applicationId, this.isEditMode ? 'updated' : 'created');
         return;
     }
-    
+
     const requests = experiences.map(exp => {
-        // Make sure each experience is properly formatted
         const formattedExp: PreviousExperience = {
             hackathonName: exp.hackathonName,
             year: exp.year,
             description: exp.description,
             numberOfTeamsCoached: exp.numberOfTeamsCoached
         };
-        
+
         console.log('Creating experience:', formattedExp);
         return this.previousExperienceService.createExperience(applicationId, formattedExp);
     });
-    
+
     forkJoin(requests)
         .pipe(
             catchError(err => {
@@ -384,14 +391,12 @@ export class MentorApplicationFormComponent implements OnInit {
     this.submitting = false;
   }
 
-  // Helper method to check if a file exists
   hasExistingFile(type: 'cv' | 'paper'): boolean {
     return type === 'cv' 
       ? !!this.existingCvFileName 
       : !!this.existingPaperFileName;
   }
-  
-  // Method to handle cancel action
+
   onCancel(): void {
     if (this.isEditMode && this.applicationId) {
       this.router.navigate(['/mentor-applications', this.applicationId]);

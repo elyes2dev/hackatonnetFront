@@ -216,6 +216,7 @@ import {
             { path: 'sponsor-prizes', component: SponsorPrizesComponent },
             { path: 'sponsor-application-form', component: SponsorApplicationFormComponent },
             { path: 'mentor-applications/new', component: MentorApplicationFormComponent },
+            { path: 'mentor-applications/user/:userId', component: MentorApplicationDetailsComponent },
             { path: 'mentor-applications/:id', component: MentorApplicationDetailsComponent },
             {  path: 'mentor-applications/:id/edit',  component: MentorApplicationFormComponent },
             { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },

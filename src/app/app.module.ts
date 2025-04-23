@@ -130,6 +130,7 @@ import {
 import {
     LandingProjectEvaluationComponent
 } from "./demo/components/landing/landing-project-evaluation/landing-project-evaluation.component";
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 
 @NgModule({
@@ -172,6 +173,9 @@ import {
         InputTextModule,
         ToggleButtonModule,
         RippleModule,
+        DialogModule,
+        DynamicDialogModule,
+        ToastModule,
         MultiSelectModule,
         DropdownModule,
         ProgressBarModule,

@@ -13,6 +13,8 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
 export class NavbarComponent implements OnInit {
   user!: User;
   isSponsor: boolean = false;
+  isMentor: boolean = false; 
+
 
   constructor(
     public router: Router,
@@ -29,9 +31,11 @@ export class NavbarComponent implements OnInit {
         this.user = data;
         // Check if user has SPONSOR role
         this.isSponsor = this.user.roles?.some(role => role.name === 'SPONSOR') || false;
+        this.isMentor = this.user.roles?.some(role => role.name === 'MENTOR') || false;
+
       });
     }
-  }
+  } 
 
   navigateToLanding() {
     this.router.navigate(['/landing']);
@@ -49,5 +53,16 @@ export class NavbarComponent implements OnInit {
       MASTER_MENTOR: 'assets/demo/images/avatar/MASTER_MENTOR.png'
     };
     return this.user ? badgeIcons[this.user.badge] || 'assets/icons/default_badge.png' : '';
+  }
+
+  viewOrCreateMentorApplication(): void {
+    const userId = this.storageService.getLoggedInUserId();
+    if (this.isMentor) {
+      // Navigate to view their existing application
+      this.router.navigate(['/mentor-applications/user', userId]);
+    } else {
+      // Navigate to create a new application
+      this.router.navigate(['/mentor-applications/new']);
+    }
   }
 }
