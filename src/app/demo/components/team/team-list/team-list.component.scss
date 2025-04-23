@@ -1,0 +1,57 @@
+.team-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.team-card-header {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+.team-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    
+    &.public {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    &.private {
+        background-color: #fce4ec;
+        color: #c2185b;
+    }
+    
+    &.available {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+    
+    &.full {
+        background-color: #ffebee;
+        color: #d32f2f;
+    }
+}
+
+.team-members {
+    h6 {
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+}
+
+.team-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}

@@ -1,10 +1,19 @@
-import { User } from './user';
+import { Team } from './team';
 import { TeamMember } from './team-members';
 
 export interface TeamDiscussion {
   id: number;
-  teamMember: TeamMember;
-  user: User;
   message: string;
-  createdAt: string; // ISO string date
+  team?: Team;
+  teamMember?: TeamMember;
+  messageType?: MessageType;
+  isRead?: boolean;
+  createdAt?: string; // ISO string date
+}
+
+export enum MessageType {
+  TEXT = 'TEXT',
+  IMAGE = 'IMAGE',
+  FILE = 'FILE',
+  EMOJI = 'EMOJI'
 }

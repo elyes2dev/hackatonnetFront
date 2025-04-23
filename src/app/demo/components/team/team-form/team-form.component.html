@@ -1,0 +1,52 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <h5>Create New Team</h5>
+            <p-toast></p-toast>
+
+            <!-- Loading Spinner -->
+            <div *ngIf="isLoading" class="flex justify-content-center">
+                <p-progressSpinner></p-progressSpinner>
+            </div>
+
+            <!-- Create Team Form -->
+            <form [formGroup]="createTeamForm" (ngSubmit)="createTeam()" *ngIf="!isLoading">
+                <div class="grid p-fluid">
+                    <div class="col-12 md:col-6">
+                        <div class="field">
+                            <label for="teamName">Team Name</label>
+                            <input type="text" pInputText id="teamName" formControlName="teamName" placeholder="Enter team name" />
+                            <small *ngIf="createTeamForm.get('teamName')?.invalid && createTeamForm.get('teamName')?.touched" class="p-error">
+                                Team name is required and must be at least 3 characters.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-12 md:col-6">
+                        <div class="field">
+                            <label for="hackathonId">Hackathon</label>
+                            <p-dropdown id="hackathonId" [options]="hackathons" formControlName="hackathonId" optionLabel="name" optionValue="id" placeholder="Select a hackathon"></p-dropdown>
+                            <small *ngIf="createTeamForm.get('hackathonId')?.invalid && createTeamForm.get('hackathonId')?.touched" class="p-error">
+                                Please select a hackathon.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="field-checkbox">
+                            <p-toggleButton formControlName="isPublic" onLabel="Public Team" offLabel="Private Team" onIcon="pi pi-globe" offIcon="pi pi-lock"></p-toggleButton>
+                            <small class="block mt-2">
+                                <div>{{ createTeamForm.value.isPublic ? 'Public teams can be joined by anyone without approval.' : 'Private teams require a join code or invitation to join.' }}</div>
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-12 flex justify-content-end">
+                        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text mr-2" (click)="cancel()"></button>
+                        <button pButton pRipple label="Create Team" icon="pi pi-check" type="submit" [disabled]="createTeamForm.invalid"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

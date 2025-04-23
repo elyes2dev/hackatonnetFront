@@ -98,6 +98,9 @@ import {
 
                     // User Management Route
                     { path: 'users', component: UserComponent },  // Add UserComponent Route
+// Team Module Route
+                    { path: 'teams', loadChildren: () => import('./demo/components/team/team.module').then(m => m.TeamModule) },
+
 
                     { path: 'mentor-applications', component: MentorApplicationListComponent },
                     { path: 'mentor-applications-admin/:id', component: MentorApplicationDetailsAdminComponent },

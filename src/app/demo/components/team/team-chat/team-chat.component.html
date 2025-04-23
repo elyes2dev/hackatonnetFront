@@ -1,0 +1,95 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <p-toast></p-toast>
+
+            <!-- Loading Spinner -->
+            <div *ngIf="isLoading" class="flex justify-content-center">
+                <p-progressSpinner></p-progressSpinner>
+            </div>
+
+            <!-- Team Chat -->
+            <div *ngIf="!isLoading && team" class="chat-container">
+                <!-- Header with Back Button -->
+                <div class="chat-header">
+                    <div class="flex align-items-center">
+                        <button pButton pRipple icon="pi pi-arrow-left" class="p-button-rounded p-button-text mr-2" (click)="goBack()"></button>
+                        <h5 class="m-0">{{team.teamName}} - Team Chat</h5>
+                    </div>
+                    <div class="chat-members">
+                        <p-avatarGroup>
+                            <p-avatar *ngFor="let member of teamMembers?.slice(0, 5)" 
+                                [label]="getUserAvatarLabel(member.id)" 
+                                shape="circle" 
+                                [style]="{'background-color': member.role === 'LEADER' ? '#FFD700' : (member.role === 'MENTOR' ? '#9C27B0' : '#2196F3')}"
+                                pTooltip="{{getMemberName(member.id)}} ({{member.role}})"
+                                tooltipPosition="top">
+                            </p-avatar>
+                            <p-avatar *ngIf="teamMembers && teamMembers.length > 5" 
+                                label="+{{teamMembers.length - 5}}" 
+                                shape="circle" 
+                                [style]="{'background-color': '#9C27B0'}">
+                            </p-avatar>
+                        </p-avatarGroup>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages">
+                    <div *ngIf="teamDiscussions.length === 0" class="no-messages">
+                        <p>No messages yet. Start the conversation!</p>
+                    </div>
+
+                    <div *ngFor="let message of teamDiscussions" 
+                        class="message-container" 
+                        [ngClass]="{'own-message': isCurrentUserMessage(message.teamMember?.id || 0)}">
+                        
+                        <div class="message-avatar" *ngIf="!isCurrentUserMessage(message.teamMember?.id || 0)">
+                            <p-avatar 
+                                [label]="getUserAvatarLabel(message.teamMember?.id || 0)" 
+                                shape="circle" 
+                                [style]="{'background-color': '#2196F3'}">
+                            </p-avatar>
+                        </div>
+                        
+                        <div class="message-content" [ngClass]="{'own': isCurrentUserMessage(message.teamMember?.id || 0)}">
+                            <div class="message-header">
+                                <span class="message-sender" *ngIf="!isCurrentUserMessage(message.teamMember?.id || 0)">
+                                    {{getMemberName(message.teamMember?.id || 0)}}
+                                </span>
+                                <span class="message-time">
+                                    {{message.createdAt | date:'short'}}
+                                </span>
+                            </div>
+                            <div class="message-body">
+                                {{message.message}}
+                            </div>
+                            <div class="message-actions" *ngIf="isCurrentUserMessage(message.teamMember?.id || 0)">
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-sm" 
+                                    (click)="deleteMessage(message.id)"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Input -->
+                <div class="chat-input">
+                    <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+                        <div class="p-inputgroup">
+                            <input type="text" pInputText formControlName="message" placeholder="Type a message..." />
+                            <button pButton pRipple type="submit" icon="pi pi-send" [disabled]="messageForm.invalid"></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- No Team Found Message -->
+            <div *ngIf="!isLoading && !team" class="text-center p-5">
+                <i class="pi pi-exclamation-circle" style="font-size: 3rem"></i>
+                <h5>Team Not Found</h5>
+                <p>The team you're looking for doesn't exist or you don't have permission to view it.</p>
+                <button pButton pRipple label="Go Back to Teams" icon="pi pi-arrow-left" class="p-button-primary" (click)="goBack()"></button>
+            </div>
+        </div>
+    </div>
+</div>

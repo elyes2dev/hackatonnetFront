@@ -1,0 +1,71 @@
+.team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    
+    h2 {
+        margin: 0;
+        font-weight: 600;
+    }
+    
+    .team-badges {
+        display: flex;
+        gap: 0.5rem;
+    }
+}
+
+.team-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    
+    &.public {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    &.private {
+        background-color: #fce4ec;
+        color: #c2185b;
+    }
+    
+    &.available {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+    
+    &.full {
+        background-color: #ffebee;
+        color: #d32f2f;
+    }
+}
+
+.team-code-section {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+}
+
+.member-role {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    
+    &.leader {
+        background-color: #fff8e1;
+        color: #ff8f00;
+    }
+    
+    &.member {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    &.mentor {
+        background-color: #f3e5f5;
+        color: #7b1fa2;
+    }
+}

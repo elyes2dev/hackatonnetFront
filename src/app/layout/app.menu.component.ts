@@ -45,7 +45,9 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Workshop', icon: 'pi pi-fw pi-id-card', routerLink: ['/workshops'] },
                     { label: 'User', icon: 'pi pi-fw pi-id-card', routerLink: ['/users'] },
                     { label: 'Support-Ticket', icon: 'pi pi-fw pi-id-card', routerLink: ['/support-tickets'] },
-                    { label: 'Hackathons', icon: 'pi pi-fw pi-id-card', routerLink: ['/hackathons'] }
+                    { label: 'Hackathons', icon: 'pi pi-fw pi-id-card', routerLink: ['/hackathons'] },
+                    { label: 'Teams', icon: 'pi pi-fw pi-users', routerLink: ['/teams'] }
+
                 ]
             },
             {
