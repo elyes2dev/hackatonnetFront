@@ -50,7 +50,6 @@ export class StorageService {
     }
 }
 
-/////////////////////////////////////////////////////////////
 
 getUserRole(token: string): string[] {
   if (!token) {
@@ -106,4 +105,7 @@ checkUserIsAdmin(): Observable<boolean> {
 }
 
 
+clearAll(): void {
+  localStorage.clear();
+}
 }

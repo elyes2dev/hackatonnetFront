@@ -130,11 +130,17 @@ import {
 import {
     LandingProjectEvaluationComponent
 } from "./demo/components/landing/landing-project-evaluation/landing-project-evaluation.component";
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { MessageModule } from 'primeng/message';
 import { FacialMetricsComponent } from './demo/components/live-stream/video-room/facial-metrics/facial-metrics.component';
 import { FacialAnalysisService } from './demo/services/live-stream/facial-analysis/facial-analysis.service';
 import { GeneralComponent } from './demo/components/general/general.component';
+import { PanelModule } from 'primeng/panel';
+import { AccordionModule } from 'primeng/accordion';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { PasswordModule } from 'primeng/password';
+
+
+
 
 
 @NgModule({
@@ -163,7 +169,12 @@ import { GeneralComponent } from './demo/components/general/general.component';
         ComponentsComponent,
         AccessDeniedComponent,
         FacialMetricsComponent,
-        GeneralComponent
+        GeneralComponent,
+
+        FooterComponent,
+        SponsorPrizesComponent
+
+        
 
     ],
     imports: [
@@ -235,7 +246,21 @@ import { GeneralComponent } from './demo/components/general/general.component';
         TableModule,
         ButtonModule,
         ToastModule,
-        RippleModule
+        RippleModule,
+        RippleModule,
+        BrowserAnimationsModule,
+        MessageModule,
+        AccordionModule,
+        DynamicDialogModule,
+        PanelModule,
+        PasswordModule,       // ✅ Required for <p-password>
+        CalendarModule,
+        TagModule,
+        TableModule,
+        DropdownModule,
+        ReactiveFormsModule,
+        
+
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

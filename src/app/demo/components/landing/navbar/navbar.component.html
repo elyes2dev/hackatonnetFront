@@ -1,5 +1,5 @@
 <div class="surface-0 flex justify-content-center h-full">
-    <div id="home" class="landing-wrapper overflow-hidden w-full h-full">
+    <div id="home" class="landing-wrapper  w-full h-full">
 
 <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
     <a (click)="navigateToLanding()" class="flex align-items-center">
@@ -84,18 +84,42 @@
                 </a>
             </li>
         </ul>
-        <div class="flex justify-content-between lg:flex-row lg:align-items-center border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
-            <div class="badge-icon ml-auto mr-1" *ngIf="user">
-                <img [src]="getBadgeIcon()" [alt]="user.badge" />
+        <!-- User account section with dropdown for authenticated users -->
+        <div *ngIf="isAuthenticated" class="flex align-items-center">
+            <div class="user-dropdown flex align-items-center relative">
+                <span class="mr-2">Hello, {{username}}</span>
+                <button 
+                    pButton 
+                    pRipple 
+                    type="button" 
+                    icon="pi pi-user" 
+                    class="p-button-rounded p-button-text p-button-plain badge-icon"
+                    (click)="userMenuVisible = !userMenuVisible">
+                </button>
+                <!-- Dropdown menu with higher z-index -->
+                <div *ngIf="userMenuVisible" class="dropdown-menu absolute right-0 top-100 shadow-2 bg-white border-round-md w-12rem z-5 py-2" [ngClass]="{'visible': userMenuVisible}" style="margin-top: 0.5rem; z-index: 1000;">
+                    <ul class="list-none p-0 m-0">
+                        <li>
+                            <a [routerLink]="['/profile']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+                               (click)="userMenuVisible = false">
+                                <i class="pi pi-user mr-2"></i>
+                                <span>Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a (click)="logout(); userMenuVisible = false" 
+                               class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
+                                <i class="pi pi-sign-out mr-2"></i>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <button (click)="router.navigate(['/user-profile'])"
-                    pButton pRipple
-                    label="Profile"
-                    class="p-button-rounded border-none ml-1 font-light line-height-2 bg-green-500 text-white"
-                    *ngIf="user">
-            </button>
-            <button pButton pRipple label="Login" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></button>
-            <button pButton pRipple label="Register" class="p-button-rounded border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></button>
+        </div>
+        <div *ngIf="!isAuthenticated" class="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
+            <button pButton pRipple label="Login" [routerLink]="['/auth/login']" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></button>
+            <button pButton pRipple label="Register" [routerLink]="['/auth/register']" class="p-button-rounded border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></button>
         </div>
     </div>
 </div>

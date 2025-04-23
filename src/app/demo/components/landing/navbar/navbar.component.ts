@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { User } from 'src/app/demo/models/user.model';
+import { AuthService } from 'src/app/demo/services/auth.service';
 import { StorageService } from 'src/app/demo/services/storage.service';
 import { UserService } from 'src/app/demo/services/user.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
@@ -15,20 +16,33 @@ export class NavbarComponent implements OnInit {
   isSponsor: boolean = false;
   isMentor: boolean = false; 
 
+  userId: string | null = null;
+  isAuthenticated: boolean = this.authService.isAuthenticated();
+  isAdmin: boolean = false;
+  isStudent: boolean = false;
+  userMenuVisible: boolean = false; // Property to control dropdown visibility
+  
 
   constructor(
     public router: Router,
     public layoutService: LayoutService,
     private userService: UserService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private authService: AuthService,
+    
+      
   ) {}
+
+  username: string = '';
 
   ngOnInit(): void {
     const userId = this.storageService.getLoggedInUserId();
-
+    console.log('User ID from storage:', this.authService.isAuthenticated());
+    
     if (userId) {
       this.userService.getUserById(userId).subscribe((data) => {
         this.user = data;
+        this.username = data.name;
         // Check if user has SPONSOR role
         this.isSponsor = this.user.roles?.some(role => role.name === 'SPONSOR') || false;
         this.isMentor = this.user.roles?.some(role => role.name === 'MENTOR') || false;
@@ -63,6 +77,36 @@ export class NavbarComponent implements OnInit {
     } else {
       // Navigate to create a new application
       this.router.navigate(['/mentor-applications/new']);
+    }}
+    
+  logout()
+  {
+      this.authService.logout();
+      this.storageService.clearAll();
+      window.location.reload();
+      this.userMenuVisible = false;
+  }
+  
+  // Toggle user menu dropdown visibility
+  toggleUserMenu(event: Event): void {
+    event.stopPropagation();
+    this.userMenuVisible = !this.userMenuVisible;
+  }
+  
+  // Close user menu dropdown
+  closeUserMenu(): void {
+    this.userMenuVisible = false;
+  }
+  
+  // Close dropdown when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    // Check if the click is outside the dropdown area
+    const clickedElement = event.target as HTMLElement;
+    const dropdown = document.querySelector('.user-dropdown');
+    
+    if (dropdown && !dropdown.contains(clickedElement)) {
+      this.userMenuVisible = false;
     }
   }
 }
