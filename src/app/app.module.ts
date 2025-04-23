@@ -119,6 +119,7 @@ import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-
 import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-list/access-denied/access-denied.component';
 import { FacialMetricsComponent } from './demo/components/live-stream/video-room/facial-metrics/facial-metrics.component';
 import { FacialAnalysisService } from './demo/services/live-stream/facial-analysis/facial-analysis.service';
+import { GeneralComponent } from './demo/components/general/general.component';
 
 
 @NgModule({
@@ -142,7 +143,8 @@ import { FacialAnalysisService } from './demo/services/live-stream/facial-analys
         HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent, HackathonCategorizationAnalyticsComponent, HackathonInsightsComponent,
         AiQuizDialogComponent,
         AccessDeniedComponent,
-        FacialMetricsComponent
+        FacialMetricsComponent,
+        GeneralComponent
 
     ],
     imports: [

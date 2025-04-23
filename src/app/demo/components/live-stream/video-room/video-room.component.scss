@@ -200,6 +200,66 @@
     position: relative;
   }
 
+
+
+/* Add these camera-off styles to your existing SCSS */
+
+/* Camera Off Styles */
+.video-container {
+  &.camera-off-container {
+    video {
+      /* Hide the video stream when camera is off */
+      display: none;
+    }
+    
+    /* Create a camera-off placeholder background */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+  }
+}
+
+/* Camera Off Overlay */
+.camera-off-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+  z-index: 2;
+  
+  i {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  span {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+}
+
+
+
+
+
+
+
   /* Video Container */
   .video-container {
     position: relative;
@@ -211,6 +271,13 @@
     margin: 0 auto;
     transition: all 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+    &.local {
+      &.camera-off-container {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: #2a2a2a;
+      }
+    }
 
     &:hover {
       transform: translateY(-2px);

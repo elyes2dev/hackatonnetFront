@@ -63,9 +63,17 @@
       <!-- Video Grid -->
       <div class="video-grid">
         <!-- Local Video with Analysis Status -->
-        <div class="video-container local" [class.screen-sharing]="isSharingScreen">
+        <div class="video-container local" [class.screen-sharing]="isSharingScreen"  [class.camera-off-container]="isCameraOff">
           <video #localVideo autoplay muted playsinline [srcObject]="localStream"></video>
           
+
+
+          <div class="camera-off-overlay" *ngIf="isCameraOff">
+            <i class="pi pi-video-slash"></i>
+            <span>Camera Off</span>
+          </div>
+
+
           <!-- Analysis Status Indicator -->
           <div class="analysis-status" *ngIf="isFacialAnalysisEnabled">
             <div class="status-indicator"></div>

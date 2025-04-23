@@ -1,62 +1,50 @@
-<div class="surface-0 flex justify-content-center h-full">
-    <div id="home" class="landing-wrapper overflow-hidden w-full h-full">
-
-        <div class="py-4 px-4 mx-0 mt-8 lg:mx-8">
-            <div class="grid justify-content-between">
-                <!-- Logo Section - Improved mobile centering -->
-                <div class="col-12 md:col-2" style="margin-top:-1.5rem;">
-                    <a (click)="router.navigate(['/pages/landing'], {fragment: 'home'})" class="flex flex-wrap align-items-center justify-content-center md:justify-content-start md:mb-0 mb-3 cursor-pointer">
-                        <img src="assets/layout/images/{{layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="footer sections" width="50" height="50" class="mr-2">
-                        <h4 class="font-medium text-3xl text-900">Hackthonnet</h4>
-                    </a>
-                </div>
-
-                <!-- Footer Links Section - Improved for small screens -->
-                <div class="col-12 md:col-10 lg:col-7">
-                    <!-- Added sm breakpoint for better small screen layout -->
-                    <div class="grid text-center md:text-left">
-                        <!-- Company Section -->
-                        <div class="col-12 sm:col-6 md:col-3 mb-4 md:mb-0">
-                            <h4 class="font-medium text-xl md:text-2xl line-height-3 mb-3 text-900">Company</h4>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">About Us</a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">News</a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">Investor Relations</a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">Careers</a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer text-700">Media Kit</a>
-                        </div>
-
-                        <!-- Resources Section -->
-                        <div class="col-12 sm:col-6 md:col-3 mb-4 md:mb-0">
-                            <h4 class="font-medium text-xl md:text-2xl line-height-3 mb-3 text-900">Resources</h4>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">Get Started</a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">Learn</a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer text-700">Case Studies</a>
-                        </div>
-
-                        <!-- Community Section -->
-                        <div class="col-12 sm:col-6 md:col-3 mb-4 md:mb-0">
-                            <h4 class="font-medium text-xl md:text-2xl line-height-3 mb-3 text-900">Community</h4>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">Discord</a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">Events<img src="assets/demo/images/landing/new-badge.svg" class="ml-2"/></a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">FAQ</a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer text-700">Blog</a>
-                        </div>
-
-                        <!-- Legal Section -->
-                        <div class="col-12 sm:col-6 md:col-3">
-                            <h4 class="font-medium text-xl md:text-2xl line-height-3 mb-3 text-900">Legal</h4>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">Brand Policy</a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer mb-2 text-700">Privacy Policy</a>
-                            <a class="line-height-3 text-lg md:text-xl block cursor-pointer text-700">Terms of Service</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Added copyright section for completeness -->
-            <div class="mt-6 pt-3 border-top-1 border-300 text-center">
-                <p class="text-sm md:text-base text-700">© 2023 SAKAI. All rights reserved.</p>
-            </div>
+<div class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="assets/layout/images/hackathonnetlogo-nobg.png" alt="HackathonNet Logo" class="footer-logo-img">
+        <p>© 2025 HackathonNet. All rights reserved.</p>
+      </div>
+      
+      <div class="footer-links">
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">Browse Events</a></li>
+            <li><a href="#">For Organizers</a></li>
+            <li><a href="#">For Sponsors</a></li>
+          </ul>
         </div>
+        
+        <div class="footer-section">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">Community</a></li>
+            <li><a href="#">Support</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Press Kit</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Connect</h4>
+          <div class="social-icons">
+            <a href="#" class="social-icon"><i class="pi pi-twitter"></i></a>
+            <a href="#" class="social-icon"><i class="pi pi-facebook"></i></a>
+            <a href="#" class="social-icon"><i class="pi pi-linkedin"></i></a>
+            <a href="#" class="social-icon"><i class="pi pi-github"></i></a>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>

@@ -237,15 +237,25 @@ export class VideoRoomComponent implements OnInit, OnDestroy, AfterViewInit {
     delete this.peers[peerId];
   }
 
-  // Control Methods
   toggleMic() {
     this.isMicMuted = !this.isMicMuted;
     this.localStream.getAudioTracks()[0].enabled = !this.isMicMuted;
   }
-
   toggleCamera() {
     this.isCameraOff = !this.isCameraOff;
-    this.localStream.getVideoTracks()[0].enabled = !this.isCameraOff;
+    
+    // Properly disable all video tracks
+    const videoTracks = this.localStream.getVideoTracks();
+    videoTracks.forEach(track => {
+      track.enabled = !this.isCameraOff;
+    });
+    
+    // Update the local video element display
+    if (this.localVideo?.nativeElement) {
+      // When camera is off, we'll still have the video element but the tracks will be disabled
+      // We'll use CSS to show a placeholder when camera is off
+      this.localVideo.nativeElement.classList.toggle('camera-off', this.isCameraOff);
+    }
     
     // If camera is turned off, also stop facial analysis
     if (this.isCameraOff && this.isFacialAnalysisEnabled) {
@@ -253,6 +263,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy, AfterViewInit {
       this.facialAnalysisService.stopAnalysis();
     }
   }
+
 
   async toggleScreenShare() {
     if (this.isSharingScreen) {
