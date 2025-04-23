@@ -172,3 +172,35 @@
     height: 28px;
   }
 }
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0;
+  
+  span {
+    margin-left: 10px;
+    color: #666;
+  }
+}
+
+.login-reminder {
+  text-align: center;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  
+  p {
+    margin: 0;
+    color: #666;
+  }
+}
+
+.no-comments {
+  text-align: center;
+  color: #666;
+  padding: 15px 0;
+  font-style: italic;
+}

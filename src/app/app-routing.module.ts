@@ -201,6 +201,7 @@ import { AdminGuard } from './demo/services/hackathon/AuthGuard/auth-guard.servi
             { path: 'landing-hackathons', component: LandingHackathonListComponent},
             { path: 'landing-hackathon/:id', component: LandingHackathonDetailsComponent},
             { path: 'prize-form/:hackathonId', component: PrizeFormComponent },
+            { path: 'landing-live-stream/:id', component: LiveStreamComponent },
             { path: 'sponsors-leaderboard', component: SponsorLeaderboardComponent },
             { path: 'sponsor-prizes', component: SponsorPrizesComponent },
             { path: 'sponsor-application-form', component: SponsorApplicationFormComponent },

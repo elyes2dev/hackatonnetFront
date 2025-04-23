@@ -1,39 +1,53 @@
 <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="p-fluid">
-    <div class="p-field">
+  <div *ngIf="loading" class="p-d-flex p-jc-center p-my-3">
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner"></p-progressSpinner>
+  </div>
+
+  <div class="p-field">
       <label for="title">Title</label>
       <input pInputText id="title" formControlName="title" />
       <small *ngIf="postForm.get('title')?.errors?.['required'] && postForm.get('title')?.touched" 
              class="p-error">Title is required</small>
-    </div>
-  
-    <div class="p-field">
+  </div>
+
+  <div class="p-field">
       <label for="content">Content</label>
       <textarea pInputTextarea id="content" formControlName="content" rows="5"></textarea>
       <small *ngIf="postForm.get('content')?.errors?.['required'] && postForm.get('content')?.touched" 
              class="p-error">Content is required</small>
-    </div>
-  
-    <div class="p-field">
-        <label for="images">Images (optional)</label>
-        <p-fileUpload 
-          id="images"
-          name="images" 
-          [multiple]="true" 
-          accept="image/*"
-          (onSelect)="onFileSelect($event)"
-          (onRemove)="onFileRemove($event)"
-          [showUploadButton]="false"
-          [showCancelButton]="false">
-          <ng-template pTemplate="content">
+  </div>
+
+  <div class="p-field">
+    <label for="images">Images (optional)</label>
+    <p-fileUpload 
+        id="images"
+        name="images" 
+        [multiple]="true" 
+        accept="image/*"
+        (onSelect)="onFileSelect($event)"
+        (onRemove)="onFileRemove($event)"
+        [showUploadButton]="false"
+        [showCancelButton]="false">
+        <ng-template pTemplate="content">
             <ul *ngIf="selectedFiles.length > 0">
-              <li *ngFor="let file of selectedFiles">{{file.name}} - {{file.size}} bytes</li>
-            </ul>
-          </ng-template>
-        </p-fileUpload>
-      </div>
-  
-    <div class="p-d-flex p-jc-end p-mt-3">
+                <li *ngFor="let file of selectedFiles">
+                  {{file.name}} - {{file.size}} bytes
+                  <!-- Add preview -->
+                  <img *ngIf="isImageFile(file)" [src]="previewUrls[file.name]" 
+                       class="upload-preview" alt="Preview">
+                </li>
+              </ul>
+        </ng-template>
+    </p-fileUpload>
+</div>
+
+  <div *ngIf="currentUser" class="p-field p-mb-3">
+      <small class="p-text-secondary">Post will be created as: {{currentUser.name}} {{currentUser.lastname}}</small>
+  </div>
+
+  <div class="p-d-flex p-jc-end p-mt-3">
       <button pButton type="button" label="Cancel" class="p-button-outlined p-mr-2" (click)="onCancel()"></button>
-      <button pButton type="submit" label="Submit" class="p-button-primary" [disabled]="!postForm.valid"></button>
-    </div>
-  </form>
+      <button pButton type="submit" label="Submit" class="p-button-primary" 
+              [disabled]="!postForm.valid || loading || !currentUser"></button>
+  </div>
+</form>

@@ -117,6 +117,8 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
 import { HackathonInsightsComponent } from './demo/components/Analytics/hackathon-insights/hackathon-insights/hackathon-insights.component';
 import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-dialog/ai-quiz-dialog.component';
 import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-list/access-denied/access-denied.component';
+import { FacialMetricsComponent } from './demo/components/live-stream/video-room/facial-metrics/facial-metrics.component';
+import { FacialAnalysisService } from './demo/services/live-stream/facial-analysis/facial-analysis.service';
 
 
 @NgModule({
@@ -139,7 +141,8 @@ import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-li
         UserProfileComponent,
         HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent, HackathonCategorizationAnalyticsComponent, HackathonInsightsComponent,
         AiQuizDialogComponent,
-        AccessDeniedComponent
+        AccessDeniedComponent,
+        FacialMetricsComponent
 
     ],
     imports: [
@@ -211,7 +214,7 @@ import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-li
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService
+        PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService, FacialAnalysisService
     ],
     bootstrap: [AppComponent]
 })

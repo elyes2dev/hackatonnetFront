@@ -1,42 +1,54 @@
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+  <span>Loading data...</span>
+</div>
+
 <div class="post-feed">
-    <div *ngFor="let post of posts" class="post-card">
-     <div class="post-header">
-       <img [src]="post.postedBy?.picture || 'assets/default-avatar.png'"
-            class="avatar"
-            alt="Profile picture">
-       <div class="user-info">
-         <h3>{{ post.postedBy?.name }} {{ post.postedBy?.lastname }}</h3>
-         <span class="post-meta">
-           {{ post.createdAt | date:'mediumDate' }}
-           <span *ngIf="post.hackathon?.title"> • {{ post.hackathon.title }}</span>
-         </span>
-       </div>
-     </div>
-   
-       <div class="post-content">
-         <h2>{{ post.title }}</h2>
-         <p>{{ post.content }}</p>
-         
-         <div *ngIf="post.images?.length" class="post-images">
-           <img *ngFor="let image of post.images" [src]="image" alt="Post image">
-         </div>
-       </div>
-   
-       <div class="post-stats">
-         <button (click)="onLikePost(post)" 
-                 [class.active]="isPostLikedByCurrentUser(post)">
-           <i class="pi pi-heart"></i> {{ post.likes?.length || 0 }}
-         </button>
-         <button>
-           <i class="pi pi-comment"></i> {{ post.comments?.length || 0 }}
-         </button>
-       </div>
-   
-       <app-landing-comment
-         [post]="post"
-         [currentUserId]="currentUserId"
-         (commentAdded)="onCommentAdded(post, $event)">
-       </app-landing-comment>
-   </div>
+  <div *ngFor="let post of posts" class="post-card">
+    <div class="post-header">
+      <img [src]="post.postedBy?.picture ? getImageUrl(post.postedBy.picture) : 'assets/images/default-avatar.png'"
+           class="avatar"
+           alt="Profile picture"
+           (error)="handleImageError($event, true)">
+      <div class="user-info">
+        <h3>{{ post.postedBy?.name }} {{ post.postedBy?.lastname }}</h3>
+        <span class="post-meta">
+          {{ post.createdAt | date:'mediumDate' }}
+          <span *ngIf="post.hackathon?.title"> • {{ post.hackathon.title }}</span>
+        </span>
+      </div>
+    </div>
+  
+    <div class="post-content">
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.content }}</p>
+      
+      <div *ngIf="post.images?.length" class="post-images">
+        <img *ngFor="let image of post.images" 
+             [src]="getImageUrl(image)" 
+             alt="Post image"
+             (error)="handleImageError($event, false)">
+      </div>
+    </div>
+
+    <div class="post-stats">
+      <button (click)="onLikePost(post)" 
+              [class.active]="isPostLikedByCurrentUser(post)">
+        <i class="pi pi-heart"></i> {{ post.likes?.length || 0 }}
+      </button>
+      <button>
+        <i class="pi pi-comment"></i> {{ post.comments?.length || 0 }}
+      </button>
+    </div>
+
+    <app-landing-comment
+      [post]="post"
+      [currentUserId]="currentUserId"
+      (commentAdded)="onCommentAdded(post, $event)">
+    </app-landing-comment>
   </div>
   
+  <div *ngIf="posts.length === 0 && !loading" class="no-posts-message">
+    <p>No posts found for this hackathon</p>
+  </div>
+</div>

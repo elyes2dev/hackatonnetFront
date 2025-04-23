@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Output, Input, Pipe, PipeTransform } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { PostService } from 'src/app/demo/services/post/post.service';
+import { StorageService } from 'src/app/demo/services/storage.service'; // Import the StorageService
 import { Hackathon } from 'src/app/demo/models/hackathon';
-import { User } from 'src/app/demo/models/user';
+import { User } from 'src/app/demo/models/user.model';
 import { Post } from 'src/app/demo/models/post';
-
 
 @Component({
   selector: 'app-post-form',
@@ -13,24 +13,23 @@ import { Post } from 'src/app/demo/models/post';
   styleUrls: ['./post-form.component.scss'],
   providers: [MessageService]
 })
-export class PostFormComponent {
+export class PostFormComponent implements OnInit {
   @Input() hackathon: Hackathon | null = null;
   @Input() isEditMode: boolean = false;
   @Input() postToEdit: Post | null = null;
   @Output() postCreated = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
-
-
   postForm: FormGroup;
   selectedFiles: File[] = [];
-  currentUser: User = { id: 1, name: 'tasnim', lastname: 'omrani', email: 'tasnimomrani@gmail.com' }; // Replace with actual user from auth service
-
+  currentUser: User | null = null;
+  loading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private postService: PostService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private storageService: StorageService // Inject the StorageService
   ) {
     this.postForm = this.fb.group({
       title: ['', Validators.required],
@@ -50,22 +49,93 @@ export class PostFormComponent {
         content: this.postToEdit.content
       });
     }
+    
+    // Get the current user from StorageService
+    this.loadCurrentUser();
   }
 
-  onFileSelect(event: any) {
-    // Convert FileList to array if needed
-    if (event.files instanceof FileList) {
-      this.selectedFiles = Array.from(event.files);
-    } else if (Array.isArray(event.files)) {
-      this.selectedFiles = event.files;
+  loadCurrentUser() {
+    this.loading = true;
+    const userId = this.storageService.getLoggedInUserId();
+    
+    if (userId) {
+      this.storageService.getUserById(userId).subscribe({
+        next: (user) => {
+          this.currentUser = user;
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Error loading user:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to load user information'
+          });
+          this.loading = false;
+        }
+      });
     } else {
-      this.selectedFiles = [event.files];
+      this.loading = false;
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'User not logged in'
+      });
     }
   }
 
-  onFileRemove(event: any) {
-    this.selectedFiles = this.selectedFiles.filter(f => f.name !== event.file.name);
+ // Add this to your component properties
+previewUrls: {[key: string]: string} = {};
+
+// Update the onFileSelect method
+onFileSelect(event: any) {
+  // Convert FileList to array if needed
+  if (event.files instanceof FileList) {
+    this.selectedFiles = Array.from(event.files);
+  } else if (Array.isArray(event.files)) {
+    this.selectedFiles = event.files;
+  } else {
+    this.selectedFiles = [event.files];
   }
+  
+  // Generate preview URLs
+  this.generatePreviewUrls();
+}
+
+// Update the onFileRemove method
+onFileRemove(event: any) {
+  this.selectedFiles = this.selectedFiles.filter(f => f.name !== event.file.name);
+  this.revokeObjectUrl(event.file.name);
+  this.generatePreviewUrls();
+}
+
+// Add these new methods
+private generatePreviewUrls() {
+  this.previewUrls = {};
+  this.selectedFiles.forEach(file => {
+    if (this.isImageFile(file)) {
+      this.previewUrls[file.name] = URL.createObjectURL(file);
+    }
+  });
+}
+
+private revokeObjectUrl(filename: string) {
+  if (this.previewUrls[filename]) {
+    URL.revokeObjectURL(this.previewUrls[filename]);
+    delete this.previewUrls[filename];
+  }
+}
+
+// Update getFilePreviewUrl to use the cached URLs
+getFilePreviewUrl(file: File): string {
+  return this.previewUrls[file.name] || '';
+}
+
+// Clean up URLs when component is destroyed
+ngOnDestroy() {
+  Object.values(this.previewUrls).forEach(url => URL.revokeObjectURL(url));
+  this.previewUrls = {};
+}
 
   onSubmit() {
     if (this.postForm.valid && this.hackathon && this.currentUser) {
@@ -75,8 +145,8 @@ export class PostFormComponent {
       const postData = {
         title: this.postForm.value.title,
         content: this.postForm.value.content,
-        postedBy: this.currentUser.id, // Just send the ID
-        hackathon: this.hackathon.id   // Just send the ID
+        postedBy: this.currentUser.id, // Use the dynamically loaded user ID
+        hackathon: this.hackathon.id
       };
 
       if (this.isEditMode && this.postToEdit) {
@@ -91,10 +161,10 @@ export class PostFormComponent {
 
         // Append files if any
         if (this.selectedFiles && this.selectedFiles.length > 0) {
-      for (const file of this.selectedFiles) {
-        formData.append('images', file, file.name);
-      }
-    }
+          for (const file of this.selectedFiles) {
+            formData.append('images', file, file.name);
+          }
+        }
 
         this.postService.updatePost(this.postToEdit.id, formData).subscribe({
           next: () => {
@@ -147,8 +217,19 @@ export class PostFormComponent {
           }
         });
       }
+    } else if (!this.currentUser) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'User information not available'
+      });
+    } else if (!this.hackathon) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Hackathon information not available'
+      });
     }
-
   }
 
   onCancel() {
@@ -161,5 +242,8 @@ export class PostFormComponent {
     this.selectedFiles = [];
   }
 
-
+  isImageFile(file: File): boolean {
+    return file.type.includes('image/');
+  }
+  
 }
