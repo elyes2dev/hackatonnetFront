@@ -33,7 +33,7 @@ export class UserProfileComponent implements OnInit {
   /**
    * Returns a display-safe value for lists (like skills)
    */
-  safeArray<T>(arr: T[] | null | undefined): T[] {
+  safeArray(arr: any[] | null | undefined): any[] {
     return Array.isArray(arr) ? arr : [];
   }
 
@@ -50,5 +50,10 @@ export class UserProfileComponent implements OnInit {
       case 'master_mentor': return 'Master Mentor';
       default: return badge; // fallback to raw string
     }
+  }
+
+  onEditProfile() {
+    // Logic to handle profile editing
+    console.log('Edit Profile clicked!');
   }
 }

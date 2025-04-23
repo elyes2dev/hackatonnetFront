@@ -117,6 +117,14 @@ import { HackathonCategorizationAnalyticsComponent } from './demo/components/Ana
 import { HackathonInsightsComponent } from './demo/components/Analytics/hackathon-insights/hackathon-insights/hackathon-insights.component';
 import { AiQuizDialogComponent } from './demo/components/quiz/quiz-list/ai-quiz-dialog/ai-quiz-dialog.component';
 import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-list/access-denied/access-denied.component';
+import { PanelModule } from 'primeng/panel';
+import { MessageModule } from 'primeng/message';
+import { AccordionModule } from 'primeng/accordion';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { PasswordModule } from 'primeng/password';
+
+
+
 
 
 @NgModule({
@@ -139,7 +147,11 @@ import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-li
         UserProfileComponent,
         HackathonDetailsComponent, HackathonListComponent, HackathonFormComponent, PostListComponent, CommentListComponent, PostFormComponent, LiveStreamComponent, VideoRoomComponent, HackathonAnalyticsComponent, HackathonCategorizationAnalyticsComponent, HackathonInsightsComponent,
         AiQuizDialogComponent,
-        AccessDeniedComponent
+        AccessDeniedComponent,
+        FooterComponent,
+        SponsorPrizesComponent,
+        AiQuizDialogComponent,
+        
 
     ],
     imports: [
@@ -206,7 +218,20 @@ import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-li
         TableModule,
         ButtonModule,
         ToastModule,
-        RippleModule
+        RippleModule,
+        RippleModule,
+        BrowserAnimationsModule,
+        MessageModule,
+        AccordionModule,
+        DynamicDialogModule,
+        PanelModule,
+        PasswordModule,       // ✅ Required for <p-password>
+        CalendarModule,
+        TagModule,
+        TableModule,
+        DropdownModule,
+        ReactiveFormsModule
+
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

@@ -28,4 +28,5 @@ export interface User {
   sponsorReward?: SponsorReward;
   monitorPoints?: number;
   badge?: BadgeLevel;
+  
 }
