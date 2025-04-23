@@ -172,3 +172,48 @@
     height: 28px;
   }
 }
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0;
+  
+  .spinner {
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border-left-color: #09f;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  span {
+    font-size: 0.9em;
+    color: #666;
+  }
+}
+
+.login-reminder {
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.no-comments {
+  text-align: center;
+  padding: 15px 0;
+  color: #999;
+  font-style: italic;
+  font-size: 0.9em;
+}

@@ -1,49 +1,120 @@
+<!-- Navigation -->
 <app-navbar></app-navbar>
 
-<div class="form-container">
-    <div class="card p-fluid">
-        <h5 class="form-title">Create Workshop</h5>
-        <form [formGroup]="workshopForm" (ngSubmit)="onSubmit()">
-            <!-- Workshop Name -->
-            <div class="p-field">
-                <label for="name" class="form-label">Name</label>
-                <input pInputText id="name" formControlName="name" placeholder="Enter Workshop Name" required class="form-input" />
-            </div>
+<div class="page-container">
+    <div class="form-wrapper">
+        <!-- Form Header -->
+        <div class="form-header">
+            <h2 class="form-title">{{ workshopId ? 'Edit Workshop' : 'Create New Workshop' }}</h2>
+            <p class="form-subtitle">Fill in the details below to {{ workshopId ? 'update' : 'create' }} your workshop</p>
+        </div>
 
-            <!-- Workshop Theme -->
-            <div class="p-field">
-                <label for="theme" class="form-label">Theme</label>
-                <p-dropdown [options]="themes" formControlName="theme" placeholder="Select Theme" class="form-input"></p-dropdown>
-            </div>
+        <!-- Main Form -->
+        <div class="form-container">
+            <form [formGroup]="workshopForm" (ngSubmit)="onSubmit()" class="workshop-form">
+                <!-- Left Column - Main Info -->
+                <div class="form-section main-info">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Workshop Name</label>
+                        <span class="input-wrapper">
+                            <i class="pi pi-book input-icon"></i>
+                            <input 
+                                pInputText 
+                                id="name" 
+                                formControlName="name" 
+                                placeholder="Enter a descriptive name"
+                                [class.error]="workshopForm.get('name')?.invalid && workshopForm.get('name')?.touched"
+                            />
+                        </span>
+                        <small class="error-message" *ngIf="workshopForm.get('name')?.invalid && workshopForm.get('name')?.touched">
+                            Workshop name is required
+                        </small>
+                    </div>
 
-            <!-- Workshop Description -->
-            <div class="p-field">
-                <label for="description" class="form-label">Description</label>
-                <textarea pInputTextarea id="description" formControlName="description" rows="5" placeholder="Enter Workshop Description" class="form-textarea"></textarea>
-            </div>
+                    <div class="form-group">
+                        <label for="theme" class="form-label">Workshop Theme</label>
+                        <p-dropdown 
+                            id="theme"
+                            [options]="themes" 
+                            formControlName="theme" 
+                            placeholder="Select a theme"
+                            [class.error]="workshopForm.get('theme')?.invalid && workshopForm.get('theme')?.touched"
+                            styleClass="theme-dropdown w-full"
+                            [dropdownIcon]="'pi pi-chevron-down'"
+                            optionLabel="label"
+                            optionValue="value"
+                        ></p-dropdown>
+                        <small class="error-message" *ngIf="workshopForm.get('theme')?.invalid && workshopForm.get('theme')?.touched">
+                            Please select a theme
+                        </small>
+                    </div>
 
-            <!-- Photo Upload (File Input with Custom Button) -->
-            <div class="p-field">
-                <label for="photo" class="form-label">Upload Photo</label>
-                <div class="file-upload-container">
-                    <label class="custom-file-upload">
-                        <input type="file" (change)="onFileSelected($event)" />
-                        Choose a File
-                    </label>
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description</label>
+                        <span class="input-wrapper textarea-wrapper">
+                            <i class="pi pi-align-left input-icon"></i>
+                            <textarea 
+                                pInputTextarea 
+                                id="description" 
+                                formControlName="description" 
+                                rows="5" 
+                                placeholder="Describe your workshop content and objectives"
+                                class="workshop-description"
+                            ></textarea>
+                        </span>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Image Preview -->
-            <div *ngIf="imagePreview" class="p-field">
-                <img [src]="imagePreview" alt="Image Preview" class="image-preview" />
-            </div>
+                <!-- Right Column - Media Upload -->
+                <div class="form-section media-section">
+                    <div class="upload-container">
+                        <label class="form-label">Workshop Cover Image</label>
+                        <div class="image-upload-area" 
+                             [class.has-image]="imagePreview"
+                             [style.backgroundImage]="imagePreview ? 'url(' + imagePreview + ')' : 'none'">
+                            <div class="upload-content" *ngIf="!imagePreview">
+                                <i class="pi pi-image upload-icon"></i>
+                                <span class="upload-text">Drop an image here or click to upload</span>
+                                <span class="upload-hint">Recommended: 1200x630px</span>
+                            </div>
+                            <input 
+                                type="file" 
+                                (change)="onFileSelected($event)" 
+                                accept="image/*"
+                                class="file-input"
+                            />
+                            <button 
+                                *ngIf="imagePreview" 
+                                pButton 
+                                type="button" 
+                                icon="pi pi-trash" 
+                                class="p-button-rounded p-button-danger remove-image-btn"
+                                (click)="removeImage($event)">
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Buttons -->
-            <div class="button-group">
-                <button pButton type="submit" label="Save" [disabled]="!workshopForm.valid" class="p-button-lg p-button-success"></button>
-                <button pButton type="button" label="Cancel" class="p-button-lg p-button-danger" (click)="cancel()"></button>
-            </div>
-        </form>
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button 
+                        pButton 
+                        type="button" 
+                        label="Cancel" 
+                        class="p-button-outlined"
+                        (click)="cancel()">
+                    </button>
+                    <button 
+                        pButton 
+                        type="submit" 
+                        [label]="workshopId ? 'Update Workshop' : 'Create Workshop'"
+                        [disabled]="!workshopForm.valid || isSubmitting"
+                        class="p-button-primary">
+                        <i class="pi pi-spin pi-spinner" *ngIf="isSubmitting"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

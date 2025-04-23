@@ -1,40 +1,52 @@
 <div class="comments-section">
-    <div class="comment-form">
-      <textarea [(ngModel)]="newCommentText" 
-                placeholder="Write a comment..."
-                rows="2"></textarea>
-      <button (click)="addComment()" [disabled]="!newCommentText.trim()">
-        Post
-      </button>
-    </div>
-  
-    <div class="comments-container">
-      <div *ngIf="post.comments.length > 2 && !showAllComments" 
-           class="view-comments" 
-           (click)="showAllComments = true">
-        View all {{ post.comments.length }} comments
-      </div>
-  
-      <div *ngFor="let comment of visibleComments" class="comment">
-        <img [src]="comment.userPicture || 'assets/images/default-avatar.png'" 
-        alt="Avatar" class="comment-avatar">
-   
-        
-        <div class="comment-content">
-          <div class="comment-header">
-            <div class="comment-info">
-              <strong>{{ comment.userFullName }}</strong>
-              <span class="comment-time">{{ comment.createdAt | date:'shortTime' }}</span>
-            </div>
+  <p-toast></p-toast>
 
-            
+  <div *ngIf="loading" class="loading-indicator">
+    <p-progressSpinner [style]="{width: '30px', height: '30px'}" styleClass="custom-spinner"></p-progressSpinner>
+    <span>Loading user data...</span>
+  </div>
+
+  <div class="comment-form" *ngIf="currentUser">
+    <textarea [(ngModel)]="newCommentText" 
+              placeholder="Write a comment..."
+              rows="2"></textarea>
+    <button (click)="addComment()" [disabled]="!newCommentText.trim()">
+      Post
+    </button>
+  </div>
+
+  <div *ngIf="!currentUser && !loading" class="login-reminder">
+    <p>Please log in to add comments</p>
+  </div>
+
+  <div class="comments-container">
+    <div *ngIf="post.comments.length > 2 && !showAllComments" 
+         class="view-comments" 
+         (click)="showAllComments = true">
+      View all {{ post.comments.length }} comments
+    </div>
+
+    <div *ngFor="let comment of visibleComments" class="comment">
+      <img [src]="comment.userPicture || 'assets/images/default-avatar.png'" 
+      alt="Avatar" class="comment-avatar">
+ 
+      <div class="comment-content">
+        <div class="comment-header">
+          <div class="comment-info">
+            <strong>{{ comment.userFullName }}</strong>
+            <span class="comment-time">{{ comment.createdAt | date:'shortTime' }}</span>
           </div>
-          
-          <p>{{ comment.content }}</p>
         </div>
-        <div class="comment-actions">
-          <i class="pi pi-trash" (click)="deleteComment(comment)"></i>
-        </div>
+        
+        <p>{{ comment.content }}</p>
       </div>
+      <div class="comment-actions" *ngIf="canDeleteComment(comment)">
+        <i class="pi pi-trash" (click)="deleteComment(comment)"></i>
+      </div>
+    </div>
+
+    <div *ngIf="post.comments.length === 0" class="no-comments">
+      No comments yet. Be the first to add one!
     </div>
   </div>
+</div>

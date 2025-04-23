@@ -9,8 +9,6 @@
   align-items: center;
 }
 
-  
-
 .badge-icon {
     
   img {
@@ -20,6 +18,7 @@
     object-fit: cover;
   }
 }
+  
 
 .header-button {
   background: #007bff;
@@ -468,4 +467,121 @@
     }
   }
 
+  // Footer Variables
+$dark-color: #1e1e2c;
+$primary-color: #a4ade8;
+$secondary-color: #28c76f;
+$transition-normal: all 0.3s ease;
+
+// Footer Styles
+.footer {
+  background: darken($dark-color, 5%);
+  color: white;
+  padding: 60px 0 30px;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
   
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.footer-logo {
+  flex: 1;
+  min-width: 250px;
+  
+  .footer-logo-img {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 15px;
+  }
+  
+  p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+  }
+}
+
+.footer-links {
+  flex: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  
+  .footer-section {
+    flex: 1;
+    min-width: 150px;
+    
+    h4 {
+      color: white;
+      margin-bottom: 20px;
+      font-size: 18px;
+      position: relative;
+      
+      &:after {
+        content: '';
+        position: absolute;
+        width: 30px;
+        height: 2px;
+        background: $secondary-color;
+        bottom: -8px;
+        left: 0;
+      }
+    }
+    
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      
+      li {
+        margin-bottom: 10px;
+        
+        a {
+          color: rgba(255, 255, 255, 0.7);
+          text-decoration: none;
+          transition: $transition-normal;
+          
+          &:hover {
+            color: white;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+  
+  .social-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    transition: $transition-normal;
+    
+    &:hover {
+      background: $primary-color;
+      transform: translateY(-3px);
+    }
+    
+    i {
+      font-size: 18px;
+    }
+  }
+}

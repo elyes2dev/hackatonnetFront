@@ -132,6 +132,9 @@ import {
 } from "./demo/components/landing/landing-project-evaluation/landing-project-evaluation.component";
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { MessageModule } from 'primeng/message';
+import { FacialMetricsComponent } from './demo/components/live-stream/video-room/facial-metrics/facial-metrics.component';
+import { FacialAnalysisService } from './demo/services/live-stream/facial-analysis/facial-analysis.service';
+import { GeneralComponent } from './demo/components/general/general.component';
 
 
 @NgModule({
@@ -158,7 +161,9 @@ import { MessageModule } from 'primeng/message';
         ProjectEvaluationComponent,
         PaymentComponent,
         ComponentsComponent,
-        AccessDeniedComponent
+        AccessDeniedComponent,
+        FacialMetricsComponent,
+        GeneralComponent
 
     ],
     imports: [
@@ -237,7 +242,8 @@ import { MessageModule } from 'primeng/message';
         CountryService, CustomerService, EventService, IconService, NodeService,
         PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService,
         ProjectEvaluationService, // Ajouté
-        TeamSubmissionService
+        TeamSubmissionService, FacialAnalysisService
+
     ],
     bootstrap: [AppComponent]
 })

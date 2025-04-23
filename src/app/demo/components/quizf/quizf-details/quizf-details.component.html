@@ -1,38 +1,118 @@
 <app-navbar></app-navbar>
-<div *ngIf="loading" class="loading-overlay">
-    <div class="loading-spinner">Loading...</div>
-  </div>
-  
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-  
-  <div *ngIf="quiz" class="quiz-details">
-    <h2>{{ quiz.title }}</h2>
-  
-    <div *ngIf="quiz.isPublished" class="badge badge-success">Published</div>
-    <div *ngIf="!quiz.isPublished" class="badge badge-warning">Not Published</div>
-  
-    <div class="questions">
-        <br>
-      <div *ngFor="let question of quiz.questions; let i = index" class="question">
-        <h3>Question {{ i + 1 }}: {{ question.questionText }}</h3>
-  
-        <div *ngFor="let answer of question.answers; let j = index" class="answer">
-          <p [ngClass]="getAnswerClass(j, question.correctAnswerIndex)">
-            Answer {{ j + 1 }}: {{ answer }}
-          </p>
-        </div>
-  
-        <div class="correct-answer">
-          Correct Answer: {{ question.answers[question.correctAnswerIndex] }}
-        </div>
-      </div>
-    </div>
-    <button [routerLink]="['/workshopsf', workshopId, 'quizzes']" class="back-button">
-        Back to Quiz List
-      </button>
-      
-      
 
-  </div>
-  
-  <app-footer></app-footer>
+<div class="quiz-details-container">
+    <div class="quiz-header">
+        <div class="header-content">
+            <div class="title-section">
+                <h1>{{ quiz?.title || 'Quiz Details' }}</h1>
+                <p class="subtitle">{{ quiz?.description || 'Test your knowledge and track your progress' }}</p>
+            </div>
+            <div class="meta-info">
+                <div class="info-item">
+                    <i class="pi pi-clock"></i>
+                    <span>10 minutes</span>
+                </div>
+                <div class="info-item">
+                    <i class="pi pi-list"></i>
+                    <span>{{ quiz?.questions?.length || 0 }} questions</span>
+                </div>
+                <div class="info-item">
+                    <i class="pi pi-check-circle"></i>
+                    <span>{{ quiz?.passingScore || 70 }}% to pass</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quiz-content">
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="loading">
+            <p-progressSpinner></p-progressSpinner>
+            <span>Loading quiz details...</span>
+        </div>
+
+        <!-- Error State -->
+        <div class="error-state" *ngIf="error">
+            <i class="pi pi-exclamation-circle"></i>
+            <h3>Oops! Something went wrong</h3>
+            <p>{{ error }}</p>
+            <button pButton label="Try Again" icon="pi pi-refresh" (click)="loadQuiz()"></button>
+        </div>
+
+        <!-- Quiz Content -->
+        <div class="quiz-sections" *ngIf="!loading && !error && quiz">
+            <!-- Instructions Section -->
+            <div class="section instructions-section">
+                <h2>
+                    <i class="pi pi-info-circle"></i>
+                    Instructions
+                </h2>
+                <div class="section-content">
+                    <ul>
+                        <li>Read each question carefully before answering</li>
+                        <li>You have 10 minutes to complete the quiz</li>
+                        <li>You need {{ quiz.passingScore }}% to pass this quiz</li>
+                        <li>Each question may have one or multiple correct answers</li>
+                        <li>You can review your answers before final submission</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Topics Section -->
+            <div class="section topics-section">
+                <h2>
+                    <i class="pi pi-book"></i>
+                    Topics Covered
+                </h2>
+                <div class="section-content">
+                    <div class="topics-grid">
+                        <div class="topic-item" *ngFor="let topic of quiz.topics">
+                            <i class="pi pi-check"></i>
+                            <span>{{ topic }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Section -->
+            <div class="section actions-section">
+                <div class="action-buttons">
+                    <button 
+                        *ngIf="!hasUserTakenQuiz"
+                        pButton 
+                        label="Start Quiz" 
+                        icon="pi pi-play"
+                        class="p-button-primary start-button"
+                        (click)="startQuiz()"
+                        [disabled]="loading">
+                    </button>
+                    <button 
+                        *ngIf="hasUserTakenQuiz"
+                        pButton 
+                        label="View Results" 
+                        icon="pi pi-chart-bar"
+                        class="p-button-success"
+                        (click)="showQuizResults()">
+                    </button>
+                    <button 
+                        *ngIf="hasUserTakenQuiz"
+                        pButton 
+                        label="Download Certificate" 
+                        icon="pi pi-file-pdf"
+                        class="p-button-info"
+                        (click)="downloadCertificate()">
+                    </button>
+                    <button 
+                        pButton 
+                        label="Back to Workshop" 
+                        icon="pi pi-arrow-left"
+                        class="p-button-outlined"
+                        (click)="goBack()">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-footer></app-footer>

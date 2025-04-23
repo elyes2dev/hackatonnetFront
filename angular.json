@@ -36,7 +36,8 @@
                             "node_modules/prismjs/prism.js",
                             "node_modules/prismjs/components/prism-typescript.js"
                         ],
-                        "allowedCommonJsDependencies": ["chart.js"]
+                        "allowedCommonJsDependencies": ["chart.js","face-api.js"]
+
                     },
                     "configurations": {
                         "production": {

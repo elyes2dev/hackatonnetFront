@@ -44,7 +44,7 @@
     </div>
     <div class="intro-text">
       <p>Welcome to Kiberbash! A place where knowledge meets creativity. Here, you'll find workshops designed to ignite your passion, enhance your skills, and inspire innovative thinking.</p>
-      <p>Browse through various themes, topics, and difficulty levels, and embark on a journey of learning. Whether you're an expert or just starting, there’s something to challenge everyone!</p>
+      <p>Browse through various themes, topics, and difficulty levels, and embark on a journey of learning. Whether you're an expert or just starting, there's something to challenge everyone!</p>
     </div>
     
     <!-- Search and Filters Section -->
@@ -63,15 +63,23 @@
       </select>
     </div>
 
-    <!-- Add New Workshop Button -->
-    <div class="add-button-wrapper">
+    <!-- Action Buttons -->
+    <div class="action-buttons">
       <button
         pButton
         label="Add New Workshop"
         icon="pi pi-plus"
         class="p-button-primary"
-        routerLink="/workshopsf/new"
-      ></button>
+        routerLink="/workshopsf/new">
+      </button>
+      <button
+        pButton
+        label="View All Feedbacks"
+        icon="pi pi-comments"
+        class="p-button-secondary"
+        (click)="showAllFeedbacks()"
+        [disabled]="getTotalFeedbackCount() === 0">
+      </button>
     </div>
   </div>
 
@@ -132,8 +140,11 @@
       outline: none;
     }
 
-    .add-button-wrapper {
-      margin-top: 20px;
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
     }
 
     .add-button-wrapper button {
@@ -143,110 +154,506 @@
     }
   </style>
 
-<!-- Workshops Cards -->
-<div class="cards-container">
-  <div
-    class="nft"
-    *ngFor="let workshop of workshops | filterByNameAndTheme:searchName:selectedTheme"
-  >
-    <div class="main">
-      <img
-        class="tokenImage"
-        [src]="workshop.photo || 'assets/images/placeholder-workshop.png'"
-        alt="Workshop"
-      />
-      <h2>{{ workshop.name }}</h2>
-      <p class="description">
-        {{ workshop.description || 'No description provided.' }}
-      </p>
-
-      <div class="tokenInfo">
-        <div class="price">
-          <ins>🎯</ins>
-          <p>{{ workshop.theme || 'No Theme' }}</p>
+<!-- Workshops Section -->
+<div class="workshops-container">
+  <div class="workshops-list">
+    <div class="workshop-item" *ngFor="let workshop of workshops | filterByNameAndTheme:searchName:selectedTheme">
+      <div class="workshop-main">
+        <div class="workshop-image">
+          <img [src]="workshop.photo || 'assets/images/placeholder-workshop.png'" alt="Workshop">
+          <div class="image-overlay">
+            <button pButton 
+              class="p-button-rounded p-button-text overlay-btn"
+              [class.active]="favorites.includes(workshop.id)"
+              (click)="toggleFavorite(workshop.id)"
+              pTooltip="{{favorites.includes(workshop.id) ? 'Remove from favorites' : 'Add to favorites'}}">
+              <i class="pi" [ngClass]="favorites.includes(workshop.id) ? 'pi-star-fill' : 'pi-star'"></i>
+            </button>
+          </div>
         </div>
-        <div class="duration">
-          <ins>📅</ins>
-          <p>{{ workshop.date || 'Unknown Date' }}</p>
+
+        <div class="workshop-info">
+          <div class="info-header">
+            <h3 class="workshop-title">{{ workshop.name }}</h3>
+            <div class="workshop-meta">
+              <span class="theme-tag" *ngIf="workshop.theme">
+                <i class="pi pi-tag"></i>
+                {{ workshop.theme }}
+              </span>
+              <span class="date-tag" *ngIf="workshop.date">
+                <i class="pi pi-calendar"></i>
+                {{ workshop.date }}
+              </span>
+            </div>
+          </div>
+
+          <p class="workshop-description">{{ workshop.description || 'No description provided.' }}</p>
+
+          <div class="workshop-footer">
+            <div class="host-info">
+              <img [src]="workshop.user.photo || 'assets/images/default-user.png'" alt="Host" class="host-avatar">
+              <span class="host-name">{{ workshop.user.name || 'Unknown' }}</span>
+            </div>
+
+            <div class="action-buttons">
+              <!-- Main Actions -->
+              <div class="button-group">
+                <button pButton 
+                  class="p-button-outlined action-btn"
+                  [routerLink]="['/workshopsf', workshop.id, 'resources']"
+                  pTooltip="View resources">
+                  <i class="pi pi-folder-open"></i>
+                  Resources
+                </button>
+
+                <button pButton 
+                  class="p-button-outlined action-btn"
+                  [routerLink]="['/workshopsf', workshop.id, 'quizzes']"
+                  pTooltip="View quizzes">
+                  <i class="pi pi-list"></i>
+                  Quizzes
+                </button>
+
+                <button pButton 
+                  class="p-button-outlined action-btn"
+                  [ngClass]="{'p-button-success': hasFeedback(workshop.id)}"
+                  (click)="hasFeedback(workshop.id) ? viewFeedback(workshop.id) : showFeedbackDialog(workshop.id)"
+                  [pTooltip]="hasFeedback(workshop.id) ? 'View Feedback' : 'Give Feedback'">
+                  <i class="pi" [ngClass]="hasFeedback(workshop.id) ? 'pi-eye' : 'pi-comments'"></i>
+                  {{ hasFeedback(workshop.id) ? 'View Feedback' : 'Give Feedback' }}
+                </button>
+              </div>
+
+              <!-- Admin Actions -->
+              <div class="admin-buttons" *ngIf="isOwner(workshop.user.id)">
+                <button pButton 
+                  class="p-button-text p-button-warning"
+                  [routerLink]="['/workshopsf', workshop.id, 'edit']"
+                  pTooltip="Edit workshop">
+                  <i class="pi pi-pencil"></i>
+                </button>
+
+                <button pButton 
+                  class="p-button-text p-button-danger"
+                  (click)="deleteWorkshop(workshop.id)"
+                  pTooltip="Delete workshop">
+                  <i class="pi pi-trash"></i>
+                </button>
+
+                <button pButton 
+                  class="p-button-text p-button-success"
+                  [routerLink]="['/workshopsf', workshop.id, 'quizzes', 'new']"
+                  pTooltip="Add new quiz"
+                  *ngIf="!workshop.quiz">
+                  <i class="pi pi-plus"></i>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <hr />
-
-      <div class="creator">
-        <div class="wrapper">
-          <img
-            [src]="workshop.user.photo || 'assets/images/default-user.png'"
-            alt="Creator"
-          />
-        </div>
-        <p><ins>Hosted by</ins> {{ workshop.user.name || 'Unknown' }}</p>
-      </div>
-
-      <div class="card-buttons">
-        <!-- Favorite Button -->
-        <button
-          pButton
-          icon="pi pi-star"
-          class="p-button-rounded p-button-warning"
-          [class.favorited]="favorites.includes(workshop.id)"
-          (click)="toggleFavorite(workshop.id)"
-          pTooltip="Favorite this workshop"
-          tooltipPosition="top"
-        >
-          {{ favorites.includes(workshop.id) ? ' Unfavorite' : ' Favorite' }}
-        </button>
-
-        <!-- Edit Button (Only show if user is the owner of the workshop) -->
-        <button
-          pButton
-          icon="pi pi-pencil"
-          class="p-button-rounded p-button-success"
-          [routerLink]="['/workshopsf', workshop.id, 'edit']"
-          *ngIf="isOwner(workshop.user.id)"
-        ></button>
-
-        <!-- Delete Button (Only show if user is the owner of the workshop) -->
-        <button
-          pButton
-          icon="pi pi-trash"
-          class="p-button-rounded p-button-danger"
-          (click)="deleteWorkshop(workshop.id)"
-          *ngIf="isOwner(workshop.user.id)"
-        ></button>
-
-        <!-- View Resources Button -->
-        <button
-          pButton
-          icon="pi pi-list"
-          class="p-button-rounded p-button-info"
-          [routerLink]="['/workshopsf', workshop.id, 'resources']"
-        ></button>
-
-        <!-- View Quizzes Button -->
-        <button
-          pButton
-          icon="pi pi-question-circle"
-          class="p-button-rounded p-button-help"
-          [routerLink]="['/workshopsf', workshop.id, 'quizzes']"
-          pTooltip="View quizzes"
-          tooltipPosition="top"
-        ></button>
-
-        <!-- Add New Quiz Button (Only show if user is the owner of the workshop) -->
-        <button
-          pButton
-          icon="pi pi-plus"
-          class="p-button-rounded p-button-warning"
-          [routerLink]="['/workshopsf', workshop.id, 'quizzes', 'new']"
-          pTooltip="Add new quiz"
-          tooltipPosition="top"
-          *ngIf="isOwner(workshop.user.id)"
-        ></button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Feedback Analysis Dialog -->
+<p-dialog 
+  [header]="dialogMode === 'view' ? currentWorkshopName + ' - Feedback Results' : 'Submit Feedback for ' + currentWorkshopName" 
+  [(visible)]="feedbackDialogVisible" 
+  [modal]="true" 
+  [style]="{width: '60vw'}"
+  [draggable]="false" 
+  [resizable]="false">
+  
+  <div class="feedback-dialog-content">
+    <!-- Submit Mode -->
+    <div *ngIf="dialogMode === 'submit' && !analysisResult" class="submit-feedback-section">
+      <p class="feedback-instruction">Please share your thoughts about {{currentWorkshopName}}. Your feedback helps us improve!</p>
+      <span class="p-float-label mt-4">
+        <textarea 
+          id="feedback" 
+          rows="5" 
+          class="w-full" 
+          pInputTextarea 
+          [(ngModel)]="feedbackText"
+          [autoResize]="true">
+        </textarea>
+        <label for="feedback">Enter your workshop feedback</label>
+      </span>
+      <div class="flex justify-content-end mt-4">
+        <button 
+          pButton 
+          label="Analyze & Submit" 
+          icon="pi pi-check" 
+          (click)="analyzeFeedback()"
+          [disabled]="!feedbackText?.trim()"
+          class="p-button-primary">
+        </button>
+      </div>
+    </div>
+
+    <!-- Results View -->
+    <div *ngIf="analysisResult" class="analysis-result">
+      <div class="workshop-info" *ngIf="dialogMode === 'view'">
+        <h3>{{analysisResult.workshopName}}</h3>
+      </div>
+      <div class="result-header">
+        <div class="sentiment-badge" [ngClass]="getSentimentClass(analysisResult.sentiment)">
+          {{analysisResult.sentiment}}
+        </div>
+        <div class="rating-container">
+          <span class="rating-label">Rating:</span>
+          <p-rating [ngModel]="analysisResult.rating" [readonly]="true" [cancel]="false"></p-rating>
+          <span class="rating-value">({{analysisResult.rating}}/5)</span>
+        </div>
+      </div>
+
+      <div class="confidence-bar">
+        <label>Analysis Confidence</label>
+        <p-progressBar 
+          [value]="analysisResult.confidence"
+          [showValue]="true"
+          [style]="{'height': '20px'}"
+          [styleClass]="getConfidenceClass(analysisResult.confidence)">
+        </p-progressBar>
+      </div>
+
+      <div class="key-points-section">
+        <h3>Key Insights</h3>
+        <ul>
+          <li *ngFor="let point of analysisResult.key_points">
+            <i class="pi pi-check-circle"></i>
+            {{point}}
+          </li>
+        </ul>
+      </div>
+
+      <div class="original-feedback" *ngIf="analysisResult.feedbackText">
+        <h3>Original Feedback</h3>
+        <p>{{analysisResult.feedbackText}}</p>
+        <small class="feedback-timestamp" *ngIf="analysisResult.timestamp">
+          Submitted on {{analysisResult.timestamp | date:'medium'}}
+        </small>
+      </div>
+
+      <div class="dialog-footer">
+        <div class="flex justify-content-between align-items-center w-full">
+          <button 
+            pButton 
+            icon="pi pi-trash" 
+            label="Remove Feedback"
+            class="p-button-danger"
+            (click)="removeFeedback(currentWorkshopId)"
+            *ngIf="dialogMode === 'view' && currentWorkshopId">
+          </button>
+          <button 
+            pButton 
+            label="Close" 
+            icon="pi pi-times" 
+            (click)="closeDialog()"
+            class="p-button-secondary">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- All Feedbacks Dialog -->
+<p-dialog 
+  header="All Workshop Feedbacks" 
+  [(visible)]="allFeedbacksDialogVisible" 
+  [modal]="true" 
+  [style]="{width: '80vw', height: '80vh'}"
+  [maximizable]="true"
+  [draggable]="false" 
+  [resizable]="false">
+  
+  <div class="all-feedbacks-content">
+    <div class="feedback-filters">
+      <span class="p-input-icon-left search-box">
+        <i class="pi pi-search"></i>
+        <input 
+          type="text" 
+          pInputText 
+          [(ngModel)]="feedbackSearchQuery" 
+          (input)="filterFeedbacks()"
+          placeholder="Search in workshop name, feedback text, sentiment, or key points..."
+          class="w-full">
+      </span>
+      <p-dropdown 
+        [options]="sentimentFilters" 
+        [(ngModel)]="selectedSentimentFilter"
+        (onChange)="filterFeedbacks()"
+        placeholder="Filter by sentiment"
+        styleClass="sentiment-filter">
+      </p-dropdown>
+      <p-dropdown 
+        [options]="ratingFilters" 
+        [(ngModel)]="selectedRatingFilter"
+        (onChange)="filterFeedbacks()"
+        placeholder="Filter by rating"
+        styleClass="rating-filter">
+      </p-dropdown>
+    </div>
+
+    <div *ngIf="filteredFeedbacks.length === 0" class="no-results">
+      <p>No feedbacks found matching your search criteria.</p>
+    </div>
+
+    <div class="feedbacks-grid">
+      <div *ngFor="let feedback of filteredFeedbacks" class="feedback-card">
+        <div class="workshop-info">
+          <h3>{{feedback.workshopName}}</h3>
+          <div class="sentiment-badge" [ngClass]="getSentimentClass(feedback.sentiment)">
+            {{feedback.sentiment}}
+          </div>
+        </div>
+        
+        <div class="rating-container">
+          <p-rating [ngModel]="feedback.rating" [readonly]="true" [cancel]="false"></p-rating>
+          <span class="confidence-label">
+            Confidence: {{feedback.confidence}}%
+          </span>
+        </div>
+
+        <div class="feedback-text">
+          <p>{{feedback.feedbackText}}</p>
+        </div>
+
+        <div class="key-points">
+          <ul>
+            <li *ngFor="let point of feedback.key_points">{{point}}</li>
+          </ul>
+        </div>
+
+        <div class="feedback-footer">
+          <div class="flex justify-content-between align-items-center">
+            <small>{{feedback.timestamp | date:'medium'}}</small>
+            <button 
+              pButton 
+              icon="pi pi-trash" 
+              class="p-button-danger p-button-text p-button-sm"
+              (click)="removeFeedback(feedback.workshopId)"
+              pTooltip="Remove feedback"
+              tooltipPosition="left">
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .search-box {
+      flex: 1;
+      min-width: 300px;
+      
+      input {
+        width: 100%;
+        padding: 0.75rem 2.5rem;
+      }
+    }
+
+    .sentiment-filter, .rating-filter {
+      min-width: 200px;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      font-style: italic;
+    }
+
+    .workshop-info h3 {
+      font-size: 1.2rem;
+      color: #2196F3;
+      margin-bottom: 0.5rem;
+    }
+
+    .feedback-filters {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      flex-wrap: wrap;
+    }
+
+    @media screen and (max-width: 768px) {
+      .feedback-filters {
+        flex-direction: column;
+        
+        .search-box, .sentiment-filter, .rating-filter {
+          width: 100%;
+          min-width: 100%;
+        }
+      }
+    }
+  </style>
+</p-dialog>
+
+<style>
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .feedback-dialog-content {
+    padding: 1.5rem;
+  }
+
+  .submit-feedback-section {
+    .feedback-instruction {
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .analysis-result {
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .sentiment-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: capitalize;
+      
+      &.very-positive { background: #d4edda; color: #155724; }
+      &.positive { background: #e8f5e9; color: #2e7d32; }
+      &.neutral { background: #f8f9fa; color: #383d41; }
+      &.negative { background: #fff3cd; color: #856404; }
+      &.very-negative { background: #f8d7da; color: #721c24; }
+    }
+
+    .rating-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .rating-label {
+        font-weight: 600;
+      }
+    }
+
+    .confidence-bar {
+      margin: 2rem 0;
+      
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+    }
+
+    .key-points-section {
+      margin: 2rem 0;
+      
+      h3 {
+        color: #495057;
+        margin-bottom: 1rem;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        
+        li {
+          display: flex;
+          align-items: flex-start;
+          margin-bottom: 0.5rem;
+          
+          i {
+            color: #2196F3;
+            margin-right: 0.5rem;
+            margin-top: 0.25rem;
+          }
+        }
+      }
+    }
+
+    .original-feedback {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 2rem 0;
+
+      h3 {
+        color: #495057;
+        margin-bottom: 1rem;
+      }
+
+      .feedback-timestamp {
+        display: block;
+        color: #6c757d;
+        margin-top: 1rem;
+      }
+    }
+  }
+
+  .all-feedbacks-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .feedback-filters {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .feedbacks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      overflow-y: auto;
+      padding: 1rem;
+
+      .feedback-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .workshop-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          h3 {
+            margin: 0;
+            color: #495057;
+          }
+        }
+
+        .feedback-text {
+          color: #666;
+          line-height: 1.5;
+        }
+
+        .feedback-footer {
+          color: #6c757d;
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+</style>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
 <app-footer></app-footer>

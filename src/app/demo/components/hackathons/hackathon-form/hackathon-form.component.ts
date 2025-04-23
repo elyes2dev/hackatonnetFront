@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HackathonService } from 'src/app/demo/services/hackathon/hackathon.service';
 import { Router } from '@angular/router';
 import { Hackathon } from 'src/app/demo/models/hackathon';
-import { AuthService } from 'src/app/demo/services/auth.service'; // Import AuthService
+import { StorageService } from 'src/app/demo/services/storage.service'; // Import StorageService instead
 
 @Component({
   selector: 'app-hackathon-form',
@@ -19,7 +19,7 @@ export class HackathonFormComponent implements OnInit {
     private fb: FormBuilder,
     private hackathonService: HackathonService,
     private router: Router,
-    private authService: AuthService // Inject existing AuthService
+    private storageService: StorageService // Inject StorageService instead of AuthService
   ) {
     this.hackathonForm = this.buildForm();
   }
@@ -61,28 +61,16 @@ export class HackathonFormComponent implements OnInit {
       } else {
         this.hackathonForm.reset();
         // Reset form but maintain the user ID
-        this.hackathonForm.get('createdBy.id')?.setValue(this.getUserIdFromToken());
+        this.hackathonForm.get('createdBy.id')?.setValue(this.getUserIdFromStorage());
       }
     }
   }
   
-  // Helper method to extract user ID from token or localStorage
-  private getUserIdFromToken(): number {
-    // This implementation will depend on how your token stores user information
-    // You might need to decode a JWT token or get the ID from localStorage
-    
-    // Option 1: If you store user ID in localStorage
-    const userId = localStorage.getItem('userId');
-    if (userId) {
-      return parseInt(userId, 10);
-    }
-    
-    // Option 2: If you can access info from the token
-    // This is just a placeholder - implement according to your token structure
-    // You might need to parse a JWT token or use some other method
-    
-    // Default fallback to user ID 1 if we can't determine the current user
-    return 1;
+  // Use StorageService to get user ID
+  private getUserIdFromStorage(): number {
+    const userId = this.storageService.getLoggedInUserId();
+    console.log('Retrieved user ID from storage:', userId);
+    return userId || 1; // Fallback to 1 if userId is null
   }
   
   onSubmit(): void {
@@ -132,7 +120,7 @@ export class HackathonFormComponent implements OnInit {
   }
 
   buildForm(): FormGroup {
-    const userId = this.getUserIdFromToken();
+    const userId = this.getUserIdFromStorage();
     console.log('Building form with user ID:', userId);
     
     return this.fb.group({
@@ -145,7 +133,7 @@ export class HackathonFormComponent implements OnInit {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       createdBy: this.fb.group({
-        id: [userId, Validators.required] // Dynamic user ID
+        id: [userId, Validators.required] // Dynamic user ID from StorageService
       })
     });
   }
