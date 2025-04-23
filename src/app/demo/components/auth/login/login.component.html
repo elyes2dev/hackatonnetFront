@@ -1,90 +1,72 @@
 <div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100">
-    <div class="grid justify-content-center p-4 w-full" style="max-width: 90%;">
-  
-      <!-- Logo -->
-      <div class="col-12 text-center mb-6">
-        <img src="assets/layout/images/{{ layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white' }}.svg"
-            alt="App Logo" 
-            class="mb-3 drop-shadow-md floating-logo"
-            style="width:85px; height:65px;">
+  <div class="grid justify-content-center p-4 w-full" style="max-width: 90%;">
 
-      </div>
-  
-      <!-- Login Card -->
-      <div class="col-12 xl:col-5 p-0 rounded-3xl shadow-2xl overflow-hidden"
-           style="background: rgba(255,255,255,0.75); backdrop-filter: blur(14px); border: 1px solid rgba(0,0,0,0.05);">
-  
-        <div class="p-8">
-  
-          <!-- Title -->
-          <div class="text-center mb-6">
-            <h2 class="text-3xl font-bold text-blue-900">Welcome Back</h2>
-            <p class="text-sm text-gray-700">Please sign in to your account</p>
-          </div>
-  
-          <!-- Form -->
-          <div class="w-full">
-            <!-- Email -->
-            <label for="email1" class="block text-sm font-medium text-blue-900 mb-2">Email</label>
-            <input id="email1" type="text" placeholder="Email address" pInputText
-                   class="w-full mb-4 text-black" 
-                   [ngModel]="name"
-                   [ngModelOptions]="{standalone: true}"
-                   [style.padding]="'1rem'"
-                   [style.borderRadius]="'12px'">
-  
-            <!-- Password -->
-            <label for="password1" class="block text-sm font-medium text-blue-900 mb-2">Password</label>
-            <p-password id="password1"
-                        [(ngModel)]="password"
-                        placeholder="Password"
-                        [toggleMask]="true"
-                        [inputStyle]="{ 'padding': '1rem', 'border-radius': '12px' }"
-                        class="w-full mb-4 text-black">
-            </p-password>
-  
-            <!-- Remember / Forgot -->
-            <div class="flex align-items-center justify-content-between mb-5 text-sm text-gray-600">
-              <div class="flex items-center">
-                <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
-                <label for="rememberme1">Remember me</label>
-              </div>
-              <a class="text-sm font-medium text-blue-700 hover:underline cursor-pointer" (click)="forgetpassword()">Forgot password?</a>
-            </div>
-  
-            <!-- Sign In -->
-            <button pButton pRipple label="Sign In" 
-                    class="w-full p-3 text-lg font-semibold bg-blue-600 hover:bg-blue-700 border-none text-white"
-                    style="border-radius: 12px;" 
-                    (click)="onSignIn()"></button>
-  
-            <!-- Divider -->
-            <div class="my-5 text-center text-sm text-gray-500">
-              or sign in with
-            </div>
-  
-            <!-- Google Sign-In -->
-            <div id="g_id_onload"
-                 data-client_id="421274310229-kmmf1gkts302hlivl21oq2ip6588gib4.apps.googleusercontent.com"
-                 data-context="signin"
-                 data-ux_mode="popup"
-                 data-login_uri="http://localhost:9100/auth/social-login"
-                 data-auto_select="true"
-                 data-itp_support="true">
-            </div>
-  
-            <div class="g_id_signin"
-                 data-type="standard"
-                 data-shape="rectangular"
-                 data-theme="outline"
-                 data-text="signin_with"
-                 data-size="large"
-                 data-logo_alignment="left">
-            </div>
-  
-          </div>
+    <!-- Logo -->
+    <div class="col-12 text-center mb-6">
+      <img src="assets/layout/images/{{ layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white' }}.svg"
+           alt="App Logo"
+           class="mb-3 drop-shadow-md floating-logo"
+           style="width:85px; height:65px;">
+    </div>
+
+    <!-- Login Card -->
+    <div class="col-12 xl:col-5 p-0 rounded-3xl shadow-2xl overflow-hidden"
+         style="background: rgba(255,255,255,0.75); backdrop-filter: blur(14px); border: 1px solid rgba(0,0,0,0.05);">
+
+      <div class="p-8">
+
+        <!-- Title -->
+        <div class="text-center mb-6">
+          <h2 class="text-3xl font-bold text-blue-900">Welcome Back</h2>
+          <p class="text-sm text-gray-700">Please sign in to your account</p>
         </div>
+
+        <!-- Email Input -->
+        <input [(ngModel)]="name" type="text" placeholder="Email address" class="w-full mb-4 text-black">
+
+        <!-- Password Input -->
+        <input [(ngModel)]="password" type="password" placeholder="Password" class="w-full mb-4 text-black">
+
+        <!-- Remember / Forgot Password -->
+        <div class="flex align-items-center justify-content-between mb-5 text-sm text-gray-600">
+          <div class="flex items-center">
+            <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
+            <label for="rememberme1">Remember me</label>
+          </div>
+          <a class="text-sm font-medium text-blue-700 hover:underline cursor-pointer" (click)="forgetpassword()">Forgot password?</a>
+        </div>
+
+        <!-- Sign In Button -->
+        <button pButton pRipple label="Sign In" 
+                class="w-full p-3 text-lg font-semibold bg-blue-600 hover:bg-blue-700 border-none text-white"
+                style="border-radius: 12px;" 
+                (click)="onSignIn()"></button>
+
+        <!-- Divider -->
+        <div class="my-5 text-center text-sm text-gray-500">
+          or sign in with
+        </div>
+
+        <!-- Google Sign-In -->
+        <div id="g_id_onload"
+             data-client_id="421274310229-kmmf1gkts302hlivl21oq2ip6588gib4.apps.googleusercontent.com"
+             data-context="signin"
+             data-ux_mode="popup"
+             data-login_uri="http://localhost:9100/auth/social-login"
+             data-auto_select="true"
+             data-itp_support="true">
+        </div>
+
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="signin_with"
+             data-size="large"
+             data-logo_alignment="left">
+        </div>
+
       </div>
     </div>
   </div>
-  
+</div>

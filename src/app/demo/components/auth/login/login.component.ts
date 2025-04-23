@@ -55,6 +55,8 @@ export class LoginComponent {
 
 
   onSignIn(): void {
+    console.log('Sign In clicked!');
+    console.log('Name:', this.name);
     this.authService.login(this.name, this.password).subscribe({
       next: (response) => {
         if (response.jwtToken) {

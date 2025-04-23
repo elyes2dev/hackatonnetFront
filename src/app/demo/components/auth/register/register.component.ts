@@ -32,7 +32,7 @@ export class RegisterComponent {
     birthdate: null,
     picture: '',
     description: '',
-    badge: 'ROLE_USER'
+    badge: 'JUNIOR_COACH'
   };
 
   errorMessage: string | null = null;
