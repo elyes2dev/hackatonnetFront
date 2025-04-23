@@ -95,6 +95,14 @@
                         (click)="showQuizResults()">
                     </button>
                     <button 
+                        *ngIf="hasUserTakenQuiz"
+                        pButton 
+                        label="Download Certificate" 
+                        icon="pi pi-file-pdf"
+                        class="p-button-info"
+                        (click)="downloadCertificate()">
+                    </button>
+                    <button 
                         pButton 
                         label="Back to Workshop" 
                         icon="pi pi-arrow-left"

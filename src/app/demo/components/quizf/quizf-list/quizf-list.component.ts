@@ -51,21 +51,10 @@ export class QuizfListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Get the current userId dynamically from StorageService
-    this.currentUserId = this.storageService.getUserId(); // Method to get userId from localStorage or other source
-
-    if (!this.currentUserId) {
-      alert('You must be logged in to access quizzes!');
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    this.route.params.subscribe(params => {
-      this.workshopId = +params['workshopId'];
-      this.loadQuizzes();
-    });
-
-    this.checkIfUserIsOwner(); // <-- add this line
+    this.workshopId = +this.route.snapshot.params['workshopId'];
+    this.currentUserId = localStorage.getItem('loggedid');
+    
+    this.checkIfUserIsOwner();
 
     const userId = Number(localStorage.getItem('loggedid'));
     this.userQuizScoreService.getUserScores(userId).subscribe((scores: UserQuizScore[]) => {
@@ -230,12 +219,27 @@ export class QuizfListComponent implements OnInit {
   checkIfUserIsOwner(): void {
     const loggedUserId = localStorage.getItem('loggedid') ? parseInt(localStorage.getItem('loggedid')!, 10) : null;
   
-    if (loggedUserId !== null) {
+    if (loggedUserId !== null && this.workshopId) {
       this.workshopService.getWorkshopById(this.workshopId).subscribe({
         next: (workshop) => {
-          this.userIsOwner = (workshop?.user?.id === loggedUserId); // Set the userIsOwner based on the comparison
+          if (workshop && workshop.user) {
+            this.userIsOwner = workshop.user.id === loggedUserId;
+            // Only load quizzes after checking ownership
+            this.loadQuizzes();
+          } else {
+            this.userIsOwner = false;
+            this.loadQuizzes();
+          }
+        },
+        error: (error) => {
+          console.error('Error checking workshop ownership:', error);
+          this.userIsOwner = false;
+          this.loadQuizzes();
         }
       });
+    } else {
+      this.userIsOwner = false;
+      this.loadQuizzes();
     }
   }
 
@@ -281,5 +285,10 @@ export class QuizfListComponent implements OnInit {
         alert('Failed to retrieve user score.');
       }
     });
+  }
+
+  // Helper method to check if current user is the workshop owner
+  isOwner(): boolean {
+    return this.userIsOwner;
   }
 }

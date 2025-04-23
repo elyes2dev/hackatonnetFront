@@ -8,7 +8,7 @@
         </div>
         <div class="header-actions">
             <button pButton 
-                    *ngIf="!hasQuiz"
+                    *ngIf="!hasQuiz && userIsOwner"
                     label="Create Quiz" 
                     icon="pi pi-plus"
                     class="p-button-primary"
@@ -36,7 +36,7 @@
             <h2>No Quizzes Available</h2>
             <p>Start by creating your first quiz for this workshop</p>
             <button pButton 
-                    *ngIf="!hasQuiz"
+                    *ngIf="!hasQuiz && userIsOwner"
                     label="Create New Quiz" 
                     icon="pi pi-plus"
                     class="p-button-primary"
@@ -88,18 +88,21 @@
                     <div class="quiz-actions">
                         <div class="action-group">
                             <button pButton 
+                                    *ngIf="quiz.isPublished || isOwner()"
                                     class="btn-action btn-view"
                                     icon="pi pi-eye"
                                     pTooltip="View Quiz"
                                     (click)="viewQuizDetails(quiz)">
                             </button>
                             <button pButton 
+                                    *ngIf="isOwner()"
                                     class="btn-action btn-edit"
                                     icon="pi pi-pencil"
                                     pTooltip="Edit Quiz"
                                     (click)="editQuiz(quiz)">
                             </button>
                             <button pButton 
+                                    *ngIf="isOwner()"
                                     class="btn-action btn-delete"
                                     icon="pi pi-trash"
                                     pTooltip="Delete Quiz"

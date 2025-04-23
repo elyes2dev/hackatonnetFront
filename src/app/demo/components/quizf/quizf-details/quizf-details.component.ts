@@ -6,6 +6,8 @@ import { Quiz } from 'src/app/demo/models/quiz.model';
 import { QuizService } from 'src/app/demo/services/quiz.service';
 import { UserQuizScoreService } from 'src/app/demo/services/user-quiz-score.service';
 import { QuizfResultDialogComponent } from '../quizf-result-dialog/quizf-result-dialog.component';
+import { QuizCertificateService } from 'src/app/demo/services/quizcertificate.service';
+import { UserService } from 'src/app/demo/services/user.service';
 
 @Component({
   selector: 'app-quizf-details',
@@ -21,7 +23,8 @@ export class QuizfDetailsComponent implements OnInit {
   error: string | null = null;
   hasUserTakenQuiz = false;
   ref: DynamicDialogRef | undefined;
-  userId = 1; // TODO: Get this from your auth service
+  userId: number | null = null;
+  userScore: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,10 +32,26 @@ export class QuizfDetailsComponent implements OnInit {
     private quizService: QuizService,
     private messageService: MessageService,
     private dialogService: DialogService,
-    private userQuizScoreService: UserQuizScoreService
+    private userQuizScoreService: UserQuizScoreService,
+    private certificateService: QuizCertificateService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
+    // Get the logged-in user's ID
+    const loggedUserId = localStorage.getItem('loggedid');
+    if (!loggedUserId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'You must be logged in to view quiz details'
+      });
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.userId = parseInt(loggedUserId, 10);
+
+    // Get route parameters and load quiz data
     this.route.params.subscribe(params => {
       this.quizId = +params['quizId'];
       this.workshopId = +params['workshopId'];
@@ -60,6 +79,9 @@ export class QuizfDetailsComponent implements OnInit {
           passingScore: quiz.passingScore || 70
         };
         this.loading = false;
+        if (this.hasUserTakenQuiz) {
+          this.loadUserScore();
+        }
       },
       error: (err: Error) => {
         console.error('Error loading quiz:', err);
@@ -70,19 +92,96 @@ export class QuizfDetailsComponent implements OnInit {
   }
 
   checkQuizStatus(): void {
-    if (!this.quizId) return;
+    if (!this.quizId || !this.userId) return;
     
     this.userQuizScoreService.hasUserTakenQuiz(this.userId, this.quizId).subscribe({
       next: (hasTaken: boolean) => {
         this.hasUserTakenQuiz = hasTaken;
+        if (hasTaken) {
+          this.loadUserScore();
+        }
       },
       error: (err: Error) => {
         console.error('Error checking quiz status:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to check quiz status'
+        });
+      }
+    });
+  }
+
+  loadUserScore(): void {
+    if (!this.userId || !this.quizId) return;
+
+    this.userQuizScoreService.getUserScoreForQuiz(this.userId, this.quizId).subscribe({
+      next: (score) => {
+        this.userScore = score;
+      },
+      error: (err) => {
+        console.error('Error loading user score:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load quiz score'
+        });
+      }
+    });
+  }
+
+  downloadCertificate(): void {
+    if (!this.userId || !this.quiz?.title || this.userScore === null) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Missing required information for certificate'
+      });
+      return;
+    }
+
+    this.userService.getUserById(this.userId).subscribe({
+      next: (user) => {
+        this.certificateService.downloadCertificate(user.username, this.quiz!.title, this.userScore!).subscribe({
+          next: (response) => {
+            const blob = new Blob([response.body!], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${this.quiz!.title}_certificate.pdf`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Certificate downloaded successfully'
+            });
+          },
+          error: (err) => {
+            console.error('Certificate download error:', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Could not download the certificate'
+            });
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching user:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch user information'
+        });
       }
     });
   }
 
   showQuizResults(): void {
+    if (!this.userId || !this.quizId) return;
+
     this.ref = this.dialogService.open(QuizfResultDialogComponent, {
       data: {
         quizId: this.quizId,

@@ -7,11 +7,14 @@ import { Question } from 'src/app/demo/models/question.model';
 import { Quiz } from 'src/app/demo/models/quiz.model';
 import { Workshop } from 'src/app/demo/models/workshop.model';
 import { ThemeEnum } from 'src/app/demo/models/theme.enum';
+import { QuestionService } from 'src/app/demo/services/question.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-ai-quiz-dialog',
   templateUrl: './ai-quiz-dialog.component.html',
-  styleUrls: ['./ai-quiz-dialog.component.scss']
+  styleUrls: ['./ai-quiz-dialog.component.scss'],
+  providers: [MessageService]
 })
 export class AiQuizDialogComponent {
   @Input() workshopId!: number;
@@ -22,10 +25,13 @@ export class AiQuizDialogComponent {
   loading = false;
   error: string | null = null;
   generatedQuestions: Question[] = [];
+  generatedQuiz: Quiz | null = null;
 
   constructor(
     private aiQuizService: AiQuizService,
-    private quizService: QuizService
+    private quizService: QuizService,
+    private questionService: QuestionService,
+    private messageService: MessageService
   ) {}
 
   onFileSelected(event: any): void {
@@ -70,35 +76,27 @@ export class AiQuizDialogComponent {
       .subscribe({
         next: (response) => {
           if (response.success && response.questions) {
-            // Create a base workshop object
-            const workshop: Workshop = {
-              id: this.workshopId,
-              name: '',  // These will be updated when saving
-              description: '',
-              photo: '',
-              theme: ThemeEnum.Default,  // Using default theme
-              user: undefined,
-              resources: [],
-              quiz: null
-            };
-
-            // Create a base quiz object
-            const quiz: Quiz = {
+            // Create the quiz object with required fields
+            this.generatedQuiz = {
               title: 'AI Generated Quiz',
               isPublished: false,
-              workshop: workshop,
-              topics: ['AI Generated'], // Default topic for AI generated quiz
-              duration: 30, // Default duration of 30 minutes
-              passingScore: 70, // Default passing score of 70%
+              workshop: { id: this.workshopId } as Workshop,
+              topics: ['AI Generated'],
+              duration: 30,
+              passingScore: 70,
+              questions: []
             };
 
-            // Transform the AI-generated questions to match your Question model format
-            this.generatedQuestions = response.questions.map(q => ({
-              questionText: q.questionText,
-              answers: q.answers,
-              correctAnswerIndex: q.correctAnswerIndex,
-              quiz: quiz
-            }));
+            // Transform the AI-generated questions to match the Question model
+            this.generatedQuestions = response.questions.map(q => {
+              const question: Question = {
+                questionText: q.questionText,
+                answers: q.answers || [],
+                correctAnswerIndex: q.correctAnswerIndex || 0,
+                quiz: this.generatedQuiz as Quiz
+              };
+              return question;
+            });
           }
           this.loading = false;
         },
@@ -110,41 +108,68 @@ export class AiQuizDialogComponent {
   }
 
   saveQuiz(): void {
-    if (!this.generatedQuestions.length) {
+    if (!this.generatedQuestions.length || !this.generatedQuiz) {
       this.error = 'No questions to save';
       return;
     }
 
     this.loading = true;
-    const saveRequests = this.generatedQuestions.map(question => {
-      const questionWithWorkshop = {
-        ...question,
-        workshopId: this.workshopId
-      };
-      return this.quizService.saveQuestion(questionWithWorkshop).pipe(
-        catchError(error => {
-          console.error(`Failed to save question: ${question.questionText}`, error);
-          return throwError(() => error);
-        })
-      );
-    });
+    this.error = null;
 
-    forkJoin(saveRequests)
-      .pipe(
-        catchError(error => {
-          this.error = 'Some questions failed to save. Please try again.';
-          return throwError(() => error);
-        })
-      )
-      .subscribe({
-        next: () => {
-          this.quizSaved.emit();
-          this.closeDialog.emit();
-        },
-        error: () => {
-          this.loading = false;
-        }
-      });
+    // First, create the quiz
+    this.quizService.createQuiz(this.generatedQuiz).subscribe({
+      next: (savedQuiz) => {
+        // Create properly formatted questions with the saved quiz reference
+        const questionsToSave = this.generatedQuestions.map(question => {
+          const formattedQuestion: Question = {
+            questionText: question.questionText,
+            answers: question.answers,
+            correctAnswerIndex: question.correctAnswerIndex,
+            quiz: savedQuiz // Use the saved quiz reference
+          };
+          return formattedQuestion;
+        });
+
+        // Create all questions using the question service
+        const questionObservables = questionsToSave.map(question => 
+          this.questionService.createQuestion(question)
+        );
+
+        // Save all questions
+        forkJoin(questionObservables).subscribe({
+          next: (savedQuestions) => {
+            // Update the quiz with the saved questions
+            savedQuiz.questions = savedQuestions;
+            
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Quiz and questions saved successfully'
+            });
+            this.quizSaved.emit();
+            this.closeDialog.emit();
+          },
+          error: (err) => {
+            console.error('Error saving questions:', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to save questions'
+            });
+            this.loading = false;
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error saving quiz:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to save quiz'
+        });
+        this.loading = false;
+      }
+    });
   }
 
   cancel(): void {
