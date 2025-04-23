@@ -131,6 +131,7 @@ import {
     LandingProjectEvaluationComponent
 } from "./demo/components/landing/landing-project-evaluation/landing-project-evaluation.component";
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { MessageModule } from 'primeng/message';
 
 
 @NgModule({
@@ -179,6 +180,8 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
         MultiSelectModule,
         DropdownModule,
         ProgressBarModule,
+        MessageModule, // Add MessageModule to the imports array
+
         ConfirmDialogModule,
         ToastModule,
         FormsModule,

@@ -40,3 +40,22 @@
     border-color: #545b62;
   }
 }
+.p-dialog-content {
+  padding: 1.5rem;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.p-message-error {
+  width: 100%;
+}
+
+.p-button-primary, .p-button-secondary {
+  min-width: 120px;
+}
+
+input[type="number"] {
+  width: 100%;
+}
