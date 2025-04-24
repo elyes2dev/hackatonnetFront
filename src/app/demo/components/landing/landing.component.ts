@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { StorageService } from '../../services/storage.service';
@@ -16,8 +16,12 @@ export class LandingComponent implements OnInit {
   userId: string | null = null;
   isAuthenticated: boolean = false;
   isAdmin: boolean = false;
-  isStudent: boolean = false;
+  isStudent: boolean = false; 
   isSponsor: boolean = false; // Added sponsor flag
+  user!: User;
+  isMentor: boolean = false; 
+
+  userMenuVisible: boolean = false; // Property to control dropdown visibility
 
   constructor(
     private storageService: StorageService,
@@ -31,14 +35,25 @@ export class LandingComponent implements OnInit {
     console.log('User ID:', this.userId);
   }
 
-  ngOnInit(): void {
-      this.getUserRole();
-  }
+  username: string = '';
 
-  logout() {
-      this.authService.logout()
-      window.location.reload();
-  }
+  ngOnInit(): void {
+    const userId = this.storageService.getLoggedInUserId();
+    console.log('User ID from storage:', this.authService.isAuthenticated());
+    this.getUserRole;
+    if (userId) {
+      this.userService.getUserById(userId).subscribe((data) => {
+        this.user = data;
+        this.username = data.name;
+        // Check if user has SPONSOR role
+        this.isSponsor = this.user.roles?.some(role => role.name === 'SPONSOR') || false;
+        this.isMentor = this.user.roles?.some(role => role.name === 'MENTOR') || false;
+
+      });
+    }
+  } 
+
+
 
   // Fetch and log user role
   getUserRole() {
@@ -68,4 +83,63 @@ export class LandingComponent implements OnInit {
         console.log('User not logged in');
       }
   }
+ navigateToLanding() {
+    this.router.navigate(['/landing']);
+  }
+
+    navigateToTeamSubmission(): void {
+        this.router.navigate(['/team-submission']); // Navigation directe vers /team-submission
+    }
+  getBadgeIcon(): string {
+    const badgeIcons: { [key: string]: string } = {
+      JUNIOR_COACH: 'assets/demo/images/avatar/JUNIOR_COACH.png',
+      ASSISTANT_COACH: 'assets/demo/images/avatar/ASSISTANT_COACH.png',
+      SENIOR_COACH: 'assets/demo/images/avatar/SENIOR_COACH.png',
+      HEAD_COACH: 'assets/demo/images/avatar/HEAD_COACH.png',
+      MASTER_MENTOR: 'assets/demo/images/avatar/MASTER_MENTOR.png'
+    };
+    return this.user ? badgeIcons[this.user.badge] || 'assets/icons/default_badge.png' : '';
+  }
+
+  viewOrCreateMentorApplication(): void {
+    const userId = this.storageService.getLoggedInUserId();
+    if (this.isMentor) {
+      // Navigate to view their existing application
+      this.router.navigate(['/mentor-applications/user', userId]);
+    } else {
+      // Navigate to create a new application
+      this.router.navigate(['/mentor-applications/new']);
+    }}
+    
+  logout()
+  {
+      this.authService.logout();
+      this.storageService.clearAll();
+      window.location.reload();
+      this.userMenuVisible = false;
+  }
+  
+  // Toggle user menu dropdown visibility
+  toggleUserMenu(event: Event): void {
+    event.stopPropagation();
+    this.userMenuVisible = !this.userMenuVisible;
+  }
+  
+  // Close user menu dropdown
+  closeUserMenu(): void {
+    this.userMenuVisible = false;
+  }
+  
+  // Close dropdown when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    // Check if the click is outside the dropdown area
+    const clickedElement = event.target as HTMLElement;
+    const dropdown = document.querySelector('.user-dropdown');
+    
+    if (dropdown && !dropdown.contains(clickedElement)) {
+      this.userMenuVisible = false;
+    }
+  }
 }
+
