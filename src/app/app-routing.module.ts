@@ -88,7 +88,6 @@ import {
                     // Dashboard
                     { path: 'support-tickets', component: SupportTicketComponent },  // Add support ticket component route
                     { path: 'mydashboard', component: MydashboardComponent },
-                    { path: 'profile', component: UserProfileComponent },  // User profile route
                     { path: 'project-evaluations', component: ProjectEvaluationComponent },
 
                     // Nouvelle route pour accéder au composant TeamSubmission
