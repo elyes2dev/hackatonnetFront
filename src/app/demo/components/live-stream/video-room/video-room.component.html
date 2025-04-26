@@ -1,20 +1,40 @@
 <!-- Video Room Container -->
 <div class="video-room">
-    <!-- Loading State -->
-    <div class="loading-overlay" *ngIf="!localStream">
-      <div class="spinner"></div>
-      <p>Connecting to room...</p>
-    </div>
-  
-    <!-- Main Room Content -->
-    <div *ngIf="localStream" class="room-content">
-      <!-- Room Header -->
-      <div class="room-header">
-        <h2>Room: {{ roomId }}</h2>
+  <!-- Loading State -->
+  <div class="loading-overlay" *ngIf="!localStream">
+    <div class="spinner"></div>
+    <p>Connecting to room...</p>
+  </div>
+
+  <!-- Main Room Content -->
+  <div *ngIf="localStream" class="room-content">
+    <!-- Room Header with Analysis Controls -->
+    <div class="room-header">
+      <h2>Room: {{ roomId }}</h2>
+      
+      <div class="header-controls">
         <div class="participant-count">
           <i class="pi pi-user"></i> {{ participants.length + 1 }}
         </div>
+        
+        <!-- Combined Analysis Controls -->
+        <div class="analysis-controls">
+          <button class="toggle-analysis-btn" 
+                  (click)="toggleFacialAnalysis()" 
+                  [class.active]="isFacialAnalysisEnabled"
+                  [disabled]="!isFacialAnalysisReady || isCameraOff">
+            <i class="pi pi-chart-line"></i>
+            <span>{{ isFacialAnalysisEnabled ? 'Analysis On' : 'Analysis Off' }}</span>
+          </button>
+          
+          <button class="toggle-metrics-btn" 
+                  *ngIf="isFacialAnalysisEnabled" 
+                  (click)="toggleFacialMetrics()">
+            {{ showFacialMetrics ? 'Hide Metrics' : 'Show Metrics' }}
+          </button>
+        </div>
       </div>
+    </div>
   
    <!-- Gesture Indicator -->
 <div class="gesture-indicator" *ngIf="currentGesture" @fadeInOut>
@@ -36,12 +56,30 @@
       </span>
     </span>
   </div>
+
   
+
+
       <!-- Video Grid -->
       <div class="video-grid">
-        <!-- Local Video -->
-        <div class="video-container local" [class.screen-sharing]="isSharingScreen">
+        <!-- Local Video with Analysis Status -->
+        <div class="video-container local" [class.screen-sharing]="isSharingScreen"  [class.camera-off-container]="isCameraOff">
           <video #localVideo autoplay muted playsinline [srcObject]="localStream"></video>
+          
+
+
+          <div class="camera-off-overlay" *ngIf="isCameraOff">
+            <i class="pi pi-video-slash"></i>
+            <span>Camera Off</span>
+          </div>
+
+
+          <!-- Analysis Status Indicator -->
+          <div class="analysis-status" *ngIf="isFacialAnalysisEnabled">
+            <div class="status-indicator"></div>
+            <span>Analyzing expressions</span>
+          </div>
+          
           <div class="user-info">
             <span class="user-name">You</span>
             <div class="user-status">
@@ -66,6 +104,12 @@
         </div>
       </div>
   
+
+      <app-facial-metrics 
+      *ngIf="isFacialAnalysisEnabled && showFacialMetrics"
+      class="facial-metrics-panel">
+    </app-facial-metrics>
+
       <!-- Controls -->
       <div class="control-bar">
         <button (click)="toggleMic()" [class.active]="!isMicMuted" title="Toggle Microphone">
@@ -74,6 +118,8 @@
             'pi-microphone': !isMicMuted
           }"></i>
         </button>
+
+        
         
         <button (click)="toggleCamera()" [class.active]="!isCameraOff" title="Toggle Camera">
           <i class="pi" [ngClass]="{

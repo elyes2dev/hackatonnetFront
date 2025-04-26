@@ -56,6 +56,8 @@ import { HackathonAnalyticsComponent } from './demo/components/Analytics/hackath
 import { HackathonCategorizationAnalyticsComponent } from './demo/components/Analytics/hackathon-categorization-analytics/hackathon-categorization-analytics.component';
 import { AccessDeniedComponent } from './demo/components/hackathons/hackathon-list/access-denied/access-denied.component';
 import { AdminGuard } from './demo/services/hackathon/AuthGuard/auth-guard.service';
+import { Component } from '@angular/core';
+import { GeneralComponent } from './demo/components/general/general.component';
 
 import { TeamSubmissionComponent } from './demo/components/team-submission/team-submission.component';  // Import du composant
 import { ProjectEvaluationComponent } from './demo/components/project-evaluation/project-evaluation.component';
@@ -77,7 +79,7 @@ import { TeamChatHubComponent } from './demo/components/team-chat-hub/team-chat-
 
                 path: '', component: AppLayoutComponent,
                 children: [
-                    { path: '', loadChildren: () => import('./demo/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
+                    { path: '', component: GeneralComponent},
                     { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UikitModule) },
                     { path: 'utilities', loadChildren: () => import('./demo/components/utilities/utilities.module').then(m => m.UtilitiesModule) },
                     { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },
@@ -217,6 +219,7 @@ import { TeamChatHubComponent } from './demo/components/team-chat-hub/team-chat-
             { path: 'landing-hackathons', component: LandingHackathonListComponent},
             { path: 'landing-hackathon/:id', component: LandingHackathonDetailsComponent},
             { path: 'prize-form/:hackathonId', component: PrizeFormComponent },
+            { path: 'landing-live-stream/:id', component: LiveStreamComponent },
             { path: 'sponsors-leaderboard', component: SponsorLeaderboardComponent },
             { path: 'sponsor-prizes', component: SponsorPrizesComponent },
             { path: 'sponsor-application-form', component: SponsorApplicationFormComponent },

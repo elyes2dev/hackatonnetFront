@@ -170,3 +170,78 @@
   color: #666;
   font-style: italic;
 }
+
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  
+  span {
+    margin-left: 12px;
+    color: #666;
+  }
+}
+
+.login-reminder {
+  text-align: center;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  
+  p {
+    margin: 0;
+    color: #666;
+  }
+}
+
+.no-posts-message {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+.image-error-text {
+  display: inline-block;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.image-error-text {
+  display: inline-block;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: #666;
+  font-size: 0.85rem;
+  margin: 10px 0;
+}
+
+.post-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.post-images img {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}

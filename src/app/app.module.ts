@@ -132,10 +132,19 @@ import {
 import {
     LandingProjectEvaluationComponent
 } from "./demo/components/landing/landing-project-evaluation/landing-project-evaluation.component";
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { MessageModule } from 'primeng/message';
 import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/team-frontoffice.component';
 import { TeamChatHubModule } from './demo/components/team-chat-hub/team-chat-hub.module';
+import { FacialMetricsComponent } from './demo/components/live-stream/video-room/facial-metrics/facial-metrics.component';
+import { FacialAnalysisService } from './demo/services/live-stream/facial-analysis/facial-analysis.service';
+import { GeneralComponent } from './demo/components/general/general.component';
+import { PanelModule } from 'primeng/panel';
+import { AccordionModule } from 'primeng/accordion';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { PasswordModule } from 'primeng/password';
+
+
+
 
 
 @NgModule({
@@ -200,7 +209,14 @@ import { TeamChatHubModule } from './demo/components/team-chat-hub/team-chat-hub
         ProjectEvaluationComponent,
         PaymentComponent,
         ComponentsComponent,
-        AccessDeniedComponent
+        AccessDeniedComponent,
+        FacialMetricsComponent,
+        GeneralComponent,
+
+        FooterComponent,
+        SponsorPrizesComponent
+
+        
 
     ],
     imports: [
@@ -275,14 +291,29 @@ import { TeamChatHubModule } from './demo/components/team-chat-hub/team-chat-hub
         TableModule,
         ButtonModule,
         ToastModule,
-        RippleModule
+        RippleModule,
+        RippleModule,
+        BrowserAnimationsModule,
+        MessageModule,
+        AccordionModule,
+        DynamicDialogModule,
+        PanelModule,
+        PasswordModule,       // ✅ Required for <p-password>
+        CalendarModule,
+        TagModule,
+        TableModule,
+        DropdownModule,
+        ReactiveFormsModule,
+        
+
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
         PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService,
         ProjectEvaluationService, // Ajouté
-        TeamSubmissionService
+        TeamSubmissionService, FacialAnalysisService
+
     ],
     bootstrap: [AppComponent]
 })

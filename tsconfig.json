@@ -1,6 +1,10 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
+        
+              
+            
+          
         // "types": ["peerjs"],
         "baseUrl": "./",
         "outDir": "./dist/out-tsc",
@@ -21,7 +25,9 @@
         "lib": [
             "es2020",
             "dom"
-        ]
+        ],
+        "skipLibCheck": true,
+        "types": []
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,

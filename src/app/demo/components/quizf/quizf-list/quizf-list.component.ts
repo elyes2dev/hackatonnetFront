@@ -10,11 +10,15 @@ import { WorkshopService } from 'src/app/demo/services/workshop.service';
 import { QuizCertificateService } from 'src/app/demo/services/quizcertificate.service';
 import { UserService } from 'src/app/demo/services/user.service';
 import { UserQuizScore } from 'src/app/demo/models/user-quiz-score.model';
+import { MessageService } from 'primeng/api';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { AiQuizDialogComponent } from '../../quiz/quiz-list/ai-quiz-dialog/ai-quiz-dialog.component';
 
 @Component({
   selector: 'app-quizf-list',
   templateUrl: './quizf-list.component.html',
-  styleUrls: ['./quizf-list.component.scss']
+  styleUrls: ['./quizf-list.component.scss'],
+  providers: [MessageService, DialogService]
 })
 export class QuizfListComponent implements OnInit {
   quizzes: Quiz[] = [];
@@ -35,7 +39,8 @@ export class QuizfListComponent implements OnInit {
 
   userScoresMap: { [quizId: number]: UserQuizScore } = {};
 
-
+  showAiQuizDialog = false;
+  private dialogRef: DynamicDialogRef | undefined;
 
   constructor(
     private quizService: QuizService,
@@ -46,23 +51,16 @@ export class QuizfListComponent implements OnInit {
     private storageService: StorageService, // Inject StorageService
     private workshopService: WorkshopService,
     private certificateService: QuizCertificateService,
-    private userService: UserService
-    
+    private userService: UserService,
+    private messageService: MessageService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
-    // Get the current userId dynamically from StorageService
-    this.currentUserId = this.storageService.getUserId(); // Method to get userId from localStorage or other source
-
-    if (!this.currentUserId) {
-      alert('You must be logged in to access quizzes!');
-      this.router.navigate(['/login']);
-      return;
-    }
-
     this.workshopId = +this.route.snapshot.params['workshopId'];
-    this.fetchQuizzes();
-    this.checkIfUserIsOwner(); // <-- add this line
+    this.currentUserId = localStorage.getItem('loggedid');
+    
+    this.checkIfUserIsOwner();
 
     const userId = Number(localStorage.getItem('loggedid'));
     this.userQuizScoreService.getUserScores(userId).subscribe((scores: UserQuizScore[]) => {
@@ -73,10 +71,19 @@ export class QuizfListComponent implements OnInit {
         }
       });
     });
-
   }
 
-  fetchQuizzes(): void {
+  loadQuizzes(): void {
+    if (!this.workshopId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Workshop ID is missing'
+      });
+      return;
+    }
+
+    this.loading = true;
     this.quizService.getQuizzesByWorkshop(this.workshopId).subscribe({
       next: (quizzes) => {
         this.quizzes = quizzes;
@@ -84,8 +91,13 @@ export class QuizfListComponent implements OnInit {
         this.hasQuiz = this.quizzes.length > 0; // Set whether the user has any quiz
         this.loading = false;
       },
-      error: () => {
-        this.error = 'Failed to load quizzes.';
+      error: (error) => {
+        console.error('Error loading quizzes:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load quizzes'
+        });
         this.loading = false;
       }
     });
@@ -111,21 +123,39 @@ export class QuizfListComponent implements OnInit {
           // Remove the quiz from the list and update the hasQuiz state
           this.quizzes = this.quizzes.filter(q => q.id_quiz !== id);
           this.hasQuiz = this.quizzes.length > 0; // Update the state
-          alert('Quiz deleted successfully');
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Quiz deleted successfully'
+          });
         },
         error: () => {
-          alert('Failed to delete quiz');
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to delete quiz'
+          });
         }
       });
     }
   }
 
-  goToEdit(quizId: number): void {
-    if (this.quizStatusMap[quizId]) {
-      this.showQuizResults(quizId);
-    } else {
-      this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', quizId, 'edit']);
-    }
+  editQuiz(quiz: Quiz): void {
+    if (!this.workshopId) return;
+    
+    this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', quiz.id_quiz, 'edit']);
+  }
+
+  viewQuizDetails(quiz: Quiz): void {
+    if (!this.workshopId) return;
+    
+    this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', quiz.id_quiz, 'details']);
+  }
+
+  createNewQuiz(): void {
+    if (!this.workshopId) return;
+    
+    this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', 'new']);
   }
 
   showQuizResults(quizId: number): void {
@@ -179,10 +209,6 @@ export class QuizfListComponent implements OnInit {
     this.showResultsDialog = false;
   }
 
-  goToDetails(quizId: number): void {
-    this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', quizId, 'details']);
-  }
-
   goToAdd(): void {
     this.router.navigate(['/workshopsf', this.workshopId, 'quizzes', 'new']);
   }
@@ -195,64 +221,95 @@ export class QuizfListComponent implements OnInit {
     this.router.navigate(['/workshopsf']);  // Adjust the route as needed
   }
 
-
   // Fetch the logged-in user ID and compare with the owner of the workshop
   checkIfUserIsOwner(): void {
     const loggedUserId = localStorage.getItem('loggedid') ? parseInt(localStorage.getItem('loggedid')!, 10) : null;
   
-    if (loggedUserId !== null) {
+    if (loggedUserId !== null && this.workshopId) {
       this.workshopService.getWorkshopById(this.workshopId).subscribe({
         next: (workshop) => {
-          this.userIsOwner = (workshop?.user?.id === loggedUserId); // Set the userIsOwner based on the comparison
+          if (workshop && workshop.user) {
+            this.userIsOwner = workshop.user.id === loggedUserId;
+            // Only load quizzes after checking ownership
+            this.loadQuizzes();
+          } else {
+            this.userIsOwner = false;
+            this.loadQuizzes();
+          }
+        },
+        error: (error) => {
+          console.error('Error checking workshop ownership:', error);
+          this.userIsOwner = false;
+          this.loadQuizzes();
         }
       });
+    } else {
+      this.userIsOwner = false;
+      this.loadQuizzes();
     }
-}
-
-downloadCertificate(quizId: number, quizTitle: string): void {
-  const userId = localStorage.getItem('loggedid') ? +localStorage.getItem('loggedid')! : null;
-
-  if (!userId) {
-    alert('User not found');
-    return;
   }
 
-  // Step 1: Get user's score for this quiz
-  this.userQuizScoreService.getUserScoreForQuiz(userId, quizId).subscribe({
-    next: (score) => {
-      // Step 2: Get the username
-      this.userService.getUserById(userId).subscribe({
-        next: (user) => {
-          const username = user.username;
+  downloadCertificate(quizId: number, quizTitle: string): void {
+    const userId = localStorage.getItem('loggedid') ? +localStorage.getItem('loggedid')! : null;
 
-          // Step 3: Download certificate
-          this.certificateService.downloadCertificate(username, quizTitle, score).subscribe({
-            next: (response) => {
-              const blob = new Blob([response.body!], { type: 'application/pdf' });
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = 'certificate.pdf';
-              a.click();
-              window.URL.revokeObjectURL(url);
-            },
-            error: (err) => {
-              console.error('Certificate download error:', err);
-              alert('Could not download the certificate.');
-            }
-          });
-        },
-        error: () => {
-          alert('Failed to fetch user info.');
-        }
-      });
-    },
-    error: () => {
-      alert('Failed to retrieve user score.');
+    if (!userId) {
+      alert('User not found');
+      return;
     }
-  });
-}
 
+    // Step 1: Get user's score for this quiz
+    this.userQuizScoreService.getUserScoreForQuiz(userId, quizId).subscribe({
+      next: (score) => {
+        // Step 2: Get the username
+        this.userService.getUserById(userId).subscribe({
+          next: (user) => {
+            const username = user.username;
 
+            // Step 3: Download certificate
+            this.certificateService.downloadCertificate(username, quizTitle, score).subscribe({
+              next: (response) => {
+                const blob = new Blob([response.body!], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'certificate.pdf';
+                a.click();
+                window.URL.revokeObjectURL(url);
+              },
+              error: (err) => {
+                console.error('Certificate download error:', err);
+                alert('Could not download the certificate.');
+              }
+            });
+          },
+          error: () => {
+            alert('Failed to fetch user info.');
+          }
+        });
+      },
+      error: () => {
+        alert('Failed to retrieve user score.');
+      }
+    });
+  }
 
+  // Helper method to check if current user is the workshop owner
+  isOwner(): boolean {
+    return this.userIsOwner;
+  }
+
+  openAiQuizDialog() {
+    this.showAiQuizDialog = true;
+  }
+
+  onAiQuizDialogClose() {
+    this.showAiQuizDialog = false;
+    this.loadQuizzes(); // Use existing loadQuizzes method
+  }
+
+  ngOnDestroy() {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
+  }
 }

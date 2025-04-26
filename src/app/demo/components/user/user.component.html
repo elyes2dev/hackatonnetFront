@@ -1,22 +1,165 @@
-<div class="user-management">
-  <h1>User Management</h1>
+<div class="user-management-container">
+  <div class="card">
+      <h1 class="page-title">User Management</h1>
+      
+      <p-toast></p-toast>
+      
+      <!-- Form to Create or Edit User -->
+      <div class="user-form-section">
+          <p-panel [header]="selectedUser ? 'Edit User' : 'Create User'" styleClass="mb-4">
+              <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+                  <div class="grid">
+                      <div class="col-12 md:col-6 form-field">
+                          <label htmlFor="name" class="block">Name *</label>
+                          <span class="p-input-icon-left w-full">
+                              <i class="pi pi-user"></i>
+                              <input type="text" pInputText formControlName="name" placeholder="First Name" class="w-full" />
+                          </span>
+                          <small *ngIf="isFieldInvalid('name')" class="p-error">
+                              Name is required
+                          </small>
+                      </div>
+                      
+                      <div class="col-12 md:col-6 form-field">
+                          <label htmlFor="lastname" class="block">Last Name *</label>
+                          <span class="p-input-icon-left w-full">
+                              <i class="pi pi-user"></i>
+                              <input type="text" pInputText formControlName="lastname" placeholder="Last Name" class="w-full" />
+                          </span>
+                          <small *ngIf="isFieldInvalid('lastname')" class="p-error">
+                              Last name is required
+                          </small>
+                      </div>
+                      
+                      <div class="col-12 md:col-6 form-field">
+                          <label htmlFor="email" class="block">Email *</label>
+                          <span class="p-input-icon-left w-full">
+                              <i class="pi pi-envelope"></i>
+                              <input type="email" pInputText formControlName="email" placeholder="Email Address" class="w-full" />
+                          </span>
+                          <small *ngIf="isFieldInvalid('email')" class="p-error">
+                              Valid email is required
+                          </small>
+                      </div>
+                      
+                      <div class="col-12 md:col-6 form-field">
+                          <label htmlFor="username" class="block">Username *</label>
+                          <span class="p-input-icon-left w-full">
+                              <i class="pi pi-at"></i>
+                              <input type="text" pInputText formControlName="username" placeholder="Username" class="w-full" />
+                          </span>
+                          <small *ngIf="isFieldInvalid('username')" class="p-error">
+                              Username is required
+                          </small>
+                      </div>
 
-  <!-- Form to Create or Edit User -->
-  <form (ngSubmit)="selectedUser ? updateUser() : createUser()" #userForm="ngForm">
-    <input type="text" [(ngModel)]="newUser.name" placeholder="Name" name="name" required />
-    <input type="text" [(ngModel)]="newUser.lastname" placeholder="Lastname" name="lastname" required />
-    <input type="email" [(ngModel)]="newUser.email" placeholder="Email" name="email" required />
-    <input type="text" [(ngModel)]="newUser.username" placeholder="Username" name="username" required />
-    <button type="submit">{{ selectedUser ? 'Update' : 'Create' }}</button>
-    <button type="button" *ngIf="selectedUser" (click)="clearSelection()">Cancel</button>
-  </form>
+                      <div class="col-12 md:col-6 form-field" *ngIf="!selectedUser">
+                          <label htmlFor="password" class="block">Password *</label>
+                          <span class="p-input-icon-left w-full">
+                              <i class="pi pi-lock"></i>
+                              <p-password formControlName="password" [toggleMask]="true" placeholder="Password" styleClass="w-full"></p-password>
+                          </span>
+                          <small *ngIf="isFieldInvalid('password')" class="p-error">
+                              Password is required (minimum 6 characters)
+                          </small>
+                      </div>
+                      
+                      <div class="col-12 md:col-6 form-field">
+                          <label htmlFor="birthdate" class="block">Birth Date</label>
+                          <p-calendar formControlName="birthdate" [showIcon]="true" dateFormat="dd/mm/yy" placeholder="Select Date" styleClass="w-full"></p-calendar>
+                      </div>
+                      
+                      <div class="col-12 form-field">
+                          <label htmlFor="description" class="block">Description</label>
+                          <textarea pInputTextarea formControlName="description" rows="3" placeholder="Brief description about the user" class="w-full"></textarea>
+                      </div>
+                      
+                      <div class="col-12 form-field">
+                          <label htmlFor="picture" class="block">Profile Picture URL</label>
+                          <span class="p-input-icon-left w-full">
+                              <i class="pi pi-image"></i>
+                              <input type="text" pInputText formControlName="picture" placeholder="URL for profile picture" class="w-full" />
+                          </span>
+                      </div>
+                      
+                      <div class="col-12 form-field" *ngIf="roles && roles.length > 0">
+                          <label class="block">Roles</label>
+                          <p-multiSelect
+                              formControlName="roles"
+                              [options]="roles"
+                              optionLabel="name"
+                              placeholder="Select Roles"
+                              styleClass="w-full"
+                              display="chip">
+                          </p-multiSelect>
+                      </div>
+                      
+                      <div class="col-12 form-field" *ngIf="skills && skills.length > 0">
+                          <label class="block">Skills</label>
+                          <p-multiSelect
+                              formControlName="skills"
+                              [options]="skills"
+                              optionLabel="name"
+                              placeholder="Select Skills"
+                              styleClass="w-full"
+                              display="chip">
+                          </p-multiSelect>
+                      </div>
 
-  <!-- Display User List -->
-  <ul>
-    <li *ngFor="let user of users">
-      <span>{{ user.name }} {{ user.lastname }}</span>
-      <button (click)="selectUser(user)">Edit</button>
-      <button *ngIf="user.id !== undefined" (click)="deleteUser(user.id)">Delete</button>
-    </li>
-  </ul>
+                      <div class="col-12 button-container">
+                          <button pButton type="submit" [label]="selectedUser ? 'Update User' : 'Create User'" icon="pi pi-save" styleClass="p-button-primary mr-2" [loading]="loading"></button>
+                          <button pButton type="button" label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" (click)="clearForm()" *ngIf="selectedUser"></button>
+                      </div>
+                  </div>
+              </form>
+          </p-panel>
+      </div>
+
+      <!-- User List -->
+      <div class="user-list-section">
+          <p-table [value]="users" responsiveLayout="scroll" [paginator]="true" [rows]="5" styleClass="p-datatable-sm" [rowHover]="true">
+              <ng-template pTemplate="caption">
+                  <div class="flex align-items-center justify-content-between">
+                      <h2 class="m-0">User List</h2>
+                      <span class="p-input-icon-left">
+                          <i class="pi pi-search"></i>
+                          <input pInputText type="text" placeholder="Search User" (input)="filterUsers($event)" />
+                      </span>
+                  </div>
+              </ng-template>
+              
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                      <th pSortableColumn="lastname">Last Name <p-sortIcon field="lastname"></p-sortIcon></th>
+                      <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+                      <th pSortableColumn="username">Username <p-sortIcon field="username"></p-sortIcon></th>
+                      <th>Actions</th>
+                  </tr>
+              </ng-template>
+              
+              <ng-template pTemplate="body" let-user>
+                  <tr>
+                      <td>{{ user.name }}</td>
+                      <td>{{ user.lastname }}</td>
+                      <td>{{ user.email }}</td>
+                      <td>{{ user.username }}</td>
+                      <td>
+                          <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="selectUser(user)" pTooltip="Edit"></button>
+                          <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="confirmDeleteUser(user)" pTooltip="Delete" [disabled]="!user.id"></button>
+                      </td>
+                  </tr>
+              </ng-template>
+              
+              <ng-template pTemplate="emptymessage">
+                  <tr>
+                      <td colspan="5" class="text-center">No users found</td>
+                  </tr>
+              </ng-template>
+          </p-table>
+      </div>
+  </div>
+
+  <!-- Delete Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '450px'}" header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 </div>

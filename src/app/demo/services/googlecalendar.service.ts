@@ -1,58 +1,57 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GoogleCalendarService {
-  private apiUrl = 'http://localhost:9100/api'; // Adjust based on your backend URL
+  private baseUrl = 'http://localhost:9100/api/mentor-calendar';
 
   constructor(
     private http: HttpClient,
     private storageService: StorageService
-  ) {
-    // Listen for messages from the Google OAuth popup
-    window.addEventListener('message', this.handleAuthMessage.bind(this), false);
-  }
+  ) { }
 
-
-  
-  // Check if user has Google Calendar connected
   isGoogleCalendarConnected(): Observable<{ connected: boolean }> {
     const userId = this.storageService.getLoggedInUserId();
-    return this.http.get<{ connected: boolean }>(
-      `${this.apiUrl}/auth/google/status?userId=${userId}`
+    if (!userId) {
+      return of({ connected: false });
+    }
+    return this.http.get<{ connected: boolean }>(`${this.baseUrl}/status?userId=${userId}`).pipe(
+      catchError(() => of({ connected: false }))
     );
   }
+
   getGoogleAuthUrl(): Observable<{ url: string }> {
     const userId = this.storageService.getLoggedInUserId();
-        return this.http.get<{ url: string }>(`${this.apiUrl}/auth/google/url?userId=${userId}`);
+    if (!userId) {
+      throw new Error('User not logged in');
     }
-
-  // Add event to Google Calendar
-  addEventToCalendar(hackathonId: number, numberOfTeams: number): Observable<any> {
-    const userId = this.storageService.getLoggedInUserId();
-    return this.http.post(`${this.apiUrl}/auth/google/add-event`, null, {
-      params: {
-        userId: userId!.toString(),
-        hackathonId: hackathonId.toString(),
-        numberOfTeams: numberOfTeams.toString()
-      }
-    });
+    return this.http.get<{ url: string }>(`${this.baseUrl}/auth-url?userId=${userId}`);
   }
 
-  // Handle messages from the OAuth popup window
-  private handleAuthMessage(event: MessageEvent): void {
-    if (event.data === 'google-auth-success') {
-      // Refresh the Google Calendar connection status
-      this.isGoogleCalendarConnected().subscribe();
-      
-      // Notify any listeners that authentication was successful
-      // You could implement a subject/observable pattern here
-      console.log('Google Calendar successfully connected!');
+  getMentorListingCalendarStatus(listMentorId: number): Observable<{ connected: boolean }> {
+    const userId = this.storageService.getLoggedInUserId();
+    if (!userId) {
+      return of({ connected: false });
     }
+    return this.http.get<{ connected: boolean }>(`${this.baseUrl}/status/${listMentorId}?userId=${userId}`).pipe(
+      catchError(() => of({ connected: false }))
+    );
+  }
+
+  addEventToCalendar(hackathonId: number, numberOfTeams: number): Observable<any> {
+    const userId = this.storageService.getLoggedInUserId();
+    if (!userId) {
+      throw new Error('User not logged in');
+    }
+    return this.http.post<any>(`${this.baseUrl}/sync`, { 
+      userId, 
+      hackathonId, 
+      numberOfTeams 
+    });
   }
 }

@@ -1,103 +1,143 @@
 <app-navbar></app-navbar>
 
 <div class="resources-container" *ngIf="!loading && !error">
-  <div class="header">
-    <h2>Resources for Workshop</h2>
+  <div class="page-header">
+    <div class="header-content">
+      <h2>Workshop Resources</h2>
+      <p class="subtitle">Access all learning materials and documents for this workshop</p>
+    </div>
     
-    <button pButton 
-            icon="pi pi-plus" 
-            label="Add Resource" 
-            class="p-button-primary add-resource-btn"
-            [routerLink]="['/workshopsf', workshopId, 'resources', 'new']"
-            *ngIf="userIsOwner">
-    </button>
-        <!-- New Back to Workshop List Button -->
-        <button pButton 
+    <div class="header-actions">
+      <button pButton 
         icon="pi pi-arrow-left" 
-        label="Back to Workshop List" 
-        class="p-button-secondary back-workshop-btn"
+        label="Back to Workshops" 
+        class="p-button-outlined p-button-secondary back-btn"
         [routerLink]="['/workshopsf']">
+      </button>
+
+      <button pButton 
+        icon="pi pi-plus" 
+        label="Add Resource" 
+        class="p-button-primary add-btn"
+        [routerLink]="['/workshopsf', workshopId, 'resources', 'new']"
+        *ngIf="userIsOwner">
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="resources.length === 0" class="empty-state">
+    <i class="pi pi-folder-open empty-icon"></i>
+    <h3>No Resources Available</h3>
+    <p>There are currently no resources added to this workshop.</p>
+    <button pButton 
+      icon="pi pi-plus" 
+      label="Add First Resource" 
+      class="p-button-primary"
+      [routerLink]="['/workshopsf', workshopId, 'resources', 'new']"
+      *ngIf="userIsOwner">
     </button>
   </div>
 
-  <div *ngIf="resources.length === 0" class="no-resources">
-    <p>No resources found for this workshop.</p>
-  </div>
+  <div class="resources-list" *ngIf="resources.length > 0">
+    <div *ngFor="let resource of resources" class="resource-item" [class.expanded]="isFilesOpen(resource.id)">
+      <div class="resource-header">
+        <div class="resource-info">
+          <h3>{{ resource.name }}</h3>
+          <span class="skill-level" [ngClass]="getSkillClass(resource.niveau)">
+            <i class="pi pi-star"></i>
+            {{ resource.niveau }}
+          </span>
+        </div>
 
-  <div class="resource-grid">
-    <div *ngFor="let resource of resources" class="resource-card" [class.expanded]="isFilesOpen(resource.id)">
-        <div class="card-header">
-        <h3>{{ resource.name }}</h3>
-        <div class="actions">
+        <div class="resource-actions">
           <button pButton 
-                  icon="pi pi-eye" 
-                  class="p-button-rounded p-button-info" 
-                  [routerLink]="['/workshopsf', workshopId, 'resources', resource.id]">
+            icon="pi pi-eye" 
+            class="p-button-text p-button-rounded"
+            pTooltip="View Details"
+            [routerLink]="['/workshopsf', workshopId, 'resources', resource.id]">
           </button>
           <button pButton 
-                  icon="pi pi-pencil" 
-                  class="p-button-rounded p-button-warning" 
-                  [routerLink]="['/workshopsf', workshopId, 'resources', resource.id, 'edit']"
-                  *ngIf="userIsOwner">
+            icon="pi pi-pencil" 
+            class="p-button-text p-button-rounded p-button-warning"
+            pTooltip="Edit Resource"
+            [routerLink]="['/workshopsf', workshopId, 'resources', resource.id, 'edit']"
+            *ngIf="userIsOwner">
           </button>
           <button pButton 
-                  icon="pi pi-trash" 
-                  class="p-button-rounded p-button-danger" 
-                  (click)="deleteResource(resource.id)"
-                  *ngIf="userIsOwner">
+            icon="pi pi-trash" 
+            class="p-button-text p-button-rounded p-button-danger"
+            pTooltip="Delete Resource"
+            (click)="deleteResource(resource.id)"
+            *ngIf="userIsOwner">
           </button>
         </div>
       </div>
 
-      <div class="card-content">
-        <p>{{ resource.description }}</p>
-        <span class="skill-badge" [ngClass]="getSkillClass(resource.niveau)">
-          {{ resource.niveau }}
-        </span>
-      
-        <div class="toggle-section-header" (click)="toggleFiles(resource.id)">
-            <span class="toggle-text">
-              {{ isFilesOpen(resource.id) ? 'Hide Files' : 'Show Files' }}
+      <div class="resource-content">
+        <p class="resource-description">{{ resource.description }}</p>
+        
+        <div class="files-section">
+          <div class="files-header" (click)="toggleFiles(resource.id)">
+            <span class="files-title">
+              <i class="pi" [ngClass]="isFilesOpen(resource.id) ? 'pi-folder-open' : 'pi-folder'"></i>
+              {{ isFilesOpen(resource.id) ? 'Hide Files' : 'View Files' }}
             </span>
-            <i class="fas fa-chevron-down transition-all" [class.rotate-180]="isFilesOpen(resource.id)"></i>
-        </div>
-
-        <div class="resource-files" *ngIf="isFilesOpen(resource.id)">
-          <!-- Images -->
-          <div *ngIf="filePreviews[resource.id] && filePreviews[resource.id].images && filePreviews[resource.id].images.length > 0" class="file-section">
-            <h4>Images</h4>
-            <div class="image-grid">
-              <img *ngFor="let image of filePreviews[resource.id].images"
-                   [src]="image.url"
-                   alt="Resource image"
-                   class="preview-image"
-                   (click)="previewFile(image, 'image')"/>
-            </div>
+            <i class="pi pi-chevron-down transition-all" [class.rotate-180]="isFilesOpen(resource.id)"></i>
           </div>
 
-          <!-- PDFs -->
-          <div *ngIf="filePreviews[resource.id] && filePreviews[resource.id].pdfs && filePreviews[resource.id].pdfs.length > 0" class="file-section">
-            <h4>PDFs</h4>
-            <div class="file-preview" *ngFor="let pdf of filePreviews[resource.id].pdfs">
-              <button pButton 
-                      [icon]="'pi ' + getFileIcon(pdf.type)" 
-                      class="p-button-rounded file-button pdf"
-                      (click)="previewFile(pdf, 'pdf')">
-              </button>
-              <span class="file-name">{{ pdf.path }}</span>
+          <div class="files-content" *ngIf="isFilesOpen(resource.id)">
+            <!-- Images Section -->
+            <div class="file-type-section" *ngIf="hasFiles(resource.id, 'images')">
+              <h4>
+                <i class="pi pi-images"></i>
+                Images
+              </h4>
+              <div class="images-grid">
+                <div class="image-card" *ngFor="let image of getFiles(resource.id, 'images')"
+                     (click)="previewFile(image, 'image')">
+                  <img [src]="image.url" [alt]="image.path">
+                  <div class="image-overlay">
+                    <i class="pi pi-eye"></i>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <!-- Other Files -->
-          <div *ngIf="filePreviews[resource.id] && filePreviews[resource.id].otherFiles && filePreviews[resource.id].otherFiles.length > 0" class="file-section">
-            <h4>Other Files</h4>
-            <div class="file-preview" *ngFor="let file of filePreviews[resource.id].otherFiles">
-              <button pButton 
-                      [icon]="'pi ' + getFileIcon(file.type)" 
-                      class="p-button-rounded file-button"
-                      (click)="downloadFile(file)">
-              </button>
-              <span class="file-name">{{ file.path }}</span>
+            <!-- PDFs Section -->
+            <div class="file-type-section" *ngIf="hasFiles(resource.id, 'pdfs')">
+              <h4>
+                <i class="pi pi-file-pdf"></i>
+                Documents
+              </h4>
+              <div class="files-grid">
+                <div class="file-card" *ngFor="let pdf of getFiles(resource.id, 'pdfs')"
+                     (click)="previewFile(pdf, 'pdf')">
+                  <i class="pi pi-file-pdf file-icon pdf"></i>
+                  <span class="file-name">{{ pdf.path }}</span>
+                  <button pButton icon="pi pi-download" 
+                    class="p-button-text p-button-rounded"
+                    (click)="$event.stopPropagation(); downloadFile(pdf)">
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Other Files Section -->
+            <div class="file-type-section" *ngIf="hasFiles(resource.id, 'otherFiles')">
+              <h4>
+                <i class="pi pi-file"></i>
+                Other Files
+              </h4>
+              <div class="files-grid">
+                <div class="file-card" *ngFor="let file of getFiles(resource.id, 'otherFiles')">
+                  <i class="pi" [ngClass]="getFileIcon(file.type)"></i>
+                  <span class="file-name">{{ file.path }}</span>
+                  <button pButton icon="pi pi-download" 
+                    class="p-button-text p-button-rounded"
+                    (click)="downloadFile(file)">
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -106,36 +146,52 @@
   </div>
 </div>
 
-
 <!-- Preview Modal -->
 <div class="preview-modal" *ngIf="showPreview" (click)="closePreview($event)">
-    <div class="preview-content" [ngClass]="{'pdf-preview': previewType === 'pdf'}">
-      <div class="preview-header">
-        <h3 *ngIf="currentFile">{{ currentFile.path }}</h3>
-        <div class="preview-actions">
-          <button pButton 
-                  icon="pi pi-download" 
-                  class="p-button-rounded p-button-info" 
-                  (click)="downloadCurrentFile()">
-          </button>
-          <button pButton 
-                  icon="pi pi-times" 
-                  class="p-button-rounded p-button-danger" 
-                  (click)="closePreview()">
-          </button>
-        </div>
-      </div>
-      <div class="preview-body">
-        <ng-container [ngSwitch]="previewType">
-          <ng-container *ngSwitchCase="'image'">
-            <img *ngIf="previewUrl" [src]="previewUrl" alt="Preview image" class="preview-image-large">
-          </ng-container>
-          <ng-container *ngSwitchCase="'pdf'">
-            <iframe *ngIf="previewUrl" [src]="previewUrl" class="pdf-iframe" frameborder="0"></iframe>
-          </ng-container>
-        </ng-container>
+  <div class="modal-content" [ngClass]="{'pdf-preview': previewType === 'pdf'}" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ currentFile?.path }}</h3>
+      <div class="modal-actions">
+        <button pButton 
+          icon="pi pi-download" 
+          class="p-button-text p-button-rounded"
+          pTooltip="Download File"
+          (click)="downloadCurrentFile()">
+        </button>
+        <button pButton 
+          icon="pi pi-times" 
+          class="p-button-text p-button-rounded"
+          pTooltip="Close Preview"
+          (click)="closePreview()">
+        </button>
       </div>
     </div>
+    
+    <div class="modal-body">
+      <ng-container [ngSwitch]="previewType">
+        <ng-container *ngSwitchCase="'image'">
+          <img *ngIf="previewUrl" [src]="previewUrl" alt="Preview">
+        </ng-container>
+        <ng-container *ngSwitchCase="'pdf'">
+          <iframe *ngIf="previewUrl" [src]="previewUrl" frameborder="0"></iframe>
+        </ng-container>
+      </ng-container>
+    </div>
   </div>
-  
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 <app-footer></app-footer>

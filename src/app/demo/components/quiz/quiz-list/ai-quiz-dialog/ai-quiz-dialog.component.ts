@@ -7,11 +7,14 @@ import { Question } from 'src/app/demo/models/question.model';
 import { Quiz } from 'src/app/demo/models/quiz.model';
 import { Workshop } from 'src/app/demo/models/workshop.model';
 import { ThemeEnum } from 'src/app/demo/models/theme.enum';
+import { QuestionService } from 'src/app/demo/services/question.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-ai-quiz-dialog',
   templateUrl: './ai-quiz-dialog.component.html',
-  styleUrls: ['./ai-quiz-dialog.component.scss']
+  styleUrls: ['./ai-quiz-dialog.component.scss'],
+  providers: [MessageService]
 })
 export class AiQuizDialogComponent {
   @Input() workshopId!: number;
@@ -22,10 +25,13 @@ export class AiQuizDialogComponent {
   loading = false;
   error: string | null = null;
   generatedQuestions: Question[] = [];
+  generatedQuiz: Quiz | null = null;
 
   constructor(
     private aiQuizService: AiQuizService,
-    private quizService: QuizService
+    private quizService: QuizService,
+    private questionService: QuestionService,
+    private messageService: MessageService
   ) {}
 
   onFileSelected(event: any): void {
@@ -70,31 +76,20 @@ export class AiQuizDialogComponent {
       .subscribe({
         next: (response) => {
           if (response.success && response.questions) {
-            // Create a base workshop object
-            const workshop: Workshop = {
-              id: this.workshopId,
-              name: '',  // These will be updated when saving
-              description: '',
-              photo: '',
-              theme: ThemeEnum.Default,  // Using default theme
-              user: undefined,
-              resources: [],
-              quiz: null
-            };
-
-            // Create a base quiz object
-            const quiz: Quiz = {
+            // Create the quiz object with only required fields
+            this.generatedQuiz = {
               title: 'AI Generated Quiz',
               isPublished: false,
-              workshop: workshop
+              workshop: { id: this.workshopId } as Workshop,
+              questions: []
             };
 
-            // Transform the AI-generated questions to match your Question model format
+            // Transform the AI-generated questions to match the Question model
             this.generatedQuestions = response.questions.map(q => ({
               questionText: q.questionText,
-              answers: q.answers,
-              correctAnswerIndex: q.correctAnswerIndex,
-              quiz: quiz
+              answers: q.answers || [],
+              correctAnswerIndex: q.correctAnswerIndex || 0,
+              quiz: this.generatedQuiz as Quiz
             }));
           }
           this.loading = false;
@@ -107,41 +102,48 @@ export class AiQuizDialogComponent {
   }
 
   saveQuiz(): void {
-    if (!this.generatedQuestions.length) {
+    if (!this.generatedQuestions.length || !this.generatedQuiz) {
       this.error = 'No questions to save';
       return;
     }
 
     this.loading = true;
-    const saveRequests = this.generatedQuestions.map(question => {
-      const questionWithWorkshop = {
-        ...question,
-        workshopId: this.workshopId
-      };
-      return this.quizService.saveQuestion(questionWithWorkshop).pipe(
-        catchError(error => {
-          console.error(`Failed to save question: ${question.questionText}`, error);
-          return throwError(() => error);
-        })
-      );
-    });
+    this.error = null;
 
-    forkJoin(saveRequests)
-      .pipe(
-        catchError(error => {
-          this.error = 'Some questions failed to save. Please try again.';
-          return throwError(() => error);
-        })
-      )
-      .subscribe({
-        next: () => {
-          this.quizSaved.emit();
-          this.closeDialog.emit();
-        },
-        error: () => {
-          this.loading = false;
-        }
-      });
+    // First create the quiz with only the required fields
+    const quizToSave: Quiz = {
+      title: this.generatedQuiz.title.substring(0, 255), // Truncate title if needed
+      isPublished: false,
+      workshop: { id: this.workshopId } as Workshop,
+      questions: this.generatedQuestions.map(q => ({
+        questionText: q.questionText.substring(0, 255), // Truncate question text
+        answers: q.answers.map(answer => answer.substring(0, 255)), // Truncate each answer
+        correctAnswerIndex: q.correctAnswerIndex,
+        quiz: this.generatedQuiz as Quiz
+      }))
+    };
+
+    // Save the quiz
+    this.quizService.createQuiz(quizToSave).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Quiz saved successfully'
+        });
+        this.quizSaved.emit();
+        this.closeDialog.emit();
+      },
+      error: (err: any) => {
+        console.error('Error saving quiz:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to save quiz'
+        });
+        this.loading = false;
+      }
+    });
   }
 
   cancel(): void {

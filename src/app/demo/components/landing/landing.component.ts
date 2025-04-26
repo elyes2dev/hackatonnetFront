@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { StorageService } from '../../services/storage.service';
@@ -6,6 +6,8 @@ import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 import { OnInit } from '@angular/core';
+import { Workshop } from '../../models/workshop.model';
+import { WorkshopService } from '../../services/workshop.service';
 
 @Component({
     selector: 'app-landing',
@@ -16,29 +18,48 @@ export class LandingComponent implements OnInit {
   userId: string | null = null;
   isAuthenticated: boolean = false;
   isAdmin: boolean = false;
-  isStudent: boolean = false;
+  isStudent: boolean = false; 
   isSponsor: boolean = false; // Added sponsor flag
+  user!: User;
+  isMentor: boolean = false; 
+
+  userMenuVisible: boolean = false; // Property to control dropdown visibility
+  workshops: Workshop[] = [];
+  loadingWorkshops: boolean = false;
 
   constructor(
     private storageService: StorageService,
     public layoutService: LayoutService,
     public router: Router,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private workshopService: WorkshopService
   ) {
     this.userId = this.storageService.getUserId();
     this.isAuthenticated = this.authService.isAuthenticated();
     console.log('User ID:', this.userId);
   }
 
-  ngOnInit(): void {
-      this.getUserRole();
-  }
+  username: string = '';
 
-  logout() {
-      this.authService.logout()
-      window.location.reload();
-  }
+  ngOnInit(): void {
+    const userId = this.storageService.getLoggedInUserId();
+    console.log('User ID from storage:', this.authService.isAuthenticated());
+    this.getUserRole;
+    if (userId) {
+      this.userService.getUserById(userId).subscribe((data) => {
+        this.user = data;
+        this.username = data.name;
+        // Check if user has SPONSOR role
+        this.isSponsor = this.user.roles?.some(role => role.name === 'SPONSOR') || false;
+        this.isMentor = this.user.roles?.some(role => role.name === 'MENTOR') || false;
+
+      });
+    }
+    this.loadWorkshops();
+  } 
+
+
 
   // Fetch and log user role
   getUserRole() {
@@ -68,4 +89,81 @@ export class LandingComponent implements OnInit {
         console.log('User not logged in');
       }
   }
+ navigateToLanding() {
+    this.router.navigate(['/landing']);
+  }
+
+    navigateToTeamSubmission(): void {
+        this.router.navigate(['/team-submission']); // Navigation directe vers /team-submission
+    }
+  getBadgeIcon(): string {
+    const badgeIcons: { [key: string]: string } = {
+      JUNIOR_COACH: 'assets/demo/images/avatar/JUNIOR_COACH.png',
+      ASSISTANT_COACH: 'assets/demo/images/avatar/ASSISTANT_COACH.png',
+      SENIOR_COACH: 'assets/demo/images/avatar/SENIOR_COACH.png',
+      HEAD_COACH: 'assets/demo/images/avatar/HEAD_COACH.png',
+      MASTER_MENTOR: 'assets/demo/images/avatar/MASTER_MENTOR.png'
+    };
+    return this.user ? badgeIcons[this.user.badge] || 'assets/icons/default_badge.png' : '';
+  }
+
+  viewOrCreateMentorApplication(): void {
+    const userId = this.storageService.getLoggedInUserId();
+    if (this.isMentor) {
+      // Navigate to view their existing application
+      this.router.navigate(['/mentor-applications/user', userId]);
+    } else {
+      // Navigate to create a new application
+      this.router.navigate(['/mentor-applications/new']);
+    }}
+    
+  logout()
+  {
+      this.authService.logout();
+      this.storageService.clearAll();
+      window.location.reload();
+      this.userMenuVisible = false;
+  }
+  
+  // Toggle user menu dropdown visibility
+  toggleUserMenu(event: Event): void {
+    event.stopPropagation();
+    this.userMenuVisible = !this.userMenuVisible;
+  }
+  
+  // Close user menu dropdown
+  closeUserMenu(): void {
+    this.userMenuVisible = false;
+  }
+  
+  // Close dropdown when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    // Check if the click is outside the dropdown area
+    const clickedElement = event.target as HTMLElement;
+    const dropdown = document.querySelector('.user-dropdown');
+    
+    if (dropdown && !dropdown.contains(clickedElement)) {
+      this.userMenuVisible = false;
+    }
+  }
+
+  loadWorkshops(): void {
+    this.loadingWorkshops = true;
+    this.workshopService.getAllWorkshops().subscribe({
+      next: (workshops) => {
+        this.workshops = workshops.slice(0, 3); // Get only first 3 workshops
+        this.loadingWorkshops = false;
+      },
+      error: (error) => {
+        console.error('Error loading workshops:', error);
+        this.loadingWorkshops = false;
+      }
+    });
+  }
+
+  navigateToWorkshop(workshopId: number): void {
+    this.router.navigate(['/workshopsf', workshopId, 'resources']);
+  }
 }
+

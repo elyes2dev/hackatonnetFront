@@ -1,75 +1,106 @@
-<div *ngIf="user; else emptyUser" class="profile-container card">
-  <div class="profile-header">
-    <img *ngIf="profileImageUrl; else defaultAvatar" [src]="profileImageUrl" class="profile-avatar" alt="Profile Image">
-    <ng-template #defaultAvatar>
-      <div class="profile-avatar default-avatar"></div>
-    </ng-template>
-    <h2 class="profile-name">{{ user.name || '' }} {{ user.lastname || '' }}</h2>
-    <p class="profile-email">{{ user.email || '' }}</p>
-  </div>
-  
-  <div class="profile-details">
-    <p><strong>Birthdate:</strong> {{ user.birthdate ? (user.birthdate | date : 'shortDate') : 'Not specified' }}</p>
-    <p><strong>Description:</strong> {{ user.description || 'Not specified' }}</p>
-    <p><strong>Score:</strong> {{ user.score !== undefined ? user.score : 'Not specified' }}</p>
-    <p><strong>Joined:</strong> {{ user.createdAt ? (user.createdAt | date : 'short') : 'Unknown' }}</p>
-    <p><strong>Badge:</strong> {{ getBadgeLabel(user.badge) || 'None' }}</p>
-    <p><strong>Monitor Points:</strong> {{ user.monitorPoints !== undefined ? user.monitorPoints : 'Not specified' }}</p>
-  </div>
+<div class="container" *ngIf="user; else emptyUser">
+  <div class="main-body">
 
-  <div class="profile-lists">
-    <div class="list-section">
-      <h3>Roles</h3>
-      <ul>
-        <li *ngFor="let role of safeArray(user.roles)">
-          {{ role.name || '' }}
-        </li>
-        <li *ngIf="!user.roles || user.roles.length === 0">No roles</li>
-      </ul>
-    </div>
-    
-    <div class="list-section">
-      <h3>Skills</h3>
-      <ul>
-        <li *ngFor="let skill of safeArray(user.skills)">
-          {{ skill.name || '' }}
-        </li>
-        <li *ngIf="!user.skills || user.skills.length === 0">No skills</li>
-      </ul>
-    </div>
-    
-    <div class="list-section">
-      <h3>Hackathons</h3>
-      <ul>
-        <li *ngFor="let hackathon of safeArray(user.hackathons)">
-          {{ hackathon.title || '' }}
-        </li>
-        <li *ngIf="!user.hackathons || user.hackathons.length === 0">No hackathons</li>
-      </ul>
-    </div>
-  </div>
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="main-breadcrumb mb-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+        <li class="breadcrumb-item"><a routerLink="/user">User</a></li>
+        <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+      </ol>
+    </nav>
+    <!-- /Breadcrumb -->
 
-  <div class="profile-nested">
-    <div class="nested-section">
-      <h3>Sponsor Application</h3>
-      <span *ngIf="user.sponsorApplication; else noApp">
-        {{ user.sponsorApplication | json }}
-      </span>
-      <ng-template #noApp>No sponsor application</ng-template>
-    </div>
-    
-    <div class="nested-section">
-      <h3>Sponsor Reward</h3>
-      <span *ngIf="user.sponsorReward; else noReward">
-        {{ user.sponsorReward | json }}
-      </span>
-      <ng-template #noReward>No sponsor reward</ng-template>
+    <div class="row gutters-sm">
+      <!-- Left column -->
+      <div class="col-md-4 mb-3">
+        <div class="card">
+          <div class="card-body text-center">
+            <img
+              *ngIf="profileImageUrl; else defaultAvatar"
+              [src]="profileImageUrl"
+              alt="Profile"
+              class="rounded-circle"
+              width="150"
+            />
+            <ng-template #defaultAvatar>
+              <div class="rounded-circle bg-secondary" style="width:150px;height:150px;"></div>
+            </ng-template>
+
+            <div class="mt-3">
+              <h4 class="d-inline">
+                {{ user.name }} {{ user.lastname }}
+              </h4>
+              <span
+                *ngIf="user.badge"
+                class="badge badge-gradient align-top ml-2"
+              >
+                {{ getBadgeLabel(user.badge) }}
+              </span>
+              <p class="text-secondary mb-1">
+                {{ user.description || 'Not specified' }}
+              </p>
+
+              <button class="btn btn-primary btn-sm mr-1">Follow</button>
+              <button class="btn btn-outline-primary btn-sm">Message</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Left column -->
+
+      <!-- Right column -->
+      <div class="col-md-8">
+        <div class="card mb-3">
+          <div class="card-body">
+            <!-- Full Name -->
+            <div class="row profile-info-row mb-3 d-flex align-items-center gap-3">
+              <div class="col-sm-3">
+                <h6 class="mb-0">Full Name</h6>
+              </div>
+              <div class="col-sm-9 text-secondary">
+                {{ user.name }} {{ user.lastname }}
+              </div>
+            </div>
+            <hr />
+
+            <!-- Email -->
+            <div class="row profile-info-row mb-3 d-flex align-items-center gap-3">
+              <div class="col-sm-3">
+                <h6 class="mb-0">Email</h6>
+              </div>
+              <div class="col-sm-9 text-secondary">
+                {{ user.email }}
+              </div>
+            </div>
+            <hr />
+            
+
+            <!-- Edit Button -->
+            <div class="row">
+              <div class="col-sm-12">
+                <button
+                  class="btn btn-info"
+                  (click)="onEditProfile()"
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Right column -->
     </div>
   </div>
 </div>
 
 <ng-template #emptyUser>
-  <div class="profile-container card">
-    <p>No user data available.</p>
+  <div class="container">
+    <div class="main-body">
+      <div class="card p-4 text-center">
+        <p>No user data available.</p>
+      </div>
+    </div>
   </div>
 </ng-template>

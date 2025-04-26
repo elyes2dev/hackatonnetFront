@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ImageService {
-  private baseUrl = 'http://localhost:9100/pi/images';
+  private baseUrl = 'http://localhost:9100/images';
 
   constructor(private http: HttpClient) { }
 

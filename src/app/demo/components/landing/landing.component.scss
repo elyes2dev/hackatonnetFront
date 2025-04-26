@@ -700,3 +700,99 @@ section {
 .count-up {
   transition: all 2s ease;
 }
+
+// Workshops Section
+.workshops {
+  background: #f5f7ff;
+  padding: 80px 0;
+}
+
+.workshop-cards {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.workshop-card {
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-soft;
+  overflow: hidden;
+  flex: 1;
+  min-width: 300px;
+  max-width: 380px;
+  transition: $transition-normal;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-medium;
+  }
+
+  .workshop-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  .workshop-details {
+    padding: 20px;
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      color: $dark-color;
+    }
+
+    .workshop-description {
+      color: $text-light;
+      font-size: 14px;
+      margin-bottom: 15px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .workshop-theme,
+    .workshop-author {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: $text-light;
+      font-size: 14px;
+      margin-top: 10px;
+
+      i {
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+.loading-state {
+  text-align: center;
+  padding: 40px;
+  
+  p {
+    margin-top: 20px;
+    color: $text-light;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: $text-light;
+}
