@@ -3,10 +3,11 @@
         <div class="card chat-main-card">
             <p-toast></p-toast>
 
+            <!-- Loading Spinner -->
           
 
             <!-- Team Chat -->
-            <div *ngIf=" team" class="chat-container">
+            <div *ngIf="!isLoading && team" class="chat-container">
                 <!-- Header with Back Button -->
                 <div class="chat-header">
                     <div class="flex align-items-center">
