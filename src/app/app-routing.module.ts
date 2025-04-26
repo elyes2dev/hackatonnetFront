@@ -67,6 +67,7 @@ import {
 import {
     LandingTeamSubmissionComponent
 } from "./demo/components/landing/landing-team-submission/landing-team-submission.component";
+import { AuthGuard } from './demo/jwt/auth.guard';
 
 
 
@@ -74,6 +75,7 @@ import {
 @NgModule({
     imports: [
         RouterModule.forRoot([
+          { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
             {
 
                 path: '', component: AppLayoutComponent,
@@ -160,7 +162,7 @@ import {
                       component: AccessDeniedComponent
                     },
 
-                ],
+                ], canActivate: [AuthGuard], data: { role: 'admin' }
             },
 
             { path: ':hackathonId/call/:roomId', component: VideoRoomComponent },
@@ -209,7 +211,7 @@ import {
 
             // Authentication & Other Routes
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
-            { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
+            
             { path: 'landing-hackathons', component: LandingHackathonListComponent},
             { path: 'landing-hackathon/:id', component: LandingHackathonDetailsComponent},
             { path: 'prize-form/:hackathonId', component: PrizeFormComponent },

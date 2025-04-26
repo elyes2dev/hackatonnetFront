@@ -1,75 +1,105 @@
 <div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100">
-  <div class="grid justify-content-center p-4 w-full" style="max-width: 90%;">
-
-    <!-- Logo -->
-    <div class="col-12 text-center mb-6">
-      <img src="assets/layout/images/{{ layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white' }}.svg"
-           alt="App Logo"
-           class="mb-3 drop-shadow-md floating-logo"
-           style="width:85px; height:65px;">
-    </div>
-
-    <!-- Register Card -->
-    <div class="col-12 xl:col-5 p-0 rounded-3xl shadow-2xl overflow-hidden"
-         style="background: rgba(255,255,255,0.75); backdrop-filter: blur(14px); border: 1px solid rgba(0,0,0,0.05);">
-
-      <div class="p-8">
-
-        <div class="text-center mb-6">
-          <h2 class="text-3xl font-bold text-blue-900">Create Account</h2>
-          <p class="text-sm text-gray-700">Join us and start your journey!</p>
+    <div class="grid justify-content-center p-4 w-full" style="max-width: 90%;">
+  
+      <!-- Logo -->
+      <div class="col-12 text-center mb-6">
+        <img src="assets/layout/images/{{ layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white' }}.svg"
+             alt="App Logo"
+             class="mb-3 drop-shadow-md floating-logo"
+             style="width:85px; height:65px;">
+      </div>
+  
+      <!-- Register Card -->
+      <div class="col-12 xl:col-5 p-0 rounded-3xl shadow-2xl overflow-hidden"
+           style="background: rgba(255,255,255,0.75); backdrop-filter: blur(14px); border: 1px solid rgba(0,0,0,0.05);">
+  
+        <div class="p-8">
+  
+          <div class="text-center mb-6">
+            <h2 class="text-3xl font-bold text-blue-900">Create Account</h2>
+            <p class="text-sm text-gray-700">Join us and start your journey!</p>
+          </div>
+  
+          <!-- Registration Form -->
+          <div class="w-full">
+            <label class="block text-sm font-medium text-blue-900 mb-2">First Name</label>
+            <input pInputText [(ngModel)]="registrationData.name" name="name" required placeholder="First Name"
+                   class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
+  
+            <label class="block text-sm font-medium text-blue-900 mb-2">Last Name</label>
+            <input pInputText [(ngModel)]="registrationData.lastname" name="lastname" required placeholder="Last Name"
+                   class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
+  
+            <label class="block text-sm font-medium text-blue-900 mb-2">Email</label>
+            <input pInputText [(ngModel)]="registrationData.email" name="email" required placeholder="Email address"
+                   class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
+  
+            <label class="block text-sm font-medium text-blue-900 mb-2">Username</label>
+            <input pInputText [(ngModel)]="registrationData.username" name="username" required placeholder="Username"
+                   class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
+  
+            <label class="block text-sm font-medium text-blue-900 mb-2">Password</label>
+            <p-password [(ngModel)]="registrationData.password" name="password" placeholder="Password"
+                        [toggleMask]="true" class="w-full mb-4 text-black"
+                        [inputStyle]="{ padding: '1rem', 'border-radius': '12px' }"></p-password>
+  
+            <label class="block text-sm font-medium text-blue-900 mb-2">Confirm Password</label>
+            <p-password [(ngModel)]="registrationData.confirmPassword" name="confirmPassword" placeholder="Confirm Password"
+                        [toggleMask]="true" class="w-full mb-4 text-black"
+                        [inputStyle]="{ padding: '1rem', 'border-radius': '12px' }"></p-password>
+  
+            <label class="block text-sm font-medium text-blue-900 mb-2">Birthdate</label>
+            <input type="date" pInputText [(ngModel)]="registrationData.birthdate" name="birthdate"
+                   class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
+  
+            <!-- Profile Picture Upload Section (Replacing the URL input) -->
+            <div class="file-input-container mb-4">
+              <label class="block text-sm font-medium text-blue-900 mb-2">Profile Picture</label>
+              <div class="file-upload-area p-4 border border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:bg-gray-50">
+                <i class="upload-icon pi pi-image text-2xl text-blue-500 mb-2"></i>
+                <div class="upload-text text-sm font-medium text-blue-900 mb-1">Click to upload your profile picture</div>
+                <div class="upload-hint text-xs text-gray-500">Max size: 2MB, formats: JPEG, PNG, GIF</div>
+                <input
+                  type="file"
+                  class="file-input opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                  accept="image/jpeg, image/png, image/gif"
+                  (change)="onProfilePictureSelected($event)"
+                >
+              </div>
+  
+              <div class="file-info mt-3" *ngIf="selectedProfilePicture">
+                <div class="file-preview flex items-center justify-between bg-blue-50 p-2 rounded-lg">
+                  <div class="flex items-center">
+                    <span class="file-badge flex items-center text-sm text-blue-800">
+                      <i class="pi pi-image mr-2"></i>{{ selectedProfilePicture?.name }}
+                    </span>
+                    <img [src]="profilePicturePreview" class="preview-image ml-3 h-10 w-10 rounded-full object-cover" alt="Profile Preview">
+                  </div>
+                  <button class="delete-btn text-gray-500 hover:text-red-500" type="button" (click)="removeProfilePicture()">
+                    <i class="pi pi-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+  
+            <label class="block text-sm font-medium text-blue-900 mb-2">Description</label>
+            <textarea pInputTextarea [(ngModel)]="registrationData.description" name="description"
+                      rows="3" class="w-full mb-4 text-black"
+                      style="padding: 1rem; border-radius: 12px;"></textarea>
+  
+            <div *ngIf="errorMessage" class="text-red-500 mb-4">{{ errorMessage }}</div>
+  
+            <!-- Updated Button with Loading State -->
+            <button pButton pRipple [label]="isSubmitting ? 'Registering...' : 'Register'"
+                    class="w-full p-3 text-lg font-semibold bg-blue-600 hover:bg-blue-700 border-none text-white"
+                    style="border-radius: 12px;"
+                    [disabled]="isSubmitting"
+                    (click)="registerUser()">
+              <i *ngIf="isSubmitting" class="pi pi-spin pi-spinner mr-2"></i>
+            </button>
+          </div>
+  
         </div>
-
-        <!-- Registration Form -->
-        <div class="w-full">
-          <label class="block text-sm font-medium text-blue-900 mb-2">First Name</label>
-          <input pInputText [(ngModel)]="registrationData.name" name="name" required placeholder="First Name"
-                 class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
-
-          <label class="block text-sm font-medium text-blue-900 mb-2">Last Name</label>
-          <input pInputText [(ngModel)]="registrationData.lastname" name="lastname" required placeholder="Last Name"
-                 class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
-
-          <label class="block text-sm font-medium text-blue-900 mb-2">Email</label>
-          <input pInputText [(ngModel)]="registrationData.email" name="email" required placeholder="Email address"
-                 class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
-
-          <label class="block text-sm font-medium text-blue-900 mb-2">Username</label>
-          <input pInputText [(ngModel)]="registrationData.username" name="username" required placeholder="Username"
-                 class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
-
-          <label class="block text-sm font-medium text-blue-900 mb-2">Password</label>
-          <p-password [(ngModel)]="registrationData.password" name="password" placeholder="Password"
-                      [toggleMask]="true" class="w-full mb-4 text-black"
-                      [inputStyle]="{ padding: '1rem', 'border-radius': '12px' }"></p-password>
-
-          <label class="block text-sm font-medium text-blue-900 mb-2">Confirm Password</label>
-          <p-password [(ngModel)]="registrationData.confirmPassword" name="confirmPassword" placeholder="Confirm Password"
-                      [toggleMask]="true" class="w-full mb-4 text-black"
-                      [inputStyle]="{ padding: '1rem', 'border-radius': '12px' }"></p-password>
-
-          <label class="block text-sm font-medium text-blue-900 mb-2">Birthdate</label>
-          <input type="date" pInputText [(ngModel)]="registrationData.birthdate" name="birthdate"
-                 class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
-
-          <label class="block text-sm font-medium text-blue-900 mb-2">Profile Picture URL</label>
-          <input pInputText [(ngModel)]="registrationData.picture" name="picture" placeholder="https://example.com/image.jpg"
-                 class="w-full mb-4 text-black" style="padding: 1rem; border-radius: 12px;"/>
-
-          <label class="block text-sm font-medium text-blue-900 mb-2">Description</label>
-          <textarea pInputTextarea [(ngModel)]="registrationData.description" name="description"
-                    rows="3" class="w-full mb-4 text-black"
-                    style="padding: 1rem; border-radius: 12px;"></textarea>
-
-          <div *ngIf="errorMessage" class="text-red-500 mb-4">{{ errorMessage }}</div>
-
-          <button pButton pRipple label="Register"
-                  class="w-full p-3 text-lg font-semibold bg-blue-600 hover:bg-blue-700 border-none text-white"
-                  style="border-radius: 12px;"
-                  (click)="registerUser()"></button>
-        </div>
-
       </div>
     </div>
   </div>
-</div>

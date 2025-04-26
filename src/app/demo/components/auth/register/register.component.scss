@@ -1,16 +1,168 @@
-:host ::ng-deep .p-password input {
-    width: 100%;
+/* Variables */
+$primary-color: #4318FF;
+$error-color: #dc3545;
+$success-color: #28a745;
+$border-radius: 16px;
+$box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+/* File Upload Styling */
+.file-input-container {
+    margin-bottom: 1rem;
+}
+
+.file-input-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.file-upload-area {
+    position: relative;
+    min-height: 120px;
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+
+    &:hover {
+        border-color: $primary-color;
+    }
+
+    .upload-icon {
+        font-size: 2rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-text {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .upload-hint {
+        font-size: 0.8rem;
+        color: #6c757d;
+        opacity: 0.7;
+        margin-top: 0.25rem;
+    }
+
+    .file-input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+    }
+}
+
+.file-info {
+    background-color: #f8f9fa;
     padding: 1rem;
-  }
-  
-  :host ::ng-deep .pi-eye,
-  :host ::ng-deep .pi-eye-slash {
-    transform: scale(1.6);
-    margin-right: 1rem;
-    color: var(--primary-color) !important;
-  }
-  
-  .floating-logo {
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.file-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.preview-image {
+    max-height: 100px;
+    border-radius: 50%;
+    margin-top: 0.5rem;
+    object-fit: cover;
+    width: 100px;
+    height: 100px;
+}
+
+.file-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #d1ecf1;
+    color: #0c5460;
+    padding: 0.2em 0.5em;
+    border-radius: 3px;
+    margin-right: 10px;
+    font-weight: 600;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #ff4d4d;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+/* Progress Bar */
+.progress-container {
+    width: 100%;
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: $primary-color;
+    color: white;
+    font-size: 0.7em;
+    text-align: center;
+    line-height: 10px;
+    transition: width 0.2s;
+}
+
+/* Spinner */
+.spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Toast Styling */
+:host ::ng-deep .p-toast {
+    .p-toast-message {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+        &.p-toast-message-success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+
+        &.p-toast-message-error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+    }
+}
+
+.floating-logo {
     animation: floatUpDown 3s ease-in-out infinite;
   }
   
@@ -19,7 +171,7 @@
       transform: translateY(0);
     }
     50% {
-      transform: translateY(-6px);
+      transform: translateY(-12px);
     }
   }
   
