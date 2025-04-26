@@ -28,13 +28,17 @@
     </div>
 
 
-  
-    <div *ngIf="post.images?.length" class="post-images">
-      <img *ngFor="let image of post.images" [src]="getImageUrl(image)" 
-           alt="Post image" 
-           (error)="handleImageError($event, false)">
+    <div class="post-content">
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.content }}</p>
+      
+      <div *ngIf="post.images?.length" class="post-images">
+        <img *ngFor="let image of post.images" [src]="getImageUrl(image)" 
+             alt="Post image" 
+             (error)="handleImageError($event, false)">
+      </div>
     </div>
-  
+    
     <div class="post-stats">
       <button (click)="onLikePost(post)" 
               [class.active]="isPostLikedByCurrentUser(post)"
