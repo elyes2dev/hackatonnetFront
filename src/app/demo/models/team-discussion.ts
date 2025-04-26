@@ -8,6 +8,7 @@ export interface TeamDiscussion {
   teamMember?: TeamMember;
   messageType?: MessageType;
   isRead?: boolean;
+  isPinned?: boolean;
   createdAt?: string; // ISO string date
 }
 

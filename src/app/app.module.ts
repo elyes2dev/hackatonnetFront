@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { TeamFrontofficeModule } from './demo/components/team-frontoffice/team-frontoffice.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
@@ -14,6 +15,7 @@ import { PhotoService } from './demo/service/photo.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UserProfileComponent } from './demo/components/user-profile/user-profile.component';
 import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
 import { BadgeModule } from 'primeng/badge';
 import { SidebarModule } from 'primeng/sidebar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -132,15 +134,54 @@ import {
 } from "./demo/components/landing/landing-project-evaluation/landing-project-evaluation.component";
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { MessageModule } from 'primeng/message';
+import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/team-frontoffice.component';
 
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, ResourceListComponent, ResourceFormComponent, ResourceDetailsComponent, QuizListComponent, QuizFormComponent, QuizDetailsComponent, QuizScoreAddComponent, QuizResultDialogComponent, WorkshoplistfComponent, NavbarComponent, FooterComponent, WorkshopfFormComponent, WorkshopfDetailsComponent, ResourcefListComponent, ResourcefFormComponent, ResourcefDetailsComponent, QuizfListComponent, QuizfFormComponent, QuizfDetailsComponent, QuizfResultDialogComponent, QuizfScoreAddComponent, FilterByNameAndThemePipe, ChartsComponent
-          , WorkshoplistComponent, WorkshopFormComponent, WorkshopDetailsComponent, UserComponent, QuizDetailsComponent, QuizFormComponent, QuizListComponent, QuizResultDialogComponent, QuizScoreAddComponent ,
-        ResourceDetailsComponent, WorkshoplistComponent,ResourceListComponent,ResourceFormComponent,SupportTicketComponent,SponsorApplicationFormComponent,
+        AppComponent,
+        // TeamfrontDetailsComponent removed to avoid duplicate declaration,
+        NotfoundComponent, 
+        WorkshoplistComponent, 
+        WorkshopFormComponent, 
+        WorkshopDetailsComponent, 
+        ResourceListComponent, 
+        ResourceFormComponent, 
+        ResourceDetailsComponent, 
+        QuizListComponent, 
+        QuizFormComponent, 
+        QuizDetailsComponent, 
+        QuizScoreAddComponent, 
+        QuizResultDialogComponent, 
+        WorkshoplistfComponent, 
+        NavbarComponent, 
+        FooterComponent, 
+        WorkshopfFormComponent, 
+        WorkshopfDetailsComponent, 
+        ResourcefListComponent, 
+        ResourcefFormComponent, 
+        ResourcefDetailsComponent, 
+        QuizfListComponent, 
+        QuizfFormComponent, 
+        QuizfDetailsComponent, 
+        QuizfResultDialogComponent, 
+        QuizfScoreAddComponent, 
+        FilterByNameAndThemePipe, 
+        ChartsComponent
+          , 
+        WorkshoplistComponent, 
+        WorkshopFormComponent, 
+        WorkshopDetailsComponent, 
+        UserComponent, 
+        QuizDetailsComponent, 
+        QuizFormComponent, 
+        QuizListComponent, 
+        QuizResultDialogComponent, 
+        QuizScoreAddComponent ,
+        ResourceDetailsComponent, 
+        WorkshoplistComponent,ResourceListComponent,ResourceFormComponent,SupportTicketComponent,SponsorApplicationFormComponent,
         SponsorApplicationListComponent,
-        SponsorApplicationDetailComponent,LandingTeamSubmissionComponent,LandingProjectEvaluationComponent,
+        SponsorApplicationDetailComponent,
         PrizeFormComponent,
         PrizeListComponent,
         PrizeDetailComponent,
@@ -163,7 +204,9 @@ import { MessageModule } from 'primeng/message';
     ],
     imports: [
         AppRoutingModule,
+        AvatarGroupModule,
         AppLayoutModule,
+        TeamFrontofficeModule,
         TableModule,
         CarouselModule,
         CommonModule,

@@ -1,15 +1,189 @@
 <div class="grid">
     <div class="col-12">
         <div class="card">
-            <h5>My Teams</h5>
+            <h5>Team Dashboard</h5>
             <p-toast></p-toast>
             <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
+            <!-- Statistics Cards -->
+            <div class="grid mb-4">
+                <div class="col-12 md:col-6 lg:col-3">
+                    <div class="card mb-0 stats-card bg-blue-50">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Total Teams</span>
+                                <div class="text-900 font-medium text-xl">{{teamStats.totalTeams}}</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
+                                <i class="pi pi-users text-blue-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6 lg:col-3">
+                    <div class="card mb-0 stats-card bg-green-50">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Total Members</span>
+                                <div class="text-900 font-medium text-xl">{{teamStats.totalMembers}}</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width:2.5rem;height:2.5rem">
+                                <i class="pi pi-user text-green-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6 lg:col-3">
+                    <div class="card mb-0 stats-card bg-yellow-50">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Avg. Team Size</span>
+                                <div class="text-900 font-medium text-xl">{{teamStats.avgTeamSize}}</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-yellow-100 border-round" style="width:2.5rem;height:2.5rem">
+                                <i class="pi pi-chart-bar text-yellow-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6 lg:col-3">
+                    <div class="card mb-0 stats-card bg-purple-50">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Public/Private</span>
+                                <div class="text-900 font-medium text-xl">{{teamStats.publicTeamsCount}}/{{teamStats.privateTeamsCount}}</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width:2.5rem;height:2.5rem">
+                                <i class="pi pi-lock-open text-purple-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Statistics Cards -->
+            <div class="grid mb-4">
+                <div class="col-12 md:col-6 lg:col-3">
+                    <div class="card mb-0 stats-card bg-indigo-50">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Active Teams</span>
+                                <div class="text-900 font-medium text-xl">{{teamStats.activeTeams}}</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-indigo-100 border-round" style="width:2.5rem;height:2.5rem">
+                                <i class="pi pi-check-circle text-indigo-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6 lg:col-3">
+                    <div class="card mb-0 stats-card bg-orange-50">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Inactive Teams</span>
+                                <div class="text-900 font-medium text-xl">{{teamStats.inactiveTeams}}</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
+                                <i class="pi pi-pause-circle text-orange-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6 lg:col-3">
+                    <div class="card mb-0 stats-card bg-teal-50">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Team Leaders</span>
+                                <div class="text-900 font-medium text-xl">{{teamStats.memberRoleDistribution.leader}}</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-teal-100 border-round" style="width:2.5rem;height:2.5rem">
+                                <i class="pi pi-star text-teal-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6 lg:col-3">
+                    <div class="card mb-0 stats-card bg-pink-50">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Regular Members</span>
+                                <div class="text-900 font-medium text-xl">{{teamStats.memberRoleDistribution.member}}</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-pink-100 border-round" style="width:2.5rem;height:2.5rem">
+                                <i class="pi pi-users text-pink-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Section (Toggled by Participate button) -->
+            <div class="grid mb-4" *ngIf="displayChartsSection">
+                <div class="col-12">
+                    <div class="card mb-0 participation-card">
+                        <h5>Team Participation Analytics</h5>
+                        <p>Explore team distribution and participation statistics across hackathons.</p>
+                        
+                        <div class="grid">
+                            <div class="col-12 md:col-4">
+                                <div class="chart-container elevation-2">
+                                    <h6>Team Distribution</h6>
+                                    <p-chart type="doughnut" [data]="teamDistributionData" [options]="teamDistributionOptions" height="250px"></p-chart>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-4">
+                                <div class="chart-container elevation-2">
+                                    <h6>Team Member Roles</h6>
+                                    <p-chart type="pie" [data]="memberActivityData" [options]="memberActivityOptions" height="250px"></p-chart>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-4">
+                                <div class="chart-container elevation-2">
+                                    <h6>Team Size Distribution</h6>
+                                    <p-chart type="bar" [data]="teamSizeData" [options]="teamSizeOptions" height="250px"></p-chart>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Teams by Hackathon -->
+            <div class="grid mb-4" *ngIf="teamStats.teamsByHackathon.length > 0 && displayChartsSection">
+                <div class="col-12">
+                    <div class="card">
+                        <h5>Teams by Hackathon</h5>
+                        <p-table [value]="teamStats.teamsByHackathon" styleClass="p-datatable-sm" [tableStyle]="{'min-width': '100%'}">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Hackathon</th>
+                                    <th style="width: 200px">Number of Teams</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-hackathon>
+                                <tr>
+                                    <td>{{hackathon.name}}</td>
+                                    <td>
+                                        <p-progressBar [value]="(hackathon.count / teamStats.totalTeams) * 100" [showValue]="false" styleClass="mb-2" [style]="{'height': '8px'}"></p-progressBar>
+                                        <span class="text-900 font-medium">{{hackathon.count}}</span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Actions Buttons -->
-            <div class="flex justify-content-end mb-3">
-                <button pButton pRipple label="Join Team with Code" icon="pi pi-users" class="p-button-info mr-2" (click)="openJoinDialog()"></button>
-<button pButton pRipple label="Create Team" icon="pi pi-plus" class="p-button-success" (click)="openCreateDialog()"></button>
-<!-- Admin-only bulk actions can be added here if needed -->
+            <div class="flex justify-content-between align-items-center mb-3">
+                <div>
+                    <button pButton pRipple label="Participate" icon="pi pi-chart-line" class="p-button-primary mr-2" (click)="toggleChartsSection()"></button>
+                </div>
+                <div>
+                    <button pButton pRipple label="Join Team with Code" icon="pi pi-users" class="p-button-info mr-2" (click)="openJoinDialog()"></button>
+                    <button pButton pRipple label="Create Team" icon="pi pi-plus" class="p-button-success" (click)="openCreateDialog()"></button>
+                    <!-- Admin-only bulk actions can be added here if needed -->
+                </div>
             </div>
 
             <!-- Loading Spinner -->
@@ -19,10 +193,22 @@
 
             <!-- My Teams Section -->
             <div *ngIf="!isLoading && userTeams.length > 0" class="mb-5">
-                <h6>Teams I'm a Member Of</h6>
-                <div class="grid">
+                <div class="flex justify-content-between align-items-center mb-3">
+                    <h6 class="m-0">Teams I'm a Member Of</h6>
+                    <div class="team-view-options">
+                        <p-selectButton [options]="[{label: 'Grid', value: 'grid', icon: 'pi pi-th-large'}, {label: 'List', value: 'list', icon: 'pi pi-list'}]" [(ngModel)]="teamViewMode" optionLabel="label" optionValue="value">
+                            <ng-template let-item pTemplate="item">
+                                <i [class]="item.icon"></i>
+                                <span class="ml-2">{{item.label}}</span>
+                            </ng-template>
+                        </p-selectButton>
+                    </div>
+                </div>
+                
+                <!-- Grid View -->
+                <div class="grid" *ngIf="teamViewMode === 'grid'">
                     <div *ngFor="let team of userTeams" class="col-12 md:col-6 lg:col-4">
-                        <p-card [header]="team.teamName" styleClass="team-card">
+                        <p-card [header]="team.teamName" styleClass="team-card elevation-2">
                             <ng-template pTemplate="header">
                                 <div class="team-card-header">
                                     <span class="team-status" [ngClass]="{'public': team.isPublic, 'private': !team.isPublic}">
@@ -50,14 +236,44 @@
                                         [style]="{'background-color': '#9C27B0'}">
                                     </p-avatar>
                                 </p-avatarGroup>
+                                <!-- Member List with Remove Option -->
+                                <div *ngIf="isAdmin() && team.teamMembers && team.teamMembers.length > 0" class="member-list">
+                                    <p-table [value]="team.teamMembers" styleClass="p-datatable-sm" [tableStyle]="{'min-width': '100%'}">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>Member</th>
+                                                <th>Role</th>
+                                                <th style="width: 80px">Actions</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-member>
+                                            <tr>
+                                                <td>
+                                                    <div class="flex align-items-center">
+                                                        <p-avatar [label]="getUserAvatarLabel(member)" shape="circle" 
+                                                            [style]="{'background-color': member.role === 'LEADER' ? '#FFD700' : '#2196F3', 'width': '2rem', 'height': '2rem', 'font-size': '0.8rem'}"></p-avatar>
+                                                        <span class="ml-2">{{getUserDisplayName(member)}}</span>
+                                                    </div>
+                                                </td>
+                                                <td><span [class]="member.role === 'LEADER' ? 'team-leader-badge' : 'team-member-badge'">{{member.role}}</span></td>
+                                                <td>
+                                                    <button *ngIf="member.role !== 'LEADER'" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm" 
+                                                        (click)="removeMemberFromTeam(team, member)" pTooltip="Remove member" tooltipPosition="top"></button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
                             </div>
 
                             <div class="team-actions">
   <button *ngIf="isAdmin()" pButton pRipple label="Update" icon="pi pi-pencil" class="p-button-warning p-button-outlined mr-2" (click)="openEditDialog(team)"></button>
   <button pButton pRipple label="View Team" icon="pi pi-eye" class="p-button-outlined p-button-info mr-2" (click)="viewTeam(team)"></button>
-  <button pButton pRipple label="Chat" icon="pi pi-comments" class="p-button-outlined" [routerLink]="['/teams', team.id, 'chat']"></button>
+  <button pButton pRipple label="Chat" icon="pi pi-comments" class="p-button-outlined mr-2" [routerLink]="['/teams', team.id, 'chat']"></button>
+  <!-- Team Member Management -->
+  <button *ngIf="isAdmin()" pButton pRipple label="Add Member" icon="pi pi-user-plus" class="p-button-success p-button-outlined mr-2" (click)="addMemberToTeam(team)"></button>
   <!-- Admin-only Discussion Controls -->
-  <button *ngIf="isAdmin()" pButton pRipple label="Manage Discussions" icon="pi pi-comments" class="p-button-help p-button-outlined ml-2" (click)="manageDiscussions(team)"></button>
+  <button *ngIf="isAdmin()" pButton pRipple label="Manage Discussions" icon="pi pi-comments" class="p-button-help p-button-outlined" (click)="manageDiscussions(team)"></button>
 </div>
                         </p-card>
                     </div>
@@ -69,49 +285,73 @@
                 <p>You are not a member of any team yet. Join an existing team or create a new one.</p>
             </div>
 
-            <!-- Public Teams Section -->
-            <div *ngIf="!isLoading && publicTeams.length > 0" class="mb-3">
-                <h6>Available Public Teams</h6>
-                <div class="grid">
-                    <div *ngFor="let team of publicTeams" class="col-12 md:col-6 lg:col-4">
-                        <p-card [header]="team.teamName" styleClass="team-card">
-                            <ng-template pTemplate="header">
-                                <div class="team-card-header">
-                                    <span class="team-status public">Public</span>
-                                    <span class="team-status" [ngClass]="{'full': team.isFull, 'available': !team.isFull}">
-                                        {{team.isFull ? 'Full' : 'Available'}}
-                                    </span>
-                                </div>
-                            </ng-template>
-
-                            <div class="team-members mb-3">
-                                <h6>Team Members</h6>
-                                <p-avatarGroup styleClass="mb-3">
-                                    <p-avatar *ngFor="let member of team.teamMembers?.slice(0, 5)" 
-                                        [label]="getUserAvatarLabel(member)" 
-                                        shape="circle" 
-                                        [style]="{'background-color': member.role === 'LEADER' ? '#FFD700' : '#2196F3'}"
-                                        pTooltip="{{getUserDisplayName(member)}} ({{member.role}})"
-                                        tooltipPosition="top">
-                                    </p-avatar>
-                                    <p-avatar *ngIf="team.teamMembers && team.teamMembers.length > 5" 
-                                        label="+{{team.teamMembers.length - 5}}" 
-                                        shape="circle" 
-                                        [style]="{'background-color': '#9C27B0'}">
-                                    </p-avatar>
-                                </p-avatarGroup>
-                            </div>
-
-                            <div class="team-actions">
-    <button pButton pRipple label="Update" icon="pi pi-pencil" class="p-button-warning p-button-outlined mr-2" (click)="openEditDialog(team)"></button>
-    <button pButton pRipple label="Join Team" icon="pi pi-sign-in" class="p-button-success mr-2" 
-        (click)="joinPublicTeam(team)" [disabled]="team.isFull"></button>
-    <button pButton pRipple label="View Details" icon="pi pi-info-circle" class="p-button-outlined p-button-info" 
-        (click)="viewTeam(team)"></button>
-</div>
-                        </p-card>
+            <!-- Teams Organized by Hackathon -->
+            <div *ngIf="!isLoading" class="mb-3">
+                <div class="flex justify-content-between align-items-center mb-3">
+                    <h6 class="m-0">All Teams by Hackathon</h6>
+                    <div class="flex align-items-center">
+                        <span class="p-input-icon-left mr-3">
+                            <i class="pi pi-search"></i>
+                            <input type="text" pInputText [(ngModel)]="teamSearchQuery" placeholder="Search teams..." (input)="filterTeams()" />
+                        </span>
+                        <p-dropdown [options]="hackathons" [(ngModel)]="teamFilterHackathonId" optionLabel="name" optionValue="id" placeholder="Filter by Hackathon" (onChange)="filterTeams()" [showClear]="true">
+                        </p-dropdown>
                     </div>
                 </div>
+                
+                <!-- Accordion for Hackathon Teams -->
+                <p-accordion [multiple]="true" styleClass="hackathon-accordion">
+                    <p-accordionTab *ngFor="let hackathonName of hackathonNames" [header]="hackathonName + ' (' + teamsByHackathon[hackathonName].length + ' teams)'">
+                        <div class="grid">
+                            <div *ngFor="let team of teamsByHackathon[hackathonName]" class="col-12 md:col-6 lg:col-4">
+                                <p-card [header]="team.teamName" styleClass="team-card elevation-3 hackathon-team-card">
+                                    <ng-template pTemplate="header">
+                                        <div class="team-card-header">
+                                            <span class="team-status" [ngClass]="{'public': team.isPublic, 'private': !team.isPublic}">
+                                                {{team.isPublic ? 'Public' : 'Private'}}
+                                            </span>
+                                            <span class="team-status" [ngClass]="{'full': team.isFull, 'available': !team.isFull}">
+                                                {{team.isFull ? 'Full' : 'Available'}}
+                                            </span>
+                                        </div>
+                                    </ng-template>
+
+                                    <div class="team-members mb-3">
+                                        <h6>Team Members</h6>
+                                        <p-avatarGroup styleClass="mb-3">
+                                            <p-avatar *ngFor="let member of team.teamMembers?.slice(0, 5)" 
+                                                [label]="getUserAvatarLabel(member)" 
+                                                shape="circle" 
+                                                [style]="{'background-color': member.role === 'LEADER' ? '#FFD700' : '#2196F3'}"
+                                                pTooltip="{{getUserDisplayName(member)}} ({{member.role}})"
+                                                tooltipPosition="top">
+                                            </p-avatar>
+                                            <p-avatar *ngIf="team.teamMembers && team.teamMembers.length > 5" 
+                                                label="+{{team.teamMembers.length - 5}}" 
+                                                shape="circle" 
+                                                [style]="{'background-color': '#9C27B0'}">
+                                            </p-avatar>
+                                        </p-avatarGroup>
+                                    </div>
+
+                                    <div class="team-actions">
+                                        <button *ngIf="isAdmin()" pButton pRipple label="Update" icon="pi pi-pencil" class="p-button-warning p-button-outlined mr-2" (click)="openEditDialog(team)"></button>
+                                        <button *ngIf="team.isPublic" pButton pRipple label="Join" icon="pi pi-sign-in" class="p-button-success mr-2" 
+                                            (click)="joinPublicTeam(team)" [disabled]="team.isFull"></button>
+                                        <button pButton pRipple label="View" icon="pi pi-info-circle" class="p-button-outlined p-button-info mr-2" 
+                                            (click)="viewTeam(team)"></button>
+                                        <button pButton pRipple label="Stats" icon="pi pi-chart-bar" class="p-button-outlined p-button-help" 
+                                            (click)="showTeamQuickStats(team)"></button>
+                                    </div>
+                                </p-card>
+                            </div>
+                        </div>
+                    </p-accordionTab>
+                </p-accordion>
+            </div>
+            <!-- No Public Teams Message -->
+            <div *ngIf="!isLoading && hackathonNames.length === 0" class="mb-5">
+                <p>There are no teams available at the moment. You can create a new team using the button above.</p>
             </div>
 
             <!-- No Public Teams Message -->
@@ -160,6 +400,87 @@
             <button pButton pRipple label="Update" icon="pi pi-check" type="submit" [disabled]="editTeamForm.invalid"></button>
         </div>
     </form>
+</p-dialog>
+
+<!-- Add Member Dialog -->
+<p-dialog header="Add Team Member" [(visible)]="displayAddMemberDialog" [style]="{width: '500px'}" [modal]="true" styleClass="p-fluid">
+    <div class="field">
+        <label for="selectUser">Select User</label>
+        <p-dropdown id="selectUser" [options]="availableUsers" [(ngModel)]="selectedUser" optionLabel="name" placeholder="Select a user to add" [filter]="true" filterBy="name,email" [showClear]="true">
+            <ng-template pTemplate="selectedItem">
+                <div class="flex align-items-center gap-2" *ngIf="selectedUser">
+                    <div>{{selectedUser.name}} {{selectedUser.lastname}} ({{selectedUser.email}})</div>
+                </div>
+            </ng-template>
+            <ng-template let-user pTemplate="item">
+                <div class="flex align-items-center gap-2">
+                    <div>{{user.name}} {{user.lastname}} <span class="text-sm text-color-secondary">({{user.email}})</span></div>
+                </div>
+            </ng-template>
+        </p-dropdown>
+    </div>
+    <div class="flex justify-content-end">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="displayAddMemberDialog = false"></button>
+        <button pButton pRipple label="Add Member" icon="pi pi-check" (click)="confirmAddMember()" [disabled]="!selectedUser"></button>
+    </div>
+</p-dialog>
+
+<!-- Quick Team Stats Dialog -->
+<p-dialog header="Team Quick Stats" [(visible)]="displayQuickStatsDialog" [style]="{width: '600px'}" [modal]="true" styleClass="p-fluid" *ngIf="selectedTeamForStats">
+    <div class="grid">
+        <div class="col-12 md:col-6">
+            <div class="card mb-0 stats-card bg-blue-50">
+                <h6>Team Information</h6>
+                <div class="field">
+                    <label>Team Name</label>
+                    <div class="text-900 font-medium">{{selectedTeamForStats.teamName}}</div>
+                </div>
+                <div class="field">
+                    <label>Team Status</label>
+                    <div>
+                        <span class="team-status" [ngClass]="{'public': selectedTeamForStats.isPublic, 'private': !selectedTeamForStats.isPublic}">
+                            {{selectedTeamForStats.isPublic ? 'Public' : 'Private'}}
+                        </span>
+                        <span class="team-status ml-2" [ngClass]="{'full': selectedTeamForStats.isFull, 'available': !selectedTeamForStats.isFull}">
+                            {{selectedTeamForStats.isFull ? 'Full' : 'Available'}}
+                        </span>
+                    </div>
+                </div>
+                <div class="field" *ngIf="selectedTeamForStats.hackathon">
+                    <label>Hackathon</label>
+                    <div class="text-900 font-medium">{{selectedTeamForStats.hackathon.title}}</div>
+                </div>
+                <div class="field">
+                    <label>Team Code</label>
+                    <div class="flex align-items-center">
+                        <span class="text-900 font-medium team-code">{{selectedTeamForStats.teamCode || 'No code available'}}</span>
+                        <button *ngIf="selectedTeamForStats.teamCode" pButton pRipple type="button" icon="pi pi-copy" class="p-button-rounded p-button-text p-button-sm ml-2" (click)="copyTeamCode(selectedTeamForStats.teamCode)" pTooltip="Copy code" tooltipPosition="top"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 md:col-6">
+            <div class="card mb-0 stats-card bg-green-50">
+                <h6>Member Statistics</h6>
+                <div class="field">
+                    <label>Total Members</label>
+                    <div class="text-900 font-medium">{{selectedTeamForStats.teamMembers?.length || 0}}</div>
+                </div>
+                <div class="field">
+                    <label>Leaders</label>
+                    <div class="text-900 font-medium">{{getTeamMemberCountByRole(selectedTeamForStats, 'LEADER')}}</div>
+                </div>
+                <div class="field">
+                    <label>Regular Members</label>
+                    <div class="text-900 font-medium">{{getTeamMemberCountByRole(selectedTeamForStats, 'MEMBER')}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end mt-3">
+        <button pButton pRipple label="Close" icon="pi pi-times" class="p-button-text" (click)="displayQuickStatsDialog = false"></button>
+        <button pButton pRipple label="View Full Team" icon="pi pi-eye" (click)="viewTeamAndCloseStats(selectedTeamForStats)"></button>
+    </div>
 </p-dialog>
 
 <!-- Create Team Dialog -->

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LandingRoutingModule } from './landing-routing.module';
 import { LandingComponent } from './landing.component';
@@ -7,28 +7,26 @@ import { DividerModule } from 'primeng/divider';
 import { ChartModule } from 'primeng/chart';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
-
-import { LandingHackathonListComponent } from './Hackathon/landing-hackathon-list/landing-hackathon-list.component';
-import { LandingHackathonDetailsComponent } from './Hackathon/landing-hackathon-details/landing-hackathon-details.component';
 import { AvatarModule } from 'primeng/avatar';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
-import { AppModule } from 'src/app/app.module';
-import { LandingLiveStreamComponent } from './Hackathon/landing-live-stream/landing-live-stream.component';
-import { LandingPostComponent } from './Hackathon/landing-hackathon-details/landing-post/landing-post.component';
-import { LandingCommentComponent } from './Hackathon/landing-hackathon-details/landing-post/landing-comment/landing-comment.component';
 import { RippleModule } from 'primeng/ripple';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
+import { RouterModule } from '@angular/router';
+import { LandingHackathonModule } from './Hackathon/landing-hackathon.module';
 import { LandingProjectEvaluationComponent } from './landing-project-evaluation/landing-project-evaluation.component'; // Nouveau
 import { LandingTeamSubmissionComponent } from './landing-team-submission/landing-team-submission.component'; // Nouveau
 
 
 @NgModule({
+    schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
     imports: [
         CommonModule,
         LandingRoutingModule,
+        RouterModule,
         DividerModule,
         StyleClassModule,
         ChartModule,
@@ -39,11 +37,11 @@ import { LandingTeamSubmissionComponent } from './landing-team-submission/landin
         DropdownModule,
         InputTextModule,
         RippleModule,
-        InputTextModule,
         InputTextareaModule,
-        ToastModule
-
+        ToastModule,
+        DialogModule,
+        LandingHackathonModule
     ],
-    declarations: [LandingComponent, LandingHackathonListComponent, LandingHackathonDetailsComponent, LandingLiveStreamComponent, LandingPostComponent, LandingCommentComponent]
+    declarations: [LandingComponent, LandingProjectEvaluationComponent, LandingTeamSubmissionComponent]
 })
 export class LandingModule { }

@@ -1,10 +1,10 @@
 <div class="grid">
     <div class="col-12">
-        <div class="card">
+        <div class="card chat-main-card">
             <p-toast></p-toast>
 
             <!-- Loading Spinner -->
-            <div *ngIf="isLoading" class="flex justify-content-center">
+            <div *ngIf="isLoading" class="flex justify-content-center p-5">
                 <p-progressSpinner></p-progressSpinner>
             </div>
 
@@ -14,61 +14,89 @@
                 <div class="chat-header">
                     <div class="flex align-items-center">
                         <button pButton pRipple icon="pi pi-arrow-left" class="p-button-rounded p-button-text mr-2" (click)="goBack()"></button>
-                        <h5 class="m-0">{{team.teamName}} - Team Chat</h5>
+                        <div class="team-info">
+                            <h5 class="m-0">{{team.teamName}}</h5>
+                            <span class="team-subtitle" *ngIf="team.hackathon">{{team.hackathon.title}}</span>
+                        </div>
                     </div>
-                    <div class="chat-members">
-                        <p-avatarGroup>
-                            <p-avatar *ngFor="let member of teamMembers?.slice(0, 5)" 
+                    <div class="chat-actions">
+                        <button pButton pRipple icon="pi pi-users" class="p-button-rounded p-button-text p-button-lg" 
+                            pTooltip="View Team Members" tooltipPosition="bottom" (click)="toggleMembersSidebar()"></button>
+                        <div class="chat-members">
+                        <p-avatarGroup styleClass="chat-avatar-group">
+                            <p-avatar *ngFor="let member of teamMembers?.slice(0, 4)" 
                                 [label]="getUserAvatarLabel(member.id)" 
                                 shape="circle" 
                                 [style]="{'background-color': member.role === 'LEADER' ? '#FFD700' : (member.role === 'MENTOR' ? '#9C27B0' : '#2196F3')}"
                                 pTooltip="{{getMemberName(member.id)}} ({{member.role}})"
                                 tooltipPosition="top">
                             </p-avatar>
-                            <p-avatar *ngIf="teamMembers && teamMembers.length > 5" 
-                                label="+{{teamMembers.length - 5}}" 
+                            <p-avatar *ngIf="teamMembers && teamMembers.length > 4" 
+                                label="+{{teamMembers.length - 4}}" 
                                 shape="circle" 
-                                [style]="{'background-color': '#9C27B0'}">
+                                [style]="{'background-color': '#9E9E9E'}">
                             </p-avatar>
                         </p-avatarGroup>
                     </div>
+                    </div>
                 </div>
 
-                <!-- Chat Messages -->
-                <div class="chat-messages">
-                    <div *ngIf="teamDiscussions.length === 0" class="no-messages">
-                        <p>No messages yet. Start the conversation!</p>
-                    </div>
+                <div class="chat-content">
+                    <!-- Chat Messages -->
+                    <div class="chat-messages" #chatMessages>
+                        <div *ngIf="teamDiscussions.length === 0" class="no-messages">
+                            <div class="empty-chat-container">
+                                <i class="pi pi-comments" style="font-size: 3rem; opacity: 0.5;"></i>
+                                <h3>No messages yet</h3>
+                                <p>Start the conversation with your team!</p>
+                            </div>
+                        </div>
 
-                    <div *ngFor="let message of teamDiscussions" 
-                        class="message-container" 
-                        [ngClass]="{'own-message': isCurrentUserMessage(message.teamMember?.id || 0)}">
-                        
-                        <div class="message-avatar" *ngIf="!isCurrentUserMessage(message.teamMember?.id || 0)">
-                            <p-avatar 
-                                [label]="getUserAvatarLabel(message.teamMember?.id || 0)" 
-                                shape="circle" 
-                                [style]="{'background-color': '#2196F3'}">
-                            </p-avatar>
-                        </div>
-                        
-                        <div class="message-content" [ngClass]="{'own': isCurrentUserMessage(message.teamMember?.id || 0)}">
-                            <div class="message-header">
-                                <span class="message-sender" *ngIf="!isCurrentUserMessage(message.teamMember?.id || 0)">
-                                    {{getMemberName(message.teamMember?.id || 0)}}
-                                </span>
-                                <span class="message-time">
-                                    {{message.createdAt | date:'short'}}
-                                </span>
+                        <!-- Date Separator -->
+                        <ng-container *ngFor="let dateGroup of groupedDiscussions | keyvalue">
+                            <div class="date-separator">
+                                <span>{{ dateGroup.key }}</span>
                             </div>
-                            <div class="message-body">
-                                {{message.message}}
-                            </div>
-                            <div class="message-actions" *ngIf="isCurrentUserMessage(message.teamMember?.id || 0)">
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-sm" 
-                                    (click)="deleteMessage(message.id)"></button>
-                            </div>
-                        </div>
+
+                            <!-- Message Groups -->
+                            <ng-container *ngFor="let group of dateGroup.value">
+                                <div class="message-group" [ngClass]="{'own-group': isCurrentUserMessage(group.memberId)}">
+                                    <!-- Sender Info -->
+                                    <div class="message-sender-info" *ngIf="!isCurrentUserMessage(group.memberId)">
+                                        <p-avatar 
+                                            [label]="getUserAvatarLabel(group.memberId)" 
+                                            shape="circle" 
+                                            [style]="{'background-color': getMemberRoleColor(group.memberId)}">
+                                        </p-avatar>
+                                        <span class="sender-name">{{ getMemberName(group.memberId) }}</span>
+                                    </div>
+
+                                    <!-- Messages -->
+                                    <div class="message-bubbles" [ngClass]="{'own-bubbles': isCurrentUserMessage(group.memberId)}">
+                                        <div *ngFor="let message of group.messages" 
+                                            class="message-bubble" 
+                                            [ngClass]="{'own-message': isCurrentUserMessage(message.teamMember?.id || 0)}">
+                                            
+                                            <div class="message-content">
+                                                <div class="message-body" [innerHTML]="formatMessage(message.message)"></div>
+                                                <div class="message-meta">
+                                                    <span class="message-time">{{ message.createdAt | date:'shortTime' }}</span>
+                                                    <span *ngIf="isCurrentUserMessage(message.teamMember?.id || 0)" class="message-status">
+                                                        <i class="pi pi-check-circle" *ngIf="message.isRead"></i>
+                                                        <i class="pi pi-check" *ngIf="!message.isRead"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="message-actions" *ngIf="isCurrentUserMessage(message.teamMember?.id || 0)">
+                                                <button pButton pRipple icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-sm" 
+                                                    (click)="toggleMessageMenu($event, message)"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
                     </div>
                 </div>
 
@@ -76,11 +104,64 @@
                 <div class="chat-input">
                     <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
                         <div class="p-inputgroup">
-                            <input type="text" pInputText formControlName="message" placeholder="Type a message..." />
-                            <button pButton pRipple type="submit" icon="pi pi-send" [disabled]="messageForm.invalid"></button>
+                            <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-rounded p-button-text p-button-lg"
+                                (click)="toggleAttachmentMenu($event)"></button>
+                            <button pButton pRipple type="button" icon="pi pi-smile" class="p-button-rounded p-button-text p-button-lg"
+                                (click)="toggleEmojiPicker($event)"></button>
+                            <input type="text" pInputText formControlName="message" placeholder="Type a message..." 
+                                (keydown.enter)="$event.preventDefault(); sendMessage()" />
+                            <button pButton pRipple type="submit" icon="pi pi-send" 
+                                [ngClass]="{'p-button-outlined': messageForm.invalid}" 
+                                [disabled]="messageForm.invalid"></button>
                         </div>
                     </form>
                 </div>
+                
+                <!-- Emoji Picker -->
+                <div *ngIf="showEmojiPicker" class="emoji-picker-container">
+                    <div class="emoji-picker">
+                        <div class="emoji-categories">
+                            <button *ngFor="let category of emojiCategories" 
+                                class="emoji-category" 
+                                [ngClass]="{'active': selectedEmojiCategory === category.name}"
+                                (click)="selectEmojiCategory(category.name)">
+                                <i class="pi" [ngClass]="category.icon"></i>
+                            </button>
+                        </div>
+                        <div class="emoji-list">
+                            <button *ngFor="let emoji of filteredEmojis" 
+                                class="emoji-item" 
+                                (click)="insertEmoji(emoji)">
+                                {{ emoji }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Team Members Sidebar -->
+                <p-sidebar [(visible)]="showMembersSidebar" position="right" styleClass="team-members-sidebar" [baseZIndex]="10000">
+                    <h3>Team Members</h3>
+                    <div class="team-members-list">
+                        <div *ngFor="let member of teamMembers" class="team-member-item">
+                            <div class="member-avatar">
+                                <p-avatar [label]="getUserAvatarLabel(member.id)" 
+                                    shape="circle" 
+                                    [style]="{'background-color': member.role === 'LEADER' ? '#FFD700' : (member.role === 'MENTOR' ? '#9C27B0' : '#2196F3')}">
+                                </p-avatar>
+                                <span class="member-status" [ngClass]="{'online': isUserOnline(member.user?.id)}"></span>
+                            </div>
+                            <div class="member-info">
+                                <div class="member-name">{{ getMemberName(member.id) }}</div>
+                                <div class="member-role" [ngClass]="member.role.toLowerCase()">{{ member.role }}</div>
+                            </div>
+                            <div class="member-actions">
+                                <button pButton pRipple icon="pi pi-comment" class="p-button-rounded p-button-text p-button-sm"
+                                    pTooltip="Send Direct Message" tooltipPosition="left"
+                                    (click)="startDirectChat(member.id)"></button>
+                            </div>
+                        </div>
+                    </div>
+                </p-sidebar>
             </div>
 
             <!-- No Team Found Message -->
@@ -93,3 +174,9 @@
         </div>
     </div>
 </div>
+
+<!-- Message Context Menu -->
+<p-menu #messageMenu [popup]="true" [model]="messageMenuItems"></p-menu>
+
+<!-- Attachment Menu -->
+<p-menu #attachmentMenu [popup]="true" [model]="attachmentMenuItems"></p-menu>

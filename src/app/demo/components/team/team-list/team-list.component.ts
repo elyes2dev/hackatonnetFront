@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Team } from 'src/app/demo/models/team';
+import { User } from 'src/app/demo/models/user.model'; // Updated to use the full User model
 import { TeamService } from 'src/app/demo/services/team.service';
+import { UserService } from 'src/app/demo/services/user.service';
 import { HackathonService } from 'src/app/demo/services/hackathon/hackathon.service';
 import { Hackathon } from 'src/app/demo/models/hackathon';
 import { StorageService } from 'src/app/demo/services/storage.service';
@@ -19,6 +21,28 @@ import { jwtDecode } from 'jwt-decode';
 
 export class TeamListComponent implements OnInit {
   userToken: string | null = null;
+  displayAddMemberDialog = false;
+  availableUsers: any[] = [];
+  selectedUser: any = null;
+  teamStats = {
+    totalTeams: 0,
+    totalMembers: 0,
+    avgTeamSize: 0,
+    publicTeamsCount: 0,
+    privateTeamsCount: 0,
+    activeTeams: 0,
+    inactiveTeams: 0,
+    teamsByHackathon: [] as {name: string, count: number}[],
+    memberRoleDistribution: {leader: 0, member: 0}
+  };
+  
+  // Chart data
+  teamDistributionData: any;
+  teamDistributionOptions: any;
+  memberActivityData: any;
+  memberActivityOptions: any;
+  teamSizeData: any;
+  teamSizeOptions: any;
 
   isAdmin(): boolean {
     if (!this.userToken) return false;
@@ -31,15 +55,95 @@ export class TeamListComponent implements OnInit {
   }
 
   addMemberToTeam(team: Team): void {
-    // TODO: Implement member adding logic (open dialog to select user, call service)
-    // Example: show a modal with user list, then call service to add selected user
-    alert('Add member logic for team ' + team.teamName);
+    if (!this.isAdmin()) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Only administrators can add team members'
+      });
+      return;
+    }
+
+    this.userService.getUsers().subscribe({
+      next: (users: User[]) => {
+        // Filter out users who are already in the team
+        this.availableUsers = users.filter((user: User) => 
+          !team.teamMembers?.some(member => member.user?.id === user.id)
+        );
+        this.selectedUser = null;
+        this.teamToEdit = team;
+        this.displayAddMemberDialog = true;
+      },
+      error: (error: any) => {
+        console.error('Error loading users:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load available users'
+        });
+      }
+    });
+  }
+
+  confirmAddMember(): void {
+    if (!this.selectedUser || !this.teamToEdit) return;
+
+    this.teamService.addTeamMember(this.teamToEdit.id, this.selectedUser.id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Added ${this.selectedUser.name} to team ${this.teamToEdit?.teamName}`
+        });
+        this.displayAddMemberDialog = false;
+        this.loadTeams();
+      },
+      error: (error: any) => {
+        console.error('Error adding member:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.message || 'Failed to add team member'
+        });
+      }
+    });
   }
 
   removeMemberFromTeam(team: Team, member: any): void {
-    // TODO: Implement member removal logic (call service)
-    // Example: call service to remove member from team
-    alert('Remove member logic for ' + member.user?.username + ' from team ' + team.teamName);
+    if (!this.isAdmin()) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Only administrators can remove team members'
+      });
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: `Are you sure you want to remove ${this.getUserDisplayName(member)} from team "${team.teamName}"?`,
+      header: 'Remove Member Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.teamService.removeTeamMember(team.id, member.user.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: `Member removed from team ${team.teamName}`
+            });
+            this.loadTeams();
+          },
+          error: (error: any) => {
+            console.error('Error removing member:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error.message || 'Failed to remove team member'
+            });
+          }
+        });
+      }
+    });
   }
 
   manageDiscussions(team: Team): void {
@@ -49,17 +153,26 @@ export class TeamListComponent implements OnInit {
 
   teams: Team[] = [];
   publicTeams: Team[] = [];
+  filteredPublicTeams: Team[] = [];
   userTeams: Team[] = [];
+  teamsByHackathon: { [key: string]: Team[] } = {}; // Teams grouped by hackathon
+  hackathonNames: string[] = []; // List of hackathon names for display
   isLoading = true;
   displayJoinDialog = false;
   displayCreateDialog = false;
   displayEditDialog = false;
+  displayQuickStatsDialog = false;
+  displayChartsSection = false; // Control visibility of charts section
   teamToEdit: Team | null = null;
+  selectedTeamForStats: Team | null = null;
   teamCode: string = '';
   joinCodeForm: FormGroup;
   createTeamForm: FormGroup;
   editTeamForm: FormGroup;
   selectedHackathonId: number | null = null;
+  teamFilterHackathonId: number | null = null;
+  teamSearchQuery: string = '';
+  teamViewMode: 'grid' | 'list' = 'grid';
   hackathons: any[] = []; // This would be populated from a HackathonService
 
   constructor(
@@ -69,7 +182,8 @@ export class TeamListComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private fb: FormBuilder,
-    private hackathonService: HackathonService
+    private hackathonService: HackathonService,
+    private userService: UserService
   ) {
     this.joinCodeForm = this.fb.group({
       teamCode: ['', [Validators.required, Validators.minLength(6)]]
@@ -91,6 +205,130 @@ export class TeamListComponent implements OnInit {
     this.userToken = localStorage.getItem('authToken');
     this.loadTeams();
     this.loadHackathons();
+    this.initializeChartOptions();
+  }
+  
+  initializeChartOptions(): void {
+    // Common options for all charts
+    const commonOptions = {
+      plugins: {
+        legend: {
+          labels: {
+            color: '#495057'
+          }
+        }
+      },
+      scales: {
+        r: {
+          grid: {
+            color: '#ebedef'
+          }
+        },
+        x: {
+          ticks: {
+            color: '#495057'
+          },
+          grid: {
+            color: '#ebedef'
+          }
+        },
+        y: {
+          ticks: {
+            color: '#495057'
+          },
+          grid: {
+            color: '#ebedef'
+          }
+        }
+      }
+    };
+    
+    // Team distribution options
+    this.teamDistributionOptions = {
+      ...commonOptions,
+      cutout: '60%',
+      plugins: {
+        ...commonOptions.plugins,
+        title: {
+          display: true,
+          text: 'Team Distribution',
+          font: {
+            size: 16
+          }
+        }
+      }
+    };
+    
+    // Member activity options
+    this.memberActivityOptions = {
+      ...commonOptions,
+      aspectRatio: 1.5,
+      plugins: {
+        ...commonOptions.plugins,
+        title: {
+          display: true,
+          text: 'Team Member Roles',
+          font: {
+            size: 16
+          }
+        }
+      }
+    };
+    
+    // Team size options
+    this.teamSizeOptions = {
+      ...commonOptions,
+      plugins: {
+        ...commonOptions.plugins,
+        title: {
+          display: true,
+          text: 'Team Size Distribution',
+          font: {
+            size: 16
+          }
+        }
+      }
+    };
+  }
+  
+  initializeCharts(teamSizes: {[key: string]: number}): void {
+    // Team distribution chart (public vs private)
+    this.teamDistributionData = {
+      labels: ['Public Teams', 'Private Teams'],
+      datasets: [
+        {
+          data: [this.teamStats.publicTeamsCount, this.teamStats.privateTeamsCount],
+          backgroundColor: ['#42A5F5', '#FF7043'],
+          hoverBackgroundColor: ['#64B5F6', '#FF8A65']
+        }
+      ]
+    };
+    
+    // Member activity chart (leaders vs members)
+    this.memberActivityData = {
+      labels: ['Team Leaders', 'Team Members'],
+      datasets: [
+        {
+          data: [this.teamStats.memberRoleDistribution.leader, this.teamStats.memberRoleDistribution.member],
+          backgroundColor: ['#FFD700', '#2196F3'],
+          hoverBackgroundColor: ['#FFC107', '#1E88E5']
+        }
+      ]
+    };
+    
+    // Team size distribution chart
+    this.teamSizeData = {
+      labels: Object.keys(teamSizes),
+      datasets: [
+        {
+          label: 'Number of Teams',
+          data: Object.values(teamSizes),
+          backgroundColor: '#4CAF50',
+          borderColor: '#388E3C',
+          borderWidth: 1
+        }
+      ]
+    };
   }
 
   loadHackathons(): void {
@@ -117,40 +355,174 @@ export class TeamListComponent implements OnInit {
   loadTeams(): void {
     this.isLoading = true;
     
-    // Get all public teams
-    this.teamService.getAvailablePublicTeams().subscribe({
-      next: (teams) => {
-        this.publicTeams = teams;
+    // Get all teams for statistics
+    this.teamService.getAllTeams().subscribe({
+      next: (allTeams) => {
+        this.calculateTeamStats(allTeams);
+        
+        // Filter public teams
+        this.publicTeams = allTeams.filter(team => team.isPublic);
+        this.filteredPublicTeams = [...this.publicTeams]; // Initialize filtered teams
+        
+        // Get user's teams
+        const userId = this.storageService.getLoggedInUserId();
+        if (userId) {
+          this.userTeams = allTeams.filter(team => 
+            team.teamMembers?.some(member => member.user && member.user.id === userId)
+          );
+        }
+        
+        // Group teams by hackathon
+        this.groupTeamsByHackathon(allTeams);
+        
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error fetching public teams:', error);
+        console.error('Error fetching teams:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to load public teams. Please try again.'
+          detail: 'Failed to load teams. Please try again.'
         });
         this.isLoading = false;
       }
     });
+  }
+  
+  groupTeamsByHackathon(teams: Team[]): void {
+    // Reset the groupings
+    this.teamsByHackathon = {};
+    this.hackathonNames = [];
+    
+    // Create a group for teams without a hackathon
+    this.teamsByHackathon['Unassigned'] = [];
+    
+    // Group teams by hackathon
+    teams.forEach(team => {
+      if (team.hackathon && team.hackathon.title) {
+        const hackathonName = team.hackathon.title;
+        
+        if (!this.teamsByHackathon[hackathonName]) {
+          this.teamsByHackathon[hackathonName] = [];
+          this.hackathonNames.push(hackathonName);
+        }
+        
+        this.teamsByHackathon[hackathonName].push(team);
+      } else {
+        this.teamsByHackathon['Unassigned'].push(team);
+      }
+    });
+    
+    // Sort hackathon names alphabetically
+    this.hackathonNames.sort();
+    
+    // Add 'Unassigned' at the end if it has teams
+    if (this.teamsByHackathon['Unassigned'].length > 0) {
+      this.hackathonNames.push('Unassigned');
+    }
+  }
+  
+  filterTeams(): void {
+    // Start with all public teams
+    let filtered = [...this.publicTeams];
+    
+    // Apply search query filter if it exists
+    if (this.teamSearchQuery && this.teamSearchQuery.trim() !== '') {
+      const query = this.teamSearchQuery.toLowerCase().trim();
+      filtered = filtered.filter(team => 
+        team.teamName.toLowerCase().includes(query) ||
+        (team.hackathon?.title && team.hackathon.title.toLowerCase().includes(query))
+      );
+    }
+    
+    // Apply hackathon filter if selected
+    if (this.teamFilterHackathonId) {
+      filtered = filtered.filter(team => 
+        team.hackathon && team.hackathon.id === this.teamFilterHackathonId
+      );
+    }
+    
+    // Update filtered teams
+    this.filteredPublicTeams = filtered;
+  }
 
-    // Get user's teams - this would need to be implemented in your service
-    const userId = this.storageService.getLoggedInUserId();
-    if (userId) {
-      // This is a placeholder - you would need to implement a method to get user's teams
-      this.teamService.getAllTeams().subscribe({
-        next: (allTeams) => {
-          // Filter teams where the user is a member (this is just a placeholder)
-          // In a real implementation, you would have a backend endpoint for this
-          this.userTeams = allTeams.filter(team => 
-            team.teamMembers?.some(member => member.user && member.user.id === userId)
-          );
-        },
-        error: (error) => {
-          console.error('Error fetching user teams:', error);
+  calculateTeamStats(teams: Team[]): void {
+    // Basic stats
+    this.teamStats.totalTeams = teams.length;
+    this.teamStats.publicTeamsCount = teams.filter(t => t.isPublic).length;
+    this.teamStats.privateTeamsCount = teams.filter(t => !t.isPublic).length;
+    
+    // Member counts
+    let totalMembers = 0;
+    let leaderCount = 0;
+    let regularMemberCount = 0;
+    
+    // Team activity (consider a team active if it has at least 3 members)
+    this.teamStats.activeTeams = teams.filter(t => (t.teamMembers?.length || 0) >= 3).length;
+    this.teamStats.inactiveTeams = teams.length - this.teamStats.activeTeams;
+    
+    // Team size distribution for chart
+    const teamSizes: {[key: string]: number} = {
+      'Small (1-2)': 0,
+      'Medium (3-5)': 0,
+      'Large (6+)': 0
+    };
+    
+    // Teams by hackathon
+    const hackathonMap = new Map<number, {name: string, count: number}>();
+    
+    teams.forEach(team => {
+      const teamMemberCount = team.teamMembers?.length || 0;
+      totalMembers += teamMemberCount;
+      
+      // Count roles
+      team.teamMembers?.forEach(member => {
+        if (member.role === 'LEADER') {
+          leaderCount++;
+        } else {
+          regularMemberCount++;
         }
       });
-    }
+      
+      // Team size categorization
+      if (teamMemberCount <= 2) {
+        teamSizes['Small (1-2)']++;
+      } else if (teamMemberCount <= 5) {
+        teamSizes['Medium (3-5)']++;
+      } else {
+        teamSizes['Large (6+)']++;
+      }
+      
+      // Hackathon tracking
+      if (team.hackathon) {
+        const hackathonId = team.hackathon.id;
+        if (hackathonMap.has(hackathonId)) {
+          const entry = hackathonMap.get(hackathonId)!;
+          entry.count++;
+          hackathonMap.set(hackathonId, entry);
+        } else {
+          hackathonMap.set(hackathonId, {
+            name: team.hackathon.title || `Hackathon ${hackathonId}`,
+            count: 1
+          });
+        }
+      }
+    });
+    
+    // Set calculated stats
+    this.teamStats.totalMembers = totalMembers;
+    this.teamStats.avgTeamSize = teams.length > 0 ? 
+      Math.round((totalMembers / teams.length) * 10) / 10 : 0;
+    this.teamStats.memberRoleDistribution = {
+      leader: leaderCount,
+      member: regularMemberCount
+    };
+    
+    // Convert hackathon map to array
+    this.teamStats.teamsByHackathon = Array.from(hackathonMap.values());
+    
+    // Initialize chart data
+    this.initializeCharts(teamSizes);
   }
 
   openJoinDialog(): void {
@@ -182,8 +554,24 @@ export class TeamListComponent implements OnInit {
     this.teamService.validateTeamCode(code).subscribe({
       next: (response) => {
         if (response.valid) {
-          // If valid, join the team
-          this.teamService.joinTeam(code).subscribe({
+          // If valid, join the team (need hackathonId)
+          let hackathonId: number | null = null;
+          // Try to get from selectedHackathonId or from hackathons dropdown
+          if (this.selectedHackathonId) {
+            hackathonId = this.selectedHackathonId;
+          } else if (this.hackathons && this.hackathons.length > 0) {
+            // fallback: take the first hackathon
+            hackathonId = this.hackathons[0].id;
+          }
+          if (!hackathonId) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Hackathon ID is required to join by code.'
+            });
+            return;
+          }
+          this.teamService.joinTeamByCode(code, hackathonId).subscribe({
             next: (team) => {
               this.messageService.add({
                 severity: 'success',
@@ -290,30 +678,77 @@ export class TeamListComponent implements OnInit {
       header: 'Join Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.teamService.joinTeam(team.teamCode).subscribe({
-          next: (joinedTeam) => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: `You have joined team ${joinedTeam.teamName}`
-            });
-            this.router.navigate(['/teams', joinedTeam.id]);
-          },
-          error: (error) => {
-            console.error('Error joining team:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: error.message || 'Failed to join team. Please try again.'
-            });
-          }
-        });
+        // Prefer joining by team ID if available
+        if (team.id) {
+          this.teamService.joinTeam(team.id).subscribe({
+            next: (joinedTeam) => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: `You have joined team ${joinedTeam.teamName}`
+              });
+              this.router.navigate(['/teams', joinedTeam.id]);
+            },
+            error: (error) => {
+              console.error('Error joining team:', error);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.message || 'Failed to join team. Please try again.'
+              });
+            }
+          });
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Team ID is missing. Cannot join team.'
+          });
+        }
       }
     });
   }
 
   viewTeam(team: Team): void {
     this.router.navigate(['/teams', team.id]);
+  }
+  
+  showTeamQuickStats(team: Team): void {
+    this.selectedTeamForStats = team;
+    this.displayQuickStatsDialog = true;
+  }
+  
+  viewTeamAndCloseStats(team: Team): void {
+    this.displayQuickStatsDialog = false;
+    this.viewTeam(team);
+  }
+  
+  toggleChartsSection(): void {
+    this.displayChartsSection = !this.displayChartsSection;
+  }
+  
+  getTeamMemberCountByRole(team: Team, role: string): number {
+    if (!team.teamMembers) return 0;
+    return team.teamMembers.filter(member => member.role === role).length;
+  }
+  
+  copyTeamCode(code: string): void {
+    navigator.clipboard.writeText(code).then(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Copied!',
+        detail: 'Team code copied to clipboard',
+        life: 3000
+      });
+    }, (err) => {
+      console.error('Could not copy text: ', err);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to copy team code',
+        life: 3000
+      });
+    });
   }
 
   openEditDialog(team: Team): void {

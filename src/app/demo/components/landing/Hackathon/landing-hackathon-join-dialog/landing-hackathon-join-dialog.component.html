@@ -1,0 +1,21 @@
+<div class="join-dialog-content">
+  <h2>Join a Team in {{ hackathonName }}</h2>
+  <div class="join-by-code-section">
+    <h3>Join by Team Code</h3>
+    <input pInputText [(ngModel)]="teamCode" placeholder="Enter team code" />
+    <button pButton type="button" label="Join by Code" class="p-button-info mt-2" (click)="joinByCode.emit(teamCode)" [disabled]="!teamCode"></button>
+  </div>
+  <div class="public-teams-section mt-4">
+    <h3>Or Join a Public Team</h3>
+    <div *ngIf="publicTeams.length; else noTeams">
+      <div *ngFor="let team of publicTeams" class="public-team-card">
+        <span>{{ team.teamName }} ({{ team.teamMembers.length }} members)</span>
+        <button pButton type="button" label="Join" class="p-button-success ml-2" (click)="joinPublicTeam.emit(team)"></button>
+      </div>
+    </div>
+    <ng-template #noTeams>
+      <span>No public teams available.</span>
+    </ng-template>
+  </div>
+  <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text close-btn" (click)="close.emit()"></button>
+</div>

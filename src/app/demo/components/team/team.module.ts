@@ -21,6 +21,13 @@ import { BadgeModule } from 'primeng/badge';
 import { DividerModule } from 'primeng/divider';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { ChartModule } from 'primeng/chart';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { AccordionModule } from 'primeng/accordion';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { SidebarModule } from 'primeng/sidebar';
+import { MenuModule } from 'primeng/menu';
 
 // Components
 import { TeamListComponent } from './team-list/team-list.component';
@@ -56,7 +63,14 @@ import { TeamChatComponent } from './team-chat/team-chat.component';
     BadgeModule,
     DividerModule,
     ConfirmDialogModule,
-    TooltipModule
+    TooltipModule,
+    ChartModule,
+    ProgressBarModule,
+    SelectButtonModule,
+    AccordionModule,
+    AutoCompleteModule,
+    SidebarModule,
+    MenuModule
   ]
 })
 export class TeamModule { }

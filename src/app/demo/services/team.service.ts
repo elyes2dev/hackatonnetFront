@@ -54,15 +54,43 @@ export class TeamService {
     );
   }
 
-  // Join a team using team code
-  joinTeam(teamCode: string): Observable<Team> {
+  // Join a team by ID
+  joinTeam(teamId: number): Observable<Team> {
     const userId = this.storageService.getLoggedInUserId();
     if (!userId) {
       return throwError(() => new Error('User not logged in'));
     }
     
-    return this.http.post<Team>(`${this.apiUrl}/join/${teamCode}/${userId}`, {}).pipe(
+    return this.http.post<Team>(`${this.apiUrl}/join-team/${teamId}/${userId}`, {}).pipe(
       tap(team => console.log('Joined team:', team)),
+      catchError(this.handleError)
+    );
+  }
+
+  // Join a team by code
+  joinTeamByCode(teamCode: string, userId: number): Observable<Team> {
+    if (!userId) {
+      return throwError(() => new Error('User not logged in'));
+    }
+    
+    return this.http.post<Team>(`${this.apiUrl}/join-by-code`, {
+      teamCode: teamCode,
+      userId: userId
+    }).pipe(
+      tap(team => console.log('Joined team by code:', team)),
+      catchError(this.handleError)
+    );
+  }
+
+  // Join a team using team code and hackathon ID
+  joinTeamByCodeAndHackathon(teamCode: string, hackathonId: number): Observable<Team> {
+    const userId = this.storageService.getLoggedInUserId();
+    if (!userId) {
+      return throwError(() => new Error('User not logged in'));
+    }
+    
+    return this.http.post<Team>(`${this.apiUrl}/join-by-code/${teamCode}/${userId}/${hackathonId}`, {}).pipe(
+      tap(team => console.log('Joined team by code:', team)),
       catchError(this.handleError)
     );
   }
@@ -146,6 +174,52 @@ export class TeamService {
   getAvailablePublicTeams(): Observable<Team[]> {
     return this.http.get<Team[]>(`${this.apiUrl}/public`).pipe(
       tap(teams => console.log('Fetched public teams:', teams)),
+      catchError(this.handleError)
+    );
+  }
+
+  // Get public teams by hackathon ID
+  getPublicTeamsByHackathonId(hackathonId: number): Observable<Team[]> {
+    return this.http.get<Team[]>(`${this.apiUrl}/public/hackathon/${hackathonId}`).pipe(
+      tap(teams => console.log(`Fetched public teams for hackathon ${hackathonId}:`, teams)),
+      catchError(this.handleError)
+    );
+  }
+
+  // Get user's team for a specific hackathon
+  getUserTeamForHackathon(hackathonId: number): Observable<Team | null> {
+    const userId = this.storageService.getLoggedInUserId();
+    if (!userId) {
+      return throwError(() => new Error('User not logged in'));
+    }
+    
+    return this.http.get<Team>(`${this.apiUrl}/user/${userId}/hackathon/${hackathonId}`).pipe(
+      tap(team => console.log(`Fetched user's team for hackathon ${hackathonId}:`, team)),
+      catchError(error => {
+        // If 404 (not found), it means the user doesn't have a team for this hackathon
+        if (error.status === 404) {
+          return new Observable<null>(subscriber => {
+            subscriber.next(null);
+            subscriber.complete();
+          });
+        }
+        return this.handleError(error);
+      })
+    );
+  }
+
+  addTeamMember(teamId: number, userId: number): Observable<any> {
+    // Use the team-members endpoint structure instead
+    return this.http.post(`http://localhost:9100/api/team-members/add-to-team/${teamId}/${userId}`, {}).pipe(
+      tap(response => console.log('Added team member:', response)),
+      catchError(this.handleError)
+    );
+  }
+
+  removeTeamMember(teamId: number, memberId: number): Observable<any> {
+    // Use the team-members service endpoint structure
+    return this.http.delete(`http://localhost:9100/api/team-members/delete/${memberId}`).pipe(
+      tap(response => console.log('Removed team member:', response)),
       catchError(this.handleError)
     );
   }

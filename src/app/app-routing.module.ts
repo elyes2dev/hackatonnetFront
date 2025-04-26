@@ -65,6 +65,7 @@ import {
 import {
     LandingTeamSubmissionComponent
 } from "./demo/components/landing/landing-team-submission/landing-team-submission.component";
+import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/team-frontoffice.component';
 
 
 
@@ -100,6 +101,7 @@ import {
                     { path: 'users', component: UserComponent },  // Add UserComponent Route
 // Team Module Route
                     { path: 'teams', loadChildren: () => import('./demo/components/team/team.module').then(m => m.TeamModule) },
+                    { path: 'teamfront', component: TeamFrontofficeComponent },
 
 
                     { path: 'mentor-applications', component: MentorApplicationListComponent },

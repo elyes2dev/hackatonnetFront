@@ -1,0 +1,196 @@
+<!-- Team Statistics Card -->
+<div class="card mb-4" *ngIf="isAdmin()">
+    <div class="card-header">
+        <h5>Team Statistics</h5>
+    </div>
+    <div class="grid p-4">
+        <div class="col-12 md:col-4">
+            <div class="surface-0 shadow-2 p-3 border-round">
+                <div class="text-900 font-medium text-xl mb-2">Total Teams</div>
+                <div class="text-600">{{teamStats.totalTeams}}</div>
+            </div>
+        </div>
+        <div class="col-12 md:col-4">
+            <div class="surface-0 shadow-2 p-3 border-round">
+                <div class="text-900 font-medium text-xl mb-2">Total Members</div>
+                <div class="text-600">{{teamStats.totalMembers}}</div>
+            </div>
+        </div>
+        <div class="col-12 md:col-4">
+            <div class="surface-0 shadow-2 p-3 border-round">
+                <div class="text-900 font-medium text-xl mb-2">Average Team Size</div>
+                <div class="text-600">{{teamStats.avgTeamSize}}</div>
+            </div>
+        </div>
+        <div class="col-12 md:col-6">
+            <div class="surface-0 shadow-2 p-3 border-round">
+                <div class="text-900 font-medium text-xl mb-2">Public Teams</div>
+                <div class="text-600">{{teamStats.publicTeamsCount}}</div>
+            </div>
+        </div>
+        <div class="col-12 md:col-6">
+            <div class="surface-0 shadow-2 p-3 border-round">
+                <div class="text-900 font-medium text-xl mb-2">Private Teams</div>
+                <div class="text-600">{{teamStats.privateTeamsCount}}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Teams List -->
+<div class="card">
+    <h5>Teams</h5>
+    
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap gap-2 mb-3">
+        <button pButton pRipple label="Create Team" icon="pi pi-plus" 
+                class="p-button-success" (click)="openCreateDialog()"></button>
+        <button pButton pRipple label="Join Team by Code" icon="pi pi-sign-in" 
+                class="p-button-info" (click)="openJoinDialog()"></button>
+    </div>
+
+    <!-- Teams Table -->
+    <p-table [value]="publicTeams" [paginator]="true" [rows]="10" 
+             [loading]="isLoading" styleClass="p-datatable-gridlines">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Team Name</th>
+                <th>Members</th>
+                <th>Type</th>
+                <th style="width: 180px">Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-team>
+            <tr>
+                <td>{{team.teamName}}</td>
+                <td>
+                    <div class="flex flex-wrap gap-2">
+                        <p-avatar *ngFor="let member of team.teamMembers" 
+                                [label]="getUserAvatarLabel(member)"
+                                shape="circle"
+                                [pTooltip]="getUserDisplayName(member)">
+                        </p-avatar>
+                    </div>
+                </td>
+                <td>
+                    <p-tag [value]="team.isPublic ? 'Public' : 'Private'"
+                          [severity]="team.isPublic ? 'success' : 'warning'">
+                    </p-tag>
+                </td>
+                <td>
+                    <div class="flex gap-2">
+                        <button pButton pRipple icon="pi pi-eye" 
+                                class="p-button-rounded p-button-info"
+                                (click)="viewTeam(team)"
+                                pTooltip="View Team"></button>
+                        
+                        <button *ngIf="isAdmin()" pButton pRipple icon="pi pi-user-plus" 
+                                class="p-button-rounded p-button-success"
+                                (click)="addMemberToTeam(team)"
+                                pTooltip="Add Member"></button>
+                                
+                        <button *ngIf="isAdmin()" pButton pRipple icon="pi pi-pencil" 
+                                class="p-button-rounded p-button-warning"
+                                (click)="openEditDialog(team)"
+                                pTooltip="Edit Team"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<!-- Add Member Dialog -->
+<p-dialog [(visible)]="displayAddMemberDialog" 
+          [style]="{width: '450px'}" 
+          header="Add Team Member" 
+          [modal]="true" 
+          styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="user">Select User</label>
+            <p-dropdown [options]="availableUsers" 
+                       [(ngModel)]="selectedUser" 
+                       optionLabel="name" 
+                       [filter]="true" 
+                       filterBy="name,email"
+                       placeholder="Select a user">
+                <ng-template pTemplate="selectedItem">
+                    <div class="flex align-items-center gap-2" *ngIf="selectedUser">
+                        <p-avatar [label]="selectedUser.name[0]" shape="circle"></p-avatar>
+                        <div>{{selectedUser.name}} ({{selectedUser.email}})</div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="item" let-user>
+                    <div class="flex align-items-center gap-2">
+                        <p-avatar [label]="user.name[0]" shape="circle"></p-avatar>
+                        <div>{{user.name}} ({{user.email}})</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" 
+                class="p-button-text" (click)="displayAddMemberDialog = false"></button>
+        <button pButton pRipple label="Add" icon="pi pi-check" 
+                class="p-button-text" (click)="confirmAddMember()"
+                [disabled]="!selectedUser"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Join Team Dialog -->
+<p-dialog [(visible)]="displayJoinDialog" 
+          [style]="{width: '450px'}" 
+          header="Join Team" 
+          [modal]="true" 
+          styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="joinCodeForm">
+            <div class="field">
+                <label for="teamCode">Team Code</label>
+                <input pInputText id="teamCode" formControlName="teamCode" />
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" 
+                class="p-button-text" (click)="displayJoinDialog = false"></button>
+        <button pButton pRipple label="Join" icon="pi pi-check" 
+                class="p-button-text" (click)="joinTeamByCode()"
+                [disabled]="joinCodeForm.invalid"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Edit Team Dialog -->
+<p-dialog [(visible)]="displayEditDialog" 
+          [style]="{width: '450px'}" 
+          header="Edit Team" 
+          [modal]="true" 
+          styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="editTeamForm">
+            <div class="field">
+                <label for="teamName">Team Name</label>
+                <input pInputText id="teamName" formControlName="teamName" />
+            </div>
+            <div class="field">
+                <label for="isPublic">Public Team</label>
+                <p-inputSwitch formControlName="isPublic"></p-inputSwitch>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" 
+                class="p-button-text" (click)="displayEditDialog = false"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" 
+                class="p-button-text" (click)="updateTeam()"
+                [disabled]="editTeamForm.invalid"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

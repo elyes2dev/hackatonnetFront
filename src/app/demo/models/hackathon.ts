@@ -9,6 +9,7 @@ export interface Hackathon {
     location: string;
     logo?: string;
     maxMembers: number;
+    maxTeamSize?: number;
     isOnline?: boolean;
     description: string;
     startDate: string;

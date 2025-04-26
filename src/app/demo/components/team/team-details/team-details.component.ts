@@ -6,6 +6,7 @@ import { TeamMember } from 'src/app/demo/models/team-members';
 import { TeamService } from 'src/app/demo/services/team.service';
 import { TeamMembersService } from 'src/app/demo/services/team-members.service';
 import { StorageService } from 'src/app/demo/services/storage.service';
+import { UserService } from 'src/app/demo/services/user.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -24,11 +25,16 @@ export class TeamDetailsComponent implements OnInit {
   currentUserTeamMemberId: number | null = null;
   displayEditDialog = false;
   displayInviteDialog = false;
+  displayAddUserDialog = false; // New dialog for adding users by name
   editTeamForm: FormGroup;
   inviteForm: FormGroup;
+  addUserForm: FormGroup; // New form for adding users by name
   teamCode: string = '';
   showCode = false;
   codeExpiration: Date | null = null;
+  availableUsers: any[] = []; // List of users that can be added to the team
+  filteredUsers: any[] = []; // Filtered users for search
+  selectedUser: any = null; // Selected user to add
   
   // Getter for team visibility status
   get isTeamPublic(): boolean {
@@ -43,7 +49,8 @@ export class TeamDetailsComponent implements OnInit {
     private storageService: StorageService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private userService: UserService // Add UserService for user search
   ) {
     this.editTeamForm = this.fb.group({
       teamName: ['', [Validators.required, Validators.minLength(3)]],
@@ -52,6 +59,11 @@ export class TeamDetailsComponent implements OnInit {
 
     this.inviteForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
+    });
+    
+    this.addUserForm = this.fb.group({
+      userId: [null, Validators.required],
+      role: ['MEMBER', Validators.required]
     });
   }
 
@@ -138,7 +150,27 @@ export class TeamDetailsComponent implements OnInit {
     this.teamService.validateTeamCode(code).subscribe({
       next: (response) => {
         if (response.valid) {
-          this.teamService.joinTeam(code).subscribe({
+          // Use the current team context or route to get hackathonId
+          let hackathonId: number | null = null;
+          if (this.team && this.team.hackathon && this.team.hackathon.id) {
+            hackathonId = this.team.hackathon.id;
+          } else {
+            // Try to get from route, if available
+            const hackathonIdParam = this.route.snapshot.paramMap.get('hackathonId');
+            if (hackathonIdParam) {
+              hackathonId = +hackathonIdParam;
+            }
+          }
+          if (!hackathonId) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Hackathon ID is required to join by code.'
+            });
+            this.router.navigate(['/teams']);
+            return;
+          }
+          this.teamService.joinTeamByCode(code, hackathonId).subscribe({
             next: (team) => {
               this.messageService.add({
                 severity: 'success',
@@ -191,6 +223,90 @@ export class TeamDetailsComponent implements OnInit {
   openInviteDialog(): void {
     this.inviteForm.reset();
     this.displayInviteDialog = true;
+  }
+  
+  openAddUserDialog(): void {
+    this.addUserForm.reset();
+    this.addUserForm.patchValue({ role: 'MEMBER' });
+    this.selectedUser = null;
+    this.loadAvailableUsers();
+    this.displayAddUserDialog = true;
+  }
+  
+  loadAvailableUsers(): void {
+    if (!this.team) return;
+    
+    this.userService.getUsers().subscribe({
+      next: (users) => {
+        // Filter out users who are already team members
+        this.availableUsers = users.filter(user => 
+          !this.teamMembers.some(member => member.user?.id === user.id)
+        );
+        this.filteredUsers = [...this.availableUsers];
+      },
+      error: (error) => {
+        console.error('Error loading users:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load available users'
+        });
+      }
+    });
+  }
+  
+  filterUsers(event: any): void {
+    const query = event.query.toLowerCase();
+    this.filteredUsers = this.availableUsers.filter(user => 
+      user.name.toLowerCase().includes(query) || 
+      (user.lastname && user.lastname.toLowerCase().includes(query)) ||
+      user.email.toLowerCase().includes(query)
+    );
+  }
+  
+  /**
+   * Handles user selection from autocomplete
+   */
+  onUserSelect(user: any): void {
+    this.selectedUser = user;
+    this.addUserForm.patchValue({
+      userId: user.id
+    });
+  }
+  
+  addUserToTeam(): void {
+    if (this.addUserForm.invalid || !this.selectedUser || !this.team) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please select a user and role'
+      });
+      return;
+    }
+    
+    const userId = this.selectedUser.id;
+    const role = this.addUserForm.get('role')?.value;
+    
+    // Use the new addUserToTeam method from teamMembersService
+    this.teamMembersService.addUserToTeam(this.team.id, userId, role).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Added ${this.selectedUser.name} to the team`
+        });
+        this.displayAddUserDialog = false;
+        this.loadTeamMembers(this.team!.id);
+      },
+      error: (error) => {
+        console.error('Error adding user to team:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.message || 'Failed to add user to team'
+        });
+      }
+    });
   }
 
   updateTeam(): void {
@@ -315,8 +431,11 @@ export class TeamDetailsComponent implements OnInit {
   }
 
   removeTeamMember(memberId: number): void {
+    const member = this.teamMembers.find(m => m.id === memberId);
+    if (!member) return;
+    
     this.confirmationService.confirm({
-      message: 'Are you sure you want to remove this member from the team?',
+      message: `Are you sure you want to remove ${this.getUserDisplayName(member)} from the team?`,
       header: 'Confirm Removal',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -325,7 +444,7 @@ export class TeamDetailsComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Member removed successfully'
+              detail: `${this.getUserDisplayName(member)} has been removed from the team`
             });
             // Refresh team members list
             if (this.team) {

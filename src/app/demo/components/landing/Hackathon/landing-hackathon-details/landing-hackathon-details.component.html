@@ -121,6 +121,17 @@
     (click)="applyAsMentor()" 
     *ngIf="hackathon && user"
   ></button>
+  <button pButton
+  type="button"
+  [label]="getParticipateButtonLabel()"
+  [icon]="getParticipateButtonIcon()"
+  class="p-button-lg participate-button"
+  [class.participate-join]="!userTeam"
+  [class.participate-chat]="userTeam"
+  [disabled]="loading || loadingDialog"
+  (click)="participate()">
+    <span class="button-hover-effect"></span>
+  </button>
   </div>
 </div>
 <p-toast></p-toast>

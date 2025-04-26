@@ -1,0 +1,393 @@
+<div class="card">
+    <!-- Participate View -->
+    <ng-container *ngIf="participateDialog">
+        <div class="p-fluid">
+            <h5>Hackathon Participation</h5>
+            <div class="card mb-3">
+                <div class="hackathon-info">
+                    <h6 class="mb-2">{{selectedHackathon?.title || 'Hackathon'}}</h6>
+                    <div class="flex flex-wrap gap-3 mb-2">
+                        <span class="flex align-items-center gap-2">
+                            <i class="pi pi-calendar"></i>
+                            {{selectedHackathon?.startDate | date:'mediumDate'}} - {{selectedHackathon?.endDate | date:'mediumDate'}}
+                        </span>
+                        <span class="flex align-items-center gap-2">
+                            <i class="pi pi-map-marker"></i>
+                            {{selectedHackathon?.location || 'Online'}}
+                        </span>
+                    </div>
+                    <p class="text-color-secondary">{{selectedHackathon?.description || 'Join this exciting hackathon!'}}</p>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="col-12 md:col-6 mb-3">
+                    <div class="card h-full">
+                        <div class="flex flex-column align-items-center text-center">
+                            <i class="pi pi-plus-circle text-2xl text-primary mb-3"></i>
+                            <h6 class="mb-2">Create New Team</h6>
+                            <p class="text-color-secondary mb-3">Start your own team and invite others to join</p>
+                            <button pButton pRipple 
+                                    label="Create Team" 
+                                    icon="pi pi-plus"
+                                    [disabled]="loading"
+                                    (click)="openCreateTeamDialog()"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 md:col-6 mb-3">
+                    <div class="card h-full">
+                        <div class="flex flex-column align-items-center text-center">
+                            <i class="pi pi-users text-2xl text-primary mb-3"></i>
+                            <h6 class="mb-2">Join Existing Team</h6>
+                            <p class="text-color-secondary mb-3">Join a team using a team code or browse public teams</p>
+                            <button pButton pRipple 
+                                    label="Join Team" 
+                                    icon="pi pi-users"
+                                    [disabled]="loading"
+                                    (click)="openJoinTeamDialog()"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-content-end mt-3">
+                <button pButton pRipple 
+                        label="Cancel" 
+                        icon="pi pi-times"
+                        class="p-button-outlined"
+                        [disabled]="loading"
+                        (click)="setParticipateDialog(false)"></button>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Create Team View -->
+    <ng-container *ngIf="createTeamDialog">
+        <div class="card">
+            <h5>Create New Team</h5>
+            <div class="p-fluid">
+                <div class="card mb-3">
+                    <div class="flex align-items-center mb-2">
+                        <i class="pi pi-info-circle text-primary mr-2"></i>
+                        <span>Create a team to participate in {{selectedHackathon?.title || 'the hackathon'}}.</span>
+                    </div>
+                    <div class="flex align-items-center">
+                        <i class="pi pi-users text-primary mr-2"></i>
+                        <span>Maximum team size: {{selectedHackathon?.maxMembers || '4'}} members.</span>
+                    </div>
+                </div>
+
+                <div class="field mb-3">
+                    <label for="teamName">Team Name</label>
+                    <input type="text" pInputText id="teamName" 
+                           [(ngModel)]="team.teamName" 
+                           [ngClass]="{'ng-invalid ng-dirty': submitted && !team.teamName}"
+                           [disabled]="loading"
+                           placeholder="Enter a creative team name"
+                           required autofocus/>
+                    <small class="p-error" *ngIf="submitted && !team.teamName">
+                        Team name is required
+                    </small>
+                </div>
+
+                <div class="field mb-3">
+                    <label>Team Visibility</label>
+                    <div class="grid">
+                        <div class="col-12 md:col-6 mb-2">
+                            <div class="card p-3 cursor-pointer"
+                                 [ngClass]="{'shadow-2': team.isPublic}"
+                                 (click)="team.isPublic = true">
+                                <div class="flex align-items-center mb-2">
+                                    <i class="pi pi-globe text-primary mr-2"></i>
+                                    <span class="font-medium">Public</span>
+                                </div>
+                                <p class="text-color-secondary m-0">Anyone can see and request to join</p>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6 mb-2">
+                            <div class="card p-3 cursor-pointer"
+                                 [ngClass]="{'shadow-2': !team.isPublic}"
+                                 (click)="team.isPublic = false">
+                                <div class="flex align-items-center mb-2">
+                                    <i class="pi pi-lock text-primary mr-2"></i>
+                                    <span class="font-medium">Private</span>
+                                </div>
+                                <p class="text-color-secondary m-0">Only team members can see details</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-content-end gap-2 mt-3">
+                    <button pButton pRipple 
+                            label="Cancel" 
+                            icon="pi pi-times" 
+                            class="p-button-outlined"
+                            [disabled]="loading"
+                            (click)="setDialogState({create: false})"></button>
+                    <button pButton pRipple 
+                            label="Create Team" 
+                            icon="pi pi-check" 
+                            [loading]="loading"
+                            [disabled]="loading || !team.teamName"
+                            (click)="createTeam()"></button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Success Dialog -->
+    <ng-container *ngIf="showSuccessDialog">
+        <div class="card">
+            <div class="text-center">
+                <div class="mb-3">
+                    <i class="pi pi-check-circle text-5xl text-green-500"></i>
+                </div>
+                <h5 class="mb-2">Team Created Successfully!</h5>
+                <p class="mb-4">Share this code with your team members to let them join:</p>
+                
+                <div class="flex align-items-center justify-content-center mb-4">
+                    <div class="card p-3 mr-2 font-medium text-xl">{{createdTeamCode}}</div>
+                    <button pButton pRipple 
+                            icon="pi pi-copy" 
+                            class="p-button-rounded"
+                            (click)="copyTeamCode()"
+                            pTooltip="Copy team code"
+                            tooltipPosition="top"></button>
+                </div>
+
+                <button pButton pRipple 
+                        label="Close" 
+                        icon="pi pi-check"
+                        (click)="closeSuccessDialog()"></button>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Join Team View -->
+    <ng-container *ngIf="joinTeamDialog">
+        <div class="card">
+            <h5>Join a Team</h5>
+            <div class="p-fluid">
+                <div class="card mb-3">
+                    <h6>Join with Team Code</h6>
+                    <div class="field">
+                        <label for="teamCode">Enter Team Code</label>
+                        <div class="p-inputgroup">
+                            <input type="text" pInputText id="teamCode" 
+                                   [(ngModel)]="teamCode" 
+                                   [disabled]="loading"
+                                   placeholder="Enter the team code provided by the team leader"/>
+                            <button pButton pRipple 
+                                    label="Join" 
+                                    [loading]="loading"
+                                    [disabled]="!teamCode.trim() || loading"
+                                    (click)="joinTeamByCode()"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <h6>Quick Join</h6>
+                    <div class="flex justify-content-center">
+                        <button pButton pRipple 
+                                label="Join Available Team" 
+                                icon="pi pi-users" 
+                                [disabled]="loading || !publicTeams.length" 
+                                (click)="joinAnyAvailableTeam()"></button>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <h6>Browse Public Teams</h6>
+                    <div class="mt-3">
+                        <ng-container *ngIf="publicTeams && publicTeams.length > 0; else noTeams">
+                            <div class="grid">
+                                <div class="col-12 md:col-6 lg:col-4 mb-3" *ngFor="let team of publicTeams">
+                                    <div class="card">
+                                        <div class="flex align-items-center mb-3">
+                                            <i class="pi pi-users text-primary mr-2"></i>
+                                            <span class="font-medium">{{team.teamName}}</span>
+                                        </div>
+                                        <div class="flex justify-content-between align-items-center mb-3">
+                                            <span>
+                                                {{team.teamMembers?.length || 0}}/{{team.hackathon?.maxMembers || 4}} members
+                                            </span>
+                                            <span class="p-tag" 
+                                                  [ngClass]="{'p-tag-success': !team.isFull, 'p-tag-danger': team.isFull}">
+                                                {{team.isFull ? 'Full' : 'Available'}}
+                                            </span>
+                                        </div>
+                                        <div class="flex justify-content-end">
+                                            <button pButton pRipple 
+                                                    label="Join Team"
+                                                    [disabled]="loading || team.isFull"
+                                                    (click)="joinPublicTeam(team)">
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-template #noTeams>
+                            <div class="text-center p-4">
+                                <i class="pi pi-users text-4xl text-400 mb-3"></i>
+                                <div class="mb-2">No public teams available</div>
+                                <div>Create a team or join using a team code</div>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+                
+                <div class="flex justify-content-end mt-3">
+                    <button pButton pRipple 
+                            label="Cancel" 
+                            icon="pi pi-times" 
+                            class="p-button-outlined"
+                            [disabled]="loading"
+                            (click)="setDialogState({join: false})"></button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Team Chat View -->
+    <ng-container *ngIf="conversationDialog">
+        <!-- Chat Container -->
+        <div class="chat-container">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="team-info">
+                    <i class="pi pi-users"></i>
+                    <span>{{selectedTeam?.teamName}}</span>
+                    <span class="team-subtitle" *ngIf="selectedTeam?.hackathon?.title">
+                        {{selectedTeam?.hackathon?.title}}
+                    </span>
+                </div>
+                <div class="chat-actions">
+                    <button pButton 
+                            type="button" 
+                            icon="pi pi-sign-out" 
+                            class="p-button-rounded p-button-danger p-button-text"
+                            [disabled]="loading"
+                            pTooltip="Leave team"
+                            tooltipPosition="left"
+                            (click)="leaveCurrentTeam()">
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div class="messages-container" #chatContainer>
+                <div *ngIf="loadingMessages" class="loading-state">
+                    <i class="pi pi-spin pi-spinner"></i>
+                    <span>Loading messages...</span>
+                </div>
+
+                <div *ngIf="!loadingMessages" class="messages-list">
+                    <ng-container *ngIf="selectedTeam && selectedTeam.id && getDiscussions(selectedTeam.id) as messages">
+                        <!-- No Messages State -->
+                        <div *ngIf="messages.length === 0" class="empty-state">
+                            <i class="pi pi-comments"></i>
+                            <h3>No messages yet</h3>
+                            <p>Start the conversation with your team!</p>
+                        </div>
+
+                        <!-- Messages -->
+                        <div *ngFor="let msg of messages; let i = index" class="message-wrapper">
+                            <!-- Date Separator -->
+                            <div *ngIf="i === 0 || shouldShowDateDivider(messages[i-1]?.createdAt, msg.createdAt)" 
+                                 class="date-separator">
+                                <span>{{getMessageDate(msg.createdAt)}}</span>
+                            </div>
+                            
+                            <!-- Message -->
+                            <div class="message" [class.own-message]="isCurrentUserMessage(msg.teamMember?.id)">
+                                <!-- Sender Avatar & Name for others' messages -->
+                                <div *ngIf="!isCurrentUserMessage(msg.teamMember?.id)" class="sender-info">
+                                    <div class="sender-avatar">
+                                        <span>{{msg.teamMember?.user?.name?.charAt(0) || '?'}}</span>
+                                    </div>
+                                    <div class="sender-name">
+                                        {{msg.teamMember?.user?.name || 'Unknown'}}
+                                    </div>
+                                </div>
+                                
+                                <!-- Message Content -->
+                                <div class="message-content">
+                                    <div *ngIf="msg.messageType !== 'FILE'" class="text">
+                                        {{msg.message}}
+                                    </div>
+                                    
+                                    <div *ngIf="msg.messageType === 'FILE'" class="file">
+                                        <i class="pi pi-file"></i>
+                                        <a [href]="msg.message" target="_blank">
+                                            {{extractFileName(msg.message)}}
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="message-meta">
+                                        <span class="time">{{getMessageTime(msg.createdAt)}}</span>
+                                        <span *ngIf="isCurrentUserMessage(msg.teamMember?.id)" class="message-status">
+                                            <i class="pi pi-check-circle" *ngIf="msg.isRead"></i>
+                                            <i class="pi pi-check" *ngIf="!msg.isRead"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Message Actions -->
+                                <div *ngIf="isCurrentUserMessage(msg.teamMember?.id)" class="message-actions">
+                                    <button pButton pRipple 
+                                            icon="pi pi-ellipsis-v" 
+                                            class="p-button-rounded p-button-text p-button-sm"
+                                            (click)="$event.stopPropagation()">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+                <button pButton 
+                        class="p-button-text p-button-rounded p-button-lg" 
+                        icon="pi pi-paperclip"
+                        pTooltip="Attach file"
+                        tooltipPosition="top"
+                        (click)="triggerFileUpload()">
+                </button>
+                
+                <button pButton 
+                        class="p-button-text p-button-rounded p-button-lg" 
+                        icon="pi pi-smile"
+                        pTooltip="Add emoji"
+                        tooltipPosition="top">
+                </button>
+                
+                <input type="text" 
+                       pInputText 
+                       [(ngModel)]="newMessage" 
+                       placeholder="Type a message..." 
+                       (keydown.enter)="$event.preventDefault(); sendMessage()"
+                       [disabled]="loading || sendingMessage">
+                
+                <button pButton 
+                        icon="pi pi-send"
+                        [ngClass]="{'p-button-outlined': !newMessage.trim()}"
+                        [disabled]="!newMessage.trim() || loading || sendingMessage"
+                        (click)="sendMessage()">
+                </button>
+            </div>
+
+            <!-- Hidden file input -->
+            <input type="file" 
+                   id="file-upload-input" 
+                   (change)="onFileSelected($event)" 
+                   style="display: none">
+        </div>
+    </ng-container>
+</div>
