@@ -6,6 +6,8 @@ import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 import { OnInit } from '@angular/core';
+import { Workshop } from '../../models/workshop.model';
+import { WorkshopService } from '../../services/workshop.service';
 
 @Component({
     selector: 'app-landing',
@@ -22,13 +24,16 @@ export class LandingComponent implements OnInit {
   isMentor: boolean = false; 
 
   userMenuVisible: boolean = false; // Property to control dropdown visibility
+  workshops: Workshop[] = [];
+  loadingWorkshops: boolean = false;
 
   constructor(
     private storageService: StorageService,
     public layoutService: LayoutService,
     public router: Router,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private workshopService: WorkshopService
   ) {
     this.userId = this.storageService.getUserId();
     this.isAuthenticated = this.authService.isAuthenticated();
@@ -51,6 +56,7 @@ export class LandingComponent implements OnInit {
 
       });
     }
+    this.loadWorkshops();
   } 
 
 
@@ -140,6 +146,24 @@ export class LandingComponent implements OnInit {
     if (dropdown && !dropdown.contains(clickedElement)) {
       this.userMenuVisible = false;
     }
+  }
+
+  loadWorkshops(): void {
+    this.loadingWorkshops = true;
+    this.workshopService.getAllWorkshops().subscribe({
+      next: (workshops) => {
+        this.workshops = workshops.slice(0, 3); // Get only first 3 workshops
+        this.loadingWorkshops = false;
+      },
+      error: (error) => {
+        console.error('Error loading workshops:', error);
+        this.loadingWorkshops = false;
+      }
+    });
+  }
+
+  navigateToWorkshop(workshopId: number): void {
+    this.router.navigate(['/workshopsf', workshopId, 'resources']);
   }
 }
 

@@ -11,12 +11,14 @@ import { QuizCertificateService } from 'src/app/demo/services/quizcertificate.se
 import { UserService } from 'src/app/demo/services/user.service';
 import { UserQuizScore } from 'src/app/demo/models/user-quiz-score.model';
 import { MessageService } from 'primeng/api';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { AiQuizDialogComponent } from '../../quiz/quiz-list/ai-quiz-dialog/ai-quiz-dialog.component';
 
 @Component({
   selector: 'app-quizf-list',
   templateUrl: './quizf-list.component.html',
   styleUrls: ['./quizf-list.component.scss'],
-  providers: [MessageService]
+  providers: [MessageService, DialogService]
 })
 export class QuizfListComponent implements OnInit {
   quizzes: Quiz[] = [];
@@ -37,6 +39,9 @@ export class QuizfListComponent implements OnInit {
 
   userScoresMap: { [quizId: number]: UserQuizScore } = {};
 
+  showAiQuizDialog = false;
+  private dialogRef: DynamicDialogRef | undefined;
+
   constructor(
     private quizService: QuizService,
     private userQuizScoreService: UserQuizScoreService,
@@ -47,7 +52,8 @@ export class QuizfListComponent implements OnInit {
     private workshopService: WorkshopService,
     private certificateService: QuizCertificateService,
     private userService: UserService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
@@ -290,5 +296,20 @@ export class QuizfListComponent implements OnInit {
   // Helper method to check if current user is the workshop owner
   isOwner(): boolean {
     return this.userIsOwner;
+  }
+
+  openAiQuizDialog() {
+    this.showAiQuizDialog = true;
+  }
+
+  onAiQuizDialogClose() {
+    this.showAiQuizDialog = false;
+    this.loadQuizzes(); // Use existing loadQuizzes method
+  }
+
+  ngOnDestroy() {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
   }
 }

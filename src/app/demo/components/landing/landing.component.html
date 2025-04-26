@@ -237,6 +237,46 @@
       </div>
     </section>
 
+    <!-- Available Workshops -->
+    <section class="workshops">
+      <h2 class="section-title">Available Workshops</h2>
+
+      <!-- Loading State -->
+      <div *ngIf="loadingWorkshops" class="loading-state">
+        <p>Loading workshops...</p>
+      </div>
+
+      <!-- Workshops List -->
+      <div class="workshop-cards" *ngIf="!loadingWorkshops && workshops.length > 0">
+        <div class="workshop-card" *ngFor="let workshop of workshops" (click)="navigateToWorkshop(workshop.id)">
+          <div class="workshop-image">
+            <img [src]="workshop.photo || 'assets/layout/images/default-workshop.jpg'" [alt]="workshop.name">
+          </div>
+          <div class="workshop-details">
+            <h3>{{ workshop.name }}</h3>
+            <p class="workshop-description">{{ workshop.description }}</p>
+            <div class="workshop-theme">
+              <i class="pi pi-tag"></i>
+              <span>{{ workshop.theme }}</span>
+            </div>
+            <div class="workshop-author" *ngIf="workshop.user">
+              <i class="pi pi-user"></i>
+              <span>By {{ workshop.user.name }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loadingWorkshops && workshops.length === 0" class="empty-state">
+        <p>No workshops available at the moment.</p>
+      </div>
+
+      <div class="view-more">
+        <button class="btn-secondary" (click)="router.navigate(['/workshopsf'])">View All Workshops</button>
+      </div>
+    </section>
+
     <!-- Stats Section -->
     <section class="stats">
       <div class="stat-container">
