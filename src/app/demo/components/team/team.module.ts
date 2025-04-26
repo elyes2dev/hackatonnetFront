@@ -28,19 +28,22 @@ import { AccordionModule } from 'primeng/accordion';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { SidebarModule } from 'primeng/sidebar';
 import { MenuModule } from 'primeng/menu';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 // Components
 import { TeamListComponent } from './team-list/team-list.component';
 import { TeamDetailsComponent } from './team-details/team-details.component';
 import { TeamFormComponent } from './team-form/team-form.component';
 import { TeamChatComponent } from './team-chat/team-chat.component';
+import { TeamChatHubComponent } from './team-chat-hub/team-chat-hub.component';
 
 @NgModule({
   declarations: [
     TeamListComponent,
     TeamDetailsComponent,
     TeamFormComponent,
-    TeamChatComponent
+    TeamChatComponent,
+    TeamChatHubComponent
   ],
   imports: [
     CommonModule,
@@ -70,7 +73,8 @@ import { TeamChatComponent } from './team-chat/team-chat.component';
     AccordionModule,
     AutoCompleteModule,
     SidebarModule,
-    MenuModule
+    MenuModule,
+    OverlayPanelModule
   ]
 })
 export class TeamModule { }

@@ -135,6 +135,7 @@ import {
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { MessageModule } from 'primeng/message';
 import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/team-frontoffice.component';
+import { TeamChatHubModule } from './demo/components/team-chat-hub/team-chat-hub.module';
 
 
 @NgModule({
@@ -207,6 +208,7 @@ import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/tea
         AvatarGroupModule,
         AppLayoutModule,
         TeamFrontofficeModule,
+        TeamChatHubModule,
         TableModule,
         CarouselModule,
         CommonModule,

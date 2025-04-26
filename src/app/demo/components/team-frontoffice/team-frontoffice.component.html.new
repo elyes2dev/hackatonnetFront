@@ -259,6 +259,13 @@
             </div>
             <div class="team-actions">
                 <button pButton 
+                        icon="pi pi-comments" 
+                        class="p-button-rounded p-button-outlined p-button-info"
+                        pTooltip="Open Team Chat"
+                        tooltipPosition="bottom"
+                        (click)="toggleChatView()"></button>
+                
+                <button pButton 
                         icon="pi pi-users" 
                         class="p-button-rounded p-button-outlined p-button-success"
                         pTooltip="Participate"
@@ -287,15 +294,6 @@
                 </div>
             </div>
             <div class="chat-actions">
-                <button pButton 
-                        type="button" 
-                        icon="pi pi-sign-out" 
-                        class="p-button-rounded p-button-text p-button-danger action-button"
-                        [disabled]="loading"
-                        pTooltip="Leave Team"
-                        tooltipPosition="left"
-                        (click)="leaveTeam()">
-                </button>
                 <button pButton 
                         type="button" 
                         icon="pi pi-external-link" 

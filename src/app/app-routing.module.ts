@@ -66,7 +66,7 @@ import {
     LandingTeamSubmissionComponent
 } from "./demo/components/landing/landing-team-submission/landing-team-submission.component";
 import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/team-frontoffice.component';
-
+import { TeamChatHubComponent } from './demo/components/team-chat-hub/team-chat-hub.component';
 
 
 
@@ -239,6 +239,7 @@ import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/tea
             { path: 'mentor-form', component: ListMentorFormComponent },
             { path: 'mentor-evaluation/new', component: MentorEvaluationFormComponent },
             { path: 'mentor-evaluation/:id/edit', component: MentorEvaluationFormComponent },
+            { path: 'team-chat-hub', component: TeamChatHubComponent },
 
             { path: 'pages/notfound', component: NotfoundComponent },
             { path: '**', redirectTo: 'pages/notfound' },

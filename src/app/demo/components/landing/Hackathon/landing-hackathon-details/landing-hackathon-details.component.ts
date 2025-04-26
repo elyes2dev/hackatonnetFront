@@ -155,14 +155,14 @@ participate() {
     this.ref = this.dialogService.open(TeamFrontofficeComponent, {
         header: this.userTeam ? `Team Chat - ${this.userTeam.teamName}` : 'Participate in Hackathon',
         style: {
-            width: this.userTeam ? '90vw' : '85vw',
-            maxWidth: this.userTeam ? '1200px' : '1100px',
+            width: this.userTeam ? '500px' : '85vw',
+            maxWidth: this.userTeam ? '500px' : '1100px',
             color: '#6200EA',
             'font-family': 'Poppins, Arial, sans-serif',
             'font-size': '1.15rem',
             'font-weight': '600',
             'letter-spacing': '0.5px',
-            'min-height': this.userTeam ? '90vh' : '85vh',
+            'min-height': this.userTeam ? '600px' : '85vh',
             'background': 'linear-gradient(135deg, #ffffff 0%, #f5f0ff 100%)',
             'box-shadow': '0 10px 50px rgba(98, 0, 234, 0.2), 0 6px 20px rgba(98, 0, 234, 0.1)',
             'border-radius': '20px',

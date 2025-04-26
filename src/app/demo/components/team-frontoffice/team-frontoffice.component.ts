@@ -86,6 +86,9 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
 
     createdTeamCode: string = '';
     showSuccessDialog: boolean = false;
+    
+    // Chat sidebar state
+    showChatView: boolean = false;
 
     // Emoji picker state
     showEmojiPicker = false;
@@ -150,6 +153,12 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
             this.loadingTeamMember = true;
             console.log('Fetching team member for teamId:', this.config.data.teamId);
             this.getTeamMemberId(this.config.data.teamId);
+            
+            // Automatically open chat view when mode is 'chat'
+            setTimeout(() => {
+                this.showChatView = true;
+                this.scrollToBottom();
+            }, 300);
         }
 
         this.dialogState$.pipe(takeUntil(this.destroy$)).subscribe(() => this.cdr.detectChanges());
@@ -751,8 +760,52 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
         return prevDate.toDateString() !== currentDate.toDateString();
     }
 
-    isCurrentUserMessage(teamMemberId: number | undefined): boolean {
+    // Check if a message is from the current user
+    isCurrentUserMessage(teamMemberId?: number): boolean {
         return teamMemberId === this.teamMemberId;
+    }
+    
+    // Get team initials for avatar
+    getTeamInitials(teamName?: string): string {
+        if (!teamName) return '?';
+        return teamName.split(' ')
+            .map(word => word.charAt(0).toUpperCase())
+            .slice(0, 2)
+            .join('');
+    }
+    
+    // Check if a message is consecutive (from the same sender within a short time)
+    isConsecutiveMessage(prevMessage: TeamDiscussion, currentMessage: TeamDiscussion): boolean {
+        if (!prevMessage || !currentMessage) return false;
+        
+        // Check if messages are from the same sender
+        const sameSender = prevMessage.teamMember?.id === currentMessage.teamMember?.id;
+        
+        // Check if messages are within 2 minutes of each other
+        const prevTime = new Date(prevMessage.createdAt || '').getTime();
+        const currentTime = new Date(currentMessage.createdAt || '').getTime();
+        const timeGap = currentTime - prevTime;
+        const withinTimeWindow = timeGap < 2 * 60 * 1000; // 2 minutes in milliseconds
+        
+        return sameSender && withinTimeWindow;
+    }
+    
+    // Determine if we should show the time for a message
+    shouldShowTime(message: TeamDiscussion, messages: TeamDiscussion[], index: number): boolean {
+        // Always show time for the last message in a conversation
+        const isLastMessage = index === messages.length - 1;
+        
+        // Show time for messages that are more than 5 minutes apart
+        if (index < messages.length - 1) {
+            const nextMessage = messages[index + 1];
+            const currentTime = new Date(message.createdAt || '').getTime();
+            const nextTime = new Date(nextMessage.createdAt || '').getTime();
+            const timeGap = nextTime - currentTime;
+            
+            return timeGap > 5 * 60 * 1000; // 5 minutes in milliseconds
+        }
+        
+        return isLastMessage;
     }
 
     onEnterPress(event: KeyboardEvent): void {
@@ -823,7 +876,6 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
 
                 // Return to the participate dialog
                 this.setParticipateDialog(true);
-
                 // Close the dialog with 'left' result
                 this.ref.close('left');
             },
@@ -891,8 +943,8 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
         if (!this.recentEmojis.includes(emoji)) {
           this.recentEmojis.unshift(emoji);
           if (this.recentEmojis.length > 12) this.recentEmojis.pop();
-          // Optionally, save to localStorage for persistence:
-          // localStorage.setItem('recentEmojis', JSON.stringify(this.recentEmojis));
+          // Save to localStorage for persistence across sessions
+          localStorage.setItem('recentEmojis', JSON.stringify(this.recentEmojis));
         }
         // Close the emoji panel
         if (this.emojiPanel) {
@@ -906,6 +958,75 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
         if (this.emojiPanel) {
             this.emojiPanel.toggle(event);
         }
+    }
+    
+    // Toggle chat sidebar view
+    toggleChatView() {
+        this.showChatView = !this.showChatView;
+        
+        // If opening the chat, make sure we have the latest messages
+        if (this.showChatView && this.selectedTeam) {
+            this.loadTeamDiscussions(this.selectedTeam.id);
+        }
+        
+        // Scroll to bottom of chat when opening
+        if (this.showChatView) {
+            setTimeout(() => {
+                this.scrollToBottom();
+            }, 100);
+        }
+    }
+    
+    // Toggle participation view
+    toggleParticipationView() {
+        // Close chat view if open
+        if (this.showChatView) {
+            this.showChatView = false;
+        }
+        this.setParticipateDialog(true);
+    }
+    
+    // Leave the current team
+    leaveTeam() {
+        if (!this.selectedTeam || !this.teamMemberId) {
+            return;
+        }
+        
+        this.loading = true;
+        this.teamService.leaveTeam(this.selectedTeam.id)
+            .pipe(finalize(() => this.loading = false))
+            .subscribe({
+                next: () => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: `You have left the team ${this.selectedTeam?.teamName}`
+                    });
+                    
+                    // Close the dialog with 'left' result to indicate the user left the team
+                    this.ref.close('left');
+                },
+                error: (error) => {
+                    console.error('Error leaving team:', error);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'Failed to leave the team. Please try again.'
+                    });
+                }
+            });
+    }
+    
+    // Open full chat view in a dedicated page
+    openFullChatView() {
+        if (!this.selectedTeam) return;
+        
+        // Store the current team in localStorage for persistence
+        localStorage.setItem('currentChatTeam', JSON.stringify(this.selectedTeam));
+        
+        // Navigate to the full chat view page
+        // We'll use window.open to open in a new tab
+        window.open(`/team-chat-hub/${this.selectedTeam.id}`, '_blank');
     }
 
     triggerFileUpload() {
