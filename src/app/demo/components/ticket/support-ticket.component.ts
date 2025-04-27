@@ -170,8 +170,11 @@ export class SupportTicketComponent implements OnInit {
 
   updateTicket(ticketData: Ticket): void {
     const ticketId = ticketData.id;
-    
-    this.ticketService.updateTicket(ticketId, ticketData).subscribe({
+
+    // Exclude userId from the updated ticket data
+    const { userId, ...updatedTicketData } = ticketData;
+
+    this.ticketService.updateTicket(ticketId, updatedTicketData as Ticket).subscribe({
       next: (updatedTicket) => {
         const index = this.tickets.findIndex(t => t.id === ticketId);
         if (index !== -1) {
@@ -196,6 +199,7 @@ export class SupportTicketComponent implements OnInit {
       }
     });
   }
+  
 
   resetForm(): void {
     this.isUpdating = false;
