@@ -142,6 +142,7 @@ import { PanelModule } from 'primeng/panel';
 import { AccordionModule } from 'primeng/accordion';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { PasswordModule } from 'primeng/password';
+import { ChipModule } from 'primeng/chip';
 
 
 
@@ -304,6 +305,7 @@ import { PasswordModule } from 'primeng/password';
         TableModule,
         DropdownModule,
         ReactiveFormsModule,
+        ChipModule
         
 
     ],

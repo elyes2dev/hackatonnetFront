@@ -1,0 +1,30 @@
+.support-ticket-container {
+    padding: 1rem;
+}
+
+.description-cell {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.5rem 1rem;
+}
+
+.analysis-dialog-content {
+    min-height: 300px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+:host ::ng-deep .p-chip {
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+:host ::ng-deep .p-chip.p-chip-secondary {
+    background-color: #e9ecef;
+    color: #6c757d;
+}

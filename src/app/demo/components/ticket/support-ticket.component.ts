@@ -5,7 +5,7 @@ import { TicketService } from '../../services/ticket.service';
 import { StorageService } from '../../services/storage.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { UserService } from '../../services/user.service';
-import { TicketAIService } from '../../services/ticket-ai.service';
+import { TicketAIService, AnalysisResult } from '../../services/ticket-ai.service';
 
 interface DropdownOption {
   label: string;
@@ -20,12 +20,16 @@ interface DropdownOption {
 export class SupportTicketComponent implements OnInit {
   tickets: Ticket[] = [];
   filteredTickets: Ticket[] = [];
+  selectedTickets: Ticket[] = [];
   ticketForm!: FormGroup;
   
   isUpdating: boolean = false;
   loading: boolean = false;
-
   
+  // Analysis Dialog
+  displayAnalysisDialog: boolean = false;
+  isAnalyzing: boolean = false;
+  analysisResults: AnalysisResult | null = null;
   
   statusOptions: DropdownOption[] = [
     { label: 'Open', value: 'Open' },
@@ -33,7 +37,6 @@ export class SupportTicketComponent implements OnInit {
     { label: 'Resolved', value: 'Resolved' },
     { label: 'Closed', value: 'Closed' }
   ];
-  
   
   filterOptions: DropdownOption[] = [
     { label: 'All Tickets', value: 'All' },
@@ -65,7 +68,6 @@ export class SupportTicketComponent implements OnInit {
     this.ticketForm = this.fb.group({
       description: ['', [Validators.required, Validators.minLength(10)]],
       status: ['Open', Validators.required],
-      
     });
   }
 
@@ -94,7 +96,6 @@ export class SupportTicketComponent implements OnInit {
     this.ticketForm.patchValue({
       description: ticket.description,
       status: ticket.status,
-     
     });
     
     // Store the ticket ID for update
@@ -109,35 +110,24 @@ export class SupportTicketComponent implements OnInit {
     
     this.loading = true;
     const formData = this.ticketForm.value;
-    /*
-    const ticketData: Ticket = {
-      ...formData,
-      user: this.userService.getUserById(this.storageService.getLoggedInUserId()),
-      updatedAt: new Date()
-    };
-    console.log(ticketData);
-    if (this.isUpdating) {
-      this.updateTicket(ticketData);
-    } else {
-      this.createTicket(ticketData);
-    }*/
-      this.userService.getUserById(this.storageService.getLoggedInUserId()).subscribe({
-        next: req => { const ticketData: Ticket = {
+
+    this.userService.getUserById(this.storageService.getLoggedInUserId()).subscribe({
+      next: req => { 
+        const ticketData: Ticket = {
           ...formData,
           userId: req.id,
           updatedAt: new Date()
         };
         console.log(ticketData);
-    if (this.isUpdating) {
-      this.updateTicket(ticketData);
-    } else {
-      this.createTicket(ticketData);
-    }
+        if (this.isUpdating) {
+          this.updateTicket(ticketData);
+        } else {
+          this.createTicket(ticketData);
+        }
       },
-        error : err => { console.log(err)},
-        complete : () => {console.log("complete")}        
-      });
-
+      error: err => { console.log(err)},
+      complete: () => {console.log("complete")}        
+    });
   }
 
   createTicket(ticketData: Ticket): void {
@@ -176,8 +166,6 @@ export class SupportTicketComponent implements OnInit {
         });
       }
     });
-
-
   }
 
   updateTicket(ticketData: Ticket): void {
@@ -305,4 +293,58 @@ export class SupportTicketComponent implements OnInit {
     const field = this.ticketForm.get(fieldName);
     return field ? field.invalid && (field.dirty || field.touched) : false;
   }
+
+  // New methods for ML analysis
+  openAnalysisDialog(): void {
+    if (!this.selectedTickets || this.selectedTickets.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Please select at least one ticket for analysis'
+      });
+      return;
+    }
+    
+    this.displayAnalysisDialog = true;
+    this.isAnalyzing = true;
+    this.analysisResults = null;
+    
+    this.analyzeSelectedTickets();
+  }
+
+  analyzeSelectedTickets(): void {
+    this.ticketAIService.analyzeTickets(this.selectedTickets).subscribe({
+      next: (results) => {
+        this.analysisResults = results;
+        this.isAnalyzing = false;
+      },
+      error: (error) => {
+        this.isAnalyzing = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to analyze tickets'
+        });
+        console.error('Analysis error:', error);
+      }
+    });
+  }
+
+  // Method for saving results (commented out for now)
+  /*
+  saveAnalysisResults(): void {
+    if (!this.analysisResults) return;
+    
+    // Here you would implement the save functionality
+    // For example, update the tickets with the labels, create a new analysis entity, etc.
+    
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Analysis results saved successfully'
+    });
+    
+    this.displayAnalysisDialog = false;
+  }
+  */
 }

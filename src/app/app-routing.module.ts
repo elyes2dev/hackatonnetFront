@@ -67,6 +67,9 @@ import {
 import {
     LandingTeamSubmissionComponent
 } from "./demo/components/landing/landing-team-submission/landing-team-submission.component";
+import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/team-frontoffice.component';
+import { AuthGuard } from './demo/jwt/auth.guard';
+import { TeamChatHubComponent } from './demo/components/team/team-chat-hub/team-chat-hub.component';
 
 
 
