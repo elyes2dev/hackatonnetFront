@@ -59,7 +59,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-value">
-          <p-avatar [label]="h.createdBy.name.charAt(0) + h.createdBy.lastname.charAt(0)" 
+          <p-avatar [label]="h.createdBy.name.charAt(0) + h.createdBy.lastname?.charAt(0)" 
                    size="large" shape="circle"></p-avatar>
         </div>
         <div class="organizer-info">
@@ -94,7 +94,7 @@
           </div>
           <div class="team-info">
             <h3>{{ team.teamName }}</h3>
-            <p>{{ team.teamMembers.length }} members</p>
+            <p>{{ team?.teamMembers?.length }} members</p>
           </div>
         </div>
       </div>

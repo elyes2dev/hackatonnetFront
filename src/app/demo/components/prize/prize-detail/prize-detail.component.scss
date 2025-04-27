@@ -1,107 +1,216 @@
-/* Main card styles */
+/* Main container styling */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+/* Loading and error styling */
+.spinner-border {
+  color: #3b82f6 !important;
+}
+
+.alert-danger {
+  color: #ef4444;
+  background-color: #fef2f2;
+  border-color: #fee2e2;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Main card styling */
 .card {
-    margin: 0 auto; /* Center the cards horizontally */
-    margin-bottom: 2rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-  }
-  
-  .card-header {
-    padding: 1rem 1.5rem;
-  }
-  
-  .card-header h5 {
-    margin-bottom: 0;
-    font-weight: 600;
-  }
-  
-  .card-body {
-    padding: 1.5rem;
-  }
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
 
+.card:hover {
+  transform: translateY(-2px);
+}
 
-/* Animated Card Styles */
+.card-header {
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+  background-color: #f4f7fb;
+}
+
+.card-header h5 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+/* Status badge styling */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.bg-warning {
+  background-color: #ff9800 !important;
+  color: #fff;
+}
+
+.bg-success {
+  background-color: #10b981 !important;
+  color: #fff;
+}
+
+.bg-danger {
+  background-color: #ef4444 !important;
+  color: #fff;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Replace animated cards with second-card style from sponsor application */
 .animated-card {
-    width: 100%;
-    max-width: 500px;
-    height: 100%;
-    max-height: 280px;
-    background: #07182E;
-    position: relative;
-    display: flex;
+  width: 100%;
+  height: auto;
+  min-height: 180px;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.animated-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.animated-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #3b82f6, #60a5fa);
+}
+
+.animated-card h2 {
+  color: #1e293b;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  position: relative;
+  padding-bottom: 8px;
+  /* Add left padding to move the title to the right */
+  padding-left: 20px;
+  margin-left: 10px;
+}
+
+.animated-card h2::after {
+  content: "";
+  position: absolute;
+  /* Adjust the left position of the underline to match the title */
+  left: 20px;
+  bottom: 0;
+  width: 40px;
+  height: 3px;
+  background: #3b82f6;
+  border-radius: 3px;
+}
+
+.card-content {
+  padding: 1.5rem;
+  color: #334155;
+  height: 100%;
+  width: 100%;
+}
+
+/* Info items styling */
+.info-item {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-right: 10px;
+  width: 100px;
+}
+
+.info-value {
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+/* Card footer styling */
+.card-footer {
+  padding: 1rem 1.5rem;
+  background-color: #f4f7fb;
+}
+
+/* Button styling */
+button.p-button {
+  transition: all 0.3s ease;
+}
+
+button.p-button-outlined.p-button-danger {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+button.p-button-outlined.p-button-danger:hover {
+  background-color: #fef2f2;
+}
+
+button.p-button-outlined.p-button-info {
+  color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+button.p-button-outlined.p-button-info:hover {
+  background-color: #eff6ff;
+}
+
+button.p-button-outlined.p-button-success {
+  color: #10b981;
+  border-color: #10b981;
+}
+
+button.p-button-outlined.p-button-success:hover {
+  background-color: #ecfdf5;
+}
+
+button.p-button-outlined.p-button-secondary {
+  color: #64748b;
+  border-color: #64748b;
+}
+
+button.p-button-outlined.p-button-secondary:hover {
+  background-color: #f8fafc;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .row {
     flex-direction: column;
-    overflow: hidden;
-    border-radius: 20px;
-    padding: 10px;
   }
   
-  .animated-card h2 {
-    z-index: 1;
-    color: white;
-    font-size: 1.5em;
-    margin-bottom: 15px;
-    text-align: center;
-  }
-  
-  .animated-card::before {
-    content: '';
-    position: absolute;
-    width: 100px;
-    background-image: linear-gradient(180deg, rgb(0, 183, 255), rgb(255, 48, 255));
-    height: 130%;
-    animation: rotBGimg 3s linear infinite;
-    transition: all 0.2s linear;
-  }
-  
-  @keyframes rotBGimg {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  .animated-card::after {
-    content: '';
-    position: absolute;
-    background: #07182E;
-    inset: 5px;
-    border-radius: 15px;
-  }
-  
-  .animated-card:hover::before {
-    background-image: linear-gradient(180deg, rgb(81, 255, 0), purple);
-    animation: rotBGimg 3.5s linear infinite;
-  }
-  
-  .card-content {
-    position: relative;
-    z-index: 1;
+  .col-md-3 {
     width: 100%;
-    padding: 10px;
-    color: white;
-    overflow-y: auto;
-    max-height: 80%;
   }
   
-  /* Fixed alignment for info items */
-  .info-item {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 8px;
-    line-height: 1.3;
+  .card-footer .d-flex {
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  .info-label {
-    flex: 0 0 90px;
-    font-weight: bold;
-    color: #adb5bd;
-    margin-right: 10px;
-  }
-  
-  .info-value {
-    flex: 1;
-    word-break: break-word;
-  }
+}

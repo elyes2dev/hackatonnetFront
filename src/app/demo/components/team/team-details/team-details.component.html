@@ -1,0 +1,257 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <p-toast></p-toast>
+            <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+            <!-- Loading Spinner -->
+            <div *ngIf="isLoading" class="flex justify-content-center">
+                <p-progressSpinner></p-progressSpinner>
+            </div>
+
+            <!-- Team Details -->
+            <div *ngIf="!isLoading && team">
+                <!-- Header with Back Button -->
+                <div class="flex align-items-center justify-content-between mb-3">
+                    <div class="flex align-items-center">
+                        <button pButton pRipple icon="pi pi-arrow-left" class="p-button-rounded p-button-text mr-2" (click)="goBack()"></button>
+                        <h5 class="m-0">Team Details</h5>
+                    </div>
+                    <div>
+                        <button pButton pRipple label="Team Chat" icon="pi pi-comments" class="p-button-info mr-2" (click)="goToChat()" *ngIf="isCurrentUserTeamMember"></button>
+                    </div>
+                </div>
+
+                <!-- Team Info Card -->
+                <p-card styleClass="mb-4 team-details-card elevation-3">
+                    <ng-template pTemplate="header">
+                        <div class="team-header">
+                            <div class="team-title-container">
+                                <h2>{{team.teamName}}</h2>
+                                <div class="team-badges">
+                                    <span class="team-status" [ngClass]="{'public': team.isPublic, 'private': !team.isPublic}">
+                                        {{team.isPublic ? 'Public' : 'Private'}}
+                                    </span>
+                                    <span class="team-status" [ngClass]="{'full': team.isFull, 'available': !team.isFull}">
+                                        {{team.isFull ? 'Full' : 'Available'}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="hackathon-info" *ngIf="team.hackathon">
+                                <span class="hackathon-badge">{{team.hackathon.title}}</span>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <!-- Team Actions -->
+                    <div class="team-actions-container mb-4">
+                        <h5>Team Management</h5>
+                        <div class="team-actions">
+                            <div class="grid">
+                                <!-- Team Management Actions -->
+                                <div class="col-12 md:col-6 lg:col-4 xl:col-3 mb-2" *ngIf="isCurrentUserTeamLeader">
+                                    <button pButton pRipple label="Edit Team" icon="pi pi-pencil" class="p-button-primary p-button-outlined w-full action-button" (click)="openEditDialog()"></button>
+                                </div>
+                                <div class="col-12 md:col-6 lg:col-4 xl:col-3 mb-2" *ngIf="isCurrentUserTeamLeader">
+                                    <button pButton pRipple label="Add Member" icon="pi pi-user-plus" class="p-button-success p-button-outlined w-full action-button" (click)="openAddUserDialog()"></button>
+                                </div>
+                                <div class="col-12 md:col-6 lg:col-4 xl:col-3 mb-2" *ngIf="isCurrentUserTeamLeader">
+                                    <button pButton pRipple label="Invite by Email" icon="pi pi-envelope" class="p-button-help p-button-outlined w-full action-button" (click)="openInviteDialog()"></button>
+                                </div>
+                                <div class="col-12 md:col-6 lg:col-4 xl:col-3 mb-2" *ngIf="isCurrentUserTeamLeader">
+                                    <button pButton pRipple label="Team Code" icon="pi pi-key" class="p-button-warning p-button-outlined w-full action-button" (click)="showCode = !showCode"></button>
+                                </div>
+                                
+                                <!-- Danger Zone -->
+                                <div class="col-12">
+                                    <div class="danger-zone mt-3 p-3">
+                                        <h6>Danger Zone</h6>
+                                        <div class="grid">
+                                            <div class="col-12 md:col-6" *ngIf="isCurrentUserTeamMember">
+                                                <button pButton pRipple label="Leave Team" icon="pi pi-sign-out" class="p-button-danger p-button-outlined w-full" (click)="leaveTeam()"></button>
+                                            </div>
+                                            <div class="col-12 md:col-6" *ngIf="isCurrentUserTeamLeader">
+                                                <button pButton pRipple label="Delete Team" icon="pi pi-trash" class="p-button-danger w-full" (click)="deleteTeam()"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Join Code (Only visible to team leader) -->
+                    <div *ngIf="isCurrentUserTeamLeader && showCode" class="team-code-section p-3 mb-4">
+                        <div class="flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="mb-2">Team Join Code</h6>
+                                <p class="m-0 font-bold">{{teamCode}}</p>
+                                <small *ngIf="codeExpiration">Expires on: {{codeExpiration | date:'medium'}}</small>
+                            </div>
+                            <div class="flex flex-column gap-2">
+                                <button pButton pRipple icon="pi pi-copy" label="Copy Code" class="p-button-sm" (click)="copyTeamCode()"></button>
+                                <button pButton pRipple icon="pi pi-refresh" label="Regenerate" class="p-button-sm p-button-warning" (click)="regenerateTeamCode()"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Members Section -->
+                    <div class="team-members-section">
+                        <div class="flex justify-content-between align-items-center mb-3">
+                            <h5>Team Members ({{teamMembers.length}})</h5>
+                            <div *ngIf="isCurrentUserTeamLeader">
+                                <button pButton pRipple label="Add Member" icon="pi pi-user-plus" class="p-button-success p-button-sm" (click)="openAddUserDialog()"></button>
+                            </div>
+                        </div>
+                        
+                        <p-table [value]="teamMembers" styleClass="p-datatable-sm team-members-table" [tableStyle]="{'min-width': '50rem'}" [rowHover]="true">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 60px">Avatar</th>
+                                    <th>Name</th>
+                                    <th style="width: 120px">Role</th>
+                                    <th style="width: 180px">Joined</th>
+                                    <th style="width: 150px" *ngIf="isCurrentUserTeamLeader">Actions</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-member>
+                                <tr [ngClass]="{'current-user-row': member.id === currentUserTeamMemberId}">
+                                    <td>
+                                        <p-avatar [label]="getUserAvatarLabel(member)" 
+                                            shape="circle" 
+                                            [style]="{'background-color': member.role === 'LEADER' ? '#FFD700' : (member.role === 'MENTOR' ? '#9C27B0' : '#2196F3')}">
+                                        </p-avatar>
+                                    </td>
+                                    <td>
+                                        <div class="flex align-items-center">
+                                            <span class="font-medium">{{getUserDisplayName(member)}}</span>
+                                            <span class="ml-2 text-sm text-500" *ngIf="member.id === currentUserTeamMemberId">(You)</span>
+                                        </div>
+                                        <div class="text-sm text-500" *ngIf="member.user?.email">{{member.user?.email}}</div>
+                                    </td>
+                                    <td>
+                                        <span class="member-role" [ngClass]="member.role.toLowerCase()">
+                                            {{member.role}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="text-sm">
+                                            <i class="pi pi-calendar mr-2"></i>
+                                            {{member.joinedAt | date:'MMM d, y'}}
+                                        </div>
+                                        <div class="text-xs text-500">
+                                            {{member.joinedAt | date:'h:mm a'}}
+                                        </div>
+                                    </td>
+                                    <td *ngIf="isCurrentUserTeamLeader">
+                                        <div class="flex gap-2" *ngIf="member.id !== currentUserTeamMemberId">
+                                            <button pButton pRipple icon="pi pi-crown" class="p-button-warning p-button-rounded p-button-sm" 
+                                                pTooltip="Promote to Leader" tooltipPosition="top"
+                                                (click)="promoteToLeader(member.id)"></button>
+                                            <button pButton pRipple icon="pi pi-user-minus" class="p-button-danger p-button-rounded p-button-sm" 
+                                                pTooltip="Remove from Team" tooltipPosition="top"
+                                                (click)="removeTeamMember(member.id)"></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="5" class="text-center p-5">
+                                        <i class="pi pi-users" style="font-size: 2rem; opacity: 0.5"></i>
+                                        <p class="mt-3">No team members found.</p>
+                                        <button *ngIf="isCurrentUserTeamLeader" pButton pRipple label="Add Members" icon="pi pi-user-plus" class="p-button-success p-button-sm" (click)="openAddUserDialog()"></button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </p-card>
+            </div>
+
+            <!-- No Team Found Message -->
+            <div *ngIf="!isLoading && !team" class="text-center p-5">
+                <i class="pi pi-exclamation-circle" style="font-size: 3rem"></i>
+                <h5>Team Not Found</h5>
+                <p>The team you're looking for doesn't exist or you don't have permission to view it.</p>
+                <button pButton pRipple label="Go Back to Teams" icon="pi pi-arrow-left" class="p-button-primary" (click)="goBack()"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Team Dialog -->
+<p-dialog header="Edit Team" [(visible)]="displayEditDialog" [style]="{width: '450px'}" [modal]="true" styleClass="p-fluid">
+    <form [formGroup]="editTeamForm" (ngSubmit)="updateTeam()">
+        <div class="field">
+            <label for="teamName">Team Name</label>
+            <input type="text" pInputText id="teamName" formControlName="teamName" />
+            <small *ngIf="editTeamForm.get('teamName')?.invalid && editTeamForm.get('teamName')?.touched" class="p-error">
+                Team name is required and must be at least 3 characters.
+            </small>
+        </div>
+        <div class="field-checkbox">
+            <p-toggleButton formControlName="isPublic" [onLabel]="'Public Team'" [offLabel]="'Private Team'" [onIcon]="'pi pi-globe'" [offIcon]="'pi pi-lock'"></p-toggleButton>
+            <small class="block mt-2">
+                <div>{{ editTeamForm.value.isPublic ? 'Public teams can be joined by anyone without approval.' : 'Private teams require a join code or invitation to join.' }}</div>
+            </small>
+        </div>
+        <div class="flex justify-content-end">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="displayEditDialog = false"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" type="submit" [disabled]="editTeamForm.invalid"></button>
+        </div>
+    </form>
+</p-dialog>
+
+<!-- Invite Member Dialog -->
+<p-dialog header="Invite Team Member" [(visible)]="displayInviteDialog" [style]="{width: '450px'}" [modal]="true" styleClass="p-fluid">
+    <form [formGroup]="inviteForm" (ngSubmit)="inviteByEmail()">
+        <div class="field">
+            <label for="email">Email Address</label>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon"><i class="pi pi-envelope"></i></span>
+                <input type="email" pInputText id="email" formControlName="email" placeholder="Enter email address" />
+            </div>
+            <small *ngIf="inviteForm.get('email')?.invalid && inviteForm.get('email')?.touched" class="p-error">
+                Please enter a valid email address.
+            </small>
+        </div>
+        <div class="flex justify-content-end">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="displayInviteDialog = false"></button>
+            <button pButton pRipple label="Send Invitation" icon="pi pi-send" type="submit" [disabled]="inviteForm.invalid"></button>
+        </div>
+    </form>
+</p-dialog>
+
+<!-- Add User Dialog -->
+<p-dialog header="Add Team Member" [(visible)]="displayAddUserDialog" [style]="{width: '500px'}" [modal]="true" styleClass="p-fluid">
+    <form [formGroup]="addUserForm" (ngSubmit)="addUserToTeam()">
+        <div class="field">
+            <label for="userId">Select User</label>
+            <p-autoComplete formControlName="userId" [suggestions]="filteredUsers" (completeMethod)="filterUsers($event)" 
+                field="name" [dropdown]="true" [forceSelection]="true" (onSelect)="onUserSelect($event)" [style]="{width: '100%'}"
+                placeholder="Search by name or email">
+                <ng-template let-user pTemplate="item">
+                    <div class="flex align-items-center">
+                        <p-avatar [label]="user.name.charAt(0)" shape="circle" [style]="{'background-color': '#2196F3', 'width': '2rem', 'height': '2rem', 'font-size': '0.8rem'}"></p-avatar>
+                        <div class="ml-2">
+                            <div>{{user.name}} {{user.lastname}}</div>
+                            <div class="text-sm text-500">{{user.email}}</div>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-autoComplete>
+            <small *ngIf="!selectedUser && addUserForm.get('userId')?.touched" class="p-error">
+                Please select a user to add to the team.
+            </small>
+        </div>
+        <div class="field">
+            <label for="role">Role</label>
+            <p-selectButton formControlName="role" [options]="[{label: 'Member', value: 'MEMBER'}, {label: 'Mentor', value: 'MENTOR'}]" optionLabel="label" optionValue="value"></p-selectButton>
+        </div>
+        <div class="flex justify-content-end">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="displayAddUserDialog = false"></button>
+            <button pButton pRipple label="Add to Team" icon="pi pi-user-plus" type="submit" [disabled]="addUserForm.invalid || !selectedUser"></button>
+        </div>
+    </form>
+</p-dialog>

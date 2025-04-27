@@ -1,0 +1,8 @@
+<div class="participate-dialog-content">
+  <h2>Participate in {{ hackathonName }}</h2>
+  <div class="dialog-actions">
+    <button pButton type="button" label="Create a New Team" class="p-button-success" (click)="createTeam.emit()"></button>
+    <button pButton type="button" label="Join a Team" class="p-button-info ml-2" (click)="joinTeam.emit()"></button>
+  </div>
+  <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text close-btn" (click)="close.emit()"></button>
+</div>

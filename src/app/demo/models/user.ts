@@ -1,22 +1,15 @@
 import { Hackathon } from "./hackathon";
-import { Role } from "./role";
 import { Skill } from "./skill";
 import { SponsorApplication } from "./sponsor-application";
 import { SponsorReward } from "./sponsor-reward";
+import { Role } from "./user.model";
 
-export enum BadgeLevel {
-    JUNIOR_COACH = 'JUNIOR_COACH',
-    ASSISTANT_COACH = 'ASSISTANT_COACH',
-    SENIOR_COACH = 'SENIOR_COACH',
-    HEAD_COACH = 'HEAD_COACH',
-    MASTER_MENTOR = 'MASTER_MENTOR'
-  }
 export interface User {
-  id?: number;
+  id: number;
   name: string;
-  lastname: string;
+  lastname?: string;
   email: string;
-  birthdate?: Date;
+  username?: string;
   picture?: string;
   description?: string;
   score?: number;
@@ -27,6 +20,5 @@ export interface User {
   sponsorApplication?: SponsorApplication;
   sponsorReward?: SponsorReward;
   monitorPoints?: number;
-  badge?: BadgeLevel;
   
 }

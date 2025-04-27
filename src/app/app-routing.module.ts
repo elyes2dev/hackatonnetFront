@@ -67,7 +67,6 @@ import {
 import {
     LandingTeamSubmissionComponent
 } from "./demo/components/landing/landing-team-submission/landing-team-submission.component";
-import { AuthGuard } from './demo/jwt/auth.guard';
 
 
 
@@ -101,6 +100,10 @@ import { AuthGuard } from './demo/jwt/auth.guard';
 
                     // User Management Route
                     { path: 'users', component: UserComponent },  // Add UserComponent Route
+// Team Module Route
+                    { path: 'teams', loadChildren: () => import('./demo/components/team/team.module').then(m => m.TeamModule) },
+                    { path: 'teamfront', component: TeamFrontofficeComponent },
+
 
                     { path: 'mentor-applications', component: MentorApplicationListComponent },
                     { path: 'mentor-applications-admin/:id', component: MentorApplicationDetailsAdminComponent },
@@ -238,6 +241,7 @@ import { AuthGuard } from './demo/jwt/auth.guard';
             { path: 'mentor-form', component: ListMentorFormComponent },
             { path: 'mentor-evaluation/new', component: MentorEvaluationFormComponent },
             { path: 'mentor-evaluation/:id/edit', component: MentorEvaluationFormComponent },
+            { path: 'team-chat-hub', component: TeamChatHubComponent },
 
             { path: 'pages/notfound', component: NotfoundComponent },
             { path: '**', redirectTo: 'pages/notfound' },

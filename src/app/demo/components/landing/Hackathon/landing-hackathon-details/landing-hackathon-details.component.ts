@@ -12,6 +12,11 @@ import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ListMentorService } from 'src/app/demo/services/list-mentor.service';
 import { ListMentorFormComponent } from '../../../list-mentor/list-mentor-form/list-mentor-form.component';
+import { Team } from 'src/app/demo/models/team';
+import { finalize, Subject, takeUntil } from 'rxjs';
+import { TeamService } from 'src/app/demo/services/team.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { TeamFrontofficeComponent } from '../../../team-frontoffice/team-frontoffice.component';
 
 @Component({
   selector: 'app-landing-hackathon-details',
@@ -31,6 +36,11 @@ export class LandingHackathonDetailsComponent implements OnInit {
   isAlreadyMentor: boolean = false;
   existingMentorListing: any = null;
   dialogRef: DynamicDialogRef | undefined;
+  userTeam: Team | null = null;
+  private destroy$ = new Subject<void>();
+  loading: boolean = false;
+  loadingDialog: boolean = false;
+  private ref: DynamicDialogRef | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -41,7 +51,10 @@ export class LandingHackathonDetailsComponent implements OnInit {
     private storageService: StorageService,
     private dialogService: DialogService,
     private listMentorService: ListMentorService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private teamService: TeamService,
+
+
   ) {}
 
   ngOnInit() {
@@ -51,11 +64,16 @@ export class LandingHackathonDetailsComponent implements OnInit {
       // Fetch the hackathon details based on the ID
       this.hackathonService.getHackathonById(hackathonId).subscribe((data: Hackathon) => {
         this.hackathon = data;
+        const cachedTeam = this.getCachedUserTeam(+hackathonId);
+        if (cachedTeam) {
+            this.userTeam = cachedTeam;
+        } else {
+            // If no cached team, check if user is in a team for this hackathon
+            this.checkUserTeam(+hackathonId);
+        }
         this.checkMentorStatus();
-
       });
     }
-
     // Get logged in user for badge icon
     const userId = this.storageService.getLoggedInUserId();
     if (userId) {
@@ -80,6 +98,146 @@ export class LandingHackathonDetailsComponent implements OnInit {
       });
     }
   }
+  private cacheUserTeam(team: Team | null, hackathonId: number): void {
+    const cacheKey = `user_team_${this.user?.id}_${hackathonId}`;
+    if (team) {
+        localStorage.setItem(cacheKey, JSON.stringify(team));
+    } else {
+        localStorage.removeItem(cacheKey);
+    }
+}
+  
+  private getCachedUserTeam(hackathonId: number): Team | null {
+    const cacheKey = `user_team_${this.user?.id}_${hackathonId}`;
+    const cachedData = localStorage.getItem(cacheKey);
+    return cachedData ? JSON.parse(cachedData) : null;
+}
+private checkUserTeam(hackathonId: number): void {
+  if (!this.user?.id) return;
+
+  this.loading = true;
+  this.teamService.getAllTeams().pipe(
+      finalize(() => this.loading = false),
+      takeUntil(this.destroy$)
+  ).subscribe({
+      next: (teams: Team[]) => {
+          const team = teams.find(t =>
+              t.hackathon?.id === hackathonId &&
+              t.teamMembers?.some(member => member.user?.id === this.user?.id)
+          );
+
+          if (team) {
+              this.userTeam = team;
+              this.cacheUserTeam(team, hackathonId);
+          } else {
+              this.userTeam = null;
+              this.cacheUserTeam(null, hackathonId);
+          }
+      },
+      error: (error: HttpErrorResponse) => {
+          console.error('Error checking user team:', error);
+          this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to check team membership'
+          });
+      }
+  });
+}
+participate() {
+    if (!this.hackathon || this.loadingDialog || this.ref) {
+        console.log('Participate blocked:', { hackathon: !!this.hackathon, loadingDialog: this.loadingDialog, dialogOpen: !!this.ref });
+        return;
+    }
+
+    this.loadingDialog = true;
+    const mode = this.userTeam ? 'chat' : 'participate';
+    this.ref = this.dialogService.open(TeamFrontofficeComponent, {
+        header: this.userTeam ? `Team Chat - ${this.userTeam.teamName}` : 'Participate in Hackathon',
+        style: {
+            width: this.userTeam ? '500px' : '85vw',
+            maxWidth: this.userTeam ? '500px' : '1100px',
+            color: '#6200EA',
+            'font-family': 'Poppins, Arial, sans-serif',
+            'font-size': '1.15rem',
+            'font-weight': '600',
+            'letter-spacing': '0.5px',
+            'min-height': this.userTeam ? '600px' : '85vh',
+            'background': 'linear-gradient(135deg, #ffffff 0%, #f5f0ff 100%)',
+            'box-shadow': '0 10px 50px rgba(98, 0, 234, 0.2), 0 6px 20px rgba(98, 0, 234, 0.1)',
+            'border-radius': '20px',
+            'border': '1px solid #d0b3ff',
+            'overflow': 'auto',
+            'padding': '0',
+            'position': 'relative',
+            'top': '50%',
+            'transform': 'translateY(-50%)',
+            'margin': '0 auto'
+        },
+        styleClass: 'modern-dialog hackathon-dialog ' + (this.userTeam ? 'team-chat-dialog' : 'participate-dialog'),
+        contentStyle: {
+            'padding': '0',
+            'border-radius': '20px',
+            'overflow-y': 'auto',
+            'overflow-x': 'hidden',
+            'height': '100%',
+            'scrollbar-width': 'thin',
+            'scrollbar-color': '#d0b3ff #f5f0ff'
+        },
+        maximizable: true,
+        closeOnEscape: true,
+        dismissableMask: true,
+        modal: true,
+        baseZIndex: 1000,
+        data: {
+            hackathonId: this.hackathon.id,
+            mode,
+            teamId: this.userTeam?.id
+        }
+    });
+
+    this.ref.onClose.pipe(takeUntil(this.destroy$)).subscribe((result: any) => {
+        console.log('Dialog closed with result:', result);
+        if (result === 'left') {
+            // User left the team
+            this.userTeam = null;
+            this.cacheUserTeam(null, this.hackathon!.id);
+            this.messageService.add({
+                severity: 'info',
+                summary: 'Info',
+                detail: 'You have left the team'
+            });
+            window.location.reload(); // Refresh the page after leaving team
+        } else if (result) {
+            // User joined a new team
+            this.userTeam = result;
+            this.cacheUserTeam(result, this.hackathon!.id);
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: `You are now part of team "${result.teamName}"`
+            });
+            window.location.reload(); // Refresh the page after joining/creating team
+        }
+        this.ref = null;
+        this.loadingDialog = false;
+    });
+}
+getParticipateButtonLabel(): string {
+  return this.userTeam ? 'Open Team Chat' : 'Participate';
+}
+
+getParticipateButtonIcon(): string {
+  return this.userTeam ? 'pi pi-comments' : 'pi pi-users';
+}
+
+public get dialogHeader(): string {
+  if (this.ref && (this.ref as any).options && (this.ref as any).options.header) {
+      return (this.ref as any).options.header;
+  }
+  return '';
+}
+
 
   checkMentorStatus(): void {
     const userId = this.storageService.getLoggedInUserId();

@@ -1,0 +1,279 @@
+<div class="team-chat-hub-container messenger-style">
+    <!-- Left Sidebar - Teams List -->
+    <div class="teams-sidebar">
+        <div class="teams-header">
+            <h2>Your Teams</h2>
+        </div>
+        
+        <div class="teams-list" *ngIf="!loadingTeams && userTeams.length > 0">
+            <div *ngFor="let team of userTeams" 
+                 class="team-item" 
+                 [class.active]="selectedTeam?.id === team.id"
+                 (click)="selectTeam(team)">
+                <div class="team-avatar">
+                    <span>{{getTeamInitials(team.teamName)}}</span>
+                </div>
+                <div class="team-info">
+                    <div class="team-name">{{team.teamName}}</div>
+                    <div class="team-last-message">{{getTeamLastMessage(team.id)}}</div>
+                </div>
+                <div class="team-time">{{getTeamLastMessageTime(team.id)}}</div>
+            </div>
+        </div>
+        
+        <div *ngIf="loadingTeams" class="teams-loading">
+            <i class="pi pi-spin pi-spinner"></i>
+            <p>Loading your teams...</p>
+        </div>
+        
+        <div *ngIf="!loadingTeams && userTeams.length === 0" class="teams-empty">
+            <i class="pi pi-users"></i>
+            <p>You're not part of any teams yet</p>
+            <button pButton label="Join a Hackathon" icon="pi pi-plus" (click)="navigateToHackathons()"></button>
+        </div>
+    </div>
+    
+    <!-- Main Chat Area -->
+    <div class="chat-main">
+        <!-- Chat Header -->
+        <div class="chat-header" *ngIf="selectedTeam">
+            <div class="chat-header-info">
+                <div class="team-avatar">
+                    <span>{{getTeamInitials(selectedTeam.teamName)}}</span>
+                </div>
+                <div class="team-details">
+                    <h2>{{selectedTeam.teamName}}</h2>
+                    <span>{{selectedTeam.teamMembers?.length || 0}} members</span>
+                </div>
+            </div>
+            <div class="chat-header-actions">
+                <button pButton 
+                        icon="pi pi-users" 
+                        class="p-button-rounded p-button-text"
+                        (click)="toggleMembersSidebar()"
+                        pTooltip="Team Members"
+                        tooltipPosition="bottom"></button>
+                <button pButton 
+                        icon="pi pi-arrow-left" 
+                        class="p-button-rounded p-button-text"
+                        routerLink="/landing-hackathon/{{selectedTeam?.hackathon?.id}}"
+                        pTooltip="Back to Hackathon"
+                        tooltipPosition="bottom"></button>
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div class="chat-empty" *ngIf="!selectedTeam">
+            <div class="empty-content">
+                <i class="pi pi-comments"></i>
+                <h2>Welcome to Team Chat</h2>
+                <p>Select a team to start chatting</p>
+            </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div class="chat-messages" #chatContainer *ngIf="selectedTeam">
+            <!-- Loading Messages -->
+            <div *ngIf="loadingMessages" class="messages-loading">
+                <i class="pi pi-spin pi-spinner"></i>
+                <p>Loading messages...</p>
+            </div>
+            
+            <!-- No Messages -->
+            <div *ngIf="!loadingMessages && (!discussions[selectedTeam.id] || discussions[selectedTeam.id].length === 0)" class="messages-empty">
+                <i class="pi pi-comments"></i>
+                <p>No messages yet</p>
+                <span>Be the first to send a message!</span>
+            </div>
+            
+            <!-- Messages List -->
+            <ng-container *ngIf="!loadingMessages && discussions[selectedTeam.id] && discussions[selectedTeam.id].length > 0">
+                <ng-container *ngFor="let discussion of discussions[selectedTeam.id]; let i = index">
+                    <!-- Date Divider -->
+                    <div *ngIf="i === 0 || shouldShowDateDivider(discussions[selectedTeam.id][i-1]?.createdAt, discussion.createdAt)" class="date-divider">
+                        <span>{{getMessageDate(discussion.createdAt)}}</span>
+                    </div>
+                    
+                    <!-- Message Item -->
+                    <div class="message-item" [class.own-message]="isCurrentUserMessage(discussion.teamMember?.id)" [class.consecutive]="i > 0 && isConsecutiveMessage(discussions[selectedTeam.id][i-1], discussion)">
+                        <!-- Avatar (only for others' messages) -->
+                        <div *ngIf="!isCurrentUserMessage(discussion.teamMember?.id)" class="message-avatar">
+                            <span>{{discussion.teamMember?.user?.name?.charAt(0) || '?'}}</span>
+                        </div>
+                        
+                        <!-- Message Content -->
+                        <div class="message-content">
+                            <!-- Sender name (only for others' messages) -->
+                            <div *ngIf="!isCurrentUserMessage(discussion.teamMember?.id)" class="message-sender">
+                                {{discussion.teamMember?.user?.name || 'Unknown'}}
+                            </div>
+                            
+                            <!-- Message bubble -->
+                            <div class="message-bubble">
+                                <!-- Text message -->
+                                <div *ngIf="discussion.messageType === 'TEXT'" class="message-text">
+                                    {{discussion.message}}
+                                </div>
+                                
+                                <!-- File message -->
+                                <div *ngIf="discussion.messageType === 'FILE'" class="message-file">
+                                    <a [href]="getFileUrl(discussion)" target="_blank" class="file-link">
+                                        <i class="pi pi-file"></i>
+                                        <span>{{extractFileName(getFileUrl(discussion))}}</span>
+                                    </a>
+                                </div>
+                                
+                                <!-- Image message -->
+                                <div *ngIf="discussion.messageType === 'IMAGE'" class="message-image">
+                                    <img [src]="getFileUrl(discussion)" alt="Image" (click)="openImage(getFileUrl(discussion))">
+                                </div>
+                                
+                                <!-- Time -->
+                                <div class="message-time" [class.show]="shouldShowTime(discussion)">
+                                    {{getMessageTime(discussion.createdAt)}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+        
+        <!-- Chat Input -->
+        <div class="chat-input modern-input" *ngIf="selectedTeam">
+            <div class="input-actions">
+                <button pButton 
+                        icon="pi pi-paperclip" 
+                        class="p-button-rounded p-button-text"
+                        (click)="triggerFileUpload()"
+                        [disabled]="sendingMessage"></button>
+                
+                <input type="file" 
+                       id="file-upload-input" 
+                       style="display: none;" 
+                       (change)="onFileSelected($event)">
+            </div>
+            
+            <div class="input-field">
+                <input type="text" 
+                       pInputText 
+                       [(ngModel)]="newMessage" 
+                       placeholder="Type a message..." 
+                       (keydown.enter)="sendMessage()"
+                       [disabled]="sendingMessage"
+                       class="modern-input-field">
+                
+                <button pButton 
+                        icon="pi pi-smile" 
+                        class="p-button-rounded p-button-text emoji-button"
+                        (click)="toggleEmojiPicker($event)"
+                        [disabled]="sendingMessage"></button>
+                
+                <p-overlayPanel #emojiPanel [showCloseIcon]="true" [style]="{width: '300px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'}" styleClass="emoji-overlay">
+                    <ng-template pTemplate>
+                        <div class="emoji-picker">
+                            <div class="emoji-section">
+                                <h4>Recent</h4>
+                                <div class="emoji-grid">
+                                    <div *ngFor="let emoji of recentEmojis" 
+                                         class="emoji-item"
+                                         (click)="addEmoji(emoji)">
+                                        {{emoji}}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="emoji-section">
+                                <h4>Smileys & People</h4>
+                                <div class="emoji-grid">
+                                    <div class="emoji-item" (click)="addEmoji('😀')">😀</div>
+                                    <div class="emoji-item" (click)="addEmoji('😃')">😃</div>
+                                    <div class="emoji-item" (click)="addEmoji('😄')">😄</div>
+                                    <div class="emoji-item" (click)="addEmoji('😁')">😁</div>
+                                    <div class="emoji-item" (click)="addEmoji('😆')">😆</div>
+                                    <div class="emoji-item" (click)="addEmoji('😅')">😅</div>
+                                    <div class="emoji-item" (click)="addEmoji('🤣')">🤣</div>
+                                    <div class="emoji-item" (click)="addEmoji('😂')">😂</div>
+                                    <div class="emoji-item" (click)="addEmoji('🙂')">🙂</div>
+                                    <div class="emoji-item" (click)="addEmoji('🙃')">🙃</div>
+                                    <div class="emoji-item" (click)="addEmoji('😉')">😉</div>
+                                    <div class="emoji-item" (click)="addEmoji('😊')">😊</div>
+                                    <div class="emoji-item" (click)="addEmoji('😇')">😇</div>
+                                    <div class="emoji-item" (click)="addEmoji('🥰')">🥰</div>
+                                    <div class="emoji-item" (click)="addEmoji('😍')">😍</div>
+                                    <div class="emoji-item" (click)="addEmoji('🤩')">🤩</div>
+                                </div>
+                            </div>
+                            
+                            <div class="emoji-section">
+                                <h4>Objects & Symbols</h4>
+                                <div class="emoji-grid">
+                                    <div class="emoji-item" (click)="addEmoji('❤️')">❤️</div>
+                                    <div class="emoji-item" (click)="addEmoji('🧡')">🧡</div>
+                                    <div class="emoji-item" (click)="addEmoji('💛')">💛</div>
+                                    <div class="emoji-item" (click)="addEmoji('💚')">💚</div>
+                                    <div class="emoji-item" (click)="addEmoji('💙')">💙</div>
+                                    <div class="emoji-item" (click)="addEmoji('💜')">💜</div>
+                                    <div class="emoji-item" (click)="addEmoji('🖤')">🖤</div>
+                                    <div class="emoji-item" (click)="addEmoji('💯')">💯</div>
+                                    <div class="emoji-item" (click)="addEmoji('💢')">💢</div>
+                                    <div class="emoji-item" (click)="addEmoji('💥')">💥</div>
+                                    <div class="emoji-item" (click)="addEmoji('💫')">💫</div>
+                                    <div class="emoji-item" (click)="addEmoji('💦')">💦</div>
+                                    <div class="emoji-item" (click)="addEmoji('💨')">💨</div>
+                                    <div class="emoji-item" (click)="addEmoji('🕳️')">🕳️</div>
+                                    <div class="emoji-item" (click)="addEmoji('💣')">💣</div>
+                                    <div class="emoji-item" (click)="addEmoji('💬')">💬</div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-overlayPanel>
+            </div>
+            
+            <div class="input-send">
+                <button pButton 
+                        icon="pi pi-send" 
+                        [loading]="sendingMessage"
+                        [disabled]="!newMessage.trim()"
+                        (click)="sendMessage()"
+                        class="send-button"></button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Sidebar - Team Members -->
+    <div class="members-sidebar" [class.show]="showMembersSidebar">
+        <div class="members-header">
+            <h3>Team Members</h3>
+            <button pButton 
+                    icon="pi pi-times" 
+                    class="p-button-rounded p-button-text"
+                    (click)="toggleMembersSidebar()"></button>
+        </div>
+        
+        <ng-template [ngIf]="!selectedTeam">
+            <div class="empty-members">
+                <i class="pi pi-users"></i>
+                <p>Select a team to view members</p>
+            </div>
+        </ng-template>
+        
+        <div class="members-list" *ngIf="selectedTeam?.teamMembers">
+            <div *ngFor="let member of selectedTeam?.teamMembers || []" class="member-item">
+                <div class="member-avatar">
+                    <span>{{member.user?.name?.charAt(0) || '?'}}</span>
+                </div>
+                <div class="member-info">
+                    <div class="member-name">{{member.user?.name || 'Unknown'}}</div>
+                    <div class="member-role">{{member.role || 'Member'}}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div *ngIf="!selectedTeam?.teamMembers || selectedTeam?.teamMembers?.length === 0" class="empty-members">
+            <i class="pi pi-users"></i>
+            <p>No team members found</p>
+        </div>
+    </div>
+</div>

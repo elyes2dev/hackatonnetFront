@@ -98,21 +98,45 @@
     <button pButton type="button" icon="pi pi-arrow-left" label="Back to List" routerLink="/landing-hackathons"></button>
   </div>
   <div class="header-actions">
-    <button class="header-button" (click)="JoinLiveStream()"><i class="pi pi-video"></i>Join Live stream</button>
-    <button *ngIf="isSponsor" pButton type="button" icon="pi pi-plus-circle" label="Add a Prize"
-            class="p-button-success header-button"
-            (click)="addPrize(hackathon?.id)">
+    <button pButton 
+            type="button" 
+            icon="pi pi-video" 
+            class="p-button-rounded p-button-outlined header-button"
+            pTooltip="Join Live Stream"
+            tooltipPosition="bottom"
+            (click)="JoinLiveStream()"></button>
+            
+    <button *ngIf="isSponsor" 
+            pButton 
+            type="button" 
+            icon="pi pi-plus-circle" 
+            class="p-button-rounded p-button-outlined p-button-success header-button"
+            pTooltip="Add a Prize"
+            tooltipPosition="bottom"
+            (click)="addPrize(hackathon?.id)"></button>
+            
+    <button pButton 
+            pRipple 
+            type="button" 
+            [icon]="isAlreadyMentor ? 'pi pi-pencil' : 'pi pi-user-plus'" 
+            [class]="isAlreadyMentor ? 'p-button-rounded p-button-outlined p-button-info' : 'p-button-rounded p-button-outlined p-button-success'"
+            [pTooltip]="isAlreadyMentor ? 'Update Mentor Application' : 'Join as Mentor'"
+            tooltipPosition="bottom"
+            (click)="applyAsMentor()" 
+            *ngIf="hackathon && user"></button>
+            
+    <button pButton
+            type="button"
+            [icon]="getParticipateButtonIcon()"
+            class="p-button-rounded p-button-outlined participate-button"
+            [class.participate-join]="!userTeam"
+            [class.participate-chat]="userTeam"
+            [pTooltip]="getParticipateButtonLabel()"
+            tooltipPosition="bottom"
+            [disabled]="loading || loadingDialog"
+            (click)="participate()">
+      <span class="button-hover-effect"></span>
     </button>
-    <button 
-    pButton 
-    pRipple 
-    type="button" 
-    [label]="isAlreadyMentor ? 'Update Mentor Application' : 'Join as Mentor'" 
-    [icon]="isAlreadyMentor ? 'pi pi-pencil' : 'pi pi-user-plus'" 
-    [class]="isAlreadyMentor ? 'p-button-info' : 'p-button-success'"
-    (click)="applyAsMentor()" 
-    *ngIf="hackathon && user"
-  ></button>
   </div>
 </div>
 <p-toast></p-toast>
@@ -187,7 +211,7 @@
             </div>
             <div class="team-info">
               <h3>{{ team.teamName }}</h3>
-              <p>{{ team.teamMembers.length }} members</p>
+              <p>{{ team?.teamMembers?.length }} members</p>
             </div>
           </div>
         </div>

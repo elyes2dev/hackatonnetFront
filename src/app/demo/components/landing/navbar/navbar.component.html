@@ -26,12 +26,6 @@
                 </a>
             </li>
 
-            <!-- Show "My prizes" only if user IS a sponsor -->
-            <li *ngIf="isSponsor">
-                <a (click)="router.navigate(['/sponsor-prizes'], {fragment: 'highlights'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                    <span>My prizes</span>
-                </a>
-            </li>
             <li>
                 <a (click)="router.navigate(['/sponsors-leaderboard'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
                     <span>Sponsor Leaderboard</span>
@@ -91,24 +85,32 @@
                     (click)="userMenuVisible = !userMenuVisible">
                 </button>
                 <!-- Dropdown menu with higher z-index -->
-                <div *ngIf="userMenuVisible" class="dropdown-menu absolute right-0 top-100 shadow-2 bg-white border-round-md w-12rem z-5 py-2" [ngClass]="{'visible': userMenuVisible}" style="margin-top: 0.5rem; z-index: 1000;">
-                    <ul class="list-none p-0 m-0">
-                        <li>
-                            <a [routerLink]="['/profile']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
-                               (click)="userMenuVisible = false">
-                                <i class="pi pi-user mr-2"></i>
-                                <span>Profile</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a (click)="logout(); userMenuVisible = false" 
-                               class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
-                                <i class="pi pi-sign-out mr-2"></i>
-                                <span>Logout</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+<div *ngIf="userMenuVisible" class="dropdown-menu absolute right-0 top-100 shadow-2 bg-white border-round-md w-12rem z-5 py-2" [ngClass]="{'visible': userMenuVisible}" style="margin-top: 0.5rem; z-index: 1000;">
+    <ul class="list-none p-0 m-0">
+        <li>
+            <a [routerLink]="['/profile']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+               (click)="userMenuVisible = false">
+                <i class="pi pi-user mr-2"></i>
+                <span>Profile</span>
+            </a>
+        </li>
+        <!-- Add My prizes option only for sponsors -->
+        <li *ngIf="isSponsor">
+            <a [routerLink]="['/sponsor-prizes']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+               (click)="userMenuVisible = false">
+               <i class="pi pi-tag mr-2"></i>
+                <span>My prizes</span>
+            </a>
+        </li>
+        <li>
+            <a (click)="logout(); userMenuVisible = false" 
+               class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
+                <i class="pi pi-sign-out mr-2"></i>
+                <span>Logout</span>
+            </a>
+        </li>
+    </ul>
+</div>
             </div>
         </div>
         <div *ngIf="!isAuthenticated" class="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">

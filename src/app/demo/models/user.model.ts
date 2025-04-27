@@ -41,17 +41,20 @@ export interface User {
   username: string;
   password: string;
   birthdate: Date | null;
-  picture: string;
+  picture: string;  // Add the picture field
   description: string;
-  score: number;
-  createdAt: Date;
-  workshops: Workshop[];
-  skills: Skill[];
-  roles: Role[];
-  mentorPoints: number;
+  score?: number;
+  createdAt?: Date;
+  workshops?: Workshop[];
+  skills?: Skill[];
+  roles?: Role[];
+
+  mentorPoints?: number;
   badge: string;
-  monitorPoints: number;
-  hackathons: Hackathon[];
+
+  monitorPoints?: number; // Corrected name from template
+  hackathons?: Hackathon[];
+
   sponsorApplication?: SponsorApplication;
   sponsorReward?: SponsorReward;
 

@@ -1,0 +1,377 @@
+.chat-main-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--surface-card);
+    border-bottom: 1px solid var(--surface-border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    z-index: 2;
+}
+
+.team-info {
+    display: flex;
+    flex-direction: column;
+    
+    h5 {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .team-subtitle {
+        font-size: 0.85rem;
+        color: var(--text-color-secondary);
+    }
+}
+
+.chat-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chat-members {
+    display: flex;
+    align-items: center;
+}
+
+.chat-avatar-group {
+    margin-left: 0.5rem;
+}
+
+.chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: var(--surface-ground);
+    scroll-behavior: smooth;
+}
+
+.empty-chat-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: var(--text-color-secondary);
+    text-align: center;
+    padding: 2rem;
+    
+    h3 {
+        margin: 1rem 0 0.5rem;
+        font-weight: 500;
+    }
+    
+    p {
+        margin: 0;
+        opacity: 0.8;
+    }
+}
+
+.date-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0;
+    position: relative;
+    
+    &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: var(--surface-border);
+        z-index: 0;
+    }
+    
+    span {
+        background-color: var(--surface-ground);
+        padding: 0 1rem;
+        font-size: 0.85rem;
+        color: var(--text-color-secondary);
+        position: relative;
+        z-index: 1;
+    }
+}
+
+.message-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+    max-width: 85%;
+    
+    &.own-group {
+        align-self: flex-end;
+    }
+}
+
+.message-sender-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    
+    .sender-name {
+        margin-left: 0.5rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: var(--text-color);
+    }
+}
+
+.message-bubbles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    
+    &.own-bubbles {
+        align-items: flex-end;
+    }
+}
+
+.message-bubble {
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+    max-width: 100%;
+    
+    .message-content {
+        padding: 0.75rem 1rem;
+        border-radius: 18px;
+        background-color: var(--surface-card);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        position: relative;
+        word-break: break-word;
+        
+        .message-body {
+            margin-bottom: 0.25rem;
+            line-height: 1.4;
+            
+            a {
+                color: var(--primary-color);
+                text-decoration: underline;
+            }
+        }
+        
+        .message-meta {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--text-color-secondary);
+            
+            .message-status {
+                display: flex;
+                align-items: center;
+                
+                i {
+                    font-size: 0.8rem;
+                }
+            }
+        }
+    }
+    
+    &.own-message {
+        flex-direction: row-reverse;
+        
+        .message-content {
+            background-color: var(--primary-color);
+            color: var(--primary-color-text);
+            
+            .message-meta {
+                color: rgba(255, 255, 255, 0.8);
+            }
+        }
+    }
+}
+
+.message-actions {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    align-self: center;
+}
+
+.message-bubble:hover .message-actions {
+    opacity: 1;
+}
+
+.chat-input {
+    padding: 0.75rem 1rem;
+    background-color: var(--surface-card);
+    border-top: 1px solid var(--surface-border);
+    z-index: 2;
+    
+    .p-inputgroup {
+        .p-button {
+            min-width: 3rem;
+        }
+        
+        input {
+            border-radius: 24px;
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+        }
+    }
+}
+
+.emoji-picker-container {
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    z-index: 1000;
+    background-color: var(--surface-card);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 300px;
+    overflow: hidden;
+}
+
+.emoji-picker {
+    display: flex;
+    flex-direction: column;
+    height: 300px;
+    
+    .emoji-categories {
+        display: flex;
+        justify-content: space-around;
+        padding: 0.5rem;
+        border-bottom: 1px solid var(--surface-border);
+        
+        .emoji-category {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            
+            &.active, &:hover {
+                background-color: var(--surface-hover);
+            }
+            
+            i {
+                font-size: 1.2rem;
+                color: var(--text-color-secondary);
+            }
+        }
+    }
+    
+    .emoji-list {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0.5rem;
+        overflow-y: auto;
+        height: calc(100% - 50px);
+        
+        .emoji-item {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            
+            &:hover {
+                background-color: var(--surface-hover);
+            }
+        }
+    }
+}
+
+.team-members-sidebar {
+    .p-sidebar-content {
+        padding: 0;
+    }
+    
+    h3 {
+        padding: 1rem;
+        margin: 0;
+        border-bottom: 1px solid var(--surface-border);
+    }
+    
+    .team-members-list {
+        padding: 0.5rem 0;
+    }
+    
+    .team-member-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        transition: background-color 0.2s;
+        
+        &:hover {
+            background-color: var(--surface-hover);
+        }
+        
+        .member-avatar {
+            position: relative;
+            margin-right: 0.75rem;
+            
+            .member-status {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background-color: var(--surface-border);
+                border: 2px solid var(--surface-card);
+                
+                &.online {
+                    background-color: #4CAF50;
+                }
+            }
+        }
+        
+        .member-info {
+            flex: 1;
+            
+            .member-name {
+                font-weight: 500;
+                margin-bottom: 0.25rem;
+            }
+            
+            .member-role {
+                font-size: 0.8rem;
+                color: var(--text-color-secondary);
+                text-transform: uppercase;
+                
+                &.leader {
+                    color: #FFD700;
+                }
+                
+                &.mentor {
+                    color: #9C27B0;
+                }
+                
+                &.member {
+                    color: #2196F3;
+                }
+            }
+        }
+    }
+}
