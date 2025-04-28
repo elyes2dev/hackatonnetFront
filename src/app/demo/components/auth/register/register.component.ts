@@ -43,7 +43,7 @@ export class RegisterComponent {
     picture: '',
     description: '',
     badge: 'JUNIOR_COACH',
-    roles: [{ name: 'student' }] // Initialize with the Role object structure
+    roles: [{ id: 0, name: 'student' }] // Initialize with the Role object structure and required id
   };
 
   errorMessage: string | null = null;
@@ -178,29 +178,31 @@ export class RegisterComponent {
   }
 
   private completeRegistration(): void {
-    const registrationPayload: User = {
-      id: 0, // or undefined if your backend assigns it, but must be a number
-      name: this.registrationData.name,
-      lastname: this.registrationData.lastname,
-      email: this.registrationData.email,
-      username: this.registrationData.username,
-      password: this.registrationData.password,
-      birthdate: this.registrationData.birthdate,
-      picture: this.registrationData.picture,
-      description: this.registrationData.description,
-      badge: this.registrationData.badge,
-      roles: this.registrationData.roles.map(role => ({
-        id: role.id ?? 0, // Assign a default id if undefined
-        name: role.name
-      })),
-      score: 0,
-      createdAt: new Date(),
-      workshops: [],
-      skills: [],
-      mentorPoints: 0,
-      monitorPoints: 0,
-      hackathons: []
-    };
+    
+      const registrationPayload: User = {
+        name: this.registrationData.name,
+        lastname: this.registrationData.lastname,
+        email: this.registrationData.email,
+        username: this.registrationData.username,
+        password: this.registrationData.password,
+        birthdate: this.registrationData.birthdate,
+        picture: this.registrationData.picture,
+        description: this.registrationData.description,
+        badge: this.registrationData.badge,
+        // Keep the Role objects with name and null ID (which will be ignored by the backend)
+        roles: this.registrationData.roles.map(role => ({
+          id: null as any, // This will be ignored by the backend
+          name: role.name
+        })),
+        score: 0,
+        createdAt: new Date(),
+        workshops: [],
+        skills: [],
+        mentorPoints: 0,
+        monitorPoints: 0,
+        hackathons: [],
+        id: undefined
+      };
   
     this.authService.register(registrationPayload).subscribe({
       next: () => {
