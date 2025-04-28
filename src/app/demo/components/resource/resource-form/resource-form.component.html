@@ -39,7 +39,7 @@
           <div *ngFor="let file of selectedFiles; let i = index" class="file-item">
             <span [class]="getFileIcon(file.type)"></span>
             <span class="file-name">{{ file.name }}</span>
-            <button type="button" class="remove-btn" (click)="removeSelectedFile(i)">×</button>
+            <button type="button" class="remove-btn" (click)="removeSelectedFile(i)" aria-label="Remove file">×</button>
           </div>
         </div>
 
