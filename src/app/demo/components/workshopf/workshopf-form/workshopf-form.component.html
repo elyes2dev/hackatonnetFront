@@ -89,7 +89,8 @@
                                 type="button" 
                                 icon="pi pi-trash" 
                                 class="p-button-rounded p-button-danger remove-image-btn"
-                                (click)="removeImage($event)">
+                                (click)="removeImage($event)"
+                                aria-label="Remove image">
                             </button>
                         </div>
                     </div>
@@ -100,17 +101,19 @@
                     <button 
                         pButton 
                         type="button" 
-                        label="Cancel" 
                         class="p-button-outlined"
                         (click)="cancel()">
+                        <i class="pi pi-times-circle mr-2"></i>
+                        <span>Cancel</span>
                     </button>
                     <button 
                         pButton 
                         type="submit" 
-                        [label]="workshopId ? 'Update Workshop' : 'Create Workshop'"
                         [disabled]="!workshopForm.valid || isSubmitting"
                         class="p-button-primary">
                         <i class="pi pi-spin pi-spinner" *ngIf="isSubmitting"></i>
+                        <i class="pi pi-check-circle mr-2" *ngIf="!isSubmitting"></i>
+                        <span>{{ workshopId ? 'Update Workshop' : 'Create Workshop' }}</span>
                     </button>
                 </div>
             </form>

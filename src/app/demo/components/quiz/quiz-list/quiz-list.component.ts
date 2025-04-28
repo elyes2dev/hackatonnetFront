@@ -8,6 +8,7 @@ import { Question } from 'src/app/demo/models/question.model';
 import { StorageService } from 'src/app/demo/services/storage.service'; // Import StorageService
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AiQuizDialogComponent } from './ai-quiz-dialog/ai-quiz-dialog.component';
+import { UserQuizScore } from 'src/app/demo/models/user-quiz-score.model';
 
 @Component({
   selector: 'app-quiz-list',
@@ -32,6 +33,9 @@ export class QuizListComponent implements OnInit {
   };
   hasQuiz: boolean = false; // Track if the user has a quiz
   private dialogRef: DynamicDialogRef | undefined;
+  showScoresDialog = false;
+  currentQuizScores: UserQuizScore[] = [];
+  selectedQuizId: number | null = null;
 
   constructor(
     private quizService: QuizService,
@@ -189,5 +193,38 @@ export class QuizListComponent implements OnInit {
     if (this.dialogRef) {
       this.dialogRef.close();
     }
+  }
+
+  showQuizScores(quizId: number): void {
+    this.selectedQuizId = quizId;
+    this.loading = true;
+    
+    this.userQuizScoreService.getQuizScores(quizId).subscribe({
+      next: (scores) => {
+        this.currentQuizScores = scores;
+        this.showScoresDialog = true;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading scores:', error);
+        this.loading = false;
+      }
+    });
+  }
+
+  closeScoresDialog(): void {
+    this.showScoresDialog = false;
+    this.currentQuizScores = [];
+    this.selectedQuizId = null;
+  }
+
+  getScorePercentage(score: UserQuizScore): number {
+    return Math.round((score.score / 100) * 100);
+  }
+
+  getScoreColor(score: number): string {
+    if (score >= 80) return '#2e7d32'; // Green
+    if (score >= 60) return '#f57c00'; // Orange
+    return '#d32f2f'; // Red
   }
 }

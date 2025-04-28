@@ -187,7 +187,15 @@ $box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             top: 1rem;
             right: 1rem;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(220, 53, 69, 0.9);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         &:hover .remove-image-btn {
@@ -201,21 +209,69 @@ $box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     grid-column: 1 / -1;
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    gap: 1.25rem;
     margin-top: 2rem;
     padding-top: 2rem;
     border-top: 1px solid #dee2e6;
 
     button {
-        min-width: 120px;
+        min-width: 140px;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &.p-button-outlined {
+            border: 2px solid #dee2e6;
+            color: #6c757d;
+            background: transparent;
+            
+            &:hover {
+                background: #f8f9fa;
+                border-color: #ced4da;
+                color: #495057;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
+                transform: translateY(-2px);
+            }
+            
+            &:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            }
+        }
         
         &.p-button-primary {
-            background: $primary-color;
+            background: linear-gradient(135deg, $primary-color, #6a5acd);
             border-color: $primary-color;
-
+            color: white;
+            
             &:hover {
-                background: darken($primary-color, 5%);
+                background: linear-gradient(135deg, darken($primary-color, 5%), #5a4abf);
                 border-color: darken($primary-color, 5%);
+                box-shadow: 0 6px 12px rgba(67, 24, 255, 0.2);
+                transform: translateY(-2px);
+            }
+            
+            &:active {
+                transform: translateY(0);
+                box-shadow: 0 3px 6px rgba(67, 24, 255, 0.15);
+            }
+            
+            &:disabled {
+                background: linear-gradient(135deg, #a8a8a8, #c5c5c5);
+                border-color: #a8a8a8;
+                opacity: 0.7;
+                cursor: not-allowed;
+                box-shadow: none;
+                transform: none;
+            }
+            
+            .pi-spinner {
+                margin-right: 0.5rem;
             }
         }
     }

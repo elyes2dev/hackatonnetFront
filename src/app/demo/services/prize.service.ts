@@ -37,6 +37,11 @@ export class PrizeService {
     return this.http.get<Prize[]>(`${this.baseUrl}/getprizebyhackathon/${this.staticHackathonId}`);
   }
 
+  // Add this method to your PrizeService class
+  getPrizesByHackathonId(hackathonId: number): Observable<Prize[]> {
+    return this.http.get<Prize[]>(`${this.baseUrl}/getprizebyhackathon/${hackathonId}`);
+  }
+
   getPrizesBySponsor(): Observable<Prize[]> {
     const userId = this.storageService.getLoggedInUserId();
     return this.http.get<Prize[]>(`${this.baseUrl}/getprizebysponsor/${userId}`);

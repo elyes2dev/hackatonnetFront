@@ -17,6 +17,8 @@ import { finalize, Subject, takeUntil } from 'rxjs';
 import { TeamService } from 'src/app/demo/services/team.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TeamFrontofficeComponent } from '../../../team-frontoffice/team-frontoffice.component';
+import { Prize, PrizeCategory } from 'src/app/demo/models/prize';
+import { PrizeService } from 'src/app/demo/services/prize.service';
 
 @Component({
   selector: 'app-landing-hackathon-details',
@@ -41,6 +43,9 @@ export class LandingHackathonDetailsComponent implements OnInit {
   loading: boolean = false;
   loadingDialog: boolean = false;
   private ref: DynamicDialogRef | null = null;
+  // Add a property to store prizes
+  prizes: Prize[] = [];
+  prizeCount: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -53,6 +58,7 @@ export class LandingHackathonDetailsComponent implements OnInit {
     private listMentorService: ListMentorService,
     private messageService: MessageService,
     private teamService: TeamService,
+    private prizeService: PrizeService // Add the prize service
 
 
   ) {}
@@ -72,6 +78,10 @@ export class LandingHackathonDetailsComponent implements OnInit {
             this.checkUserTeam(+hackathonId);
         }
         this.checkMentorStatus();
+        // Fetch prizes count for this hackathon
+        this.getPrizesCount(Number(hackathonId));
+        // Fetch prizes for this hackathon
+        this.loadPrizes(Number(hackathonId));
       });
     }
     // Get logged in user for badge icon
@@ -301,6 +311,50 @@ public get dialogHeader(): string {
   addPrize(hackathonId: number | undefined) {
     if (!hackathonId) return;
     this.router.navigate(['/prize-form', hackathonId]);
+  }
+
+  // Add a new method to get prizes count
+  getPrizesCount(hackathonId: number): void {
+    // You need to modify the prize service to accept a hackathon ID parameter
+    this.prizeService.getPrizesByHackathonId(hackathonId).subscribe({
+      next: (prizes) => {
+        this.prizeCount = prizes.length;
+      },
+      error: (err) => {
+        console.error('Error fetching prizes:', err);
+        this.prizeCount = 0; // Default to 0 if there's an error
+      }
+    });
+  }
+
+  // Add a method to load prizes
+  loadPrizes(hackathonId: number): void {
+    this.prizeService.getPrizesByHackathonId(hackathonId).subscribe({
+      next: (prizes) => {
+        this.prizes = prizes;
+        this.prizeCount = prizes.length;
+      },
+      error: (err) => {
+        console.error('Error fetching prizes:', err);
+        this.prizes = [];
+        this.prizeCount = 0;
+      }
+    });
+  }
+
+  // Helper method to convert prize category enum to readable text
+  getPrizeCategoryName(category: PrizeCategory): string {
+    switch(category) {
+      case PrizeCategory.BEST_INNOVATION:
+        return 'Best Innovation';
+      case PrizeCategory.BEST_DESIGN:
+        return 'Best Design';
+      case PrizeCategory.BEST_AI_PROJECT:
+        return 'Best AI Project';
+      default:
+        // Force TypeScript to treat it as a string
+        return String(category).replace('_', ' ');
+    }
   }
 
   applyAsMentor() {

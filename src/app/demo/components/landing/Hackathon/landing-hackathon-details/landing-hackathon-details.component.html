@@ -177,7 +177,7 @@
           <div class="stat-label">Max Team Size</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">{{ (h.prizes ?? []).length }}</div>
+          <div class="stat-value">{{ prizeCount }}</div>
           <div class="stat-label">Prizes</div>
         </div>
         <div class="stat-card">
@@ -187,19 +187,37 @@
         
       </div>
   
-      <!-- Prizes Section -->
-      <div class="card prizes-section" *ngIf="h.prizes && h.prizes.length > 0">
-        <h2>Prizes</h2>
-        <div class="prizes-grid">
-          <div class="prize-card" *ngFor="let prize of h.prizes; let i = index">
-            <div class="prize-rank">{{ i + 1 }}</div>
-            <div class="prize-details">
-              <h3>{{ prize.productName }}</h3>
-              <p>{{ prize.productDescription }}</p>
-            </div>
-          </div>
+          <!-- Prizes Section with Dynamic Details -->
+<div class="card prizes-section" *ngIf="prizes && prizes.length > 0">
+  <h2>Prizes</h2>
+  <div class="prizes-grid">
+    <div class="prize-card" *ngFor="let prize of prizes; let i = index">
+      <div class="prize-rank">{{ i + 1 }}</div>
+      <div class="prize-details">
+        <!-- Display different information based on prize type -->
+        <h3>
+          <span *ngIf="prize.prizeType === 'MONEY'">
+            ${{ prize.amount }} - {{ getPrizeCategoryName(prize.prizeCategory) }}
+          </span>
+          <span *ngIf="prize.prizeType === 'PRODUCT'">
+            {{ prize.productName }} - {{ getPrizeCategoryName(prize.prizeCategory) }}
+          </span>
+        </h3>
+        <p>
+          <span *ngIf="prize.prizeType === 'MONEY'">
+            Cash prize for {{ getPrizeCategoryName(prize.prizeCategory) }}
+          </span>
+          <span *ngIf="prize.prizeType === 'PRODUCT'">
+            {{ prize.productDescription }}
+          </span>
+        </p>
+        <div class="sponsor-info" *ngIf="prize.sponsor">
+          <p>Sponsored by: {{ prize.sponsor.name }} {{ prize.sponsor.lastname }}</p>
         </div>
       </div>
+    </div>
+  </div>
+</div>
   
       <!-- Teams Section -->
       <div class="card teams-section" *ngIf="h.teams && h.teams.length > 0">
