@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Team } from '../models/team';
 import { StorageService } from './storage.service';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -243,5 +244,17 @@ export class TeamService {
     
     console.error(errorMessage);
     return throwError(() => new Error(errorMessage));
+  }
+
+
+
+  getAvailableMentorsForHackathon(hackathonId: number): Observable<User[]> {
+    return this.http.get<User[]>(`http://localhost:9100/api/mentor-recommendations/hackathon/${hackathonId}/mentors`);
+  }
+  
+  assignMentorToTeam(teamId: number, mentorId: number): Observable<any> {
+    return this.http.post<any>(`http://localhost:9100/api/mentor-recommendations/team/${teamId}/assign`, {
+      mentorId: mentorId
+    });
   }
 }

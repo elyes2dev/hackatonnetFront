@@ -302,6 +302,18 @@
                 <!-- Accordion for Hackathon Teams -->
                 <p-accordion [multiple]="true" styleClass="hackathon-accordion">
                     <p-accordionTab *ngFor="let hackathonName of hackathonNames" [header]="hackathonName + ' (' + teamsByHackathon[hackathonName].length + ' teams)'">
+                        <ng-template pTemplate="header">
+                            <div class="flex align-items-center justify-content-between w-full">
+                                <span>{{hackathonName + ' (' + teamsByHackathon[hackathonName].length + ' teams)'}}</span>
+                                <button *ngIf="hackathonName !== 'Unassigned' && isAdmin()" 
+                                        pButton 
+                                        icon="pi pi-users" 
+                                        label="Smart Mentor Assignment" 
+                                        class="p-button-sm p-button-info ml-3"
+                                        (click)="assignMentorsToHackathon($event, getHackathonIdByName(hackathonName))">
+                                </button>
+                            </div>
+                        </ng-template>
                         <div class="grid">
                             <div *ngFor="let team of teamsByHackathon[hackathonName]" class="col-12 md:col-6 lg:col-4">
                                 <p-card [header]="team.teamName" styleClass="team-card elevation-3 hackathon-team-card">
@@ -342,6 +354,13 @@
                                             (click)="viewTeam(team)"></button>
                                         <button pButton pRipple label="Stats" icon="pi pi-chart-bar" class="p-button-outlined p-button-help" 
                                             (click)="showTeamQuickStats(team)"></button>
+                                            <button *ngIf="!teamHasMentor(team)" 
+                                            pButton pRipple 
+                                            label="Assign Mentor" 
+                                            icon="pi pi-user-plus" 
+                                            class="p-button-outlined p-button-secondary ml-2" 
+                                            (click)="assignMentorToTeam(team)">
+                                    </button>
                                     </div>
                                 </p-card>
                             </div>
@@ -361,6 +380,71 @@
         </div>
     </div>
 </div>
+
+
+
+<!-- Mentor Assignment Dialog -->
+<!-- Mentor Assignment Dialog - with increased dropdown height -->
+<p-dialog header="Assign Mentor to Team" 
+          [(visible)]="displayMentorDialog" 
+          [style]="{width: '700px', maxHeight: '90vh'}" 
+          [modal]="true" 
+          styleClass="p-fluid mentor-dialog" 
+          *ngIf="teamToEdit">
+    <div class="grid">
+        <div class="col-12 md:col-6">
+            <div class="field">
+                <label>Team</label>
+                <div class="text-900 font-medium">{{teamToEdit.teamName}}</div>
+            </div>
+            <div class="field">
+                <label>Current Mentor</label>
+                <div class="text-900 font-medium">{{getCurrentMentorName(teamToEdit)}}</div>
+            </div>
+        </div>
+        <div class="col-12 md:col-6">
+            <div class="field">
+                <label>Hackathon</label>
+                <div class="text-900 font-medium">{{teamToEdit.hackathon?.title || 'N/A'}}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="field">
+        <label for="selectMentor">Select Mentor</label>
+        <p-dropdown id="selectMentor" 
+                  [options]="availableMentors" 
+                  [(ngModel)]="selectedMentor" 
+                  optionLabel="name" 
+                  placeholder="Select a mentor to assign" 
+                  [filter]="true" 
+                  filterBy="name,email,lastname" 
+                  [showClear]="true"
+                  [style]="{width: '100%'}"
+                  appendTo="body"
+                  styleClass="mentor-dropdown">
+            <ng-template pTemplate="selectedItem">
+                <div class="flex align-items-center gap-2" *ngIf="selectedMentor">
+                    <div>{{selectedMentor.name}} {{selectedMentor.lastname}} ({{selectedMentor.email}})</div>
+                </div>
+            </ng-template>
+            <ng-template let-mentor pTemplate="item">
+                <div class="flex align-items-center gap-2">
+                    <div>{{mentor.name}} {{mentor.lastname}} <span class="text-sm text-color-secondary">({{mentor.email}})</span></div>
+                </div>
+            </ng-template>
+        </p-dropdown>
+    </div>
+    
+    <div *ngIf="availableMentors && availableMentors.length === 0" class="field">
+        <p class="text-orange-500">No available mentors found for this hackathon.</p>
+    </div>
+    
+    <div class="flex justify-content-end">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="displayMentorDialog = false"></button>
+        <button pButton pRipple label="Assign" icon="pi pi-check" (click)="confirmMentorAssignment()" [disabled]="!selectedMentor"></button>
+    </div>
+</p-dialog>
 
 <!-- Join Team Dialog -->
 <p-dialog header="Join Team with Code" [(visible)]="displayJoinDialog" [style]="{width: '450px'}" [modal]="true" styleClass="p-fluid">

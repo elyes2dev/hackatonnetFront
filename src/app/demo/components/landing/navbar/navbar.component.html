@@ -34,12 +34,6 @@
 
 
 
-<li>
-    <a (click)="viewOrCreateMentorApplication()" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 cursor-pointer">
-        <span>{{ isMentor ? 'My Mentor Application' : 'Apply as Mentor' }}</span>
-    </a>
-</li>
-
 
 
             <li>
@@ -50,11 +44,6 @@
 
         
 
-            <li  *ngIf="isMentor" >
-                <a [routerLink]="['/mentor-evaluations-user']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                    <span>my evaluations</span>
-                </a>
-            </li>
 
             <li>
                 <a (click)="router.navigate(['/landing-hackathons'], {fragment: 'hackathons'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
@@ -102,7 +91,19 @@
                 <span>My prizes</span>
             </a>
         </li>
+        <li  *ngIf="isMentor" >
+            <a [routerLink]="['/mentor-evaluations-user']" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                <span>my evaluations</span>
+            </a>
+        </li>
+
         <li>
+            <a (click)="viewOrCreateMentorApplication()" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 cursor-pointer">
+                <span>{{ isMentor ? 'My Mentor Application' : 'Apply as Mentor' }}</span>
+            </a>
+        </li>
+        <li>
+            
             <a (click)="logout(); userMenuVisible = false" 
                class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
                 <i class="pi pi-sign-out mr-2"></i>

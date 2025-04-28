@@ -11,6 +11,7 @@ import { StorageService } from 'src/app/demo/services/storage.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { jwtDecode } from 'jwt-decode';
+import { MentorRecommendationService } from 'src/app/demo/services/mentor-recommendation.service';
 
 @Component({
   selector: 'app-team-list',
@@ -43,6 +44,10 @@ export class TeamListComponent implements OnInit {
   memberActivityOptions: any;
   teamSizeData: any;
   teamSizeOptions: any;
+
+  displayMentorDialog = false;
+  availableMentors: User[] = [];
+  selectedMentor: User | null = null;
 
   isAdmin(): boolean {
     if (!this.userToken) return false;
@@ -175,6 +180,9 @@ export class TeamListComponent implements OnInit {
   teamViewMode: 'grid' | 'list' = 'grid';
   hackathons: any[] = []; // This would be populated from a HackathonService
 
+// In team-list.component.ts - Add these properties
+
+
   constructor(
     private teamService: TeamService,
     private storageService: StorageService,
@@ -183,7 +191,9 @@ export class TeamListComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private fb: FormBuilder,
     private hackathonService: HackathonService,
-    private userService: UserService
+    private userService: UserService,
+    private mentorService: MentorRecommendationService,
+
   ) {
     this.joinCodeForm = this.fb.group({
       teamCode: ['', [Validators.required, Validators.minLength(6)]]
@@ -815,4 +825,328 @@ export class TeamListComponent implements OnInit {
     
     return '?';
   }
+
+// Add this method to open the mentor dialog
+assignMentorToTeam(team: Team): void {
+  if (!team || !team.hackathon || !team.hackathon.id) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Team must be associated with a hackathon to assign mentors'
+    });
+    return;
+  }
+
+  const hackathonId = team.hackathon.id;
+  this.teamToEdit = team;
+  
+  // Get available mentors for this hackathon
+  this.teamService.getAvailableMentorsForHackathon(hackathonId).subscribe({
+    next: (mentors: User[]) => {
+      this.availableMentors = mentors;
+      this.selectedMentor = null;
+      this.displayMentorDialog = true;
+    },
+    error: (error: any) => {
+      console.error('Error loading mentors:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to load available mentors'
+      });
+    }
+  });
+}
+
+// Add this method to confirm mentor assignment
+confirmMentorAssignment(): void {
+  if (!this.selectedMentor || !this.teamToEdit) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Please select a mentor to assign'
+    });
+    return;
+  }
+
+  this.teamService.assignMentorToTeam(this.teamToEdit.id, this.selectedMentor.id).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: `Mentor ${this.selectedMentor?.name || 'Unknown'} assigned to team ${this.teamToEdit?.teamName}`
+      });
+      this.displayMentorDialog = false;
+      this.loadTeams(); // Reload teams to reflect changes
+    },
+    error: (error: any) => {
+      console.error('Error assigning mentor:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: error.message || 'Failed to assign mentor to team'
+      });
+    }
+  });
+}
+
+// Utility method to check if team already has a mentor - added null safety
+teamHasMentor(team: Team | null): boolean {
+  if (!team) return false;
+  return team.teamMembers?.some(member => member.role === 'MENTOR') || false;
+}
+
+// Method to get current mentor name if exists - added null safety
+getCurrentMentorName(team: Team | null): string {
+  if (!team) return 'None';
+  
+  const mentorMember = team.teamMembers?.find(member => member.role === 'MENTOR');
+  if (mentorMember && mentorMember.user) {
+    return this.getUserDisplayName(mentorMember);
+  }
+  return 'None';
+}
+
+
+// Add these new methods to the TeamListComponent class
+
+/**
+ * Get hackathon ID by its name (title)
+ * @param hackathonName The name of the hackathon
+ * @returns The ID of the hackathon or null if not found
+ */
+getHackathonIdByName(hackathonName: string): number | null {
+  if (hackathonName === 'Unassigned') return null;
+  
+  const hackathon = this.hackathons.find(h => h.name === hackathonName);
+  return hackathon ? hackathon.id : null;
+}
+
+/**
+ * Stop event propagation to prevent accordion from toggling
+ * @param event The click event
+ */
+stopPropagation(event: Event): void {
+  event.stopPropagation();
+}
+
+/**
+ * Assign mentors to all teams in a hackathon using smart recommendation
+ * @param event The click event
+ * @param hackathonId The ID of the hackathon
+ */
+assignMentorsToHackathon(event: Event, hackathonId: number | null): void {
+  // Stop event propagation to prevent accordion toggle
+  event.stopPropagation();
+  
+  if (!hackathonId) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Could not determine hackathon ID'
+    });
+    return;
+  }
+  
+  // Confirm before proceeding
+  this.confirmationService.confirm({
+    message: 'This will automatically assign mentors to all teams in this hackathon based on AI recommendations. Do you want to proceed?',
+    header: 'Smart Mentor Assignment',
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      // Show loading indicator
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Processing',
+        detail: 'Assigning mentors to teams...',
+        sticky: true,
+        key: 'mentor-assignment'
+      });
+      
+      // Get teams for this hackathon
+      const hackathonName = this.hackathons.find(h => h.id === hackathonId)?.name || '';
+      const teamsForHackathon = this.teamsByHackathon[hackathonName] || [];
+      
+      // Counter for completed operations
+      let completedCount = 0;
+      let successCount = 0;
+      const totalTeams = teamsForHackathon.length;
+      
+      // Get available mentors for the hackathon
+      this.mentorService.getAvailableMentorsForHackathon(hackathonId).subscribe({
+        next: (mentors: User[]) => {
+          if (mentors.length === 0) {
+            this.messageService.clear('mentor-assignment');
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'No Mentors',
+              detail: 'There are no available mentors for this hackathon'
+            });
+            return;
+          }
+          
+          // Process each team that doesn't already have a mentor
+          const teamsWithoutMentors = teamsForHackathon.filter(team => !this.teamHasMentor(team));
+          
+          if (teamsWithoutMentors.length === 0) {
+            this.messageService.clear('mentor-assignment');
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Complete',
+              detail: 'All teams in this hackathon already have mentors assigned'
+            });
+            return;
+          }
+          
+          // Create a map to track mentor assignments and availability
+          const mentorAssignmentMap = new Map<number, {assigned: number, maxTeams: number}>();
+          
+          // Initialize the mentor assignment map
+          mentors.forEach(mentor => {
+            mentorAssignmentMap.set(mentor.id, {assigned: 0, maxTeams: 0});
+          });
+          
+          // Load current mentor assignments and availability
+          const availabilityChecks = mentors.map(mentor => 
+            this.mentorService.checkMentorAvailability(mentor.id, hackathonId)
+              .toPromise()
+              .then(result => {
+                if (result) {
+                  mentorAssignmentMap.set(mentor.id, {
+                    assigned: result.currentTeams,
+                    maxTeams: result.maxTeams
+                  });
+                }
+              })
+              .catch(error => {
+                console.error(`Error checking availability for mentor ${mentor.id}:`, error);
+              })
+          );
+          
+          // Wait for all availability checks to complete before proceeding
+          Promise.all(availabilityChecks).then(() => {
+            // Filter out mentors who are already at max capacity
+            const availableMentors = mentors.filter(mentor => {
+              const info = mentorAssignmentMap.get(mentor.id);
+              return info && info.assigned < info.maxTeams;
+            });
+            
+            if (availableMentors.length === 0) {
+              this.messageService.clear('mentor-assignment');
+              this.messageService.add({
+                severity: 'warn',
+                summary: 'No Available Mentors',
+                detail: 'All mentors have reached their maximum team capacity'
+              });
+              return;
+            }
+            
+            // Assign mentors to each team, respecting capacity limits
+            teamsWithoutMentors.forEach(team => {
+              // Get recommended mentors for this team (only available ones)
+              this.mentorService.getAvailableMentorRecommendations(team.id, hackathonId).subscribe({
+                next: (recommendation: any) => {
+                  let mentorToAssign: User | null = null;
+                  
+                  // Find the best available mentor
+                  if (recommendation && recommendation.recommendedMentors && recommendation.recommendedMentors.length > 0) {
+                    // Try each recommended mentor in order until finding an available one
+                    for (const candidate of recommendation.recommendedMentors) {
+                      const info = mentorAssignmentMap.get(candidate.id);
+                      if (info && info.assigned < info.maxTeams) {
+                        mentorToAssign = candidate;
+                        break;
+                      }
+                    }
+                  }
+                  
+                  // If no available recommended mentor, try a random available one
+                  if (!mentorToAssign && availableMentors.length > 0) {
+                    // Find mentors who still have capacity
+                    const mentorsWithCapacity = availableMentors.filter(m => {
+                      const info = mentorAssignmentMap.get(m.id);
+                      return info && info.assigned < info.maxTeams;
+                    });
+                    
+                    if (mentorsWithCapacity.length > 0) {
+                      // Choose the mentor with the most remaining capacity
+                      mentorsWithCapacity.sort((a, b) => {
+                        const infoA = mentorAssignmentMap.get(a.id)!;
+                        const infoB = mentorAssignmentMap.get(b.id)!;
+                        return (infoB.maxTeams - infoB.assigned) - (infoA.maxTeams - infoA.assigned);
+                      });
+                      
+                      mentorToAssign = mentorsWithCapacity[0];
+                    }
+                  }
+                  
+                  if (mentorToAssign) {
+                    // Assign the mentor to the team
+                    this.teamService.assignMentorToTeam(team.id, mentorToAssign.id).subscribe({
+                      next: () => {
+                        // Update the mentor's assignment count
+                        const info = mentorAssignmentMap.get(mentorToAssign!.id);
+                        if (info) {
+                          info.assigned++;
+                          mentorAssignmentMap.set(mentorToAssign!.id, info);
+                        }
+                        
+                        successCount++;
+                        completedCount++;
+                        checkIfComplete();
+                      },
+                      error: (error) => {
+                        console.error(`Error assigning mentor to team ${team.teamName}:`, error);
+                        completedCount++;
+                        checkIfComplete();
+                      }
+                    });
+                  } else {
+                    // No available mentors left
+                    this.messageService.add({
+                      severity: 'warn',
+                      summary: 'No Capacity',
+                      detail: `Couldn't assign a mentor to team ${team.teamName} - all mentors at capacity`,
+                      life: 5000
+                    });
+                    completedCount++;
+                    checkIfComplete();
+                  }
+                },
+                error: (error) => {
+                  console.error(`Error getting mentor recommendations for team ${team.teamName}:`, error);
+                  completedCount++;
+                  checkIfComplete();
+                }
+              });
+            });
+            
+            // Check if all operations are complete
+            const checkIfComplete = () => {
+              if (completedCount === teamsWithoutMentors.length) {
+                this.messageService.clear('mentor-assignment');
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Assignment Complete',
+                  detail: `Successfully assigned mentors to ${successCount} out of ${teamsWithoutMentors.length} teams`
+                });
+                // Reload teams to reflect the changes
+                this.loadTeams();
+              }
+            };
+          });
+        },
+        error: (error) => {
+          this.messageService.clear('mentor-assignment');
+          console.error('Error loading mentors for hackathon:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to load mentors for this hackathon'
+          });
+        }
+      });
+    }
+  });
+}
 }

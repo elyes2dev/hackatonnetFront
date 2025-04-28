@@ -17,6 +17,7 @@ import { finalize, Subject, takeUntil } from 'rxjs';
 import { TeamService } from 'src/app/demo/services/team.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TeamFrontofficeComponent } from '../../../team-frontoffice/team-frontoffice.component';
+import { ListMentor } from 'src/app/demo/models/list-mentor.model';
 
 @Component({
   selector: 'app-landing-hackathon-details',
@@ -41,6 +42,9 @@ export class LandingHackathonDetailsComponent implements OnInit {
   loading: boolean = false;
   loadingDialog: boolean = false;
   private ref: DynamicDialogRef | null = null;
+  numberOfMentors: number = 0;
+  mentorsList: ListMentor[] = [];
+
 
   constructor(
     private route: ActivatedRoute,
@@ -53,6 +57,7 @@ export class LandingHackathonDetailsComponent implements OnInit {
     private listMentorService: ListMentorService,
     private messageService: MessageService,
     private teamService: TeamService,
+
 
 
   ) {}
@@ -72,6 +77,8 @@ export class LandingHackathonDetailsComponent implements OnInit {
             this.checkUserTeam(+hackathonId);
         }
         this.checkMentorStatus();
+        this.fetchNumberOfMentors(+hackathonId);
+
       });
     }
     // Get logged in user for badge icon
@@ -111,6 +118,22 @@ export class LandingHackathonDetailsComponent implements OnInit {
     const cacheKey = `user_team_${this.user?.id}_${hackathonId}`;
     const cachedData = localStorage.getItem(cacheKey);
     return cachedData ? JSON.parse(cachedData) : null;
+}
+
+
+private fetchNumberOfMentors(hackathonId: number): void {
+  this.listMentorService.getListMentorsByHackathonId(hackathonId).subscribe({
+    next: (mentors) => {
+      this.mentorsList = mentors; // Store the actual mentor listings
+      this.numberOfMentors = mentors.length;
+      console.log('Fetched mentors:', mentors); // Debug log
+    },
+    error: (error) => {
+      console.error('Error fetching mentors:', error);
+      this.numberOfMentors = 0;
+      this.mentorsList = [];
+    }
+  });
 }
 private checkUserTeam(hackathonId: number): void {
   if (!this.user?.id) return;

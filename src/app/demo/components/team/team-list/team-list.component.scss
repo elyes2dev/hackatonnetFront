@@ -215,3 +215,17 @@
     border-radius: 4px;
     border: 1px solid #dee2e6;
 }
+
+
+/* Add these styles to your component's CSS or styles.css */
+:host ::ng-deep .mentor-dropdown .p-dropdown-panel .p-dropdown-items {
+    max-height: 400px !important; /* Much taller dropdown list */
+}
+
+:host ::ng-deep .mentor-dropdown .p-dropdown-panel {
+    min-width: 650px !important; /* Ensure dropdown panel is wide enough */
+}
+
+:host ::ng-deep .mentor-dropdown .p-dropdown-filter-container {
+    width: 100%;
+}
