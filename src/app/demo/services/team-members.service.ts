@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { TeamMember } from '../models/team-members';
 import { StorageService } from './storage.service';
 
@@ -114,6 +114,17 @@ export class TeamMembersService {
     return this.http.get<TeamMember[]>(`${this.apiUrl}/user/${userId}`).pipe(
       tap(members => console.log('Fetched team members by user ID:', members)),
       catchError(this.handleError)
+    );
+  }
+
+  checkUserHackathonParticipation(userId: number, hackathonId: number): Observable<boolean> {
+    return this.http.get<any[]>(`${this.apiUrl}/user/${userId}/hackathon/${hackathonId}`).pipe(
+      tap(response => console.log('Hackathon participation check:', response)),
+      map(response => response.length > 0), // Returns true if the user has any team membership in this hackathon
+      catchError(error => {
+        console.error('Error checking hackathon participation:', error);
+        return of(false); // Return false in case of error
+      })
     );
   }
 }

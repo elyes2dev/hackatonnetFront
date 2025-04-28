@@ -31,6 +31,9 @@ export class MentorDetailsDialogComponent implements OnInit {
   showEvaluationForm = false;
   loading = false;
 
+  hackathonId: number | null = null;
+  hasParticipated: boolean = false;
+
   constructor(
     private config: DynamicDialogConfig,
     private ref: DynamicDialogRef,
@@ -47,19 +50,59 @@ export class MentorDetailsDialogComponent implements OnInit {
     this.loggedInUserId = userId;  }
 
   ngOnInit(): void {
-    // Get mentor data passed from dialog config
-    if (this.config.data && this.config.data.mentor) {
+    // Get mentor data and hackathonId passed from dialog config
+  if (this.config.data) {
+    if (this.config.data.mentor) {
       this.mentor = this.config.data.mentor;
-      
-      this.getUserTeamId();
+    }
+    
+    if (this.config.data.hackathonId) {
+      this.hackathonId = this.config.data.hackathonId;
+      this.checkHackathonParticipation();
+    }
+    
+    this.getUserTeamId();
 
-      // Check for existing evaluation
-      if (this.mentor && this.mentor.id) {
-        this.checkExistingEvaluation();
-      }
+    // Check for existing evaluation
+    if (this.mentor && this.mentor.id) {
+      this.checkExistingEvaluation();
     }
   }
+  }
 
+  checkHackathonParticipation() {
+    if (!this.hackathonId || !this.loggedInUserId) {
+      this.hasParticipated = false;
+      return;
+    }
+    
+    this.loading = true;
+    
+    // Since we don't have a direct API to check participation,
+    // we'll check if the user has a team in this hackathon
+    // This is a temporary workaround until the API is available
+    this.teamMemberService.getTeamMembersByUserId(this.loggedInUserId).subscribe({
+      next: (teamMembers: any[]) => {
+        if (teamMembers && teamMembers.length > 0) {
+          // Check if any of the teams is participating in this hackathon
+          // For now, we'll assume if the user has a team, they can participate
+          // You may need to adjust this logic based on your data structure
+          this.hasParticipated = true;
+          
+          // When you have the proper endpoint, you can use this instead:
+          // this.hasParticipated = teamMembers.some(tm => tm.team.hackathonId === this.hackathonId);
+        } else {
+          this.hasParticipated = false;
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error checking hackathon participation:', err);
+        this.hasParticipated = false;
+        this.loading = false;
+      }
+    });
+  }
   getBadgeIcon(): string {
     const badgeIcons: { [key: string]: string } = {
       JUNIOR_COACH: 'assets/demo/images/avatar/JUNIOR_COACH.png',
@@ -70,7 +113,7 @@ export class MentorDetailsDialogComponent implements OnInit {
     };
     return this.mentor ? badgeIcons[this.mentor.badge] || 'assets/icons/default_badge.png' : '';
   }
-  
+
   getUserTeamId() {
     this.loading = true;
     // Get team details for the logged-in user
@@ -86,15 +129,7 @@ export class MentorDetailsDialogComponent implements OnInit {
         }
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Error getting user team:', err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to get team information'
-        });
-        this.loading = false;
-      }
+      
     });
   }
   

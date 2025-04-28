@@ -400,7 +400,9 @@ public get dialogHeader(): string {
   openMentorDetails(mentor: any) {
     const ref = this.dialogService.open(MentorDetailsDialogComponent, {
       data: {
-        mentor: mentor.mentor || mentor // Handle both formats: {mentor: User} or User
+        mentor: mentor.mentor || mentor, // Handle both formats: {mentor: User} or User
+        hackathonId: this.hackathon?.id    // Pass the hackathon ID
+
       },
       header: 'Mentor Details',
       width: '70%',

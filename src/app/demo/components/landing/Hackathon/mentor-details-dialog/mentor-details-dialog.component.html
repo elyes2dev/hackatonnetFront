@@ -41,10 +41,10 @@
       </div>
     
       <!-- Evaluation Button -->
-      <div class="mentor-actions" *ngIf="!showEvaluationForm">
-        <button pButton 
-                label="Evaluate Mentor" 
-                icon="pi pi-star" 
+      <div class="mentor-actions" *ngIf="!showEvaluationForm && hasParticipated">
+        <button pButton
+                label="Evaluate Mentor"
+                icon="pi pi-star"
                 class="p-button-primary"
                 (click)="toggleEvaluationForm()">
         </button>
