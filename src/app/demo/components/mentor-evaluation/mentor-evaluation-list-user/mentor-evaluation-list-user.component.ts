@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { MentorEvaluation } from 'src/app/demo/models/mentor-evaluation.model';
 import { MentorEvaluationService } from 'src/app/demo/services/mentor-evaluation.service';
+import { StorageService } from 'src/app/demo/services/storage.service';
 
 @Component({
   selector: 'app-mentor-evaluation-list-user',
@@ -18,11 +19,26 @@ export class MentorEvaluationListUserComponent  implements OnInit {
   constructor(
     private evaluationService: MentorEvaluationService,
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private storageService: StorageService // Inject StorageService
+    
 ) {}
 
+
   ngOnInit(): void {
-    this.evaluationService.getAllEvaluations().subscribe({
+    const userId = this.storageService.getLoggedInUserId();
+
+     // Get logged-in user ID
+     if (!userId) {
+       this.messageService.add({
+         severity: 'error',
+         summary: 'User Not Logged In',
+         detail: 'You must be logged in to submit a mentor application.'
+       });
+       return;
+     }
+ 
+    this.evaluationService.getEvaluationsByMentorId(userId).subscribe({
       next: (data) => {
         this.evaluations = data;
         this.loading = false;

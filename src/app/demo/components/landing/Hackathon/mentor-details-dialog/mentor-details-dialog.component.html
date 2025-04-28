@@ -1,0 +1,136 @@
+<div class="mentor-details-container">
+    <p-toast></p-toast>
+    
+    <!-- Mentor Profile Section -->
+    <div class="mentor-card" *ngIf="mentor">
+      <div class="mentor-header">
+        <div class="mentor-avatar">
+          <p-avatar 
+            [image]="mentor?.picture || ''"
+            [label]="mentor?.name ? mentor.name.charAt(0) : 'M'" 
+            size="xlarge" 
+            shape="circle"
+            [style]="{'width': '100px', 'height': '100px'}">
+          </p-avatar>
+        </div>
+        <div class="mentor-title">
+          <h2>{{ mentor?.name || '' }} {{ mentor?.lastname || '' }}</h2>
+ 
+    <!-- Badge and Points Section -->
+    <div class="badge-container" *ngIf="mentor?.badge">
+      <img [src]="getBadgeIcon()" alt="Badge Icon" class="badge-icon" width="24" height="24">
+      <span class="badge-name">{{ mentor?.badge }}</span>
+    </div>
+    
+    <div class="mentor-badge" *ngIf="mentor?.score">
+      <span class="badge"><i class="pi pi-star-fill"></i> {{ mentor.score }} points</span>
+    </div>
+        </div>
+      </div>
+    
+      <div class="mentor-body">
+        <div class="section">
+          <h3>About</h3>
+          <p>{{ mentor?.description || 'No description available' }}</p>
+        </div>
+    
+        <div class="section" *ngIf="mentor?.monitorPoints">
+          <h3>Mentor Points</h3>
+          <p>{{ mentor.monitorPoints }}</p>
+        </div>
+      </div>
+    
+      <!-- Evaluation Button -->
+      <div class="mentor-actions" *ngIf="!showEvaluationForm">
+        <button pButton 
+                label="Evaluate Mentor" 
+                icon="pi pi-star" 
+                class="p-button-primary"
+                (click)="toggleEvaluationForm()">
+        </button>
+      </div>
+    </div>
+  
+    <!-- Evaluation Form (shows when button is clicked) -->
+    <div *ngIf="showEvaluationForm" class="mentor-card" style="margin-top: 1.5rem; animation: fadeIn 0.3s ease-out;">
+      <div class="surface-section">
+        <div class="flex align-items-center justify-content-between mb-4">
+          <div>
+            <div class="font-medium text-xl text-900">{{ isEditMode ? 'Edit' : 'New' }} Mentor Evaluation</div>
+            <div class="text-500">{{ isEditMode ? 'Update your mentor evaluation' : 'Share your feedback about this mentor' }}</div>
+          </div>
+        </div>
+        
+        <form (ngSubmit)="submitEvaluation()" class="p-fluid">
+          <div class="evaluation-form">
+            <!-- Rating -->
+            <div class="field mb-4">
+              <label for="rating" class="text-500 font-medium">Rating (0-5)*</label>
+              <p-rating
+                [(ngModel)]="evaluation.rating"
+                id="rating"
+                name="rating"
+                [cancel]="true"
+                [stars]="5"
+                [required]="true">
+              </p-rating>
+              <small *ngIf="submitted && (evaluation.rating < 0 || evaluation.rating > 5)" class="p-error">
+                Rating must be between 0 and 5
+              </small>
+            </div>
+            
+            <!-- Feedback -->
+            <div class="field mb-4">
+              <label for="feedback" class="text-500 font-medium">Feedback*</label>
+              <textarea
+                pInputTextarea
+                id="feedback"
+                rows="5"
+                [(ngModel)]="evaluation.feedbackText"
+                name="feedbackText"
+                required
+                placeholder="Share your experience with this mentor..."
+                [class.ng-invalid]="submitted && !evaluation.feedbackText"
+                [class.ng-dirty]="submitted && !evaluation.feedbackText">
+              </textarea>
+              <small *ngIf="submitted && !evaluation.feedbackText" class="p-error">
+                Feedback is required
+              </small>
+            </div>
+            
+            <!-- Submit and Cancel Buttons -->
+            <div class="flex justify-content-between mt-4 pt-3 border-top-1">
+              <button 
+                pButton 
+                pRipple 
+                type="button" 
+                label="Cancel" 
+                icon="pi pi-times"
+                class="p-button-secondary"
+                (click)="toggleEvaluationForm()">
+              </button>
+              
+              <button 
+                pButton 
+                pRipple 
+                type="submit" 
+                [label]="isEditMode ? 'Update Evaluation' : 'Submit Evaluation'"
+                icon="pi pi-check" 
+                class="p-button-primary">
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+    <!-- Close Dialog Button -->
+    <div class="dialog-footer" *ngIf="!showEvaluationForm">
+      <button pButton 
+              label="Close" 
+              icon="pi pi-times" 
+              class="p-button-text" 
+              (click)="close()">
+      </button>
+    </div>
+  </div>

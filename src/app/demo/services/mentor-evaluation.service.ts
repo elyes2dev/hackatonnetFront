@@ -21,7 +21,7 @@ export class MentorEvaluationService {
 
   getEvaluationsByMentorId(mentorId: number): Observable<MentorEvaluation[]> {
     return this.http.get<MentorEvaluation[]>(`${this.apiUrl}/mentor/${mentorId}`)
-  }
+  } 
 
   getEvaluationsByTeamId(teamId: number): Observable<MentorEvaluation[]> {
     return this.http.get<MentorEvaluation[]>(`${this.apiUrl}/team/${teamId}`)
@@ -34,30 +34,23 @@ export class MentorEvaluationService {
 
   createEvaluation(evaluation: any): Observable<MentorEvaluation> {
     console.log('Service sending payload:', evaluation); // Debug log
-    
-    // Make sure rating is sent as a number, not a string
-    const payload = {
-      rating: Number(evaluation.rating),
-      feedbackText: evaluation.feedbackText
-    };
-    
-    return this.http.post<MentorEvaluation>(this.apiUrl, payload);
+    return this.http.post<MentorEvaluation>(this.apiUrl, evaluation);
   }
-  
+
   updateEvaluation(id: number, evaluation: any): Observable<MentorEvaluation> {
     console.log('Service updating with payload:', evaluation); // Debug log
     
-    // Make sure rating is sent as a number, not a string
-    const payload = {
-      rating: Number(evaluation.rating),
-      feedbackText: evaluation.feedbackText
-    };
-    
-    return this.http.put<MentorEvaluation>(`${this.apiUrl}/${id}`, payload);
+    return this.http.put<MentorEvaluation>(`${this.apiUrl}/${id}`, evaluation);
   }
+  
+
 
   deleteEvaluation(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`)
+  }
+
+  getMentorBadge(mentorId: number): Observable<string> {
+    return this.http.get<string>(`${this.apiUrl}/mentor/${mentorId}/badge`);
   }
 }
 

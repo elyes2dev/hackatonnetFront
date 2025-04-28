@@ -16,10 +16,15 @@ import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { TooltipModule } from 'primeng/tooltip';
+import { RatingModule } from 'primeng/rating';
+
 import { DividerModule } from 'primeng/divider';
 import { CardModule } from 'primeng/card';
 import { StyleClassModule } from 'primeng/styleclass';
 import { DatePipe } from '@angular/common';
+import { MentorDetailsDialogComponent } from './mentor-details-dialog/mentor-details-dialog.component';
+import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 
 @NgModule({
   declarations: [
@@ -27,7 +32,8 @@ import { DatePipe } from '@angular/common';
     LandingHackathonDetailsComponent,
     LandingLiveStreamComponent,
     LandingPostComponent,
-    LandingCommentComponent
+    LandingCommentComponent,
+    MentorDetailsDialogComponent
   ],
   imports: [
     CommonModule,
@@ -39,6 +45,13 @@ import { DatePipe } from '@angular/common';
     DropdownModule,
     DialogModule,
     ToastModule,
+    AvatarModule,
+    ButtonModule,
+    CardModule,
+    InputTextareaModule,
+    ToastModule,
+    RatingModule,
+    TooltipModule,
     RippleModule,
     AvatarModule,
     TooltipModule,
@@ -54,7 +67,9 @@ import { DatePipe } from '@angular/common';
     LandingCommentComponent
   ],
   providers: [
-    DatePipe
+    DatePipe,
+    DialogService, // Required for dynamic dialogs
+    MessageService // Required for toast messages
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })

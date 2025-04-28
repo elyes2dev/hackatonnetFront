@@ -108,4 +108,12 @@ export class TeamMembersService {
     console.error(errorMessage);
     return throwError(() => new Error(errorMessage));
   }
+
+
+  getTeamMembersByUserId(userId: number): Observable<TeamMember[]> {
+    return this.http.get<TeamMember[]>(`${this.apiUrl}/user/${userId}`).pipe(
+      tap(members => console.log('Fetched team members by user ID:', members)),
+      catchError(this.handleError)
+    );
+  }
 }
