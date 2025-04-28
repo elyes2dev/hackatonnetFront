@@ -881,3 +881,106 @@ $transition-normal: all 0.3s ease;
     }
   }
 }
+
+/* Add or update these styles in your component's SCSS file */
+
+.mentors-grid {
+  .mentor-card {
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      background: linear-gradient(135deg, #f5f0ff 0%, #ffffff 100%);
+      
+      .mentor-view-icon {
+        right: 15px;
+        opacity: 1;
+      }
+    }
+    
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #6200EA, #9C64FF);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover:after {
+      transform: scaleX(1);
+    }
+    
+    .mentor-avatar {
+      margin-right: 1rem;
+      flex-shrink: 0;
+      
+      ::ng-deep .p-avatar {
+        background: linear-gradient(135deg, #6200EA 0%, #9C64FF 100%);
+      }
+    }
+    
+    .mentor-info {
+      flex: 1;
+      
+      h3 {
+        margin: 0 0 0.25rem;
+        color: #333;
+        font-size: 1.1rem;
+      }
+      
+      p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+    }
+    
+    .mentor-view-icon {
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6200EA;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+  }
+}
+
+/* Customize PrimeNG Dialog for mentor details */
+:host ::ng-deep .mentor-dialog {
+  .p-dialog-header {
+    background: #6200EA;
+    color: white;
+    border-radius: 8px 8px 0 0;
+    padding: 1rem 1.5rem;
+    
+    .p-dialog-header-icon {
+      color: white;
+      
+      &:hover {
+        background: rgba(255,255,255,0.2);
+        color: white;
+      }
+    }
+  }
+  
+  .p-dialog-content {
+    padding: 0;
+    border-radius: 0 0 8px 8px;
+  }
+}

@@ -225,22 +225,32 @@
   </div>
   
   <!-- Mentors Section -->
-  <div class="card mentors-section" *ngIf="isActiveSection('mentors') && mentorsList && mentorsList.length > 0"
-       [@sectionAnimation]>
-    <h2>Mentors</h2>
-    <div class="mentors-grid">
-      <div class="mentor-card" *ngFor="let mentor of mentorsList">
-        <div class="mentor-avatar">
-          <p-avatar [label]="mentor.mentor?.name?.charAt(0) || 'M'" size="large" shape="circle"></p-avatar>
-        </div>
-        <div class="mentor-info">
-          <h3>{{ mentor.mentor?.name }} {{ mentor.mentor?.lastname }}</h3>
-          <p>{{ mentor.numberOfTeams || 'General Mentor' }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+
+<div class="card mentors-section" *ngIf="isActiveSection('mentors') && mentorsList && mentorsList.length > 0"
+  [@sectionAnimation]>
+<h2>Mentors</h2>
+<div class="mentors-grid">
+ <div class="mentor-card" *ngFor="let mentor of mentorsList" 
+      (click)="openMentorDetails(mentor)" 
+      [pTooltip]="'Click to view profile'">
+   <div class="mentor-avatar">
+     <p-avatar [label]="mentor.mentor?.name?.charAt(0) || 'M'" size="large" shape="circle"></p-avatar>
+   </div>
+   <div class="mentor-info">
+     <h3>{{ mentor.mentor?.name }} {{ mentor.mentor?.lastname }}</h3>
+     <p>{{ mentor.numberOfTeams || 'General Mentor' }}</p>
+   </div>
+   <div class="mentor-view-icon">
+     <i class="pi pi-external-link"></i>
+   </div>
+ </div>
 </div>
+</div>
+</div>
+
+
+
+
 
   </div>
   <div class="posts-section-container">

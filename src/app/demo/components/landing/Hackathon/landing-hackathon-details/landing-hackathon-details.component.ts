@@ -392,4 +392,45 @@ public get dialogHeader(): string {
       }
     });
   }
+
+
+
+
+  openMentorDetails(mentor: ListMentor): void {
+    // Check if user is in same hackathon as the mentor
+    const userInSameHackathon = this.userTeam && this.hackathon?.id === mentor.hackathon?.id;
+    
+    this.dialogRef = this.dialogService.open(ListMentorFormComponent, {
+      header: 'Mentor Profile',
+      width: '500px',
+      contentStyle: { 
+        overflow: 'auto',
+        borderRadius: '8px',
+        padding: '0' 
+      },
+      styleClass: 'mentor-dialog',
+      baseZIndex: 10000,
+      dismissableMask: true,
+      data: {
+        mentorListingId: mentor.id,
+        hackathonId: this.hackathon?.id,
+        viewMode: true, // Set view mode to true
+        canEvaluate: userInSameHackathon // Allow evaluation if user is in same hackathon
+      }
+    });
+  
+    // Handle dialog close events (for evaluation submission)
+    this.dialogRef.onClose.subscribe((result) => {
+      if (result && result.evaluated) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Thank you for evaluating this mentor!'
+        });
+        
+        // Refresh mentor list if needed
+        this.fetchNumberOfMentors(this.hackathon!.id);
+      }
+    });
+  } 
 }
