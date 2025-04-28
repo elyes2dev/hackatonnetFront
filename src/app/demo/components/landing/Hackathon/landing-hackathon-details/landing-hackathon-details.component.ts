@@ -11,6 +11,7 @@ import { StorageService } from 'src/app/demo/services/storage.service';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ListMentorService } from 'src/app/demo/services/list-mentor.service';
+import { PrizeService } from 'src/app/demo/services/prize.service';
 import { ListMentorFormComponent } from '../../../list-mentor/list-mentor-form/list-mentor-form.component';
 
 @Component({
@@ -31,6 +32,7 @@ export class LandingHackathonDetailsComponent implements OnInit {
   isAlreadyMentor: boolean = false;
   existingMentorListing: any = null;
   dialogRef: DynamicDialogRef | undefined;
+  prizeCount: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -41,7 +43,8 @@ export class LandingHackathonDetailsComponent implements OnInit {
     private storageService: StorageService,
     private dialogService: DialogService,
     private listMentorService: ListMentorService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private prizeService: PrizeService // Add the prize service
   ) {}
 
   ngOnInit() {
@@ -52,6 +55,9 @@ export class LandingHackathonDetailsComponent implements OnInit {
       this.hackathonService.getHackathonById(hackathonId).subscribe((data: Hackathon) => {
         this.hackathon = data;
         this.checkMentorStatus();
+
+        // Fetch prizes count for this hackathon
+        this.getPrizesCount(Number(hackathonId));
 
       });
     }
@@ -143,6 +149,20 @@ export class LandingHackathonDetailsComponent implements OnInit {
   addPrize(hackathonId: number | undefined) {
     if (!hackathonId) return;
     this.router.navigate(['/prize-form', hackathonId]);
+  }
+
+  // Add a new method to get prizes count
+  getPrizesCount(hackathonId: number): void {
+    // You need to modify the prize service to accept a hackathon ID parameter
+    this.prizeService.getPrizesByHackathonId(hackathonId).subscribe({
+      next: (prizes) => {
+        this.prizeCount = prizes.length;
+      },
+      error: (err) => {
+        console.error('Error fetching prizes:', err);
+        this.prizeCount = 0; // Default to 0 if there's an error
+      }
+    });
   }
 
   applyAsMentor() {
