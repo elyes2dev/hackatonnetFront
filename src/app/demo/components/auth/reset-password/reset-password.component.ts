@@ -7,7 +7,7 @@ import { AuthService } from '../../../services/auth.service';
   styleUrls: ['./reset-password.component.scss']
 })
 export class ResetPasswordComponent {
-  email: string = '';
+  email = '';
 
   constructor(private authService: AuthService) {}
 

@@ -12,17 +12,15 @@ import { ResourceService } from 'src/app/demo/services/resources.service';
   styleUrls: ['./resource-list.component.scss']
 })
 export class ResourceListComponent implements OnInit {
-  workshopId: number = 0;
+  workshopId = 0;
   resources: Resources[] = [];
   loading = true;
   error: string | null = null;
-  filePreviews: { 
-    [resourceId: number]: {
+  filePreviews: Record<number, {
       images: { id: number, url: SafeUrl }[],
       pdfs: ImageModel[],
       otherFiles: ImageModel[]
-    }
-  } = {};
+    }> = {};
 
   constructor(
     private route: ActivatedRoute,

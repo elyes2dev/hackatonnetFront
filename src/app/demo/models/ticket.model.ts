@@ -8,5 +8,5 @@ export interface Ticket {
   createdAt: Date;
   updatedAt: Date;
   user: User;
-  classification: String
+  classification: string
 }

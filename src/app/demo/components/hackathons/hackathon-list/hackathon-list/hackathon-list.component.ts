@@ -14,9 +14,9 @@ import { Router } from '@angular/router';
 export class HackathonListComponent implements OnInit {
   hackathons: HackathonWithCategories[] = [];  
   selectedHackathon: HackathonWithCategories | null = null;  
-  visibleSidebar2: boolean = false;  
+  visibleSidebar2 = false;  
   filteredHackathons: HackathonWithCategories[] = [];
-  searchTerm: string = '';
+  searchTerm = '';
   selectedEventType: string | null = null;
   
   // New properties for category filtering

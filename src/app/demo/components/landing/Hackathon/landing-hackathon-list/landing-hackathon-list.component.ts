@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HackathonService } from 'src/app/demo/services/hackathon/hackathon.service';
 import { Hackathon } from 'src/app/demo/models/hackathon';
 import { Router } from '@angular/router';
@@ -12,10 +12,10 @@ import {NavbarComponent} from "../../navbar/navbar.component";
   templateUrl: './landing-hackathon-list.component.html',
   styleUrls: ['./landing-hackathon-list.component.scss']
 })
-export class LandingHackathonListComponent {
+export class LandingHackathonListComponent implements OnInit {
   hackathons: Hackathon[] = [];
   filteredHackathons: Hackathon[] = [];
-  searchTerm: string = '';
+  searchTerm = '';
   selectedEventType: string | null = null;
 
   user!: User;
@@ -58,7 +58,7 @@ export class LandingHackathonListComponent {
     this.router.navigate(['/landing']);  // Redirect to '/landings'
   }
   getBadgeIcon(): string {
-    const badgeIcons: { [key: string]: string } = {
+    const badgeIcons: Record<string, string> = {
       JUNIOR_COACH: 'assets/demo/images/avatar/JUNIOR_COACH.png',
       ASSISTANT_COACH: 'assets/demo/images/avatar/ASSISTANT_COACH.png',
       SENIOR_COACH: 'assets/demo/images/avatar/SENIOR_COACH.png',

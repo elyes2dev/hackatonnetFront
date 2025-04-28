@@ -29,7 +29,7 @@ export class TeamDetailsComponent implements OnInit {
   editTeamForm: FormGroup;
   inviteForm: FormGroup;
   addUserForm: FormGroup; // New form for adding users by name
-  teamCode: string = '';
+  teamCode = '';
   showCode = false;
   codeExpiration: Date | null = null;
   availableUsers: any[] = []; // List of users that can be added to the team

@@ -8,7 +8,7 @@ import { Hackathon } from 'src/app/demo/models/hackathon';
   templateUrl: './hackathon-categorization-analytics.component.html',
   styleUrls: ['./hackathon-categorization-analytics.component.scss']
 })
-export class HackathonCategorizationAnalyticsComponent {
+export class HackathonCategorizationAnalyticsComponent implements OnInit {
   hackathons: Hackathon[] = [];
   
   // Chart data

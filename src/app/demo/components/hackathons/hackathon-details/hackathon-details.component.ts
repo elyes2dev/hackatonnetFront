@@ -16,10 +16,10 @@ import { StorageService } from 'src/app/demo/services/storage.service'; // Impor
 export class HackathonDetailsComponent implements OnInit {
   @ViewChild(PostListComponent) postListComponent!: PostListComponent;
   hackathon: Hackathon | null = null;
-  display: boolean = false;
-  displayPostForm: boolean = false;
+  display = false;
+  displayPostForm = false;
   currentUserId: number | null = null; // Store current user ID
-  isCurrentUserCreator: boolean = false; // Track if current user is the creator
+  isCurrentUserCreator = false; // Track if current user is the creator
 
   constructor(
     private route: ActivatedRoute,

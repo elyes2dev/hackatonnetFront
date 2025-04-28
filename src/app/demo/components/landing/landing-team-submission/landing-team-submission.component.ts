@@ -9,7 +9,7 @@ import { TeamSubmission } from '../../../api/team-submission';
 })
 export class LandingTeamSubmissionComponent implements OnInit {
   submissions: TeamSubmission[] = [];
-  loading: boolean = false;
+  loading = false;
   error: string | null = null;
   selectedSubmission: TeamSubmission | null = null;
 

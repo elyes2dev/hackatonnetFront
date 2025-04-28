@@ -36,6 +36,7 @@ export class TeamChatHubComponent implements OnInit, OnDestroy {
     userTeams: Team[] = [];
     selectedTeam: Team | null = null;
     teamMemberId: number | null = null;
+    showArchived: boolean = false;
     
     // Chat state
     discussions: { [key: number]: TeamDiscussion[] } = {};
@@ -47,6 +48,9 @@ export class TeamChatHubComponent implements OnInit, OnDestroy {
     loadingTeams: boolean = false;
     loadingMessages: boolean = false;
     sendingMessage: boolean = false;
+    
+    // Tracking read messages
+    readMessages: Set<number> = new Set();
     
     // WebSocket
     public wsSubject: WebSocketSubject<any> | null = null;
@@ -60,7 +64,7 @@ export class TeamChatHubComponent implements OnInit, OnDestroy {
     
     constructor(
         private route: ActivatedRoute,
-        private router: Router,
+        public router: Router,
         private teamService: TeamService,
         private teamDiscussionService: TeamDiscussionService,
         private messageService: MessageService,
@@ -69,9 +73,29 @@ export class TeamChatHubComponent implements OnInit, OnDestroy {
         private cdr: ChangeDetectorRef
     ) {}
     
-    // Navigation method for the Join Hackathon button
+    // Navigation methods
     navigateToHackathons(): void {
-        this.router.navigate(['/landing-hackathons']);
+        this.router.navigate(['/landing-hackathons'], {fragment: 'hackathons'});
+    }
+    
+    navigateToLanding(): void {
+        this.router.navigate(['/landing']);
+    }
+    
+    navigateToHackathon(hackathonId?: number): void {
+        if (hackathonId) {
+            this.router.navigate(['/landing-hackathon', hackathonId]);
+        } else {
+            this.router.navigate(['/landing-hackathons']);
+        }
+    }
+    
+    navigateTo(path: string, fragment?: string): void {
+        if (fragment) {
+            this.router.navigate([path], {fragment: fragment});
+        } else {
+            this.router.navigate([path]);
+        }
     }
 
     ngOnInit(): void {
@@ -340,7 +364,17 @@ export class TeamChatHubComponent implements OnInit, OnDestroy {
     scrollToBottom(): void {
         setTimeout(() => {
             if (this.chatContainer) {
+                // Scroll to the bottom of the chat container
                 this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+                
+                // Mark visible messages as read
+                if (this.selectedTeam && this.discussions[this.selectedTeam.id]) {
+                    this.discussions[this.selectedTeam.id].forEach(discussion => {
+                        if (discussion.id) {
+                            this.readMessages.add(discussion.id);
+                        }
+                    });
+                }
             }
         }, 100);
     }
@@ -353,6 +387,26 @@ export class TeamChatHubComponent implements OnInit, OnDestroy {
     // Check if a message is from the current user
     isCurrentUserMessage(teamMemberId?: number): boolean {
         return teamMemberId === this.teamMemberId;
+    }
+    
+    // Check if a team is archived (hackathon has ended)
+    isTeamArchived(team?: Team | null): boolean {
+        if (!team || !team.hackathon) return false;
+        
+        const endDate = new Date(team.hackathon.endDate || '');
+        const now = new Date();
+        
+        return endDate < now;
+    }
+    
+    // Get filtered teams based on archived status
+    getFilteredTeams(): Team[] {
+        return this.userTeams.filter(team => this.isTeamArchived(team) === this.showArchived);
+    }
+    
+    // Check if a message has been read
+    isMessageRead(discussion: TeamDiscussion): boolean {
+        return discussion.id ? this.readMessages.has(discussion.id) : true;
     }
     
     // Check if a message is consecutive (from the same sender within a short time)

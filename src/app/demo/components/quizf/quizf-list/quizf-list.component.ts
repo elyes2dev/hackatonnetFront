@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizService } from 'src/app/demo/services/quiz.service';
 import { UserQuizScoreService } from 'src/app/demo/services/user-quiz-score.service';
@@ -20,13 +20,13 @@ import { AiQuizDialogComponent } from '../../quiz/quiz-list/ai-quiz-dialog/ai-qu
   styleUrls: ['./quizf-list.component.scss'],
   providers: [MessageService, DialogService]
 })
-export class QuizfListComponent implements OnInit {
+export class QuizfListComponent implements OnInit, OnDestroy {
   quizzes: Quiz[] = [];
   workshopId!: number;
-  loading: boolean = true;
-  error: string = '';
+  loading = true;
+  error = '';
   currentUserId: string | null = null; // Store user ID here
-  quizStatusMap: { [key: number]: boolean } = {};
+  quizStatusMap: Record<number, boolean> = {};
   showResultsDialog = false;
   currentQuizResults: any = {
     score: 0,
@@ -34,10 +34,10 @@ export class QuizfListComponent implements OnInit {
     correctAnswers: 0,
     questions: []
   };
-  hasQuiz: boolean = false; // Track if the user has a quiz
-  userIsOwner: boolean = false; // To check if the current user is the owner
+  hasQuiz = false; // Track if the user has a quiz
+  userIsOwner = false; // To check if the current user is the owner
 
-  userScoresMap: { [quizId: number]: UserQuizScore } = {};
+  userScoresMap: Record<number, UserQuizScore> = {};
 
   showAiQuizDialog = false;
   private dialogRef: DynamicDialogRef | undefined;

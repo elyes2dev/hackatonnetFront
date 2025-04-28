@@ -7,6 +7,6 @@ export interface TeamMember {
   team: Team;
   user: User;
   joinedAt?: string; // ISO string date
-  role: 'LEADER' | 'MEMBER' | 'MENTOR'; // enum values
+  role: 'LEADER' | 'MEMBER' | 'MENTOR' | 'GEMINI'; // enum values
   teamDiscussions?: TeamDiscussion[];
 }

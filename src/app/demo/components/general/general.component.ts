@@ -7,7 +7,7 @@ import { Hackathon } from 'src/app/demo/models/hackathon';
   templateUrl: './general.component.html',
   styleUrls: ['./general.component.scss']
 })
-export class GeneralComponent {
+export class GeneralComponent implements OnInit {
   hackathons: Hackathon[] = [];
   
   // Pie chart data and options
@@ -23,8 +23,8 @@ export class GeneralComponent {
   lineOptions: any;
   
   // Store hackathon counts
-  onlineCount: number = 0;
-  onsiteCount: number = 0;
+  onlineCount = 0;
+  onsiteCount = 0;
   
   // Monthly data
   monthlyData: number[] = Array(12).fill(0);

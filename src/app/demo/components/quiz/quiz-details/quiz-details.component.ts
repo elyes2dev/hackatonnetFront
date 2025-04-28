@@ -10,8 +10,8 @@ import { QuizService } from 'src/app/demo/services/quiz.service';
 })
 export class QuizDetailsComponent implements OnInit {
   quiz: Quiz | null = null;
-  loading: boolean = true;
-  error: string = '';
+  loading = true;
+  error = '';
   workshopId: string | null = null;
 
   constructor(

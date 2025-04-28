@@ -28,18 +28,18 @@ import { TeamFrontofficeComponent } from '../../../team-frontoffice/team-frontof
 export class LandingHackathonDetailsComponent implements OnInit {
   @ViewChild(PostListComponent) postListComponent!: PostListComponent;
   hackathon: Hackathon | null = null;
-  display: boolean = false;
-  displayPostForm: boolean = false;
+  display = false;
+  displayPostForm = false;
   
   user!: User;
-  isSponsor: boolean = false;
-  isAlreadyMentor: boolean = false;
+  isSponsor = false;
+  isAlreadyMentor = false;
   existingMentorListing: any = null;
   dialogRef: DynamicDialogRef | undefined;
   userTeam: Team | null = null;
   private destroy$ = new Subject<void>();
-  loading: boolean = false;
-  loadingDialog: boolean = false;
+  loading = false;
+  loadingDialog = false;
   private ref: DynamicDialogRef | null = null;
 
   constructor(
@@ -155,19 +155,20 @@ participate() {
     this.ref = this.dialogService.open(TeamFrontofficeComponent, {
         header: this.userTeam ? `Team Chat - ${this.userTeam.teamName}` : 'Participate in Hackathon',
         style: {
-            width: this.userTeam ? '500px' : '85vw',
-            maxWidth: this.userTeam ? '500px' : '1100px',
+            width: this.userTeam ? '400px' : '60vw',
+            maxWidth: this.userTeam ? '400px' : '700px',
             color: '#6200EA',
             'font-family': 'Poppins, Arial, sans-serif',
-            'font-size': '1.15rem',
+            'font-size': '0.95rem',
             'font-weight': '600',
             'letter-spacing': '0.5px',
-            'min-height': this.userTeam ? '600px' : '85vh',
+            'height': this.userTeam ? '500px' : 'auto',
+            'max-height': this.userTeam ? '500px' : '600px',
             'background': 'linear-gradient(135deg, #ffffff 0%, #f5f0ff 100%)',
-            'box-shadow': '0 10px 50px rgba(98, 0, 234, 0.2), 0 6px 20px rgba(98, 0, 234, 0.1)',
-            'border-radius': '20px',
+            'box-shadow': '0 8px 30px rgba(98, 0, 234, 0.15), 0 4px 15px rgba(98, 0, 234, 0.1)',
+            'border-radius': '16px',
             'border': '1px solid #d0b3ff',
-            'overflow': 'auto',
+            'overflow': 'hidden',
             'padding': '0',
             'position': 'relative',
             'top': '50%',
@@ -280,7 +281,7 @@ public get dialogHeader(): string {
   }
   
   getBadgeIcon(): string {
-    const badgeIcons: { [key: string]: string } = {
+    const badgeIcons: Record<string, string> = {
       JUNIOR_COACH: 'assets/demo/images/avatar/JUNIOR_COACH.png',
       ASSISTANT_COACH: 'assets/demo/images/avatar/ASSISTANT_COACH.png',
       SENIOR_COACH: 'assets/demo/images/avatar/SENIOR_COACH.png',

@@ -3,11 +3,7 @@ import { Injectable } from '@angular/core';
 import { Hackathon } from 'src/app/demo/models/hackathon';
 import { HackathonWithCategories, CategoryType } from 'src/app/demo/models/hackathon-category';
 
-interface CategoryDistribution {
-  [key: string]: {
-    [category: string]: number;
-  };
-}
+type CategoryDistribution = Record<string, Record<string, number>>;
 
 @Injectable({
   providedIn: 'root'

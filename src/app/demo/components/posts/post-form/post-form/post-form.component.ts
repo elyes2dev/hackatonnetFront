@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { PostService } from 'src/app/demo/services/post/post.service';
@@ -13,9 +13,9 @@ import { Post } from 'src/app/demo/models/post';
   styleUrls: ['./post-form.component.scss'],
   providers: [MessageService]
 })
-export class PostFormComponent implements OnInit {
+export class PostFormComponent implements OnInit, OnDestroy {
   @Input() hackathon: Hackathon | null = null;
-  @Input() isEditMode: boolean = false;
+  @Input() isEditMode = false;
   @Input() postToEdit: Post | null = null;
   @Output() postCreated = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
@@ -23,7 +23,7 @@ export class PostFormComponent implements OnInit {
   postForm: FormGroup;
   selectedFiles: File[] = [];
   currentUser: User | null = null;
-  loading: boolean = false;
+  loading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -85,7 +85,7 @@ export class PostFormComponent implements OnInit {
   }
 
  // Add this to your component properties
-previewUrls: {[key: string]: string} = {};
+previewUrls: Record<string, string> = {};
 
 // Update the onFileSelect method
 onFileSelect(event: any) {

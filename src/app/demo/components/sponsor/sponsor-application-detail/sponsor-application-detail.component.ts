@@ -11,13 +11,13 @@ import { ConfirmationService, MessageService } from 'primeng/api';
   styleUrls: ['./sponsor-application-detail.component.scss']
 })
 export class SponsorApplicationDetailComponent implements OnInit {
-  applicationId: number = 0;
+  applicationId = 0;
   application: SponsorApplication | null = null;
   loading = false;
   isProcessing = false;
   
   // Properties for verification results
-  showVerificationResults: boolean = false;
+  showVerificationResults = false;
   verificationResults: any = null;
 
   constructor(

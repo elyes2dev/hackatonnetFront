@@ -22,8 +22,8 @@ export class SupportTicketComponent implements OnInit {
   filteredTickets: Ticket[] = [];
   ticketForm!: FormGroup;
   
-  isUpdating: boolean = false;
-  loading: boolean = false;
+  isUpdating = false;
+  loading = false;
 
   
   
@@ -43,8 +43,8 @@ export class SupportTicketComponent implements OnInit {
     { label: 'Closed', value: 'Closed' }
   ];
   
-  selectedFilter: string = 'All';
-  searchQuery: string = '';
+  selectedFilter = 'All';
+  searchQuery = '';
 
   constructor(
     private fb: FormBuilder,

@@ -13,7 +13,7 @@ export class TicketAIService {
   ) { }
 
   geTicketDesc(ticket: Ticket){
-     let obj = {
+     const obj = {
       "text" : ticket.description,
      }
       return this.http.post("http://localhost:9100/api/tickets/analyze", obj);

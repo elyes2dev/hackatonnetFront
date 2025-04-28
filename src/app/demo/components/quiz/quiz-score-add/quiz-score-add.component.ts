@@ -16,8 +16,8 @@ export class QuizScoreAddComponent implements OnInit {
   workshopId!: number;
   quiz!: Quiz;
   currentUser: any; // Replace with your actual User type
-  userAnswers: { [questionId: number]: number } = {}; // Store the user's answers
-  score: number = 0;
+  userAnswers: Record<number, number> = {}; // Store the user's answers
+  score = 0;
   userId: string | null = null; // Store user ID here
 
   constructor(

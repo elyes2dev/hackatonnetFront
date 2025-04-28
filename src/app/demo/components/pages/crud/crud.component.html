@@ -86,7 +86,7 @@
                 <img [src]="'assets/demo/images/product/' + product.image" [alt]="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" *ngIf="product.image">
                 <div class="field">
                     <label for="name">Name</label>
-                    <input type="text" pInputText id="name" [(ngModel)]="product.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !product.name}"/>
+                    <input type="text" pInputText id="name" [(ngModel)]="product.name" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !product.name}"/>
                     <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name">Name is required.</small>
                 </div>
                 <div class="field">

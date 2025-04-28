@@ -13,15 +13,15 @@ export class LandingProjectEvaluationComponent implements OnInit {
   stripePromise = loadStripe('pk_test_51R9uQOCRTCCMntpfqwwnlonVcpy4gMnwyZamhJOGx8nhBfWWCQLlAw0ejgAVgrsEn4DnRNuyahhniFbXRYGy6TTq00Y20fwrAI');
   evaluations: ProjectEvaluation[] = [];
   topRatedEvaluations: ProjectEvaluation[] = [];
-  loading: boolean = false;
+  loading = false;
   error: string | null = null;
   selectedEvaluation: ProjectEvaluation | null = null;
-  minScore: number = 90;
+  minScore = 90;
   clientSecret: string | null = null;
   cardElement: any;
   donationAmount: number | null = null;
   donationEvaluationId: number | null = null;
-  donationSuccess: boolean = false;
+  donationSuccess = false;
 
   newEvaluation: ProjectEvaluation = {
     score: 0,

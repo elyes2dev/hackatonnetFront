@@ -16,15 +16,9 @@ export interface Hackathon {
   // Add more fields as needed
 }
 
-export interface SponsorApplication {
-  // Define structure if known, or leave as any for now
-  [key: string]: any;
-}
+export type SponsorApplication = Record<string, any>;
 
-export interface SponsorReward {
-  // Define structure if known, or leave as any for now
-  [key: string]: any;
-}
+export type SponsorReward = Record<string, any>;
 
 export interface User {
   id?: number;
