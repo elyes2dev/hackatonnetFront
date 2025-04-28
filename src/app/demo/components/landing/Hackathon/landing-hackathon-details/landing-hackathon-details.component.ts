@@ -18,12 +18,24 @@ import { TeamService } from 'src/app/demo/services/team.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TeamFrontofficeComponent } from '../../../team-frontoffice/team-frontoffice.component';
 import { ListMentor } from 'src/app/demo/models/list-mentor.model';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-landing-hackathon-details',
   templateUrl: './landing-hackathon-details.component.html',
   styleUrls: ['./landing-hackathon-details.component.scss'],
-  providers: [DialogService, MessageService]
+  providers: [DialogService, MessageService],
+  animations: [
+    trigger('sectionAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(20px)' }))
+      ])
+    ])
+  ],
 
 })
 export class LandingHackathonDetailsComponent implements OnInit {
@@ -44,6 +56,17 @@ export class LandingHackathonDetailsComponent implements OnInit {
   private ref: DynamicDialogRef | null = null;
   numberOfMentors: number = 0;
   mentorsList: ListMentor[] = [];
+  // Add to your component class
+  activeSection: 'teams' | 'prizes' | 'mentors' | null = 'teams';
+
+  // Add these methods to toggle sections
+  showSection(section: 'teams' | 'prizes' | 'mentors'): void {
+    this.activeSection = this.activeSection === section ? null : section;
+  }
+
+  isActiveSection(section: 'teams' | 'prizes' | 'mentors'): boolean {
+    return this.activeSection === section;
+  }
 
 
   constructor(
