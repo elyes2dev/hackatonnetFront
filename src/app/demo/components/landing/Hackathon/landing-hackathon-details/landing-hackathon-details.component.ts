@@ -13,6 +13,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ListMentorService } from 'src/app/demo/services/list-mentor.service';
 import { PrizeService } from 'src/app/demo/services/prize.service';
 import { ListMentorFormComponent } from '../../../list-mentor/list-mentor-form/list-mentor-form.component';
+import { Prize, PrizeCategory, PrizeType } from 'src/app/demo/models/prize';
 
 @Component({
   selector: 'app-landing-hackathon-details',
@@ -32,6 +33,8 @@ export class LandingHackathonDetailsComponent implements OnInit {
   isAlreadyMentor: boolean = false;
   existingMentorListing: any = null;
   dialogRef: DynamicDialogRef | undefined;
+  // Add a property to store prizes
+  prizes: Prize[] = [];
   prizeCount: number = 0;
 
   constructor(
@@ -58,6 +61,8 @@ export class LandingHackathonDetailsComponent implements OnInit {
 
         // Fetch prizes count for this hackathon
         this.getPrizesCount(Number(hackathonId));
+        // Fetch prizes for this hackathon
+        this.loadPrizes(Number(hackathonId));
 
       });
     }
@@ -163,6 +168,36 @@ export class LandingHackathonDetailsComponent implements OnInit {
         this.prizeCount = 0; // Default to 0 if there's an error
       }
     });
+  }
+
+  // Add a method to load prizes
+  loadPrizes(hackathonId: number): void {
+    this.prizeService.getPrizesByHackathonId(hackathonId).subscribe({
+      next: (prizes) => {
+        this.prizes = prizes;
+        this.prizeCount = prizes.length;
+      },
+      error: (err) => {
+        console.error('Error fetching prizes:', err);
+        this.prizes = [];
+        this.prizeCount = 0;
+      }
+    });
+  }
+
+  // Helper method to convert prize category enum to readable text
+  getPrizeCategoryName(category: PrizeCategory): string {
+    switch(category) {
+      case PrizeCategory.BEST_INNOVATION:
+        return 'Best Innovation';
+      case PrizeCategory.BEST_DESIGN:
+        return 'Best Design';
+      case PrizeCategory.BEST_AI_PROJECT:
+        return 'Best AI Project';
+      default:
+        // Force TypeScript to treat it as a string
+        return String(category).replace('_', ' ');
+    }
   }
 
   applyAsMentor() {
