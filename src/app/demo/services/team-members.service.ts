@@ -32,12 +32,10 @@ export class TeamMembersService {
     );
   }
 
-  // Add a team membe
-
-  addTeamMember(teamId: number, userId: number): Observable<any> {
-    // Change to use an existing endpoint like join team
-    return this.http.post(`${this.apiUrl}/join/${userId}/${teamId}`, {}).pipe(
-      tap(response => console.log('Added team member:', response)),
+  // Add a team member
+  addTeamMember(teamMember: TeamMember): Observable<TeamMember> {
+    return this.http.post<TeamMember>(`${this.apiUrl}/add`, teamMember).pipe(
+      tap(member => console.log('Added team member:', member)),
       catchError(this.handleError)
     );
   }
@@ -129,7 +127,4 @@ export class TeamMembersService {
       })
     );
   }
-
-
-
 }

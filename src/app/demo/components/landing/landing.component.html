@@ -96,6 +96,13 @@
                   </li>
 
                     <li>
+                      <a [routerLink]="['/ticket']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+                         (click)="userMenuVisible = false">
+                          <i class="pi pi-user mr-2"></i>
+                          <span>Support Ticket</span>
+                      </a>
+                  </li>
+                    <li>
                         <a (click)="logout(); userMenuVisible = false" 
                            class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
                             <i class="pi pi-sign-out mr-2"></i>

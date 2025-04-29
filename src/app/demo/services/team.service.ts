@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
 import { Team } from '../models/team';
 import { StorageService } from './storage.service';
 import { User } from '../models/user.model';
+import { catchError, tap, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -209,13 +209,7 @@ export class TeamService {
     );
   }
 
-  addTeamMember(teamId: number, userId: number): Observable<any> {
-    // Use the team-members endpoint structure instead
-    return this.http.post(`http://localhost:9100/api/team-members/add-to-team/${teamId}/${userId}`, {}).pipe(
-      tap(response => console.log('Added team member:', response)),
-      catchError(this.handleError)
-    );
-  }
+
 
   removeTeamMember(teamId: number, memberId: number): Observable<any> {
     // Use the team-members service endpoint structure
@@ -256,5 +250,24 @@ export class TeamService {
     return this.http.post<any>(`http://localhost:9100/api/mentor-recommendations/team/${teamId}/assign`, {
       mentorId: mentorId
     });
+  }
+
+
+  addTeamMember(teamId: number, userId: number): Observable<any> {
+    // First get the team to retrieve its join code
+    return this.getTeamById(teamId).pipe(
+      switchMap(team => {
+        if (!team.teamCode) {
+          return throwError(() => new Error('Team code not available'));
+        }
+        
+        // Then use the join endpoint with the team code
+        return this.http.post<Team>(`${this.apiUrl}/join/${team.teamCode}/${userId}`, {}).pipe(
+          tap(response => console.log('Added team member:', response)),
+          catchError(this.handleError)
+        );
+      }),
+      catchError(this.handleError)
+    );
   }
 }

@@ -43,10 +43,45 @@
             <i class="pi pi-calendar"></i>
             <span>Calendar</span>
         </button>
-        <button class="p-link layout-topbar-button">
-            <i class="pi pi-user"></i>
-            <span>Profile</span>
-        </button>
+        <!-- User account section with dropdown for authenticated users -->
+        <div *ngIf="isAuthenticated" class="flex align-items-center">
+            <div class="user-dropdown flex align-items-center relative">
+               
+                <button 
+                    pButton 
+                    pRipple 
+                    type="button" 
+                    icon="pi pi-user" 
+                    class="p-button-rounded p-button-text p-button-plain badge-icon"
+                    (click)="userMenuVisible = !userMenuVisible">
+                </button>
+                <!-- Dropdown menu with higher z-index -->
+<div *ngIf="userMenuVisible" class="dropdown-menu absolute right-0 top-100 shadow-2 bg-white border-round-md w-12rem z-5 py-2" [ngClass]="{'visible': userMenuVisible}" style="margin-top: 0.5rem; z-index: 1000;">
+    <ul class="list-none p-0 m-0">
+        <li>
+            <a [routerLink]="['/profile']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+               (click)="userMenuVisible = false">
+                <i class="pi pi-user mr-2"></i>
+                <span>Profile</span>
+            </a>
+        </li>
+        <!-- Add My prizes option only for sponsors -->
+        <li *ngIf="isSponsor">
+            <a [routerLink]="['/sponsor-prizes']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+               (click)="userMenuVisible = false">
+               <i class="pi pi-tag mr-2"></i>
+                <span>My prizes</span>
+            </a>
+        </li>
+        <li>
+            <a (click)="logout(); userMenuVisible = false" 
+               class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
+                <i class="pi pi-sign-out mr-2"></i>
+                <span>Logout</span>
+            </a>
+        </li>
+    </ul>
+</div>
         <button class="p-link layout-topbar-button" [routerLink]="'/documentation'">
             <i class="pi pi-cog"></i>
             <span>Settings</span>

@@ -5,6 +5,9 @@ import { User, Role, Skill } from '../../models/user.model';
 import { RoleService } from '../../services/role.service';
 import { SkillService } from '../../services/skill.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
+import { finalize } from 'rxjs/operators';
+import { FileUploadService } from '../../services/file-upload.service';
 
 @Component({
   selector: 'app-user',
@@ -26,8 +29,16 @@ export class UserComponent implements OnInit {
     private skillService: SkillService,
     private formBuilder: FormBuilder,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private fileUploadService: FileUploadService
   ) {}
+
+  errorMessage: string | null = null;
+  selectedProfilePicture: File | null = null;
+  profilePicturePreview: string | null = null;
+  isSubmitting = false;
+  uploadProgress = 0;
+  token: any;
 
   ngOnInit() {
     this.initForm();
@@ -108,13 +119,20 @@ export class UserComponent implements OnInit {
       return;
     }
 
-    const userData = this.userForm.value;
+    this.isSubmitting = true;
     this.loading = true;
 
-    if (this.selectedUser) {
-      this.updateUser(userData);
+    if (this.selectedProfilePicture) {
+      // Upload the profile picture first, then create/update user
+      this.uploadProfilePicture();
     } else {
-      this.createUser(userData);
+      // No new profile picture, proceed with user creation/update
+      const userData = this.userForm.value;
+      if (this.selectedUser) {
+        this.updateUser(userData);
+      } else {
+        this.createUser(userData);
+      }
     }
   }
 
@@ -125,10 +143,12 @@ export class UserComponent implements OnInit {
         this.filteredUsers = [...this.filteredUsers, user];
         this.resetForm();
         this.loading = false;
+        this.isSubmitting = false;
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'User created successfully' });
       },
       error: (error) => {
         this.loading = false;
+        this.isSubmitting = false;
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create user' });
       }
     });
@@ -145,10 +165,12 @@ export class UserComponent implements OnInit {
           }
           this.resetForm();
           this.loading = false;
+          this.isSubmitting = false;
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'User updated successfully' });
         },
         error: (error) => {
           this.loading = false;
+          this.isSubmitting = false;
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update user' });
         }
       });
@@ -169,6 +191,13 @@ export class UserComponent implements OnInit {
       skills: user.skills || [],
       roles: user.roles || []
     });
+
+    // Set profile picture preview if available
+    if (user.picture) {
+      this.profilePicturePreview = user.picture;
+    } else {
+      this.profilePicturePreview = null;
+    }
     
     // Remove password validation when editing
     this.updateFormValidation();
@@ -181,6 +210,8 @@ export class UserComponent implements OnInit {
 
   resetForm() {
     this.userForm.reset();
+    this.selectedProfilePicture = null;
+    this.profilePicturePreview = null;
     this.updateFormValidation();
   }
 
@@ -232,5 +263,111 @@ export class UserComponent implements OnInit {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.userForm.get(fieldName);
     return field ? field.invalid && (field.dirty || field.touched) : false;
+  }
+
+  onProfilePictureSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!this.isValidImageType(file)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Invalid File',
+          detail: 'Please select a valid image file (JPEG, PNG, GIF)'
+        });
+        return;
+      }
+      
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'File Too Large',
+          detail: 'Profile picture file size should not exceed 2MB'
+        });
+        return;
+      }
+      
+      this.selectedProfilePicture = file;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.profilePicturePreview = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  isValidImageType(file: File): boolean {
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    return validTypes.includes(file.type);
+  }
+
+  removeProfilePicture(): void {
+    this.selectedProfilePicture = null;
+    this.profilePicturePreview = null;
+    this.userForm.patchValue({ picture: '' });
+  }
+
+  uploadProfilePicture(): void {
+    if (!this.selectedProfilePicture) {
+      // No picture to upload, proceed with the rest of the form submission
+      const userData = this.userForm.value;
+      if (this.selectedUser) {
+        this.updateUser(userData);
+      } else {
+        this.createUser(userData);
+      }
+      return;
+    }
+
+    this.fileUploadService.uploadFile(this.selectedProfilePicture, 'logo')
+      .pipe(
+        finalize(() => {
+          // Reset progress when complete regardless of outcome
+          this.uploadProgress = 0;
+        })
+      )
+      .subscribe({
+        next: (event: HttpEvent<any>) => {
+          // Track upload progress
+          if (event.type === HttpEventType.UploadProgress && event.total) {
+            this.uploadProgress = Math.round(100 * event.loaded / event.total);
+          }
+          
+          // Handle the response
+          if (event instanceof HttpResponse) {
+            if (event.body && event.body.filePath) {
+              // Use the file path returned from the server
+              const userData = this.userForm.value;
+              userData.picture = this.fileUploadService.getFileUrl(event.body.filePath);
+              
+              // Now proceed with user creation/update
+              if (this.selectedUser) {
+                this.updateUser(userData);
+              } else {
+                this.createUser(userData);
+              }
+            } else {
+              this.handleUploadError('Invalid response from server');
+            }
+          }
+        },
+        error: (error) => {
+          this.handleUploadError('Failed to upload profile picture');
+          console.error('Error uploading file:', error);
+        }
+      });
+  }
+
+  private handleUploadError(message: string): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Upload Failed',
+      detail: message
+    });
+    this.isSubmitting = false;
+    this.loading = false;
   }
 }

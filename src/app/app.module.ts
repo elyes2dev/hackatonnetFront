@@ -144,6 +144,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { PasswordModule } from 'primeng/password';
 import { ChipModule } from 'primeng/chip';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { UserSupportTicketComponent } from './demo/components/ticket-front/user-support-ticket.component';
 
 
 
@@ -216,7 +217,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
         GeneralComponent,
 
         FooterComponent,
-        SponsorPrizesComponent
+        SponsorPrizesComponent,
+        UserSupportTicketComponent
 
         
 

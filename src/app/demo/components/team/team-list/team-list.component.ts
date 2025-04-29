@@ -92,9 +92,9 @@ export class TeamListComponent implements OnInit {
 
   confirmAddMember(): void {
     if (!this.selectedUser || !this.teamToEdit) return;
-
+    
     this.teamService.addTeamMember(this.teamToEdit.id, this.selectedUser.id).subscribe({
-      next: () => {
+      next: (team) => {
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
