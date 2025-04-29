@@ -101,4 +101,34 @@ export class LayoutService {
         this.configUpdate.next(this.config);
     }
 
+    private sidebarVisibleSource = new Subject<boolean>();
+    private sidebarVisible: boolean = true;
+
+    sidebarVisibleChange$ = this.sidebarVisibleSource.asObservable();
+
+    constructor() { }
+
+    toggleSidebar() {
+        this.sidebarVisible = !this.sidebarVisible;
+        this.sidebarVisibleSource.next(this.sidebarVisible);
+    }
+
+    isSidebarVisible(): boolean {
+        return this.sidebarVisible;
+    }
+
+    showSidebar() {
+        if (!this.sidebarVisible) {
+            this.sidebarVisible = true;
+            this.sidebarVisibleSource.next(true);
+        }
+    }
+
+    hideSidebar() {
+        if (this.sidebarVisible) {
+            this.sidebarVisible = false;
+            this.sidebarVisibleSource.next(false);
+        }
+    }
+
 }

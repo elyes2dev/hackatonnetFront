@@ -1,0 +1,50 @@
+// Larger menu items styling
+.layout-menu {
+    li {
+        a {
+            // Increase padding for larger hit area
+            padding: 1rem 1rem 1rem 1.5rem !important;
+            
+            // Larger text
+            .layout-menuitem-text {
+                font-size: 1rem !important;
+            }
+            
+            // Larger icons
+            .layout-menuitem-icon {
+                font-size: 1.25rem !important;
+                margin-right: 0.75rem !important;
+            }
+            
+            // Adjust submenu toggler icon
+            .layout-submenu-toggler {
+                font-size: 1rem !important;
+            }
+        }
+        
+        // Adjust root menu item headers
+        .layout-menuitem-root-text {
+            font-size: 1.1rem !important;
+            padding: 1rem 1rem 0.5rem 1.5rem !important;
+            font-weight: 600;
+        }
+    }
+    
+    // Increase space between menu sections
+    .menu-separator {
+        margin: 1rem 0 !important;
+    }
+}
+
+// Make sure submenu items are also enlarged
+::ng-deep {
+    .layout-menu {
+        ul {
+            li {
+                a {
+                    padding-left: 2.5rem !important;
+                }
+            }
+        }
+    }
+}

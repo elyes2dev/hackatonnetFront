@@ -81,6 +81,7 @@ import { SubmissionDetailsComponent } from './demo/components/landing/Hackathon/
         RouterModule.forRoot([
           { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
             {
+              
 
                 path: '', component: AppLayoutComponent,
                 children: [
