@@ -54,12 +54,14 @@
 <div class="hackathon-list-container">
   <div class="col-12 md:col-12">
     <div class="hackathon-grid">
-      <div class="hackathon-card" *ngFor="let hackathon of filteredHackathons">
-        <!-- Card Header with Logo -->
-        <div class="card-header">
-          <div class="logo-container">
-            <img [src]="hackathon.logo" alt="Hackathon Logo" class="card-logo">
-          </div>
+      <div class="hackathon-item" *ngFor="let hackathon of filteredHackathons">
+        <div class="hackathon-image-container">
+          <img [src]="hackathon.logo" alt="Hackathon Cover" class="hackathon-image">
+          <div class="hackathon-overlay"></div>
+          <span class="hackathon-type" [ngClass]="hackathon.isOnline ? 'online' : 'onsite'">
+            <i class="pi" [ngClass]="hackathon.isOnline ? 'pi-globe' : 'pi-building'"></i>
+            {{ hackathon.isOnline ? 'Online' : 'Onsite' }}
+          </span>
           <!-- Floating Action Buttons -->
           <div class="card-actions">
             <button class="action-btn edit-btn" (click)="showAddHackathonForm(hackathon); $event.stopPropagation()">
@@ -70,22 +72,25 @@
             </button>
           </div>
         </div>
-        
-        <!-- Card Content -->
-        <div class="card-content" [routerLink]="['/hackathon', hackathon.id]">
-          <h3 class="card-title">{{ hackathon.title }}</h3>
-          
-          <div class="card-meta">
-            <span class="meta-item location">
-              <i class="pi pi-map-marker"></i> {{ hackathon.location }}
+
+        <div class="hackathon-content" [routerLink]="['/hackathon', hackathon.id]">
+          <h3 class="hackathon-title">{{ hackathon.title }}</h3>
+
+          <div class="hackathon-meta">
+            <span class="meta-item">
+              <i class="pi pi-map-marker"></i>
+              {{ hackathon.location }}
             </span>
-            <span class="meta-item date">
-              <i class="pi pi-calendar"></i> {{ hackathon.startDate | date:'MMM d' }} - {{ hackathon.endDate | date:'MMM d' }}
+            <span class="meta-item">
+              <i class="pi pi-calendar"></i>
+              {{ hackathon.startDate | date:'MMM d' }} - {{ hackathon.endDate | date:'MMM d' }}
             </span>
           </div>
-          
-          <p class="card-description">{{ (hackathon.description) || 'No description provided' }}</p>
-          
+
+          <p class="hackathon-description">
+            {{ hackathon.description || 'No description provided' }}
+          </p>
+
           <!-- Category Tags -->
           <div class="category-tags">
             <!-- Theme Tags -->
@@ -103,14 +108,14 @@
               <i class="pi pi-code"></i> {{ tech }}
             </span>
           </div>
-          
-          <div class="card-footer">
-            <span class="event-type" [ngClass]="{'online': hackathon.isOnline, 'onsite': !hackathon.isOnline}">
-              <i class="pi" [ngClass]="hackathon.isOnline ? 'pi-globe' : 'pi-building'"></i>
-              {{ hackathon.isOnline ? 'Online' : 'Onsite' }}
-            </span>
+
+          <div class="hackathon-footer">
             <span class="participants">
-              <i class="pi pi-users"></i> {{ hackathon.maxMembers }} max
+              <i class="pi pi-users"></i>
+              {{ hackathon.maxMembers }} participants max
+            </span>
+            <span class="date-badge">
+              {{ getDaysUntilStart(hackathon.startDate) }}
             </span>
           </div>
         </div>
