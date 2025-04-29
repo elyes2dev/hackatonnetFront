@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HackathonService } from 'src/app/demo/services/hackathon/hackathon.service';
 import { Hackathon } from 'src/app/demo/models/hackathon';
@@ -27,6 +27,7 @@ import { TeamSubmissionService } from 'src/app/demo/service/team-submission.serv
 import { TeamSubmission } from 'src/app/demo/api/team-submission';
 import { loadStripe } from '@stripe/stripe-js';
 import { LandingProjectEvaluationComponent } from '../../landing-project-evaluation/landing-project-evaluation.component';
+import { AuthService } from 'src/app/demo/services/auth.service';
 
 @Component({
   selector: 'app-landing-hackathon-details',
@@ -66,6 +67,15 @@ export class LandingHackathonDetailsComponent implements OnInit {
   mentorsList: ListMentor[] = [];
   // Add to your component class
   activeSection: 'teams' | 'prizes' | 'mentors' | null = 'teams';
+
+
+  isMentor = false; 
+
+  userId: string | null = null;
+  isAuthenticated: boolean = this.authService.isAuthenticated();
+  isAdmin = false;
+  isStudent = false;
+  userMenuVisible = false; // Property to control dropdown visibility
 
   // Add these methods to toggle sections
   showSection(section: 'teams' | 'prizes' | 'mentors'): void {
@@ -140,14 +150,21 @@ export class LandingHackathonDetailsComponent implements OnInit {
     private teamService: TeamService,
     private prizeService: PrizeService ,// Add the prize service
 
+        private authService: AuthService,
+
 
 
     private teamSubmissionService: TeamSubmissionService,
     private http: HttpClient
   ) {}
 
+  username = '';
+  applicationsMenuVisible = false;
+
   ngOnInit(): void {
     // Get the 'id' parameter from the route
+    this.userMenuVisible = false;
+    this.applicationsMenuVisible = false;
     const hackathonId = this.route.snapshot.paramMap.get('id');
     if (hackathonId) {
       // Fetch the hackathon details based on the ID
@@ -204,7 +221,97 @@ export class LandingHackathonDetailsComponent implements OnInit {
         localStorage.removeItem(cacheKey);
     }
 }
+viewOrCreateMentorApplication(): void {
+  const userId = this.storageService.getLoggedInUserId();
+  if (this.isMentor) {
+    // Navigate to view their existing application
+    this.router.navigate(['/mentor-applications/user', userId]);
+  } else {
+    // Navigate to create a new application
+    this.router.navigate(['/mentor-applications/new']);
+  }}
   
+  logout()
+  {
+      this.authService.logout();
+      this.storageService.clearAll();
+      window.location.reload();
+      this.userMenuVisible = false;
+  }
+  
+
+
+  // Close user menu dropdown
+  closeUserMenu(): void {
+    this.userMenuVisible = false;
+  }
+  
+  // Close dropdown when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    // Check if the click is outside the dropdown area
+    const clickedElement = event.target as HTMLElement;
+    const dropdown = document.querySelector('.user-dropdown');
+    
+    if (dropdown && !dropdown.contains(clickedElement)) {
+      this.userMenuVisible = false;
+    }
+  }
+
+
+  
+ // Method to toggle applications dropdown
+toggleApplicationsMenu(event: Event) {
+  event.stopPropagation();
+  this.applicationsMenuVisible = !this.applicationsMenuVisible;
+  
+  // Close user menu if open
+  if (this.applicationsMenuVisible && this.userMenuVisible) {
+    this.userMenuVisible = false;
+  }
+}
+
+// Method to toggle user menu dropdown
+toggleUserMenu(event: Event) {
+  event.stopPropagation();
+  this.userMenuVisible = !this.userMenuVisible;
+  
+  // Close applications menu if open
+  if (this.userMenuVisible && this.applicationsMenuVisible) {
+    this.applicationsMenuVisible = false;
+  }
+}
+
+
+// Close both dropdowns when clicking outside
+@HostListener('document:click', ['$event'])
+handleDocumentClick(event: MouseEvent) {
+  // Get references to your dropdown elements
+  const userMenuButton = document.querySelector('.badge-icon');
+  const userDropdownMenu = document.querySelector('.user-dropdown-menu');
+  const applicationsMenuButton = document.querySelector('.applications-toggle');
+  const applicationsDropdown = document.querySelector('.applications-dropdown');
+  
+  // Close user menu if click is outside
+  if (userMenuButton && !userMenuButton.contains(event.target as Node) && 
+      userDropdownMenu && !userDropdownMenu.contains(event.target as Node) &&
+      this.userMenuVisible) {
+    this.userMenuVisible = false;
+  }
+  
+  // Close applications menu if click is outside
+  if (applicationsMenuButton && !applicationsMenuButton.contains(event.target as Node) && 
+      applicationsDropdown && !applicationsDropdown.contains(event.target as Node) &&
+      this.applicationsMenuVisible) {
+    this.applicationsMenuVisible = false;
+  }
+} 
+
+  navigateToTeamSubmission(): void {
+      this.router.navigate(['/team-submission']); // Navigation directe vers /team-submission
+  }
+
+
   private getCachedUserTeam(hackathonId: number): Team | null {
     const cacheKey = `user_team_${this.user?.id}_${hackathonId}`;
     const cachedData = localStorage.getItem(cacheKey);

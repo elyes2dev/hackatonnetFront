@@ -74,7 +74,7 @@ export class NavbarComponent implements OnInit {
       MASTER_MENTOR: 'assets/demo/images/avatar/MASTER_MENTOR.png'
     };
     return this.user ? badgeIcons[this.user.badge] || 'assets/icons/default_badge.png' : '';
-  }
+  } 
 
   viewOrCreateMentorApplication(): void {
     const userId = this.storageService.getLoggedInUserId();
