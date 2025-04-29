@@ -27,6 +27,7 @@ export class LandingComponent implements OnInit {
   workshops: Workshop[] = [];
   loadingWorkshops = false;
 
+
   constructor(
     private storageService: StorageService,
     public layoutService: LayoutService,
@@ -41,8 +42,12 @@ export class LandingComponent implements OnInit {
   }
 
   username = '';
+  applicationsMenuVisible = false;
+
 
   ngOnInit(): void {
+    this.userMenuVisible = false;
+    this.applicationsMenuVisible = false;
     const userId = this.storageService.getLoggedInUserId();
     console.log('User ID from storage:', this.authService.isAuthenticated());
     this.getUserRole;
@@ -58,6 +63,7 @@ export class LandingComponent implements OnInit {
     }
     this.loadWorkshops();
   } 
+
 
 
 
@@ -92,6 +98,11 @@ export class LandingComponent implements OnInit {
  navigateToLanding() {
     this.router.navigate(['/landing']);
   }
+
+
+  
+ 
+    
 
     navigateToTeamSubmission(): void {
         this.router.navigate(['/team-submission']); // Navigation directe vers /team-submission
@@ -136,17 +147,30 @@ export class LandingComponent implements OnInit {
     this.userMenuVisible = false;
   }
   
-  // Close dropdown when clicking outside
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    // Check if the click is outside the dropdown area
-    const clickedElement = event.target as HTMLElement;
-    const dropdown = document.querySelector('.user-dropdown');
-    
-    if (dropdown && !dropdown.contains(clickedElement)) {
-      this.userMenuVisible = false;
+
+
+    // Close dropdown when clicking outside
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent): void {
+      // Check if the click is outside the dropdown area
+      const clickedElement = event.target as HTMLElement;
+      const dropdown = document.querySelector('.user-dropdown');
+      
+      if (dropdown && !dropdown.contains(clickedElement)) {
+        this.userMenuVisible = false;
+      }
     }
+  
+     // Method to toggle applications dropdown
+toggleApplicationsMenu(event: Event) {
+  event.stopPropagation();
+  this.applicationsMenuVisible = !this.applicationsMenuVisible;
+  
+  // Close user menu if open
+  if (this.applicationsMenuVisible && this.userMenuVisible) {
+    this.userMenuVisible = false;
   }
+}
 
   loadWorkshops(): void {
     this.loadingWorkshops = true;
@@ -165,5 +189,31 @@ export class LandingComponent implements OnInit {
   navigateToWorkshop(workshopId: number): void {
     this.router.navigate(['/workshopsf', workshopId, 'resources']);
   }
+
+
+  
+// Close both dropdowns when clicking outside
+@HostListener('document:click', ['$event'])
+handleDocumentClick(event: MouseEvent) {
+  // Get references to your dropdown elements
+  const userMenuButton = document.querySelector('.badge-icon');
+  const userDropdownMenu = document.querySelector('.user-dropdown-menu');
+  const applicationsMenuButton = document.querySelector('.applications-toggle');
+  const applicationsDropdown = document.querySelector('.applications-dropdown');
+  
+  // Close user menu if click is outside
+  if (userMenuButton && !userMenuButton.contains(event.target as Node) && 
+      userDropdownMenu && !userDropdownMenu.contains(event.target as Node) &&
+      this.userMenuVisible) {
+    this.userMenuVisible = false;
+  }
+  
+  // Close applications menu if click is outside
+  if (applicationsMenuButton && !applicationsMenuButton.contains(event.target as Node) && 
+      applicationsDropdown && !applicationsDropdown.contains(event.target as Node) &&
+      this.applicationsMenuVisible) {
+    this.applicationsMenuVisible = false;
+  }
+} 
 }
 

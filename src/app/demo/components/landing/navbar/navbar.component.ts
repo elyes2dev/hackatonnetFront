@@ -34,8 +34,12 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   username = '';
+  applicationsMenuVisible = false;
+
 
   ngOnInit(): void {
+    this.userMenuVisible = false;
+    this.applicationsMenuVisible = false;
     const userId = this.storageService.getLoggedInUserId();
     console.log('User ID from storage:', this.authService.isAuthenticated());
     
@@ -50,6 +54,9 @@ export class NavbarComponent implements OnInit {
       });
     }
   } 
+
+
+
 
   navigateToLanding() {
     this.router.navigate(['/landing']);
@@ -87,11 +94,7 @@ export class NavbarComponent implements OnInit {
       this.userMenuVisible = false;
   }
   
-  // Toggle user menu dropdown visibility
-  toggleUserMenu(event: Event): void {
-    event.stopPropagation();
-    this.userMenuVisible = !this.userMenuVisible;
-  }
+
   
   // Close user menu dropdown
   closeUserMenu(): void {
@@ -109,4 +112,51 @@ export class NavbarComponent implements OnInit {
       this.userMenuVisible = false;
     }
   }
+
+
+ // Method to toggle applications dropdown
+toggleApplicationsMenu(event: Event) {
+  event.stopPropagation();
+  this.applicationsMenuVisible = !this.applicationsMenuVisible;
+  
+  // Close user menu if open
+  if (this.applicationsMenuVisible && this.userMenuVisible) {
+    this.userMenuVisible = false;
+  }
+}
+
+// Method to toggle user menu dropdown
+toggleUserMenu(event: Event) {
+  event.stopPropagation();
+  this.userMenuVisible = !this.userMenuVisible;
+  
+  // Close applications menu if open
+  if (this.userMenuVisible && this.applicationsMenuVisible) {
+    this.applicationsMenuVisible = false;
+  }
+}
+
+// Close both dropdowns when clicking outside
+@HostListener('document:click', ['$event'])
+handleDocumentClick(event: MouseEvent) {
+  // Get references to your dropdown elements
+  const userMenuButton = document.querySelector('.badge-icon');
+  const userDropdownMenu = document.querySelector('.user-dropdown-menu');
+  const applicationsMenuButton = document.querySelector('.applications-toggle');
+  const applicationsDropdown = document.querySelector('.applications-dropdown');
+  
+  // Close user menu if click is outside
+  if (userMenuButton && !userMenuButton.contains(event.target as Node) && 
+      userDropdownMenu && !userDropdownMenu.contains(event.target as Node) &&
+      this.userMenuVisible) {
+    this.userMenuVisible = false;
+  }
+  
+  // Close applications menu if click is outside
+  if (applicationsMenuButton && !applicationsMenuButton.contains(event.target as Node) && 
+      applicationsDropdown && !applicationsDropdown.contains(event.target as Node) &&
+      this.applicationsMenuVisible) {
+    this.applicationsMenuVisible = false;
+  }
+} 
 }
