@@ -14,6 +14,7 @@ import { ListMentorService } from 'src/app/demo/services/list-mentor.service';
 import { PrizeService } from 'src/app/demo/services/prize.service';
 import { ListMentorFormComponent } from '../../../list-mentor/list-mentor-form/list-mentor-form.component';
 import { Prize, PrizeCategory, PrizeType } from 'src/app/demo/models/prize';
+import { ApplicationStatus } from 'src/app/demo/models/application-status';
 
 @Component({
   selector: 'app-landing-hackathon-details',
@@ -156,12 +157,16 @@ export class LandingHackathonDetailsComponent implements OnInit {
     this.router.navigate(['/prize-form', hackathonId]);
   }
 
-  // Add a new method to get prizes count
+  // Modified methods in LandingHackathonDetailsComponent
+
+  // Add a method to get prizes count - filtered by status
   getPrizesCount(hackathonId: number): void {
-    // You need to modify the prize service to accept a hackathon ID parameter
     this.prizeService.getPrizesByHackathonId(hackathonId).subscribe({
       next: (prizes) => {
-        this.prizeCount = prizes.length;
+        // Filter out canceled and rejected prizes
+        const activePrizes = prizes.filter(prize => 
+          prize.status !== ApplicationStatus.CANCELED && prize.status !== ApplicationStatus.REJECTED);
+        this.prizeCount = activePrizes.length;
       },
       error: (err) => {
         console.error('Error fetching prizes:', err);
@@ -170,12 +175,14 @@ export class LandingHackathonDetailsComponent implements OnInit {
     });
   }
 
-  // Add a method to load prizes
+  // Add a method to load prizes - filtered by status
   loadPrizes(hackathonId: number): void {
     this.prizeService.getPrizesByHackathonId(hackathonId).subscribe({
       next: (prizes) => {
-        this.prizes = prizes;
-        this.prizeCount = prizes.length;
+        // Filter out canceled and rejected prizes
+        this.prizes = prizes.filter(prize => 
+          prize.status !== ApplicationStatus.CANCELED && prize.status !== ApplicationStatus.REJECTED);
+        this.prizeCount = this.prizes.length;
       },
       error: (err) => {
         console.error('Error fetching prizes:', err);
