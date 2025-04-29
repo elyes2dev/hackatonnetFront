@@ -70,6 +70,7 @@ import {
 import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/team-frontoffice.component';
 import { AuthGuard } from './demo/jwt/auth.guard';
 import { TeamChatHubComponent } from './demo/components/team/team-chat-hub/team-chat-hub.component';
+import { UserSupportTicketComponent } from './demo/components/ticket-front/user-support-ticket.component';
 
 
 
@@ -232,6 +233,7 @@ import { TeamChatHubComponent } from './demo/components/team/team-chat-hub/team-
             { path: 'mentor-applications/:id/edit', component: MentorApplicationFormComponent },
             { path: 'mentor-evaluations-user', component: MentorEvaluationListUserComponent },
             { path: 'profile', component: UserProfileComponent },
+            { path: 'ticket', component: UserSupportTicketComponent },
 
             {
                 path: 'landing/team-submission',

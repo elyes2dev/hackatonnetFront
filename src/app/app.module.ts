@@ -143,6 +143,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { PasswordModule } from 'primeng/password';
 import { ChipModule } from 'primeng/chip';
+import { UserSupportTicketComponent } from './demo/components/ticket-front/user-support-ticket.component';
 
 
 
@@ -215,7 +216,8 @@ import { ChipModule } from 'primeng/chip';
         GeneralComponent,
 
         FooterComponent,
-        SponsorPrizesComponent
+        SponsorPrizesComponent,
+        UserSupportTicketComponent
 
         
 

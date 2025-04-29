@@ -74,13 +74,35 @@
                           <textarea pInputTextarea formControlName="description" rows="3" placeholder="Brief description about the user" class="w-full"></textarea>
                       </div>
                       
-                      <div class="col-12 form-field">
-                          <label htmlFor="picture" class="block">Profile Picture URL</label>
-                          <span class="p-input-icon-left w-full">
-                              <i class="pi pi-image"></i>
-                              <input type="text" pInputText formControlName="picture" placeholder="URL for profile picture" class="w-full" />
-                          </span>
-                      </div>
+                     <!-- Profile Picture Upload Section - Keeping Original Functionality -->
+          <div class="file-input-container">
+            <label class="file-input-label">Profile Picture</label>
+            <div class="file-upload-area">
+              <i class="upload-icon pi pi-image"></i>
+              <div class="upload-text">Click to upload your profile picture</div>
+              <div class="upload-hint">Max size: 2MB, formats: JPEG, PNG, GIF</div>
+              <input
+                type="file"
+                class="file-input"
+                accept="image/jpeg, image/png, image/gif"
+                (change)="onProfilePictureSelected($event)"
+              >
+            </div>
+
+            <div class="file-info mt-3" *ngIf="selectedProfilePicture">
+              <div class="file-preview">
+                <div class="flex items-center">
+                  <span class="file-badge">
+                    <i class="pi pi-image mr-2"></i>{{ selectedProfilePicture?.name }}
+                  </span>
+                  <img [src]="profilePicturePreview" class="preview-image" alt="Profile Preview">
+                </div>
+                <button class="delete-btn" type="button" (click)="removeProfilePicture()">
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
                       
                       <div class="col-12 form-field" *ngIf="roles && roles.length > 0">
                           <label class="block">Roles</label>

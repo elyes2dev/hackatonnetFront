@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, HostListener } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
 import { Router } from '@angular/router';
@@ -6,6 +6,9 @@ import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { SponsorNotificationService } from '../demo/services/sponsor-notification.service';
 import { SponsorNotification } from '../demo/models/sponsor-notification';
+import { AuthService } from '../demo/services/auth.service';
+import { User } from '../demo/models/user.model';
+import { StorageService } from '../demo/services/storage.service';
 
 @Component({
     selector: 'app-topbar',
@@ -23,11 +26,24 @@ export class AppTopBarComponent implements OnInit {
     @ViewChild('topbarmenu') menu!: ElementRef;
     @ViewChild('notificationMenu') notificationMenu!: ElementRef;
 
+ 
     constructor(
         public layoutService: LayoutService,
         private notificationService: SponsorNotificationService,
-        private router: Router
+        private router: Router,
+        private authService : AuthService,
+        private storageService : StorageService
     ) {}
+
+    userId: string | null = null;
+    isAuthenticated: boolean = this.authService.isAuthenticated();
+    isAdmin: boolean = false;
+    isStudent: boolean = false;
+    userMenuVisible: boolean = false; 
+      user!: User;
+      isSponsor: boolean = false;
+      isMentor: boolean = false; 
+  
 
     ngOnInit() {
         // Subscribe to notifications
@@ -90,4 +106,36 @@ export class AppTopBarComponent implements OnInit {
         const days = Math.floor(hours / 24);
         return `${days} day${days !== 1 ? 's' : ''} ago`;
     }
+
+    // Toggle user menu dropdown visibility
+      toggleUserMenu(event: Event): void {
+        event.stopPropagation();
+        this.userMenuVisible = !this.userMenuVisible;
+      }
+      
+      // Close user menu dropdown
+      closeUserMenu(): void {
+        this.userMenuVisible = false;
+      }
+      
+      // Close dropdown when clicking outside
+      @HostListener('document:click', ['$event'])
+      onDocumentClick(event: MouseEvent): void {
+        // Check if the click is outside the dropdown area
+        const clickedElement = event.target as HTMLElement;
+        const dropdown = document.querySelector('.user-dropdown');
+        
+        if (dropdown && !dropdown.contains(clickedElement)) {
+          this.userMenuVisible = false;
+        }
+      }
+
+      logout()
+  {
+      this.authService.logout();
+      this.storageService.clearAll();
+      window.location.reload();
+      this.userMenuVisible = false;
+  }
+  
 }
