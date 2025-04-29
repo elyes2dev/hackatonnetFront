@@ -19,12 +19,6 @@
                 </a>
             </li>
 
-             <!-- Show "Apply as a sponsor" only if user is NOT a sponsor -->
-             <li *ngIf="!isSponsor">
-                <a (click)="router.navigate(['/sponsor-application-form'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                    <span>Apply as a sponsor</span>
-                </a>
-            </li>
 
             <li>
                 <a (click)="router.navigate(['/sponsors-leaderboard'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
@@ -92,6 +86,13 @@
                (click)="userMenuVisible = false">
                 <i class="pi pi-user mr-2"></i>
                 <span>Profile</span>
+            </a>
+        </li>
+        <li *ngIf="!isSponsor">
+            <a [routerLink]="['/sponsor-application-form']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+               (click)="userMenuVisible = false">
+                <i class="pi pi-plus-circle mr-2"></i>
+                <span>Apply as a sponsor</span>
             </a>
         </li>
         <!-- Add My prizes option only for sponsors -->
