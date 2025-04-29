@@ -859,12 +859,13 @@ assignMentorToTeam(team: Team): void {
 }
 
 // Add this method to confirm mentor assignment
+
 confirmMentorAssignment(): void {
-  if (!this.selectedMentor || !this.teamToEdit) {
+  if (!this.selectedMentor || !this.teamToEdit || this.selectedMentor.id === undefined || this.teamToEdit.id === undefined) {
     this.messageService.add({
       severity: 'error',
       summary: 'Error',
-      detail: 'Please select a mentor to assign'
+      detail: 'Please select a valid mentor to assign'
     });
     return;
   }
@@ -921,7 +922,6 @@ getHackathonIdByName(hackathonName: string): number | null {
   const hackathon = this.hackathons.find(h => h.name === hackathonName);
   return hackathon ? hackathon.id : null;
 }
-
 /**
  * Stop event propagation to prevent accordion from toggling
  * @param event The click event
@@ -929,6 +929,7 @@ getHackathonIdByName(hackathonName: string): number | null {
 stopPropagation(event: Event): void {
   event.stopPropagation();
 }
+
 /**
  * Assign mentors to all teams in a hackathon using smart recommendation
  * @param event The click event
@@ -1019,28 +1020,32 @@ assignMentorsToHackathon(event: Event, hackathonId: number | null): void {
           
           // Initialize the mentor assignment map
           mentors.forEach(mentor => {
-            mentorAssignmentMap.set(mentor.id, {assigned: 0, maxTeams: 0});
+            if (mentor.id !== undefined) {
+              mentorAssignmentMap.set(mentor.id, {assigned: 0, maxTeams: 0});
+            }
           });
           
           console.log('[assignMentorsToHackathon] Checking availability for', mentors.length, 'mentors');
           
           // Load current mentor assignments and availability
-          const availabilityChecks = mentors.map(mentor => 
-            this.mentorService.checkMentorAvailability(mentor.id, hackathonId)
-              .toPromise()
-              .then(result => {
-                console.log('[assignMentorsToHackathon] Mentor availability for', mentor.id, ':', result);
-                if (result) {
-                  mentorAssignmentMap.set(mentor.id, {
-                    assigned: result.currentTeams,
-                    maxTeams: result.maxTeams
-                  });
-                }
-              })
-              .catch(error => {
-                console.error(`[assignMentorsToHackathon] Error checking availability for mentor ${mentor.id}:`, error);
-              })
-          );
+          const availabilityChecks = mentors
+            .filter(mentor => mentor.id !== undefined)
+            .map(mentor => 
+              this.mentorService.checkMentorAvailability(mentor.id!, hackathonId)
+                .toPromise()
+                .then(result => {
+                  console.log('[assignMentorsToHackathon] Mentor availability for', mentor.id, ':', result);
+                  if (result && mentor.id !== undefined) {
+                    mentorAssignmentMap.set(mentor.id, {
+                      assigned: result.currentTeams,
+                      maxTeams: result.maxTeams
+                    });
+                  }
+                })
+                .catch(error => {
+                  console.error(`[assignMentorsToHackathon] Error checking availability for mentor ${mentor.id}:`, error);
+                })
+            );
           
           // Wait for all availability checks to complete before proceeding
           Promise.all(availabilityChecks).then(() => {
@@ -1049,6 +1054,7 @@ assignMentorsToHackathon(event: Event, hackathonId: number | null): void {
             
             // Filter out mentors who are already at max capacity
             const availableMentors = mentors.filter(mentor => {
+              if (mentor.id === undefined) return false;
               const info = mentorAssignmentMap.get(mentor.id);
               return info && info.assigned < info.maxTeams;
             });
@@ -1069,45 +1075,49 @@ assignMentorsToHackathon(event: Event, hackathonId: number | null): void {
             
             // Assign mentors to each team, respecting capacity limits
             teamsWithoutMentors.forEach(team => {
+              if (team.id === undefined) {
+                console.warn('[assignMentorsToHackathon] Team has no ID, skipping');
+                completedCount++;
+                return;
+              }
+              
               console.log('[assignMentorsToHackathon] Processing team:', team.id, team.teamName);
               
               // Get recommended mentors for this team (only available ones)
-// Get recommended mentors for this team (only available ones)
-console.log('[assignMentorsToHackathon] Requesting mentor recommendations for team', team.id);
-this.mentorService.getMentorRecommendations(team.id, hackathonId).subscribe({ 
-  next: (recommendation: any) => {
-    console.log('[assignMentorsToHackathon] Received recommendations for team', team.id, ':', JSON.stringify(recommendation));
-    
-    let mentorToAssign: User | null = null;
-    
-    // Find the best available mentor from recommendations
-    if (recommendation && recommendation.recommendations && recommendation.recommendations.length > 0) {
-      console.log('[assignMentorsToHackathon] Team', team.id, 'has', recommendation.recommendations.length, 'recommended mentors');
-      
-      // Try each recommended mentor in order until finding an available one
-      for (const candidate of recommendation.recommendations) {
-        // Get the mentor ID from the recommendation structure
-        const mentorId = parseInt(candidate.mentor_id, 10);
-        console.log('[assignMentorsToHackathon] Checking recommended mentor', mentorId, 'compatibility score:', candidate.compatibility_score);
-        
-        const info = mentorAssignmentMap.get(mentorId);
-        console.log('[assignMentorsToHackathon] Checking recommended mentor', mentorId, 'availability:', info);
-        
-        if (info && info.assigned < info.maxTeams) {
-          // Find the full mentor object from the mentors array
-          mentorToAssign = mentors.find(m => m.id === mentorId) || null;
-          if (mentorToAssign) {
-            console.log('[assignMentorsToHackathon] Selected recommended mentor', mentorId, 'for team', team.id);
-            break;
-          }
-        } else {
-          console.log('[assignMentorsToHackathon] Recommended mentor', mentorId, 'is at capacity');
-        }
-      }
-    } else {
-      console.warn('[assignMentorsToHackathon] No recommendations received for team', team.id);
-    }
-
+              console.log('[assignMentorsToHackathon] Requesting mentor recommendations for team', team.id);
+              this.mentorService.getMentorRecommendations(team.id, hackathonId).subscribe({ 
+                next: (recommendation: any) => {
+                  console.log('[assignMentorsToHackathon] Received recommendations for team', team.id, ':', JSON.stringify(recommendation));
+                  
+                  let mentorToAssign: User | null = null;
+                  
+                  // Find the best available mentor from recommendations
+                  if (recommendation && recommendation.recommendations && recommendation.recommendations.length > 0) {
+                    console.log('[assignMentorsToHackathon] Team', team.id, 'has', recommendation.recommendations.length, 'recommended mentors');
+                    
+                    // Try each recommended mentor in order until finding an available one
+                    for (const candidate of recommendation.recommendations) {
+                      // Get the mentor ID from the recommendation structure
+                      const mentorId = parseInt(candidate.mentor_id, 10);
+                      console.log('[assignMentorsToHackathon] Checking recommended mentor', mentorId, 'compatibility score:', candidate.compatibility_score);
+                      
+                      const info = mentorAssignmentMap.get(mentorId);
+                      console.log('[assignMentorsToHackathon] Checking recommended mentor', mentorId, 'availability:', info);
+                      
+                      if (info && info.assigned < info.maxTeams) {
+                        // Find the full mentor object from the mentors array
+                        mentorToAssign = mentors.find(m => m.id === mentorId) || null;
+                        if (mentorToAssign) {
+                          console.log('[assignMentorsToHackathon] Selected recommended mentor', mentorId, 'for team', team.id);
+                          break;
+                        }
+                      } else {
+                        console.log('[assignMentorsToHackathon] Recommended mentor', mentorId, 'is at capacity');
+                      }
+                    }
+                  } else {
+                    console.warn('[assignMentorsToHackathon] No recommendations received for team', team.id);
+                  }
                   
                   // If no available recommended mentor, try a random available one
                   if (!mentorToAssign && availableMentors.length > 0) {
@@ -1115,6 +1125,7 @@ this.mentorService.getMentorRecommendations(team.id, hackathonId).subscribe({
                     
                     // Find mentors who still have capacity
                     const mentorsWithCapacity = availableMentors.filter(m => {
+                      if (m.id === undefined) return false;
                       const info = mentorAssignmentMap.get(m.id);
                       return info && info.assigned < info.maxTeams;
                     });
@@ -1124,6 +1135,7 @@ this.mentorService.getMentorRecommendations(team.id, hackathonId).subscribe({
                     if (mentorsWithCapacity.length > 0) {
                       // Choose the mentor with the most remaining capacity
                       mentorsWithCapacity.sort((a, b) => {
+                        if (a.id === undefined || b.id === undefined) return 0;
                         const infoA = mentorAssignmentMap.get(a.id)!;
                         const infoB = mentorAssignmentMap.get(b.id)!;
                         return (infoB.maxTeams - infoB.assigned) - (infoA.maxTeams - infoA.assigned);
@@ -1134,7 +1146,7 @@ this.mentorService.getMentorRecommendations(team.id, hackathonId).subscribe({
                     }
                   }
                   
-                  if (mentorToAssign) {
+                  if (mentorToAssign && mentorToAssign.id !== undefined && team.id !== undefined) {
                     // Assign the mentor to the team
                     console.log('[assignMentorsToHackathon] Assigning mentor', mentorToAssign.id, 'to team', team.id);
                     this.teamService.assignMentorToTeam(team.id, mentorToAssign.id).subscribe({
@@ -1142,11 +1154,13 @@ this.mentorService.getMentorRecommendations(team.id, hackathonId).subscribe({
                         console.log('[assignMentorsToHackathon] Successfully assigned mentor', mentorToAssign!.id, 'to team', team.id);
                         
                         // Update the mentor's assignment count
-                        const info = mentorAssignmentMap.get(mentorToAssign!.id);
-                        if (info) {
-                          info.assigned++;
-                          mentorAssignmentMap.set(mentorToAssign!.id, info);
-                          console.log('[assignMentorsToHackathon] Updated assignment count for mentor', mentorToAssign!.id, 'to', info.assigned);
+                        if (mentorToAssign && mentorToAssign.id !== undefined) {
+                          const info = mentorAssignmentMap.get(mentorToAssign.id);
+                          if (info) {
+                            info.assigned++;
+                            mentorAssignmentMap.set(mentorToAssign.id, info);
+                            console.log('[assignMentorsToHackathon] Updated assignment count for mentor', mentorToAssign.id, 'to', info.assigned);
+                          }
                         }
                         
                         successCount++;
@@ -1162,7 +1176,7 @@ this.mentorService.getMentorRecommendations(team.id, hackathonId).subscribe({
                       }
                     });
                   } else {
-                    // No available mentors left
+                    // No available mentors left or invalid IDs
                     console.warn('[assignMentorsToHackathon] No mentors with capacity available for team', team.id);
                     this.messageService.add({
                       severity: 'warn',

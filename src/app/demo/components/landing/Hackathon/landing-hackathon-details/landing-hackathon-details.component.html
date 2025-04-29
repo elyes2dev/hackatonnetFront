@@ -161,95 +161,111 @@
         </div>
       </div>
     </div>
-  
-    <!-- Main Content Section -->
-    <div class="content-section">
-      <!-- Description Card -->
-      <div class="card description-card">
-        <h2>About This Hackathon</h2>
-        <p>{{ h.description }}</p>
-      </div>
-  
- <!-- Stats Grid - Make cards clickable -->
-<div class="stats-grid">
-  <div class="stat-card" [class.active]="isActiveSection('teams')" (click)="showSection('teams')">
-    <div class="stat-value">{{ h.maxMembers }}</div>
-    <div class="stat-label">Max Team Size</div>
+  <!-- Main Content Section -->
+<div class="content-section">
+  <!-- Description Card -->
+  <div class="card description-card">
+    <h2>About This Hackathon</h2>
+    <p>{{ h.description }}</p>
   </div>
-  <div class="stat-card" [class.active]="isActiveSection('prizes')" (click)="showSection('prizes')">
-    <div class="stat-value">{{ (h.prizes ?? []).length }}</div>
-    <div class="stat-label">Prizes</div>
-  </div>
-  <div class="stat-card" [class.active]="isActiveSection('teams')" (click)="showSection('teams')">
-    <div class="stat-value">{{ h.teams.length }}</div>
-    <div class="stat-label">Teams</div>
-  </div>
-  <div class="stat-card" [class.active]="isActiveSection('mentors')" (click)="showSection('mentors')">
-    <div class="stat-value">{{ numberOfMentors }}</div>
-    <div class="stat-label">Mentors</div>
-  </div>
-</div>
 
-<!-- Content Sections with smooth animations -->
-<div class="sections-container">
-  <!-- Prizes Section -->
-  <div class="card prizes-section" *ngIf="isActiveSection('prizes') && h.prizes && h.prizes.length > 0"
-       [@sectionAnimation]>
-    <h2>Prizes</h2>
-    <div class="prizes-grid">
-      <div class="prize-card" *ngFor="let prize of h.prizes; let i = index">
+  <!-- Stats Grid - Make cards clickable -->
+  <div class="stats-grid">
+    <div class="stat-card" [class.active]="isActiveSection('teams')" (click)="showSection('teams')">
+      <div class="stat-value">{{ h.maxMembers }}</div>
+      <div class="stat-label">Max Team Size</div>
+    </div>
+    <div class="stat-card" [class.active]="isActiveSection('prizes')" (click)="showSection('prizes')">
+      <div class="stat-value">{{ prizeCount }}</div>
+      <div class="stat-label">Prizes</div>
+    </div>
+    <div class="stat-card" [class.active]="isActiveSection('teams')" (click)="showSection('teams')">
+      <div class="stat-value">{{ h.teams.length }}</div>
+      <div class="stat-label">Teams</div>
+    </div>
+    <div class="stat-card" [class.active]="isActiveSection('mentors')" (click)="showSection('mentors')">
+      <div class="stat-value">{{ numberOfMentors }}</div>
+      <div class="stat-label">Mentors</div>
+    </div>
+  </div>
+
+  <!-- Content Sections with smooth animations -->
+  <div class="sections-container">
+    <!-- Prizes Section with Advanced Prize Details -->
+ <!-- Prizes Section to match Mentor design -->
+ <div class="card prizes-section" *ngIf="isActiveSection('prizes') && prizes && prizes.length > 0" [@sectionAnimation]>
+  <h2>Prizes</h2>
+  <div class="mentors-grid prizes-grid">
+    <div class="mentor-card prize-card" *ngFor="let prize of prizes; let i = index">
+      <div class="mentor-avatar prize-icon">
         <div class="prize-rank">{{ i + 1 }}</div>
-        <div class="prize-details">
-          <h3>{{ prize.productName }}</h3>
-          <p>{{ prize.productDescription }}</p>
+      </div>
+      <div class="mentor-info prize-info">
+        <h3>
+          <span *ngIf="prize.prizeType === 'MONEY'">
+            ${{ prize.amount }} - {{ getPrizeCategoryName(prize.prizeCategory) }}
+          </span>
+          <span *ngIf="prize.prizeType === 'PRODUCT'">
+            {{ prize.productName }} - {{ getPrizeCategoryName(prize.prizeCategory) }}
+          </span>
+        </h3>
+        <p>
+          <span *ngIf="prize.prizeType === 'MONEY'">
+            Cash prize for {{ getPrizeCategoryName(prize.prizeCategory) }}
+          </span>
+          <span *ngIf="prize.prizeType === 'PRODUCT'">
+            {{ prize.productDescription }}
+          </span>
+        </p>
+        <div class="sponsor-info" *ngIf="prize.sponsor">
+          <small>Sponsored by: {{ prize.sponsor.name }} {{ prize.sponsor.lastname }}</small>
         </div>
       </div>
     </div>
   </div>
+  </div>
   
-  <!-- Teams Section -->
-  <div class="card teams-section" *ngIf="isActiveSection('teams') && h.teams && h.teams.length > 0"
-       [@sectionAnimation]>
-    <h2>Participating Teams</h2>
-    <div class="teams-grid">
-      <div class="team-card" *ngFor="let team of h.teams">
-        <div class="team-avatar">
-          <p-avatar [label]="team.teamName.charAt(0)" size="large" shape="circle"></p-avatar>
+    
+    <!-- Teams Section -->
+    <div class="card teams-section" *ngIf="isActiveSection('teams') && h.teams && h.teams.length > 0"
+        [@sectionAnimation]>
+      <h2>Participating Teams</h2>
+      <div class="teams-grid">
+        <div class="team-card" *ngFor="let team of h.teams">
+          <div class="team-avatar">
+            <p-avatar [label]="team.teamName.charAt(0)" size="large" shape="circle"></p-avatar>
+          </div>
+          <div class="team-info">
+            <h3>{{ team.teamName }}</h3>
+            <p>{{ team?.teamMembers?.length }} members</p>
+          </div>
         </div>
-        <div class="team-info">
-          <h3>{{ team.teamName }}</h3>
-          <p>{{ team?.teamMembers?.length }} members</p>
+      </div>
+    </div>
+    
+    <!-- Mentors Section -->
+    <div class="card mentors-section" *ngIf="isActiveSection('mentors') && mentorsList && mentorsList.length > 0"
+        [@sectionAnimation]>
+      <h2>Mentors</h2>
+      <div class="mentors-grid">
+        <div class="mentor-card" *ngFor="let mentor of mentorsList" 
+            (click)="openMentorDetails(mentor)" 
+            [pTooltip]="'Click to view profile'">
+          <div class="mentor-avatar">
+            <p-avatar [label]="mentor.mentor?.name?.charAt(0) || 'M'" size="large" shape="circle"></p-avatar>
+          </div>
+          <div class="mentor-info">
+            <h3>{{ mentor.mentor?.name }} {{ mentor.mentor?.lastname }}</h3>
+            <p>{{ mentor.numberOfTeams || 'General Mentor' }}</p>
+          </div>
+          <div class="mentor-view-icon">
+            <i class="pi pi-external-link"></i>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  
-  <!-- Mentors Section -->
-
-<div class="card mentors-section" *ngIf="isActiveSection('mentors') && mentorsList && mentorsList.length > 0"
-  [@sectionAnimation]>
-<h2>Mentors</h2>
-<div class="mentors-grid">
- <div class="mentor-card" *ngFor="let mentor of mentorsList" 
-      (click)="openMentorDetails(mentor)" 
-      [pTooltip]="'Click to view profile'">
-   <div class="mentor-avatar">
-     <p-avatar [label]="mentor.mentor?.name?.charAt(0) || 'M'" size="large" shape="circle"></p-avatar>
-   </div>
-   <div class="mentor-info">
-     <h3>{{ mentor.mentor?.name }} {{ mentor.mentor?.lastname }}</h3>
-     <p>{{ mentor.numberOfTeams || 'General Mentor' }}</p>
-   </div>
-   <div class="mentor-view-icon">
-     <i class="pi pi-external-link"></i>
-   </div>
- </div>
 </div>
-</div>
-</div>
-
-
-
 
 
   </div>
@@ -260,7 +276,6 @@
     </div>
   </div>
 
-</div>
 
   <div class="footer">
     <div class="footer-content">

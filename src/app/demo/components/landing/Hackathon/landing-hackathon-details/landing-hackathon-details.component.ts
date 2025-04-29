@@ -20,6 +20,9 @@ import { TeamFrontofficeComponent } from '../../../team-frontoffice/team-frontof
 import { ListMentor } from 'src/app/demo/models/list-mentor.model';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { MentorDetailsDialogComponent } from '../mentor-details-dialog/mentor-details-dialog.component';
+import { Prize, PrizeCategory } from 'src/app/demo/models/prize';
+import { PrizeService } from 'src/app/demo/services/prize.service';
+import { ApplicationStatus } from 'src/app/demo/models/application-status';
 
 @Component({
   selector: 'app-landing-hackathon-details',
@@ -69,6 +72,9 @@ export class LandingHackathonDetailsComponent implements OnInit {
     return this.activeSection === section;
   }
 
+  // Add a property to store prizes
+  prizes: Prize[] = [];
+  prizeCount: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -81,6 +87,7 @@ export class LandingHackathonDetailsComponent implements OnInit {
     private listMentorService: ListMentorService,
     private messageService: MessageService,
     private teamService: TeamService,
+    private prizeService: PrizeService // Add the prize service
 
 
 
@@ -103,6 +110,10 @@ export class LandingHackathonDetailsComponent implements OnInit {
         this.checkMentorStatus();
         this.fetchNumberOfMentors(+hackathonId);
 
+        // Fetch prizes count for this hackathon
+        this.getPrizesCount(Number(hackathonId));
+        // Fetch prizes for this hackathon
+        this.loadPrizes(Number(hackathonId));
       });
     }
     // Get logged in user for badge icon
@@ -348,6 +359,54 @@ public get dialogHeader(): string {
   addPrize(hackathonId: number | undefined) {
     if (!hackathonId) return;
     this.router.navigate(['/prize-form', hackathonId]);
+  }
+
+   // Add a method to get prizes count - filtered by status
+   getPrizesCount(hackathonId: number): void {
+    this.prizeService.getPrizesByHackathonId(hackathonId).subscribe({
+      next: (prizes) => {
+        // Filter out canceled and rejected prizes
+        const activePrizes = prizes.filter(prize => 
+          prize.status !== ApplicationStatus.CANCELED && prize.status !== ApplicationStatus.REJECTED);
+        this.prizeCount = activePrizes.length;
+      },
+      error: (err) => {
+        console.error('Error fetching prizes:', err);
+        this.prizeCount = 0; // Default to 0 if there's an error
+      }
+    });
+  }
+
+  // Add a method to load prizes - filtered by status
+  loadPrizes(hackathonId: number): void {
+    this.prizeService.getPrizesByHackathonId(hackathonId).subscribe({
+      next: (prizes) => {
+        // Filter out canceled and rejected prizes
+        this.prizes = prizes.filter(prize => 
+          prize.status !== ApplicationStatus.CANCELED && prize.status !== ApplicationStatus.REJECTED);
+        this.prizeCount = this.prizes.length;
+      },
+      error: (err) => {
+        console.error('Error fetching prizes:', err);
+        this.prizes = [];
+        this.prizeCount = 0;
+      }
+    });
+  }
+
+  // Helper method to convert prize category enum to readable text
+  getPrizeCategoryName(category: PrizeCategory): string {
+    switch(category) {
+      case PrizeCategory.BEST_INNOVATION:
+        return 'Best Innovation';
+      case PrizeCategory.BEST_DESIGN:
+        return 'Best Design';
+      case PrizeCategory.BEST_AI_PROJECT:
+        return 'Best AI Project';
+      default:
+        // Force TypeScript to treat it as a string
+        return String(category).replace('_', ' ');
+    }
   }
 
   applyAsMentor() {

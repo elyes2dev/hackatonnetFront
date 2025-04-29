@@ -90,12 +90,24 @@
         }
   
         .remove-btn {
-          background: none;
+          background: rgba(220, 53, 69, 0.1);
           border: none;
           color: #f44336;
           font-size: 1.2rem;
           cursor: pointer;
-          padding: 0 5px;
+          padding: 0.2rem 0.5rem;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+          width: 28px;
+          height: 28px;
+          
+          &:hover {
+            background: rgba(220, 53, 69, 0.2);
+            transform: scale(1.1);
+          }
         }
       }
     }
@@ -103,44 +115,112 @@
     .form-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
+      gap: 1.25rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #dee2e6;
   
       button {
-        padding: 8px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-  
+        min-width: 140px;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
         &[type="submit"] {
-          background-color: #4CAF50;
+          background: linear-gradient(135deg, #4318FF, #6a5acd);
+          border: 1px solid #4318FF;
           color: white;
-          border: none;
-  
+          
+          &:hover {
+            background: linear-gradient(135deg, darken(#4318FF, 5%), #5a4abf);
+            border-color: darken(#4318FF, 5%);
+            box-shadow: 0 6px 12px rgba(67, 24, 255, 0.2);
+            transform: translateY(-2px);
+          }
+          
+          &:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 6px rgba(67, 24, 255, 0.15);
+          }
+          
           &:disabled {
-            background-color: #cccccc;
+            background: linear-gradient(135deg, #a8a8a8, #c5c5c5);
+            border-color: #a8a8a8;
+            opacity: 0.7;
             cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+          }
+          
+          &:before {
+            content: '✓';
+            margin-right: 0.5rem;
+            font-weight: bold;
           }
         }
   
         &.cancel-btn {
-          background-color: #f44336;
-          color: white;
-          border: none;
+          border: 2px solid #dee2e6;
+          color: #6c757d;
+          background: transparent;
+          
+          &:hover {
+            background: #f8f9fa;
+            border-color: #ced4da;
+            color: #495057;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
+            transform: translateY(-2px);
+          }
+          
+          &:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          }
+          
+          &:before {
+            content: '×';
+            margin-right: 0.5rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+          }
         }
       }
   
       .back-btn {
-        display: inline-block;
-        padding: 8px 16px;
-        background-color: #2ecc71;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
         color: white;
-        border-radius: 4px;
         text-decoration: none;
-        font-weight: bold;
+        font-weight: 600;
         cursor: pointer;
-  
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        
         &:hover {
-          background-color: #27ae60;
+          background: linear-gradient(135deg, darken(#2ecc71, 5%), darken(#27ae60, 5%));
+          box-shadow: 0 6px 12px rgba(46, 204, 113, 0.2);
+          transform: translateY(-2px);
+        }
+        
+        &:active {
+          transform: translateY(0);
+          box-shadow: 0 3px 6px rgba(46, 204, 113, 0.15);
+        }
+        
+        &:before {
+          content: '←';
+          margin-right: 0.5rem;
+          font-weight: bold;
         }
       }
     }

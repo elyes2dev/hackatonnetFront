@@ -34,7 +34,7 @@ export interface SponsorReward {
 }
 
 export interface User {
-  id: number;
+  id: number | undefined;
   name: string;
   lastname: string;
   email: string;

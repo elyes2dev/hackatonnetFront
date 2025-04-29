@@ -51,6 +51,10 @@
           <i [class]="quizStatusMap[quiz.id_quiz!] ? 'fas fa-trophy' : 'fas fa-edit'"></i>
         </button>
         
+        <button (click)="showQuizScores(quiz.id_quiz!)" class="btn btn-scores" title="View All Scores">
+          <i class="fas fa-chart-bar"></i>
+        </button>
+        
         <button (click)="deleteQuiz(quiz.id_quiz!)" class="btn btn-delete" title="Delete Quiz">
           <i class="fas fa-trash-alt"></i>
         </button>
@@ -126,4 +130,49 @@
     (closeDialog)="onAiQuizDialogClose()"
     (quizSaved)="fetchQuizzes()">
   </app-ai-quiz-dialog>
+</div>
+
+<!-- Scores Dialog -->
+<div *ngIf="showScoresDialog" class="scores-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Quiz Scores</h3>
+      <button (click)="closeScoresDialog()" class="close-btn">&times;</button>
+    </div>
+    
+    <div class="scores-container">
+      <div *ngIf="currentQuizScores.length === 0" class="no-scores">
+        No scores available for this quiz yet.
+      </div>
+      
+      <div *ngIf="currentQuizScores.length > 0" class="scores-table">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let score of currentQuizScores">
+              <td>{{ score.user?.username || 'Anonymous' }}</td>
+              <td>
+                <div class="score-bar">
+                  <div class="score-fill" 
+                       [style.width.%]="getScorePercentage(score)"
+                       [style.background-color]="getScoreColor(getScorePercentage(score))">
+                    {{ score.score }}
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button (click)="closeScoresDialog()" class="btn btn-close">Close</button>
+    </div>
+  </div>
 </div>

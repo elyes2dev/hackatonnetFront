@@ -236,19 +236,25 @@ export class GeneralComponent implements OnInit {
     
     this.mentorEvaluations.forEach(evaluation => {
       const mentorId = evaluation.mentor.id;
-      if (!mentorRatings.has(mentorId)) {
-        mentorRatings.set(mentorId, { total: 0, count: 0 });
+      
+      // Add null check before accessing mentorId
+      if (mentorId !== undefined) {
+        if (!mentorRatings.has(mentorId)) {
+          mentorRatings.set(mentorId, { total: 0, count: 0 });
+        }
+        
+        const current = mentorRatings.get(mentorId)!;
+        current.total += evaluation.rating;
+        current.count += 1;
       }
-      const current = mentorRatings.get(mentorId)!;
-      current.total += evaluation.rating;
-      current.count += 1;
     });
     
     // Create sorted arrays of mentors by average rating
     const mentorsWithRatings = this.mentors.filter(mentor => 
-      mentorRatings.has(mentor.id) && mentorRatings.get(mentor.id)!.count > 0
+      mentor.id !== undefined && mentorRatings.has(mentor.id) && mentorRatings.get(mentor.id)!.count > 0
     ).map(mentor => {
-      const ratingData = mentorRatings.get(mentor.id)!;
+      // We know mentor.id is defined from the filter above
+      const ratingData = mentorRatings.get(mentor.id!)!;
       const averageRating = ratingData.total / ratingData.count;
       return { ...mentor, averageRating };
     });
@@ -279,41 +285,60 @@ export class GeneralComponent implements OnInit {
     
     this.listMentors.forEach(listing => {
       const mentorId = listing.mentor.id;
-      const hackathonDate = new Date(listing.hackathon?.startDate || '');      if (!mentorActivityCount.has(mentorId)) {
-        mentorActivityCount.set(mentorId, { month: 0, halfYear: 0, year: 0 });
-      }
+      const hackathonDate = new Date(listing.hackathon?.startDate || '');
       
-      const counts = mentorActivityCount.get(mentorId)!;
-      
-      if (hackathonDate >= oneMonthAgo) {
-        counts.month += 1;
-      }
-      
-      if (hackathonDate >= sixMonthsAgo) {
-        counts.halfYear += 1;
-      }
-      
-      if (hackathonDate >= oneYearAgo) {
-        counts.year += 1;
+      // Add null check before using mentorId
+      if (mentorId !== undefined) {
+        if (!mentorActivityCount.has(mentorId)) {
+          mentorActivityCount.set(mentorId, { month: 0, halfYear: 0, year: 0 });
+        }
+        
+        const counts = mentorActivityCount.get(mentorId)!;
+        
+        if (hackathonDate >= oneMonthAgo) {
+          counts.month += 1;
+        }
+        
+        if (hackathonDate >= sixMonthsAgo) {
+          counts.halfYear += 1;
+        }
+        
+        if (hackathonDate >= oneYearAgo) {
+          counts.year += 1;
+        }
       }
     });
     
     // Find top active mentors for each timeframe
-    const mentorsWithActivity = this.mentors.filter(mentor => mentorActivityCount.has(mentor.id));
+    const mentorsWithActivity = this.mentors.filter(mentor => 
+      mentor.id !== undefined && mentorActivityCount.has(mentor.id)
+    );
     
     this.activeTimeframes.month = [...mentorsWithActivity]
-      .sort((a, b) => (mentorActivityCount.get(b.id)?.month || 0) - (mentorActivityCount.get(a.id)?.month || 0))
+      .sort((a, b) => {
+        // Add null checks with defaults for sorting
+        const aId = a.id !== undefined ? a.id : 0;
+        const bId = b.id !== undefined ? b.id : 0;
+        return (mentorActivityCount.get(bId)?.month || 0) - (mentorActivityCount.get(aId)?.month || 0);
+      })
       .slice(0, 5);
       
     this.activeTimeframes.halfYear = [...mentorsWithActivity]
-      .sort((a, b) => (mentorActivityCount.get(b.id)?.halfYear || 0) - (mentorActivityCount.get(a.id)?.halfYear || 0))
+      .sort((a, b) => {
+        const aId = a.id !== undefined ? a.id : 0;
+        const bId = b.id !== undefined ? b.id : 0;
+        return (mentorActivityCount.get(bId)?.halfYear || 0) - (mentorActivityCount.get(aId)?.halfYear || 0);
+      })
       .slice(0, 5);
       
     this.activeTimeframes.year = [...mentorsWithActivity]
-      .sort((a, b) => (mentorActivityCount.get(b.id)?.year || 0) - (mentorActivityCount.get(a.id)?.year || 0))
+      .sort((a, b) => {
+        const aId = a.id !== undefined ? a.id : 0;
+        const bId = b.id !== undefined ? b.id : 0;
+        return (mentorActivityCount.get(bId)?.year || 0) - (mentorActivityCount.get(aId)?.year || 0);
+      })
       .slice(0, 5);
   }
-
   updatePieChartData() {
     this.pieData = {
       labels: ['Online', 'Onsite'],
