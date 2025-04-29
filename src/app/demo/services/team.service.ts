@@ -223,7 +223,7 @@ export class TeamService {
       tap(response => console.log('Removed team member:', response)),
       catchError(this.handleError)
     );
-  }
+  } 
 
   // Error handling
   private handleError(error: HttpErrorResponse) {
