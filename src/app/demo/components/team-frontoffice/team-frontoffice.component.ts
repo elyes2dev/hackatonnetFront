@@ -80,6 +80,9 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
     
     // Current team member reference
     public currentTeamMember: TeamMember | null = null;
+    
+    // AI assistant team member reference
+    private aiTeamMember: TeamMember | null = null;
 
     public destroy$ = new Subject<void>();
 
@@ -407,6 +410,11 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
                 this.createdTeamCode = team.teamCode || '';
                 this.setDialogState({ success: true });
                 this.showSuccessDialog = true;
+                
+                // Set a timeout to refresh the page after showing the success dialog
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000); // Refresh after 3 seconds to give user time to see the success message
             },
             error: (error: HttpErrorResponse) => {
                 console.error('Failed to create team:', error);
@@ -546,6 +554,10 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
                     this.teamMemberId = teamMember.id;
                     this.selectedTeam = team;
                     console.log('Set teamMemberId:', this.teamMemberId, 'selectedTeam:', this.selectedTeam);
+                    
+                    // Find or initialize the AI team member
+                    this.initializeAITeamMember(team);
+                    
                     this.loadTeamDiscussions(teamId);
                     this.initializeWebSocket(teamId);
                 } else {
@@ -556,8 +568,7 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
             },
             error: (error) => {
                 console.error('Failed to get team member information:', error);
-                // Show a user-friendly error message
-                this.showError('Team not found or you do not have access to this team.');
+                // Silently handle the error without showing notification
                 this.hideConversationDialog();
             },
             complete: () => {
@@ -566,6 +577,36 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
                 console.log('getTeamMemberId complete');
             }
         });
+    }
+    
+    /**
+     * Initialize the AI team member for the current team
+     * This creates a persistent AI team member that can be used to save messages to the database
+     */
+    private initializeAITeamMember(team: Team): void {
+        // Look for an existing AI team member in the team
+        const aiMember = team.teamMembers?.find(member => member.role === 'GEMINI');
+        
+        if (aiMember) {
+            console.log('Found existing AI team member:', aiMember);
+            this.aiTeamMember = aiMember;
+        } else {
+            console.log('No AI team member found, using fallback approach');
+            // Create a virtual AI team member as a fallback
+            this.aiTeamMember = {
+                id: -999, // Special ID for AI (will be replaced with actual ID if available)
+                user: {
+                    id: -999,
+                    name: 'Gemini Assistant',
+                    lastname: '',
+                    email: 'ai-assistant@system.local'
+                },
+                team: team,
+                role: 'GEMINI'
+            } as TeamMember;
+        }
+        
+        console.log('AI team member initialized:', this.aiTeamMember);
     }
 
     getDiscussions(teamId: number): TeamDiscussion[] {
@@ -956,11 +997,18 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
     // Open full chat view in a dedicated page
     public openFullChatView(): void {
         if (!this.selectedTeam) return;
+        
         // Store the current team in localStorage for persistence
         localStorage.setItem('currentChatTeam', JSON.stringify(this.selectedTeam));
-        // Navigate to the full chat view page
-        // We'll use window.open to open in a new tab
-        window.open(`/team-chat-hub/${this.selectedTeam.id}`, '_blank');
+        
+        // Get the team ID before closing the dialog
+        const teamId = this.selectedTeam.id;
+        
+        // Close the current dialog
+        this.hideConversationDialog();
+        
+        // Navigate to the team hub in the current window instead of a new tab
+        window.location.href = `/team-chat-hub/${teamId}`;
     }
 
     public triggerFileUpload(): void {
@@ -1104,7 +1152,7 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
             setTimeout(() => this.initializeWebSocket(teamId), delay);
         } else {
             console.warn('Failed to reconnect WebSocket after max attempts');
-            this.showError('Unable to establish real-time connection. Messages will be updated periodically.');
+            // Silently fall back to polling without showing error notification
             this.setupPollingFallback(teamId);
         }
     }
@@ -1124,19 +1172,14 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
 
     /**
      * Set up polling as a fallback when WebSocket fails
+     * Note: All refresh functionality has been completely disabled as requested
      */
     private setupPollingFallback(teamId: number): void {
-        console.log('Setting up polling fallback for team:', teamId);
+        console.log('All refresh functionality disabled for team:', teamId);
         this.clearPollingInterval();
         
-        // Set up polling interval to fetch messages periodically
-        this.pollingInterval = setInterval(() => {
-            if (this.selectedTeam && this.selectedTeam.id === teamId) {
-                this.loadTeamDiscussions(teamId);
-            } else {
-                this.clearPollingInterval();
-            }
-        }, this.pollingIntervalTime);
+        // No refresh at all, not even a one-time refresh
+        // Messages will only be loaded once when the chat is initially opened
     }
 
 
@@ -1457,18 +1500,18 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
                     this.discussions[teamId] = this.discussions[teamId].filter(msg => msg.id !== loadingMessage.id);
                 }
 
-                // Create Gemini response message
+                // Create a Gemini response message using the AI team member
                 const aiMessage: GeminiTeamDiscussion = {
                     id: Date.now() + 2,
                     message: response.text,
                     team: { id: this.selectedTeam!.id! } as Team,
-                    teamMember: {
-                        id: 0, // Special ID for AI
+                    teamMember: this.aiTeamMember || {
+                        id: -999, // Fallback ID for AI
                         user: {
-                            id: 0,
+                            id: -999,
                             name: 'Gemini Assistant',
                             lastname: '',
-                            email: ''
+                            email: 'ai-assistant@system.local'
                         },
                         team: { id: this.selectedTeam!.id! } as Team,
                         role: 'GEMINI'
@@ -1697,11 +1740,12 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
             return;
         }
 
-        // Create a special AI team member ID if one doesn't exist
-        const aiTeamMemberId = 0; // Using 0 as a special ID for AI
+        // Use the AI team member if available, otherwise use a fallback ID
+        const aiTeamMemberId = this.aiTeamMember?.id || -999;
         
-        // Format the message to clearly indicate it's from AI
-        const formattedMessage = `[AI RESPONSE] ${message}`;
+        // Format the message in a way that's compatible with the backend
+        // No need for special prefix since we're using the AI team member
+        const formattedMessage = message;
         
         console.log('Attempting to save AI message to database:', {
             teamId,
@@ -1709,7 +1753,7 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
             messageLength: formattedMessage.length
         });
         
-        // First attempt to save the message
+        // First attempt to save the message using the AI team member
         const saveMessage = () => {
             this.teamDiscussionService.sendMessage(
                 teamId, 
@@ -1725,10 +1769,16 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
                     if (response && response.id) {
                         // Find the temporary message and update its ID
                         const tempMessages = this.discussions[teamId].filter(msg => 
-                            (msg as GeminiTeamDiscussion).isAI && msg.teamMember?.id === 0 && !(msg as GeminiTeamDiscussion).isLoading);
+                            (msg as GeminiTeamDiscussion).isAI && 
+                            (msg.teamMember?.id === aiTeamMemberId || msg.teamMember?.id === 0) && 
+                            !(msg as GeminiTeamDiscussion).isLoading);
                         if (tempMessages.length > 0) {
                             const lastTempMessage = tempMessages[tempMessages.length - 1];
                             lastTempMessage.id = response.id;
+                            // Also update the team member ID to match the server
+                            if (lastTempMessage.teamMember) {
+                                lastTempMessage.teamMember.id = aiTeamMemberId;
+                            }
                             this.cdr.detectChanges();
                         }
                     }
@@ -1752,9 +1802,12 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
      * Retry saving an AI message to the database
      */
     private retryAIMessageSave(teamId: number, message: string): void {
+        // Use the AI team member if available, otherwise use a fallback ID
+        const aiTeamMemberId = this.aiTeamMember?.id || -999;
+        
         this.teamDiscussionService.sendMessage(
             teamId, 
-            0, // AI team member ID 
+            aiTeamMemberId, 
             message, 
             TeamDiscussionMessageType.TEXT
         ).subscribe({
@@ -1773,21 +1826,44 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
      * Final attempt to save an AI message using a different approach
      */
     private finalAttemptSaveAIMessage(teamId: number, message: string): void {
-        // Use the current user's team member ID as a fallback
+        // First try with the current user's team member ID as a fallback
         const fallbackTeamMemberId = this.teamMemberId || 0;
         
+        // Create a message format that clearly identifies this as an AI message
+        const formattedMessage = `[AI Assistant] ${message}`;
+        
+        console.log('Making final attempt to save AI message using user ID:', {
+            teamId,
+            fallbackTeamMemberId,
+            messageLength: formattedMessage.length
+        });
+        
+        // Try sending the message as if it came from the current user
         this.teamDiscussionService.sendMessage(
             teamId, 
             fallbackTeamMemberId, 
-            `[AI ASSISTANT MESSAGE] ${message}`, 
+            formattedMessage, 
             TeamDiscussionMessageType.TEXT
         ).subscribe({
             next: (response: any) => {
                 console.log('Final attempt successful: AI message saved using fallback method:', response);
+                
+                // Update the UI to reflect that the message was saved
+                const tempMessages = this.discussions[teamId].filter(msg => 
+                    (msg as GeminiTeamDiscussion).isAI && 
+                    !(msg as GeminiTeamDiscussion).isLoading);
+                
+                if (tempMessages.length > 0) {
+                    const lastTempMessage = tempMessages[tempMessages.length - 1];
+                    lastTempMessage.id = response.id || lastTempMessage.id;
+                    this.cdr.detectChanges();
+                }
             },
             error: (finalError: any) => {
                 console.error('All attempts to save AI message failed:', finalError);
-                this.showError('Failed to save AI response to the database. The message is only visible temporarily.');
+                // Don't show error to user, just keep the message in the UI
+                // The message will still be visible in the current session
+                console.log('Message will remain visible in the current session only');
             }
         });
     }

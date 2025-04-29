@@ -1,0 +1,187 @@
+<!-- Navbar will be added via module -->
+
+<div class="submission-details-page">
+  <!-- Loading Overlay -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading submission details...</p>
+  </div>
+  
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    <i class="pi pi-exclamation-triangle"></i>
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- No Submission Found -->
+  <div *ngIf="!loading && !submission && !error" class="no-data-message">
+    <i class="pi pi-info-circle"></i>
+    <p>No submission found with the specified ID.</p>
+    <button pButton type="button" label="Back to Submissions" icon="pi pi-arrow-left" 
+            class="p-button-outlined" routerLink="/hackathon/submissions"></button>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="donationSuccess" class="alert alert-success">
+    <i class="pi pi-check-circle"></i>
+    <p>Your donation has been processed successfully!</p>
+  </div>
+
+  <div class="back-navigation">
+    <button pButton type="button" icon="pi pi-arrow-left" label="Back to Hackathons" 
+            class="p-button-text" (click)="goBack()"></button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-container" *ngIf="submission">
+    <!-- Hero Section -->
+    <div class="submission-hero">
+      <div class="hero-content">
+        <div class="project-badge" *ngIf="submission && isDonationPositive(submission.donationAmount)">
+          <i class="pi pi-heart-fill"></i>
+          <span>${{ submission?.donationAmount }} raised</span>
+        </div>
+        <h1 class="project-title">{{ submission?.projectName }}</h1>
+        <div class="submission-meta">
+          <div class="meta-item">
+            <i class="pi pi-user"></i>
+            <span>Submitted by {{ submission?.teamMember?.id ? 'User ' + submission?.teamMember?.id : 'Unknown User' }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="pi pi-calendar"></i>
+            <span>{{ submission?.submissionDate }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="pi pi-flag"></i>
+            <span>{{ hackathonName || 'Unknown Hackathon' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Evaluation Chart -->
+    <div class="card chart-section" *ngIf="evaluations && evaluations.length > 0">
+      <div class="card-header">
+        <i class="pi pi-chart-line"></i>
+        <h2>Evaluation Scores</h2>
+        <div class="average-score">
+          {{ getAverageScore() }}/100
+        </div>
+      </div>
+      
+      <div class="card-content">
+        <!-- Chart placeholder -->
+        <div class="chart-placeholder">
+          <p>Chart visualization is loading...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid Content -->
+    <div class="details-grid">
+      <!-- Left Column: Project Details -->
+      <div class="details-column">
+        <div class="card">
+          <div class="card-header">
+            <i class="pi pi-info-circle"></i>
+            <h2>Project Details</h2>
+          </div>
+          <div class="card-content">
+            <div class="detail-section">
+              <h3>Description</h3>
+              <p>{{ submission?.description }}</p>
+            </div>
+            
+            <div class="detail-section">
+              <h3>Technologies Used</h3>
+              <div class="tech-tags">
+                <span class="tech-tag" *ngFor="let tech of getTechnologiesArray(submission?.technologies)">
+                  {{ tech.trim() }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="detail-section">
+              <h3>Repository</h3>
+              <div class="repo-link" *ngIf="submission?.repoLink">
+                <i class="pi pi-github"></i>
+                <a [href]="submission?.repoLink" target="_blank" rel="noopener noreferrer">
+                  {{ submission?.repoLink }}
+                </a>
+              </div>
+              <p *ngIf="!submission?.repoLink" class="no-data-text">No repository link provided</p>
+            </div>
+            
+            <!-- Actions -->
+            <div class="detail-section actions-section" *ngIf="user">
+              <h3>Actions</h3>
+              <div class="action-buttons">
+                <button pButton type="button" label="Evaluate Project" icon="pi pi-star" 
+                        class="p-button-info action-button" (click)="openEvaluationDialog()">
+                  <span class="action-description">Review and score this project</span>
+                </button>
+                <button pButton type="button" label="Donate to Project" icon="pi pi-heart" 
+                        class="p-button-success action-button" (click)="toggleDonationForm()">
+                  <span class="action-description">Support this project financially</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column: Evaluations -->
+      <div class="evaluations-column">
+        <div class="card">
+          <div class="card-header">
+            <i class="pi pi-star"></i>
+            <h2>Project Evaluations</h2>
+            <button pButton type="button" icon="pi pi-plus" 
+                    class="p-button-rounded p-button-sm p-button-outlined"
+                    (click)="openEvaluationDialog()"
+                    *ngIf="user && !isSubmissionOwner"
+                    pTooltip="Add Evaluation"></button>
+          </div>
+          
+          <div class="card-content">
+            <div *ngIf="evaluations && evaluations.length > 0; else noEvaluations" class="evaluations-list">
+              <div *ngFor="let evaluation of evaluations" class="evaluation-item">
+                <div class="evaluation-header">
+                  <div class="evaluator-info">
+                    <i class="pi pi-user"></i>
+                    <span>{{ getEvaluatorDisplay(evaluation.evaluator) }}</span>
+                  </div>
+                  <div class="score-badge">
+                    {{ evaluation.score }}/100
+                  </div>
+                </div>
+                
+                <div class="evaluation-date">
+                  <i class="pi pi-calendar"></i>
+                  <span>{{ evaluation.evaluationDate }}</span>
+                </div>
+                
+                <div class="evaluation-feedback">
+                  <h4>Feedback</h4>
+                  <p>{{ evaluation.feedback || 'No feedback provided' }}</p>
+                </div>
+              </div>
+            </div>
+            
+            <ng-template #noEvaluations>
+              <div class="no-data">
+                <i class="pi pi-info-circle"></i>
+                <p>No evaluations yet</p>
+                <p *ngIf="!isSubmissionOwner" class="no-data-hint">Be the first to evaluate this project!</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast for notifications -->
+<!-- Toast component would be here -->
+<div class="toast-container"></div>

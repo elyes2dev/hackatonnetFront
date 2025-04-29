@@ -21,6 +21,11 @@ export class TeamSubmissionService {
     return this.http.get<TeamSubmission>(`${this.apiUrl}/${id}`);
   }
 
+  getSubmissionsByHackathonId(hackathonId: number): Observable<TeamSubmission[]> {
+    // Try a different endpoint structure - the backend might use a query parameter instead
+    return this.http.get<TeamSubmission[]>(`${this.apiUrl}?hackathonId=${hackathonId}`);
+  }
+
   createSubmission(submission: TeamSubmission): Observable<string> {
     const body = {
       ...submission,

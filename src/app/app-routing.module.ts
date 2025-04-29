@@ -69,8 +69,7 @@ import {
 } from "./demo/components/landing/landing-team-submission/landing-team-submission.component";
 import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/team-frontoffice.component';
 import { TeamChatHubComponent } from './demo/components/team-chat-hub/team-chat-hub.component';
-
-
+import { SubmissionDetailsComponent } from './demo/components/landing/Hackathon/submission-details/submission-details.component';
 
 @NgModule({
     imports: [
@@ -217,6 +216,7 @@ import { TeamChatHubComponent } from './demo/components/team-chat-hub/team-chat-
             { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
             { path: 'landing-hackathons', component: LandingHackathonListComponent},
             { path: 'landing-hackathon/:id', component: LandingHackathonDetailsComponent},
+            { path: 'submission-details/:id', component: SubmissionDetailsComponent },
             { path: 'prize-form/:hackathonId', component: PrizeFormComponent },
             { path: 'landing-live-stream/:id', component: LiveStreamComponent },
             { path: 'sponsors-leaderboard', component: SponsorLeaderboardComponent },

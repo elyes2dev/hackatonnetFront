@@ -6,5 +6,6 @@ export interface TeamSubmission {
     repoLink: string;
     teamMember?: { id: number };
     submissionDate?: Date;
+    donationAmount?: number;
+    technologies?: string;
   }
-  
