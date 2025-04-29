@@ -454,6 +454,8 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
     joinTeamByCode(): void {
         if (!this.teamCode.trim()) {
             this.showError('Team code is required');
+            console.log("teamcode:", this.teamCode);
+
             return;
         }
 
@@ -462,6 +464,8 @@ export class TeamFrontofficeComponent implements OnInit, OnDestroy {
         // Since the service expects a teamId, we need to find the team by code first
         // For now, we'll use a workaround by modifying the service call
         // This would need a proper API endpoint to join by code
+        console.log("userid", this.userId);
+
         this.teamService.joinTeamByCode(this.teamCode.trim(), this.userId!).pipe(
             takeUntil(this.destroy$),
             finalize(() => {

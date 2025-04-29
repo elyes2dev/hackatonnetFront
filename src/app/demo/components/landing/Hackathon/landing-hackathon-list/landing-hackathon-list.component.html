@@ -143,6 +143,7 @@
 
   <div class="fixed-header">
     <div class="search-container">
+      <!-- Search Input -->
       <span class="p-input-icon-left">
         <i class="pi pi-search"></i>
         <input type="text" pInputText [(ngModel)]="searchTerm"
@@ -150,10 +151,34 @@
                placeholder="Search by name..." />
       </span>
 
+      <!-- Event Type Filter -->
       <p-dropdown [options]="eventTypeOptions" [(ngModel)]="selectedEventType"
                   (onChange)="filterHackathons()"
-                  placeholder="Filter by type" [showClear]="true">
+                  placeholder="Event Type" [showClear]="true">
       </p-dropdown>
+
+      <!-- Theme Filter -->
+      <p-dropdown [options]="themeOptions" [(ngModel)]="selectedTheme"
+                  (onChange)="filterHackathons()"
+                  placeholder="Theme" [showClear]="true">
+      </p-dropdown>
+
+      <!-- Audience Filter -->
+      <p-dropdown [options]="audienceOptions" [(ngModel)]="selectedAudience"
+                  (onChange)="filterHackathons()"
+                  placeholder="Target Audience" [showClear]="true">
+      </p-dropdown>
+
+      <!-- Tech Filter -->
+      <p-dropdown [options]="techOptions" [(ngModel)]="selectedTech"
+                  (onChange)="filterHackathons()"
+                  placeholder="Technology" [showClear]="true">
+      </p-dropdown>
+
+      <!-- Reset Filters Button -->
+      <button class="reset-filters" (click)="resetFilters()">
+        <i class="pi pi-refresh"></i> Reset
+      </button>
     </div>
   </div>
 
@@ -161,36 +186,59 @@
   <div class="hackathon-list-container">
     <div class="col-12 md:col-12">
     <div class="hackathon-grid">
-      <div class="hackathon-card" *ngFor="let hackathon of filteredHackathons">
-        <!-- Card Header with Logo -->
-        <div class="card-header">
-          <div class="logo-container">
-            <img [src]="hackathon.logo" alt="Hackathon Logo" class="card-logo">
-          </div>
+      <div class="hackathon-item" *ngFor="let hackathon of filteredHackathons" [routerLink]="['/landing-hackathon', hackathon.id]">
+        <div class="hackathon-image-container">
+          <img [src]="hackathon.logo" alt="Hackathon Cover" class="hackathon-image">
+          <div class="hackathon-overlay"></div>
+          <span class="hackathon-type" [ngClass]="hackathon.isOnline ? 'online' : 'onsite'">
+            <i class="pi" [ngClass]="hackathon.isOnline ? 'pi-globe' : 'pi-building'"></i>
+            {{ hackathon.isOnline ? 'Online' : 'Onsite' }}
+          </span>
         </div>
 
-        <!-- Card Content -->
-        <div class="card-content" [routerLink]="['/landing-hackathon', hackathon.id]">
-          <h3 class="card-title">{{ hackathon.title }}</h3>
+        <div class="hackathon-content">
+          <h3 class="hackathon-title">{{ hackathon.title }}</h3>
 
-          <div class="card-meta">
-            <span class="meta-item location">
-              <i class="pi pi-map-marker"></i> {{ hackathon.location }}
+          <div class="hackathon-meta">
+            <span class="meta-item">
+              <i class="pi pi-map-marker"></i>
+              {{ hackathon.location }}
             </span>
-            <span class="meta-item date">
-              <i class="pi pi-calendar"></i> {{ hackathon.startDate | date:'MMM d' }} - {{ hackathon.endDate | date:'MMM d' }}
+            <span class="meta-item">
+              <i class="pi pi-calendar"></i>
+              {{ hackathon.startDate | date:'MMM d' }} - {{ hackathon.endDate | date:'MMM d' }}
             </span>
           </div>
 
-          <p class="card-description">{{ (hackathon.description) || 'No description provided' }}</p>
+          <p class="hackathon-description">
+            {{ hackathon.description || 'No description provided' }}
+          </p>
 
-          <div class="card-footer">
-            <span class="event-type" [ngClass]="{'online': hackathon.isOnline, 'onsite': !hackathon.isOnline}">
-              <i class="pi" [ngClass]="hackathon.isOnline ? 'pi-globe' : 'pi-building'"></i>
-              {{ hackathon.isOnline ? 'Online' : 'Onsite' }}
+          <!-- Category Tags -->
+          <div class="category-tags">
+            <!-- Theme Tags -->
+            <span class="category-tag theme" *ngFor="let theme of hackathon.categories?.theme">
+              <i class="pi pi-tag"></i> {{ theme }}
             </span>
+            
+            <!-- Audience Tags -->
+            <span class="category-tag audience" *ngFor="let audience of hackathon.categories?.audience">
+              <i class="pi pi-users"></i> {{ audience }}
+            </span>
+            
+            <!-- Tech Tags -->
+            <span class="category-tag tech" *ngFor="let tech of hackathon.categories?.tech">
+              <i class="pi pi-code"></i> {{ tech }}
+            </span>
+          </div>
+
+          <div class="hackathon-footer">
             <span class="participants">
-              <i class="pi pi-users"></i> {{ hackathon.maxMembers }} max
+              <i class="pi pi-users"></i>
+              {{ hackathon.maxMembers }} participants max
+            </span>
+            <span class="date-badge">
+              {{ getDaysUntilStart(hackathon.startDate) }}
             </span>
           </div>
         </div>

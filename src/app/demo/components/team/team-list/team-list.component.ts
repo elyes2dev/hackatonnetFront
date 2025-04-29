@@ -36,6 +36,7 @@ export class TeamListComponent implements OnInit {
     teamsByHackathon: [] as {name: string, count: number}[],
     memberRoleDistribution: {leader: 0, member: 0}
   };
+
   
   // Chart data
   teamDistributionData: any;
@@ -48,6 +49,9 @@ export class TeamListComponent implements OnInit {
   displayMentorDialog = false;
   availableMentors: User[] = [];
   selectedMentor: User | null = null;
+
+
+
 
   isAdmin(): boolean {
     if (!this.userToken) return false;
@@ -581,7 +585,21 @@ export class TeamListComponent implements OnInit {
             });
             return;
           }
-          this.teamService.joinTeamByCode(code, hackathonId).subscribe({
+
+          const code = this.joinCodeForm.get('teamCode')?.value;
+  const userId = this.storageService.getLoggedInUserId();
+  
+  if (!userId) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'You must be logged in to join a team'
+    });
+    return;
+  }
+  
+  // First validate the code
+  this.teamService.validateTeamCode(code).subscribe({
             next: (team) => {
               this.messageService.add({
                 severity: 'success',

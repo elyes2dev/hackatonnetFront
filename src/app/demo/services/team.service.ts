@@ -74,27 +74,14 @@ export class TeamService {
       return throwError(() => new Error('User not logged in'));
     }
     
-    return this.http.post<Team>(`${this.apiUrl}/join-by-code`, {
-      teamCode: teamCode,
-      userId: userId
-    }).pipe(
+    return this.http.post<Team>(`${this.apiUrl}/join/${teamCode}/${userId}`, {}).pipe(
       tap(team => console.log('Joined team by code:', team)),
       catchError(this.handleError)
     );
+    
   }
 
-  // Join a team using team code and hackathon ID
-  joinTeamByCodeAndHackathon(teamCode: string, hackathonId: number): Observable<Team> {
-    const userId = this.storageService.getLoggedInUserId();
-    if (!userId) {
-      return throwError(() => new Error('User not logged in'));
-    }
-    
-    return this.http.post<Team>(`${this.apiUrl}/join-by-code/${teamCode}/${userId}/${hackathonId}`, {}).pipe(
-      tap(team => console.log('Joined team by code:', team)),
-      catchError(this.handleError)
-    );
-  }
+
 
   // Regenerate team code
   regenerateTeamCode(teamId: number): Observable<any> {
@@ -217,7 +204,7 @@ export class TeamService {
       tap(response => console.log('Removed team member:', response)),
       catchError(this.handleError)
     );
-  } 
+  }
 
   // Error handling
   private handleError(error: HttpErrorResponse) {

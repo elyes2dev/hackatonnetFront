@@ -251,7 +251,7 @@ import { SubmissionDetailsComponent } from './demo/components/landing/Hackathon/
             { path: 'team-chat-hub', component: TeamChatHubComponent },
 
             { path: 'pages/notfound', component: NotfoundComponent },
-            { path: '**', redirectTo: 'pages/notfound' },
+            { path: '**', redirectTo: 'Landing' },
         ], { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })
     ],
     exports: [RouterModule]

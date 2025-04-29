@@ -50,6 +50,38 @@ export class MentorApplicationFormComponent implements OnInit {
       previousExperiences: this.fb.array([])
     });
   }
+  benefitItems = [
+    {
+      title: 'Share Your Knowledge',
+      description: 'Pass on your expertise to the next generation of professionals and make a real difference in their careers.',
+      icon: 'pi pi-book',
+      bgGradient: 'linear-gradient(135deg, #6B46C1 0%, #8B5CF6 100%)'
+    },
+    {
+      title: 'Expand Your Network',
+      description: 'Connect with talented individuals and industry leaders, expanding your professional network in meaningful ways.',
+      icon: 'pi pi-users',
+      bgGradient: 'linear-gradient(135deg, #3182CE 0%, #63B3ED 100%)'
+    },
+    {
+      title: 'Enhance Your Reputation',
+      description: 'Build credibility as a thought leader in your field and gain recognition for your expertise and contributions.',
+      icon: 'pi pi-star',
+      bgGradient: 'linear-gradient(135deg, #2F855A 0%, #48BB78 100%)'
+    },
+    {
+      title: 'Develop Leadership Skills',
+      description: 'Refine your leadership and communication abilities by guiding others through challenges and growth opportunities.',
+      icon: 'pi pi-chart-line',
+      bgGradient: 'linear-gradient(135deg, #DD6B20 0%, #F6AD55 100%)'
+    },
+    {
+      title: 'Give Back to the Community',
+      description: 'Contribute to the growth of your professional community and help create opportunities for underrepresented groups.',
+      icon: 'pi pi-heart',
+      bgGradient: 'linear-gradient(135deg, #9F7AEA 0%, #B794F4 100%)'
+    }
+  ];
 
   ngOnInit(): void {
     this.setupFormListeners();
