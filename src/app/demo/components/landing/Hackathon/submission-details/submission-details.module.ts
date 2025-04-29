@@ -12,15 +12,20 @@ import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { RatingModule } from 'primeng/rating';
+import { SliderModule } from 'primeng/slider';
+import { MessageService } from 'primeng/api';
 
 import { SubmissionDetailsComponent } from './submission-details.component';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from '../../navbar/navbar.component';
+import { ProjectEvaluationComponent } from '../../../project-evaluation/project-evaluation.component';
 
 @NgModule({
   declarations: [
     SubmissionDetailsComponent,
-    NavbarComponent
+    NavbarComponent,
+    ProjectEvaluationComponent
   ],
   imports: [
     CommonModule,
@@ -37,7 +42,12 @@ import { NavbarComponent } from '../../navbar/navbar.component';
     TooltipModule,
     DialogModule,
     DynamicDialogModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    RatingModule,
+    SliderModule
+  ],
+  providers: [
+    MessageService
   ],
   exports: [
     SubmissionDetailsComponent

@@ -7,17 +7,21 @@ import { TeamSubmissionService } from 'src/app/demo/service/team-submission.serv
 import { ProjectEvaluationService } from 'src/app/demo/service/project-evaluation.service';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { LandingProjectEvaluationComponent } from '../../landing-project-evaluation/landing-project-evaluation.component';
+import { ProjectEvaluationComponent } from 'src/app/demo/components/project-evaluation/project-evaluation.component';
 import { UserService } from 'src/app/demo/services/user.service';
 import { User } from 'src/app/demo/models/user.model';
 import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { CommonModule } from '@angular/common';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-submission-details',
   templateUrl: './submission-details.component.html',
   styleUrls: ['./submission-details.component.scss'],
   providers: [DialogService, MessageService],
-  imports: [CommonModule],
+  imports: [CommonModule, ToastModule, ButtonModule, TooltipModule],
   standalone: true
 })
 export class SubmissionDetailsComponent implements OnInit {
@@ -97,6 +101,8 @@ export class SubmissionDetailsComponent implements OnInit {
       }
     });
   }
+  
+
 
   loadSubmissionDetails(): void {
     if (!this.submissionId) return;
@@ -198,19 +204,49 @@ export class SubmissionDetailsComponent implements OnInit {
   openEvaluationDialog(): void {
     if (!this.submissionId) return;
     
-    this.dialogRef = this.dialogService.open(LandingProjectEvaluationComponent, {
-      header: 'Evaluate Project',
+    // Check if user is logged in
+    if (!this.user) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'You must be logged in to evaluate projects'
+      });
+      return;
+    }
+    
+    // Check if user is the submission owner
+    if (this.isSubmissionOwner) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'You cannot evaluate your own project'
+      });
+      return;
+    }
+    
+    // Open the evaluation dialog
+    this.dialogRef = this.dialogService.open(ProjectEvaluationComponent, {
+      header: 'Evaluate Project: ' + this.submission?.projectName,
       width: '70%',
       contentStyle: { overflow: 'auto' },
       baseZIndex: 10000,
+      maximizable: true,
       data: {
-        isPopup: true,
         submissionId: this.submissionId,
-        projectName: this.submission?.projectName
+        projectName: this.submission?.projectName,
+        hackathonName: this.hackathonName,
+        userId: this.user.id
       }
     });
     
-    this.dialogRef.onClose.subscribe(() => {
+    this.dialogRef.onClose.subscribe((result) => {
+      if (result) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Project evaluation submitted successfully!'
+        });
+      }
       // Reload evaluations when dialog is closed
       this.loadEvaluations();
     });

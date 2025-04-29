@@ -55,7 +55,9 @@ export class LandingHackathonDetailsComponent implements OnInit {
     projectName: '',
     description: '',
     repoLink: '',
-    teamMember: { id: 0 }
+    teamMember: { id: 0 },
+    technologies: '',
+    hackathonId: 0
   };
   
   // Submission details
@@ -330,6 +332,51 @@ createSubmission(): void {
     return;
   }
   
+  // Ensure we have a valid hackathon (for validation only, not sent to API)
+  if (!this.hackathon || this.hackathon.id === undefined) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Hackathon ID is missing'
+    });
+    return;
+  }
+  
+  // Find the correct team member ID from the user's team
+  if (this.userTeam && this.userTeam.teamMembers && this.user && this.user.id !== undefined) {
+    const teamMember = this.userTeam.teamMembers.find(member => member.user?.id === this.user.id);
+    if (teamMember && teamMember.id) {
+      this.newSubmission.teamMember = { id: teamMember.id };
+      console.log('Using team member ID:', teamMember.id);
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Could not find your team member record'
+      });
+      return;
+    }
+  } else {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'User ID is missing or you are not part of a team'
+    });
+    return;
+  }
+  
+  // Ensure user is part of a team (for validation only, not sent to API)
+  if (!this.userTeam || this.userTeam.id === undefined) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Team ID is missing, please join a team first'
+    });
+    return;
+  }
+  
+  console.log('Submitting project with data:', this.newSubmission);
+  
   this.loadingSubmissions = true;
   this.teamSubmissionService.createSubmission(this.newSubmission).subscribe({
     next: (response) => {
@@ -338,11 +385,21 @@ createSubmission(): void {
         summary: 'Success',
         detail: 'Project submitted successfully!'
       });
+      // Reset the submission form with the correct team member ID
+      let teamMemberId = 0;
+      if (this.userTeam && this.userTeam.teamMembers && this.user && this.user.id !== undefined) {
+        const teamMember = this.userTeam.teamMembers.find(member => member.user?.id === this.user.id);
+        if (teamMember && teamMember.id) {
+          teamMemberId = teamMember.id;
+        }
+      }
+      
       this.newSubmission = {
         projectName: '',
         description: '',
         repoLink: '',
-        teamMember: this.user && this.user.id !== undefined ? { id: this.user.id as number } : { id: 0 }
+        teamMember: { id: teamMemberId }
+        // Note: technologies, hackathonId and teamId are not included as they're not recognized by the backend
       };
       this.showSubmissionForm = false;
       // Reload submissions
@@ -352,7 +409,25 @@ createSubmission(): void {
       this.loadingSubmissions = false;
     },
     error: (err) => {
-      this.submissionError = 'Error creating submission: ' + (err.message || 'Network error');
+      console.error('Submission error:', err);
+      let errorMessage = 'Error creating submission';
+      
+      if (err.error && typeof err.error === 'string') {
+        errorMessage += ': ' + err.error;
+      } else if (err.message) {
+        errorMessage += ': ' + err.message;
+      } else if (err.status === 400) {
+        errorMessage += ': Bad request. Please check that all required fields are filled correctly.';
+      } else {
+        errorMessage += ': Network error or server issue';
+      }
+      
+      this.submissionError = errorMessage;
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Submission Failed',
+        detail: errorMessage
+      });
       this.loadingSubmissions = false;
     }
   });

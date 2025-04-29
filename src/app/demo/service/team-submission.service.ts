@@ -2,7 +2,8 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { TeamSubmission } from '../api/team-submission';
 
 @Injectable({
@@ -27,11 +28,37 @@ export class TeamSubmissionService {
   }
 
   createSubmission(submission: TeamSubmission): Observable<string> {
+    // Ensure all required fields are present
     const body = {
-      ...submission,
+      projectName: submission.projectName,
+      description: submission.description,
+      repoLink: submission.repoLink,
+      // Make sure teamMember is properly formatted
       teamMember: submission.teamMember ? { id: submission.teamMember.id } : null
+      // Note: hackathonId, teamId, and technologies are not recognized by the backend
     };
-    return this.http.post(`${this.apiUrl}`, body, { responseType: 'text' });
+    
+    console.log('Submission data being sent:', body);
+    
+    // Use the HttpClient with error handling
+    return this.http.post(`${this.apiUrl}`, body, { 
+      responseType: 'text',
+      observe: 'response'
+    }).pipe(
+      map(response => {
+        console.log('Submission response:', response);
+        return response.body || 'Success';
+      }),
+      catchError(error => {
+        console.error('Submission error details:', error);
+        if (error.error && typeof error.error === 'object') {
+          console.error('Error response body:', JSON.stringify(error.error));
+        } else if (error.error) {
+          console.error('Error text:', error.error);
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
   updateSubmission(id: number, submission: TeamSubmission): Observable<TeamSubmission> {

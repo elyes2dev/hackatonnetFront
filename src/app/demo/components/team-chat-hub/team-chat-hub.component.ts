@@ -37,6 +37,7 @@ export class TeamChatHubComponent implements OnInit, OnDestroy {
     selectedTeam: Team | null = null;
     teamMemberId: number | null = null;
     showArchived: boolean = false;
+    showTeamsSidebar: boolean = false;
     
     // Chat state
     discussions: { [key: number]: TeamDiscussion[] } = {};
@@ -382,6 +383,11 @@ export class TeamChatHubComponent implements OnInit, OnDestroy {
     // Toggle members sidebar
     toggleMembersSidebar(): void {
         this.showMembersSidebar = !this.showMembersSidebar;
+    }
+    
+    // Toggle teams sidebar for mobile view
+    toggleTeamsSidebar(): void {
+        this.showTeamsSidebar = !this.showTeamsSidebar;
     }
     
     // Check if a message is from the current user
