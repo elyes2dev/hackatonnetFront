@@ -145,6 +145,7 @@ import { PasswordModule } from 'primeng/password';
 import { ChipModule } from 'primeng/chip';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { UserSupportTicketComponent } from './demo/components/ticket-front/user-support-ticket.component';
+import { AboutComponent } from './demo/components/about/about.component';
 
 
 
@@ -218,7 +219,8 @@ import { UserSupportTicketComponent } from './demo/components/ticket-front/user-
 
         FooterComponent,
         SponsorPrizesComponent,
-        UserSupportTicketComponent
+        UserSupportTicketComponent,
+        AboutComponent
 
         
 

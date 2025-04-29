@@ -28,6 +28,7 @@ interface FeedbackResult {
 })
 export class WorkshoplistfComponent implements OnInit {
   workshops: any[] = [];
+  profileImageUrl: string | null = null;
   isLoading = true;
   isAdmin = false;
   isStudent = false;
@@ -81,7 +82,7 @@ export class WorkshoplistfComponent implements OnInit {
     this.getAllWorkshops();
     this.getUserRole();
     this.loadFavorites();
-    this.loadRecentlyViewed();
+    this.loadRecentlyViewed();           
   }
 
   getAllWorkshops() {
@@ -379,5 +380,19 @@ export class WorkshoplistfComponent implements OnInit {
         }
       }
     });
+  }
+
+  getInitials(firstName?: string, lastName?: string): string {
+    let initials = '';
+    
+    if (firstName) {
+      initials += firstName.charAt(0).toUpperCase();
+    }
+    
+    if (lastName) {
+      initials += lastName.charAt(0).toUpperCase();
+    }
+    
+    return initials || 'U';
   }
 }

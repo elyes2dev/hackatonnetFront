@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { ThemeEnum } from 'src/app/demo/models/theme.enum';
 import { Workshop } from 'src/app/demo/models/workshop.model';
 import { StorageService } from 'src/app/demo/services/storage.service';
@@ -19,6 +20,7 @@ export class WorkshopFormComponent implements OnInit {
     photo: [''],  // This will store the Base64 or URL
     theme: [ThemeEnum.Web, Validators.required]
   });
+  
 
   workshopId: number | null = null; // Holds workshop ID for edit mode
   imagePreview: string | null = null; // Preview for image
@@ -31,7 +33,9 @@ export class WorkshopFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private storageService: StorageService,
-    private userService: UserService // Add the UserService to retrieve user details
+    private userService: UserService, // Add the UserService to retrieve user details
+    private messageService: MessageService // Inject MessageService for toast notifications
+    
   ) {}
 
   ngOnInit() {
@@ -97,7 +101,11 @@ export class WorkshopFormComponent implements OnInit {
               this.workshopService.updateWorkshop(this.workshopId, workshop).subscribe({
                 next: () => {
                   console.log('Workshop updated successfully!');
-                  alert('Workshop updated!');
+                  this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Workshop updated successfully'
+                  });
                   this.router.navigate(['/workshops']); // Redirect after update
                 },
                 error: (err) => {
@@ -109,7 +117,11 @@ export class WorkshopFormComponent implements OnInit {
               this.workshopService.addWorkshop(workshop).subscribe({
                 next: () => {
                   console.log('Workshop added successfully!');
-                  alert('Workshop added!');
+                  this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Workshop deleted successfully'
+                  });
                   this.router.navigate(['/workshops']); // Redirect after creation
                 },
                 error: (err) => {

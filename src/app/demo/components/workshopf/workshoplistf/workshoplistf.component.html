@@ -191,8 +191,18 @@
 
           <div class="workshop-footer">
             <div class="host-info">
-              <img [src]="workshop.user.photo || 'assets/images/default-user.png'" alt="Host" class="host-avatar">
-              <span class="host-name">{{ workshop.user.name || 'Unknown' }}</span>
+              <div class="host-avatar">
+                <img *ngIf="workshop.user?.picture; else defaultAvatar" 
+                     [src]="workshop.user.picture" 
+                     alt="Host" 
+                     class="avatar-img">
+                <ng-template #defaultAvatar>
+                  <div class="default-avatar">
+                    <span>{{ getInitials(workshop.user?.name, workshop.user?.lastname) }}</span>
+                  </div>
+                </ng-template>
+              </div>
+              <span class="host-name">{{ workshop.user?.name || 'Unknown' }}</span>
             </div>
 
             <div class="action-buttons">

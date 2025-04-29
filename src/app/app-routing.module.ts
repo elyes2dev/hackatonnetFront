@@ -71,6 +71,7 @@ import { TeamFrontofficeComponent } from './demo/components/team-frontoffice/tea
 import { AuthGuard } from './demo/jwt/auth.guard';
 import { TeamChatHubComponent } from './demo/components/team/team-chat-hub/team-chat-hub.component';
 import { UserSupportTicketComponent } from './demo/components/ticket-front/user-support-ticket.component';
+import { AboutComponent } from './demo/components/about/about.component';
 
 
 
@@ -80,6 +81,7 @@ import { SubmissionDetailsComponent } from './demo/components/landing/Hackathon/
     imports: [
         RouterModule.forRoot([
           { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
+          { path: 'about', component: AboutComponent },
             {
               
 
