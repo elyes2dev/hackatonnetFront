@@ -8,16 +8,16 @@ import { Hackathon } from 'src/app/demo/models/hackathon';
 })
 export class HackathonInsightsComponent implements OnChanges {
   @Input() hackathons: Hackathon[] = [];
-  @Input() onlineCount: number = 0;
-  @Input() onsiteCount: number = 0;
+  @Input() onlineCount = 0;
+  @Input() onsiteCount = 0;
   @Input() monthlyData: number[] = [];
   @Input() monthNames: string[] = [];
   @Input() timeLabels: string[] = [];
   @Input() cumulativeHackathons: number[] = [];
 
   insights: string[] = [];
-  topInsight: string = '';
-  loading: boolean = true;
+  topInsight = '';
+  loading = true;
 
   constructor() {}
 
@@ -75,18 +75,18 @@ export class HackathonInsightsComponent implements OnChanges {
     if (this.monthlyData.length === 0) return;
     
     // Find the most popular month
-    let maxValue = Math.max(...this.monthlyData);
-    let maxIndex = this.monthlyData.indexOf(maxValue);
-    let maxMonth = this.monthNames[maxIndex];
+    const maxValue = Math.max(...this.monthlyData);
+    const maxIndex = this.monthlyData.indexOf(maxValue);
+    const maxMonth = this.monthNames[maxIndex];
     
     this.insights.push(`${maxMonth} is the most popular month for hackathons with ${maxValue} events.`);
     
     // Find the least popular month that has events
     const nonZeroMonths = this.monthlyData.filter(count => count > 0);
     if (nonZeroMonths.length < this.monthlyData.length) {
-      let minValue = Math.min(...nonZeroMonths);
-      let minIndices = this.monthlyData.map((value, index) => value === minValue ? index : -1).filter(index => index !== -1);
-      let minMonth = this.monthNames[minIndices[0]];
+      const minValue = Math.min(...nonZeroMonths);
+      const minIndices = this.monthlyData.map((value, index) => value === minValue ? index : -1).filter(index => index !== -1);
+      const minMonth = this.monthNames[minIndices[0]];
       
       if (minValue < maxValue) {
         this.insights.push(`${minMonth} has the fewest hackathons with only ${minValue} events.`);

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 
@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './landing-live-stream.component.html',
   styleUrls: ['./landing-live-stream.component.scss']
 })
-export class LandingLiveStreamComponent {
+export class LandingLiveStreamComponent implements OnInit {
   hackathonId: string | null = null;
 
   constructor(

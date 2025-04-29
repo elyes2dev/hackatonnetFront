@@ -17,7 +17,7 @@ export class PostListComponent implements OnInit, OnChanges {
   currentUser: User | null = null;
   loading = false;
   
-  editSidebarVisible: boolean = false;
+  editSidebarVisible = false;
   selectedPost: Post | null = null;
 
   constructor(
@@ -162,7 +162,7 @@ export class PostListComponent implements OnInit, OnChanges {
  
 
 // Update your error handler as previously defined
-handleImageError(event: Event, isProfilePicture: boolean = false) {
+handleImageError(event: Event, isProfilePicture = false) {
   const img = event.target as HTMLImageElement;
   
   // Prevent further error handling to avoid infinite loops

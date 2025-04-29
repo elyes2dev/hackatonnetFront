@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { PreviousExperience } from 'src/app/demo/models/previous-experience.model';
 
 @Component({
@@ -6,7 +6,7 @@ import { PreviousExperience } from 'src/app/demo/models/previous-experience.mode
   templateUrl: './previous-experience-list.component.html',
   styleUrls: ['./previous-experience-list.component.scss']
 })
-export class PreviousExperienceListComponent implements OnInit {
+export class PreviousExperienceListComponent implements OnInit, OnChanges {
   @Input() experiences: PreviousExperience[] = [];
   rowGroupMetadata: any;
 

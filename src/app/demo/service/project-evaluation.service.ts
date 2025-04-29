@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ProjectEvaluation } from '../api/project-evaluation';
+import { TeamSubmission } from '../api/team-submission';
 
 @Injectable({
   providedIn: 'root'
@@ -37,5 +38,13 @@ export class ProjectEvaluationService {
 
   donateToProject(evaluation: ProjectEvaluation): void {
     console.log('Donation pour le projet:', evaluation.teamSubmission?.projectName || 'Inconnu');
+  }
+
+  getSubmissionById(id: number): Observable<TeamSubmission> {
+    return this.http.get<TeamSubmission>(`http://localhost:9100/api/team-submissions/${id}`);
+  }
+
+  getAllSubmissions(): Observable<TeamSubmission[]> {
+    return this.http.get<TeamSubmission[]>('http://localhost:9100/api/team-submissions');
   }
 }

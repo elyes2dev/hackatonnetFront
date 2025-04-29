@@ -6,9 +6,9 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./landing-hackathon-create-team-dialog.component.scss']
 })
 export class LandingHackathonCreateTeamDialogComponent {
-  @Input() hackathonName: string = '';
+  @Input() hackathonName = '';
   @Output() createTeam = new EventEmitter<{ teamName: string, isPublic: boolean }>();
   @Output() close = new EventEmitter<void>();
-  teamName: string = '';
-  isPublic: boolean = true;
+  teamName = '';
+  isPublic = true;
 }

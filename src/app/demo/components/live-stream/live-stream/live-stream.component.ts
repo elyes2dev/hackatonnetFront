@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './live-stream.component.html',
   styleUrls: ['./live-stream.component.scss']
 })
-export class LiveStreamComponent {
+export class LiveStreamComponent implements OnInit {
   hackathonId: string | null = null;
 
   constructor(

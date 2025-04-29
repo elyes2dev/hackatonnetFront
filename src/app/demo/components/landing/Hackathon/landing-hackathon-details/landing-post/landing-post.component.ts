@@ -15,7 +15,7 @@ export class LandingPostComponent implements OnInit, OnChanges {
   @Input() hackathonId?: number;
   posts: Post[] = [];
   currentUser: User | null = null;
-  currentUserId: number = 1; // Default user ID
+  currentUserId = 1; // Default user ID
   loading = false;
 
   constructor(
@@ -130,7 +130,7 @@ export class LandingPostComponent implements OnInit, OnChanges {
     return `${this.imageBaseUrl}${cleanPath}`;
   }
 
-  handleImageError(event: Event, isProfilePicture: boolean = false) {
+  handleImageError(event: Event, isProfilePicture = false) {
     const img = event.target as HTMLImageElement;
     
     // Prevent further error handling to avoid infinite loops

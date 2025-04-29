@@ -241,6 +241,145 @@
           </div>
         </div>
       </div>
+
+      <!-- Team Submissions Section -->
+      <div class="card submissions-section">
+        <div class="submissions-header">
+          <h2>Team Submissions</h2>
+          <button *ngIf="canUserSubmit()" 
+                  pButton 
+                  type="button" 
+                  icon="pi pi-plus" 
+                  label="Add Submission" 
+                  class="p-button-rounded p-button-success" 
+                  (click)="toggleSubmissionForm()"></button>
+        </div>
+
+        <!-- Submission Form -->
+        <div class="submission-form-container" *ngIf="showSubmissionForm">
+          <div class="card submission-form">
+            <h3>Submit Your Project</h3>
+            <div class="p-fluid">
+              <div class="field">
+                <label for="projectName">Project Name</label>
+                <input id="projectName" type="text" pInputText [(ngModel)]="newSubmission.projectName" required>
+              </div>
+              <div class="field">
+                <label for="description">Description</label>
+                <textarea id="description" pInputTextarea [(ngModel)]="newSubmission.description" rows="5" required></textarea>
+              </div>
+              <div class="field">
+                <label for="repoLink">Repository Link</label>
+                <input id="repoLink" type="text" pInputText [(ngModel)]="newSubmission.repoLink" required>
+              </div>
+              <div class="button-container">
+                <button pButton type="button" label="Submit" icon="pi pi-check" class="p-button-success" (click)="createSubmission()" [disabled]="loadingSubmissions"></button>
+                <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="toggleSubmissionForm()" [disabled]="loadingSubmissions"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div *ngIf="loadingSubmissions" class="loading-container">
+          <p-progressSpinner></p-progressSpinner>
+          <p>Loading submissions...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="submissionError" class="error-message">
+          <p>{{ submissionError }}</p>
+        </div>
+
+        <!-- No Submissions Message -->
+        <div *ngIf="!loadingSubmissions && teamSubmissions.length === 0 && !submissionError" class="no-submissions">
+          <p>No project submissions yet. Be the first to submit your team's project!</p>
+        </div>
+
+        <!-- Submissions List -->
+        <div class="submissions-container" *ngIf="teamSubmissions.length > 0">
+          <p-carousel [value]="teamSubmissions" [numVisible]="1" [numScroll]="1" [circular]="false" [responsiveOptions]="submissionCarouselResponsiveOptions">
+            <ng-template let-submission pTemplate="item">
+              <div class="submission-card">
+                <div class="submission-header">
+                  <div class="submission-title">
+                    <i class="pi pi-folder-open submission-icon"></i>
+                    <h3>{{ submission.projectName }}</h3>
+                  </div>
+                  <span class="submission-date" *ngIf="submission.submissionDate">
+                    <i class="pi pi-calendar"></i> {{ submission.submissionDate | date:'medium' }}
+                  </span>
+                </div>
+                <div class="submission-content">
+                  <p-divider></p-divider>
+                  <div class="description-section">
+                    <h4><i class="pi pi-info-circle"></i> Project Description</h4>
+                    <p>{{ submission.description }}</p>
+                  </div>
+                  <p-divider></p-divider>
+                  <div class="repo-section">
+                    <h4><i class="pi pi-code"></i> Repository</h4>
+                    <div class="submission-action-buttons">
+                      <a [href]="submission.repoLink" target="_blank" class="repo-link p-button p-button-outlined">
+                        <i class="pi pi-github"></i> View Source Code
+                      </a>
+                      <button pButton type="button" icon="pi pi-info-circle" label="Details" 
+                              class="p-button-outlined p-button-info details-button" 
+                              (click)="showSubmissionDetails(submission)"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </p-carousel>
+        </div>
+        
+        <!-- Modern Grid View for Submissions -->
+        <div class="modern-submissions-grid" *ngIf="teamSubmissions.length > 0">
+          <div class="modern-card" *ngFor="let submission of teamSubmissions" (click)="navigateToSubmissionDetails(submission)">
+            <div class="card-badge" *ngIf="submission.donationAmount && submission.donationAmount > 0">
+              <i class="pi pi-star-fill"></i>
+              <span>${{ submission.donationAmount }}</span>
+            </div>
+            
+            <div class="card-header">
+              <div class="project-title-container">
+                <i class="pi pi-folder-open project-icon"></i>
+                <h3 class="project-title">{{ submission.projectName }}</h3>
+              </div>
+              <div class="date-chip" *ngIf="submission.submissionDate">
+                <i class="pi pi-calendar"></i>
+                <span>{{ submission.submissionDate | date:'MMM d' }}</span>
+              </div>
+            </div>
+            
+            <div class="card-body">
+              <p class="project-description">{{ submission.description | slice:0:100 }}{{ submission.description.length > 100 ? '...' : '' }}</p>
+            </div>
+            
+            <div class="card-tags">
+              <span class="tag"><i class="pi pi-code"></i> Project</span>
+              <span class="tag"><i class="pi pi-users"></i> Team</span>
+            </div>
+            
+            <div class="card-footer">
+              <a [href]="submission.repoLink" target="_blank" class="repo-button" (click)="$event.stopPropagation()">
+                <i class="pi pi-github"></i>
+                <span>Repository</span>
+              </a>
+              
+              <div class="action-buttons">
+                <button pButton type="button" icon="pi pi-eye" label="View" 
+                        class="p-button-sm p-button-outlined view-button" 
+                        (click)="$event.stopPropagation(); navigateToSubmissionDetails(submission)"></button>
+                <button pButton type="button" icon="pi pi-heart" label="Donate" 
+                        class="p-button-sm p-button-danger donate-button" 
+                        (click)="$event.stopPropagation(); showSubmissionDetails(submission); toggleDonationForm()"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     
     <!-- Mentors Section -->
@@ -276,6 +415,205 @@
     </div>
   </div>
 
+
+  <!-- Submission Details Dialog -->
+  <p-dialog [(visible)]="showSubmissionDetailsDialog" [style]="{width: '650px'}" [modal]="true" 
+           [header]="selectedSubmission?.projectName || 'Project Details'" [draggable]="false" [resizable]="false"
+           styleClass="modern-dialog" [closeOnEscape]="true" [dismissableMask]="true">
+    <div *ngIf="selectedSubmission" class="submission-details-container">
+      <div class="submission-details-header">
+        <div class="project-meta">
+          <div class="project-badge" *ngIf="selectedSubmission.donationAmount && selectedSubmission.donationAmount > 0">
+            <i class="pi pi-star-fill"></i>
+            <span>${{ selectedSubmission.donationAmount }}</span>
+          </div>
+          <span class="submission-date" *ngIf="selectedSubmission.submissionDate">
+            <i class="pi pi-calendar"></i> Submitted on {{ selectedSubmission.submissionDate | date:'medium' }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="submission-details-content">
+        <div class="details-section description-section">
+          <div class="section-header">
+            <i class="pi pi-info-circle"></i>
+            <h3>Description</h3>
+          </div>
+          <div class="section-content">
+            <p>{{ selectedSubmission.description }}</p>
+          </div>
+        </div>
+        
+        <div class="details-section repo-section">
+          <div class="section-header">
+            <i class="pi pi-code"></i>
+            <h3>Repository</h3>
+          </div>
+          <div class="section-content">
+            <a [href]="selectedSubmission.repoLink" target="_blank" class="repo-link">
+              <i class="pi pi-github"></i>
+              <span>{{ selectedSubmission.repoLink }}</span>
+            </a>
+            <button pButton type="button" icon="pi pi-external-link" label="View Source Code" 
+                    class="p-button-outlined p-button-secondary" 
+                    [onClick]="'window.open(\'' + selectedSubmission.repoLink + '\', \'_blank\')'">
+            </button>
+          </div>
+        </div>
+        
+        <!-- Owner Actions - Update Project -->
+        <div class="details-section update-section" *ngIf="isSubmissionOwner">
+          <div class="section-header">
+            <i class="pi pi-pencil"></i>
+            <h3>Update Project</h3>
+          </div>
+          <div class="section-content">
+            <div class="p-fluid">
+              <div class="field">
+                <label for="updateProjectName">Project Name</label>
+                <span class="p-input-icon-left">
+                  <i class="pi pi-tag"></i>
+                  <input id="updateProjectName" type="text" pInputText [(ngModel)]="selectedSubmission.projectName" required>
+                </span>
+              </div>
+              <div class="field">
+                <label for="updateDescription">Description</label>
+                <textarea id="updateDescription" pInputTextarea [(ngModel)]="selectedSubmission.description" rows="5" required
+                          placeholder="Describe your project in detail..."></textarea>
+              </div>
+              <div class="field">
+                <label for="updateRepoLink">Repository Link</label>
+                <span class="p-input-icon-left">
+                  <i class="pi pi-link"></i>
+                  <input id="updateRepoLink" type="text" pInputText [(ngModel)]="selectedSubmission.repoLink" required
+                         placeholder="https://github.com/username/repo">
+                </span>
+              </div>
+              <div class="update-actions">
+                <button pButton type="button" label="Update Project" icon="pi pi-check" 
+                        class="p-button-success" (click)="updateSubmission()" 
+                        [disabled]="loadingSubmissions"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Non-Owner Actions - Evaluate & Donate -->
+        <div class="details-section actions-section" *ngIf="!isSubmissionOwner && user">
+          <div class="section-header">
+            <i class="pi pi-star"></i>
+            <h3>Actions</h3>
+          </div>
+          <div class="section-content">
+            <div class="action-buttons">
+              <button pButton type="button" label="Evaluate Project" icon="pi pi-star" 
+                      class="p-button-info action-button" (click)="evaluateSubmission()">
+                <span class="action-description">Review and score this project</span>
+              </button>
+              <button pButton type="button" label="Donate to Project" icon="pi pi-heart" 
+                      class="p-button-success action-button" (click)="toggleDonationForm()">
+                <span class="action-description">Support this project financially</span>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Donation Form -->
+          <div class="donation-form" *ngIf="showDonationForm">
+            <div class="donation-header">
+              <i class="pi pi-heart-fill"></i>
+              <h4>Support this project</h4>
+            </div>
+            <p class="donation-info">Your donation directly impacts this project's standing in the competition!</p>
+            
+            <div class="p-fluid">
+              <!-- Step 1: Enter Amount -->
+              <div *ngIf="!clientSecret" class="donation-step">
+                <div class="step-indicator">
+                  <span class="step-number">1</span>
+                  <span class="step-line"></span>
+                </div>
+                <div class="step-content">
+                  <h5>Enter Donation Amount</h5>
+                  <div class="field">
+                    <label for="donationAmount">Amount in USD ($)</label>
+                    <span class="p-input-icon-left">
+                      <i class="pi pi-dollar"></i>
+                      <input type="number" id="donationAmount" [(ngModel)]="donationAmount" 
+                             class="p-inputtext p-component" min="1" step="5" 
+                             placeholder="Enter donation amount" />
+                    </span>
+                  </div>
+                  <div class="quick-amounts">
+                    <button pButton type="button" label="$5" class="p-button-outlined p-button-sm" (click)="donationAmount = 5"></button>
+                    <button pButton type="button" label="$10" class="p-button-outlined p-button-sm" (click)="donationAmount = 10"></button>
+                    <button pButton type="button" label="$25" class="p-button-outlined p-button-sm" (click)="donationAmount = 25"></button>
+                    <button pButton type="button" label="$50" class="p-button-outlined p-button-sm" (click)="donationAmount = 50"></button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Step 2: Enter Card Details -->
+              <div *ngIf="clientSecret" class="donation-step">
+                <div class="step-indicator">
+                  <span class="step-number">2</span>
+                  <span class="step-line"></span>
+                </div>
+                <div class="step-content">
+                  <h5>Enter Payment Details</h5>
+                  <div class="field stripe-card-container">
+                    <label>Card Information</label>
+                    <div id="card-element" class="stripe-card-element"></div>
+                    <div id="card-errors" class="stripe-card-errors text-danger"></div>
+                    <small class="card-hint"><i class="pi pi-lock"></i> Your payment information is secure</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="donation-note">
+                <i class="pi pi-info-circle"></i>
+                <span>Projects with the highest donations will be marked as winners!</span>
+              </div>
+              
+              <div class="donation-buttons">
+                <button *ngIf="!clientSecret" pButton type="button" label="Proceed to Payment" icon="pi pi-credit-card" 
+                        class="p-button-success" (click)="processDonation()" 
+                        [disabled]="donationAmount <= 0 || paymentProcessing"></button>
+                        
+                <button *ngIf="clientSecret && !paymentProcessing" pButton type="button" label="Confirm Payment" icon="pi pi-check-circle" 
+                        class="p-button-success" (click)="submitDonation()" 
+                        [disabled]="paymentProcessing"></button>
+                        
+                <button *ngIf="paymentProcessing" pButton type="button" label="Processing..." icon="pi pi-spin pi-spinner" 
+                        class="p-button-success" [disabled]="true"></button>
+                        
+                <button pButton type="button" label="Cancel" icon="pi pi-times" 
+                        class="p-button-outlined p-button-secondary" (click)="showDonationForm = false; clientSecret = null;"
+                        [disabled]="paymentProcessing"></button>
+              </div>
+              
+              <div class="donation-security">
+                <i class="pi pi-shield"></i>
+                <span>Secure payment processing by Stripe</span>
+              </div>
+              
+              <div *ngIf="donationSuccess" class="donation-success">
+                <i class="pi pi-check-circle" style="font-size: 2rem; color: green;"></i>
+                <h3>Thank you for your donation!</h3>
+                <p>Your contribution helps this project succeed.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <button pButton type="button" label="Close" icon="pi pi-times" 
+                class="p-button-text" (click)="closeSubmissionDetails()"></button>
+      </div>
+    </ng-template>
+  </p-dialog>
 
   <div class="footer">
     <div class="footer-content">

@@ -16,16 +16,16 @@ import { WorkshopService } from '../../services/workshop.service';
 })
 export class LandingComponent implements OnInit {
   userId: string | null = null;
-  isAuthenticated: boolean = false;
-  isAdmin: boolean = false;
-  isStudent: boolean = false; 
-  isSponsor: boolean = false; // Added sponsor flag
+  isAuthenticated = false;
+  isAdmin = false;
+  isStudent = false; 
+  isSponsor = false; // Added sponsor flag
   user!: User;
-  isMentor: boolean = false; 
+  isMentor = false; 
 
-  userMenuVisible: boolean = false; // Property to control dropdown visibility
+  userMenuVisible = false; // Property to control dropdown visibility
   workshops: Workshop[] = [];
-  loadingWorkshops: boolean = false;
+  loadingWorkshops = false;
 
   constructor(
     private storageService: StorageService,
@@ -40,7 +40,7 @@ export class LandingComponent implements OnInit {
     console.log('User ID:', this.userId);
   }
 
-  username: string = '';
+  username = '';
 
   ngOnInit(): void {
     const userId = this.storageService.getLoggedInUserId();
@@ -97,7 +97,7 @@ export class LandingComponent implements OnInit {
         this.router.navigate(['/team-submission']); // Navigation directe vers /team-submission
     }
   getBadgeIcon(): string {
-    const badgeIcons: { [key: string]: string } = {
+    const badgeIcons: Record<string, string> = {
       JUNIOR_COACH: 'assets/demo/images/avatar/JUNIOR_COACH.png',
       ASSISTANT_COACH: 'assets/demo/images/avatar/ASSISTANT_COACH.png',
       SENIOR_COACH: 'assets/demo/images/avatar/SENIOR_COACH.png',

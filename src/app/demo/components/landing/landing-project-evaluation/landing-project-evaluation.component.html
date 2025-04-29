@@ -1,164 +1,310 @@
-<app-navbar></app-navbar>
+<!-- Only show navbar in non-popup mode -->
+<app-navbar *ngIf="!isPopup"></app-navbar>
 
-<div class="main-container">
+<div class="main-container" [ngClass]="{'popup-mode': isPopup}">
     <!-- Loading -->
     <div *ngIf="loading" class="loading-overlay">
-      <div class="spinner"></div>
+      <p-progressSpinner></p-progressSpinner>
       <p>Loading...</p>
     </div>
 
     <!-- Error/Success Messages -->
     <div *ngIf="error" class="alert alert-error">
+      <i class="pi pi-exclamation-triangle"></i>
       <p>{{ error }}</p>
+      <button class="close-btn" (click)="error = null"><i class="pi pi-times"></i></button>
     </div>
 
     <div *ngIf="donationSuccess" class="alert alert-success">
+      <i class="pi pi-check-circle"></i>
       <p>Donation successful!</p>
     </div>
 
-    <!-- Header -->
-    <div class="header">
-      <h1>Project Evaluations</h1>
+    <!-- Header - Only show in non-popup mode -->
+    <div class="header" *ngIf="!isPopup">
+      <div class="header-content">
+        <i class="pi pi-star-fill header-icon"></i>
+        <h1>Project Evaluations</h1>
+      </div>
+      <p class="header-subtitle">Review and evaluate hackathon project submissions</p>
     </div>
 
-    <!-- Main Grid Content -->
-    <div class="grid-container">
-      <!-- Left Column -->
-      <div class="left-column">
-        <!-- Evaluation Form -->
-        <div class="card">
-          <h2>Submit New Evaluation</h2>
-          <form (ngSubmit)="createEvaluation()">
-            <div class="form-group">
-              <label for="score">Score</label>
-              <input type="number" id="score" [(ngModel)]="newEvaluation.score" name="score" required class="form-control" min="0" max="100" />
-            </div>
-
-            <div class="form-group">
-              <label for="feedback">Feedback</label>
-              <textarea id="feedback" [(ngModel)]="newEvaluation.feedback" name="feedback" class="form-control" rows="3"></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="evaluationDate">Date</label>
-              <input type="datetime-local" id="evaluationDate" [(ngModel)]="newEvaluation.evaluationDate" name="evaluationDate" required class="form-control" />
-            </div>
-
-
-
-            <div class="form-group">
-              <label for="teamSubmissionId">Submission ID</label>
-              <input type="number" id="teamSubmissionId" [(ngModel)]="newEvaluation.teamSubmission!.id" name="teamSubmissionId" required class="form-control" />
-            </div>
-
-            <div class="form-group">
-              <label for="evaluatorId">Evaluator ID</label>
-              <input type="number" id="evaluatorId" [(ngModel)]="newEvaluation.evaluator!.id" name="evaluatorId" required class="form-control" />
-            </div>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </form>
+    <!-- Popup Mode Content -->
+    <div *ngIf="isPopup" class="popup-content">
+      <div class="evaluation-form-card">
+        <div class="card-header">
+          <i class="pi pi-star-fill"></i>
+          <h2>Evaluate Project</h2>
         </div>
+        <form [formGroup]="evaluationForm" (ngSubmit)="createEvaluation()">
+          <div class="field">
+            <label for="teamSubmission">Team Submission</label>
+            <p-dropdown id="teamSubmission" [options]="teamSubmissions" formControlName="teamSubmissionId"
+                        optionLabel="projectName" optionValue="id" placeholder="Select a team submission"
+                        [filter]="true" filterBy="projectName" [showClear]="true" [disabled]="isPopup && !!submissionId">
+            </p-dropdown>
+            <small *ngIf="evaluationForm.get('teamSubmissionId')?.hasError('required') && evaluationForm.get('teamSubmissionId')?.touched"
+                   class="p-error">Team submission is required</small>
+          </div>
 
-        <!-- Score Filter -->
-        <div class="card">
-          <h2>Filter by Score</h2>
-          <div class="filter-container">
-            <label for="minScore">Minimum score:</label>
-            <input type="number" [(ngModel)]="minScore" id="minScore" placeholder="90" class="form-control" />
-            <button class="btn btn-secondary" (click)="loadTopRatedEvaluations()">Filter</button>
+          <div class="field">
+            <label for="innovationScore">Innovation Score (1-10)</label>
+            <p-inputNumber id="innovationScore" formControlName="innovationScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
+            <small *ngIf="evaluationForm.get('innovationScore')?.hasError('required') && evaluationForm.get('innovationScore')?.touched"
+                   class="p-error">Innovation score is required</small>
+          </div>
+
+          <div class="field">
+            <label for="technicalScore">Technical Complexity Score (1-10)</label>
+            <p-inputNumber id="technicalScore" formControlName="technicalScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
+            <small *ngIf="evaluationForm.get('technicalScore')?.hasError('required') && evaluationForm.get('technicalScore')?.touched"
+                   class="p-error">Technical score is required</small>
+          </div>
+
+          <div class="field">
+            <label for="designScore">Design & UX Score (1-10)</label>
+            <p-inputNumber id="designScore" formControlName="designScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
+            <small *ngIf="evaluationForm.get('designScore')?.hasError('required') && evaluationForm.get('designScore')?.touched"
+                   class="p-error">Design score is required</small>
+          </div>
+
+          <div class="field">
+            <label for="feedback">Feedback</label>
+            <textarea id="feedback" pInputTextarea formControlName="feedback" rows="5" 
+                      placeholder="Provide detailed feedback about the project..."></textarea>
+            <small *ngIf="evaluationForm.get('feedback')?.hasError('required') && evaluationForm.get('feedback')?.touched"
+                   class="p-error">Feedback is required</small>
+          </div>
+
+          <div class="form-actions">
+            <button pButton type="submit" label="Submit Evaluation" icon="pi pi-check" 
+                    class="p-button-success" [disabled]="evaluationForm.invalid || submitting"></button>
+            <button pButton type="button" label="Cancel" icon="pi pi-times" 
+                    class="p-button-outlined p-button-secondary" (click)="resetForm()"></button>
+          </div>
+        </form>
+      </div>
+    </div>
+      
+      <!-- Regular view with grid layout for non-popup mode -->
+      <div *ngIf="!isPopup" class="grid grid-container">
+        <div class="col-12 md:col-6 left-column">
+          <div class="card evaluation-form-card">
+            <div class="card-header">
+              <i class="pi pi-plus-circle"></i>
+              <h2>Add New Evaluation</h2>
+            </div>
+            <form [formGroup]="evaluationForm" (ngSubmit)="createEvaluation()">
+              <div class="field">
+                <label for="teamSubmission">Team Submission</label>
+                <p-dropdown id="teamSubmission" [options]="teamSubmissions" formControlName="teamSubmissionId"
+                            optionLabel="projectName" optionValue="id" placeholder="Select a team submission"
+                            [filter]="true" filterBy="projectName" [showClear]="true">
+                </p-dropdown>
+                <small *ngIf="evaluationForm.get('teamSubmissionId')?.hasError('required') && evaluationForm.get('teamSubmissionId')?.touched"
+                       class="p-error">Team submission is required</small>
+              </div>
+
+              <div class="field">
+                <label for="innovationScore">Innovation Score (1-10)</label>
+                <p-inputNumber id="innovationScore" formControlName="innovationScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
+                <small *ngIf="evaluationForm.get('innovationScore')?.hasError('required') && evaluationForm.get('innovationScore')?.touched"
+                       class="p-error">Innovation score is required</small>
+              </div>
+
+              <div class="field">
+                <label for="technicalScore">Technical Complexity Score (1-10)</label>
+                <p-inputNumber id="technicalScore" formControlName="technicalScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
+                <small *ngIf="evaluationForm.get('technicalScore')?.hasError('required') && evaluationForm.get('technicalScore')?.touched"
+                       class="p-error">Technical score is required</small>
+              </div>
+
+              <div class="field">
+                <label for="designScore">Design & UX Score (1-10)</label>
+                <p-inputNumber id="designScore" formControlName="designScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
+                <small *ngIf="evaluationForm.get('designScore')?.hasError('required') && evaluationForm.get('designScore')?.touched"
+                       class="p-error">Design score is required</small>
+              </div>
+
+              <div class="field">
+                <label for="feedback">Feedback</label>
+                <textarea id="feedback" pInputTextarea formControlName="feedback" rows="5" 
+                          placeholder="Provide detailed feedback about the project..."></textarea>
+                <small *ngIf="evaluationForm.get('feedback')?.hasError('required') && evaluationForm.get('feedback')?.touched"
+                       class="p-error">Feedback is required</small>
+              </div>
+
+              <div class="form-actions">
+                <button pButton type="submit" label="Submit Evaluation" icon="pi pi-check" 
+                        class="p-button-success" [disabled]="evaluationForm.invalid || submitting"></button>
+                <button pButton type="button" label="Reset" icon="pi pi-refresh" 
+                        class="p-button-outlined p-button-secondary" (click)="resetForm()"></button>
+              </div>
+            </form>
           </div>
         </div>
-      </div>
 
-      <!-- Right Column -->
-      <div class="right-column">
-        <!-- Evaluations List -->
-        <div class="card">
-          <h2>Evaluations List</h2>
-          <div *ngIf="evaluations && evaluations.length > 0; else noEvaluations" class="evaluations-list">
-            <div *ngFor="let evaluation of evaluations" class="evaluation-item">
-              <div class="evaluation-header">
-                <h3>{{ evaluation.projectName || 'Unspecified' }}</h3>
-                <div class="evaluation-actions">
-                  <button class="btn btn-edit" (click)="selectEvaluation(evaluation)">Edit</button>
-                  <button class="btn btn-danger" (click)="delete(evaluation.id!)">Delete</button>
+        <div class="col-12 md:col-6 right-column">
+          <div class="card evaluations-list-card">
+            <div class="card-header">
+              <i class="pi pi-list"></i>
+              <h2>Evaluations</h2>
+              <div class="card-actions">
+                <div class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input pInputText type="text" (input)="onGlobalFilter($event)" placeholder="Search..." />
                 </div>
               </div>
-
-              <div class="evaluation-details">
-                <p><strong>Evaluator:</strong> {{ evaluation.evaluator?.id || 'Not available' }}</p>
-                <p><strong>Score:</strong> <span class="highlight">{{ evaluation.score }}</span></p>
-                <p><strong>Feedback:</strong> {{ evaluation.feedback || 'No feedback' }}</p>
-              </div>
-
-              <!-- Edit Form -->
-              <div *ngIf="selectedEvaluation && selectedEvaluation.id === evaluation.id" class="modification-form">
-                <h3>Edit Evaluation</h3>
-                <form (ngSubmit)="updateEvaluation()">
-                  <div class="form-group">
-                    <label [attr.for]="'editScore-' + evaluation.id">Score</label>
-                    <input type="number" [id]="'editScore-' + evaluation.id" [(ngModel)]="selectedEvaluation.score" name="score" required class="form-control" />
-                  </div>
-
-                  <div class="form-group">
-                    <label [attr.for]="'editFeedback-' + evaluation.id">Feedback</label>
-                    <textarea [id]="'editFeedback-' + evaluation.id" [(ngModel)]="selectedEvaluation.feedback" name="feedback" required class="form-control"></textarea>
-                  </div>
-
-                  <div class="form-group">
-                    <label [attr.for]="'editProjectName-' + evaluation.id">Project Name</label>
-                    <input type="text" [id]="'editProjectName-' + evaluation.id" [(ngModel)]="selectedEvaluation.projectName" name="projectName" class="form-control" />
-                  </div>
-
-                  <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Update</button>
-                    <button type="button" class="btn btn-secondary" (click)="cancelModification()">Cancel</button>
-                  </div>
-                </form>
-              </div>
             </div>
+            
+            <p-table [value]="evaluations" [paginator]="true" [rows]="5" 
+                     [rowsPerPageOptions]="[5, 10, 25]" [showCurrentPageReport]="true"
+                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} evaluations"
+                     [globalFilterFields]="['teamSubmission.projectName', 'evaluator.id', 'score']"
+                     *ngIf="evaluations && evaluations.length > 0; else noEvaluations">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Project</th>
+                  <th>Evaluator</th>
+                  <th>Score</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-evaluation>
+                <tr>
+                  <td>{{ evaluation.teamSubmission?.projectName || 'Unknown Project' }}</td>
+                  <td>{{ evaluation.evaluator?.id ? 'User ' + evaluation.evaluator.id : 'Anonymous' }}</td>
+                  <td>
+                    <span class="score-badge" [ngClass]="{'high-score': evaluation.score >= 80, 'medium-score': evaluation.score >= 50 && evaluation.score < 80, 'low-score': evaluation.score < 50}">
+                      {{ evaluation.score }}/100
+                    </span>
+                  </td>
+                  <td>{{ evaluation.evaluationDate | date:'medium' }}</td>
+                  <td>
+                    <button pButton type="button" icon="pi pi-eye" class="p-button-rounded p-button-text p-button-sm"
+                            pTooltip="View Details" (click)="viewEvaluationDetails(evaluation)"></button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+            
+            <ng-template #noEvaluations>
+              <div *ngIf="!loading && !error" class="no-data">
+                <i class="pi pi-info-circle"></i>
+                <p>No evaluations found.</p>
+                <p class="no-data-hint">Submit a new evaluation to get started!</p>
+              </div>
+            </ng-template>
           </div>
-
-          <ng-template #noEvaluations>
-            <p *ngIf="!loading && !error" class="no-data">No evaluations found.</p>
-          </ng-template>
         </div>
       </div>
-    </div>
 
-    <!-- Top Rated Projects -->
-    <div class="card top-rated-section">
-      <h2>Top Rated Projects</h2>
-      <div *ngIf="topRatedEvaluations && topRatedEvaluations.length > 0; else noTopRated" class="top-rated-grid">
-        <div *ngFor="let evaluation of topRatedEvaluations" class="top-rated-item">
-          <h3>{{ evaluation.projectName || 'Unspecified' }}</h3>
-          <p><strong>Evaluator:</strong> {{ evaluation.evaluator?.id || 'Not available' }}</p>
-          <p><strong>Score:</strong> <span class="highlight">{{ evaluation.score }}</span></p>
-          <p><strong>Feedback:</strong> {{ evaluation.feedback || 'No feedback' }}</p>
-
-          <button class="btn btn-donate" (click)="showDonationForm(evaluation.id!)">Make a Donation</button>
-
-          <!-- Donation Form -->
-          <div *ngIf="donationEvaluationId === evaluation.id" class="donation-form">
-            <div class="form-group">
-              <label [attr.for]="'donationAmount-' + evaluation.id">Amount (€)</label>
-              <input type="number" [id]="'donationAmount-' + evaluation.id" [(ngModel)]="donationAmount" name="donationAmount" min="1" step="0.01" required class="form-control" />
+    <!-- Top Rated Projects - Only show in non-popup mode -->
+    <div class="card top-rated-section" *ngIf="!isPopup">
+      <div class="card-header">
+        <i class="pi pi-trophy"></i>
+        <h2>Top Rated Projects</h2>
+      </div>
+      
+      <div class="top-rated-grid" *ngIf="topRatedEvaluations && topRatedEvaluations.length > 0; else noTopRated">
+        <div class="top-rated-item" *ngFor="let evaluation of topRatedEvaluations">
+          <div class="top-rated-header">
+            <div class="project-info">
+              <i class="pi pi-folder"></i>
+              <h3>{{ evaluation.teamSubmission?.projectName || 'Unspecified' }}</h3>
             </div>
-
-            <button class="btn btn-primary" (click)="initiateDonation(evaluation.id!)">Continue</button>
+            <div class="score-badge high-score">
+              {{ evaluation.score }}/100
+            </div>
           </div>
-
-          <div [id]="'card-element-' + evaluation.id" class="card-element"></div>
-
-          <button *ngIf="clientSecret && cardElement" class="btn btn-success" (click)="confirmDonation(evaluation.id!)">Confirm Donation</button>
+          
+          <div class="top-rated-details">
+            <div class="detail-item">
+              <i class="pi pi-user"></i>
+              <p><strong>Evaluator:</strong> {{ evaluation.evaluator?.id || 'Not available' }}</p>
+            </div>
+            <div class="detail-item">
+              <i class="pi pi-calendar"></i>
+              <p><strong>Date:</strong> {{ evaluation.evaluationDate | date:'medium' }}</p>
+            </div>
+          </div>
+          
+          <div class="top-rated-actions">
+            <button pButton type="button" icon="pi pi-heart" label="Donate" 
+                    class="p-button-rounded p-button-danger p-button-outlined"
+                    (click)="prepareDonation(evaluation)"></button>
+          </div>
+        </div>
+      </div>
+      
+      <ng-template #noTopRated>
+        <div *ngIf="!loading && !error" class="no-data">
+          <i class="pi pi-info-circle"></i>
+          <p>No top rated projects found.</p>
+          <p class="no-data-hint">Try lowering the minimum score filter.</p>
+        </div>
+      </ng-template>
+      
+      <!-- Donation Modal -->
+      <div class="donation-modal" *ngIf="showDonationModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Support This Project</h3>
+            <button class="close-btn" (click)="showDonationModal = false">
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+          
+          <div class="modal-body">
+            <p>You are about to donate to:</p>
+            <h4>{{ selectedEvaluation?.teamSubmission?.projectName || 'Unknown Project' }}</h4>
+            
+            <div class="donation-form">
+              <div class="form-group">
+                <label for="donationAmount">Donation Amount ($)</label>
+                <div class="p-inputgroup">
+                  <span class="p-inputgroup-addon">$</span>
+                  <input type="number" id="donationAmount" [(ngModel)]="donationAmount" 
+                         class="p-inputtext" min="1" step="1" name="donationAmount" />
+                </div>
+              </div>
+              
+              <div class="quick-amounts">
+                <button pButton type="button" label="$5" 
+                        class="p-button-outlined p-button-sm"
+                        (click)="donationAmount = 5"></button>
+                <button pButton type="button" label="$10" 
+                        class="p-button-outlined p-button-sm"
+                        (click)="donationAmount = 10"></button>
+                <button pButton type="button" label="$25" 
+                        class="p-button-outlined p-button-sm"
+                        (click)="donationAmount = 25"></button>
+                <button pButton type="button" label="$50" 
+                        class="p-button-outlined p-button-sm"
+                        (click)="donationAmount = 50"></button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="modal-footer">
+            <button pButton type="button" label="Cancel" 
+                    class="p-button-text"
+                    (click)="showDonationModal = false"></button>
+            <button pButton type="button" label="Donate Now" 
+                    class="p-button-danger"
+                    [disabled]="!donationAmount || donationAmount <= 0"
+                    (click)="processDonation()"></button>
+          </div>
         </div>
       </div>
 
       <ng-template #noTopRated>
-        <p *ngIf="!loading && !error" class="no-data">No top rated projects found.</p>
+        <div *ngIf="!loading && !error" class="no-data">
+          <i class="pi pi-info-circle"></i>
+          <p>No top rated projects found.</p>
+          <p class="no-data-hint">Try lowering the minimum score filter.</p>
+        </div>
       </ng-template>
     </div>
   </div>
-
-

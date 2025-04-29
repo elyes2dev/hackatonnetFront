@@ -11,7 +11,7 @@ import { TeamSubmission } from '../../api/team-submission';
 export class TeamSubmissionComponent implements OnInit {
 
   submissions: TeamSubmission[] = [];
-  loading: boolean = false; // Variable pour indiquer si les données sont en cours de chargement
+  loading = false; // Variable pour indiquer si les données sont en cours de chargement
   error: string | null = null; // Variable pour gérer les erreurs
 
   // Nouvelle soumission temporaire à remplir depuis le formulaire

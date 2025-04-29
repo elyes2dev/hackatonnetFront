@@ -38,15 +38,15 @@ export class TeamChatHubComponent implements OnInit, OnDestroy {
     teamMemberId: number | null = null;
     
     // Chat state
-    discussions: { [key: number]: TeamDiscussion[] } = {};
-    newMessage: string = '';
-    showMembersSidebar: boolean = false;
+    discussions: Record<number, TeamDiscussion[]> = {};
+    newMessage = '';
+    showMembersSidebar = false;
     
     // Loading states
-    loading: boolean = false;
-    loadingTeams: boolean = false;
-    loadingMessages: boolean = false;
-    sendingMessage: boolean = false;
+    loading = false;
+    loadingTeams = false;
+    loadingMessages = false;
+    sendingMessage = false;
     
     // WebSocket
     public wsSubject: WebSocketSubject<any> | null = null;

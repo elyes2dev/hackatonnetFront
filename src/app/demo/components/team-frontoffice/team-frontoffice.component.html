@@ -1,62 +1,84 @@
 <div class="card team-frontoffice-wrapper" [class.chat-open]="showChatView">
     <!-- Participate View -->
     <ng-container *ngIf="participateDialog">
-        <div class="p-fluid">
-            <h5>Hackathon Participation</h5>
-            <div class="card mb-3">
-                <div class="hackathon-info">
-                    <h6 class="mb-2">{{selectedHackathon?.title || 'Hackathon'}}</h6>
-                    <div class="flex flex-wrap gap-3 mb-2">
-                        <span class="flex align-items-center gap-2">
-                            <i class="pi pi-calendar"></i>
-                            {{selectedHackathon?.startDate | date:'mediumDate'}} - {{selectedHackathon?.endDate | date:'mediumDate'}}
-                        </span>
-                        <span class="flex align-items-center gap-2">
-                            <i class="pi pi-map-marker"></i>
-                            {{selectedHackathon?.location || 'Online'}}
-                        </span>
+        <div class="participate-container">
+            <div class="participate-header">
+                <h2 class="title">Join the Hackathon</h2>
+                <p class="subtitle">Choose how you want to participate in this exciting event</p>
+            </div>
+            
+            <div class="hackathon-card">
+                <div class="hackathon-banner" [style.background-image]="'url(' + (selectedHackathon?.logo || 'assets/layout/images/hackathon-default.jpg') + ')'">
+                    <div class="hackathon-overlay">
+                        <h3>{{selectedHackathon?.title || 'Hackathon'}}</h3>
                     </div>
-                    <p class="text-color-secondary">{{selectedHackathon?.description || 'Join this exciting hackathon!'}}</p>
+                </div>
+                <div class="hackathon-details">
+                    <div class="detail-item">
+                        <i class="pi pi-calendar"></i>
+                        <span>{{selectedHackathon?.startDate | date:'MMM d'}} - {{selectedHackathon?.endDate | date:'MMM d, y'}}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="pi pi-map-marker"></i>
+                        <span>{{selectedHackathon?.location || 'Online'}} • {{selectedHackathon?.isOnline ? 'Virtual Event' : 'In-Person Event'}}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="pi pi-users"></i>
+                        <span>Max Team Size: {{selectedHackathon?.maxMembers || '4'}} members</span>
+                    </div>
+                    <p class="hackathon-description">{{selectedHackathon?.description || 'Join this exciting hackathon and showcase your skills! Collaborate with talented individuals to build innovative solutions.'}}</p>
                 </div>
             </div>
 
-            <div class="grid">
-                <div class="col-12 md:col-6 mb-3">
-                    <div class="card h-full">
-                        <div class="flex flex-column align-items-center text-center">
-                            <i class="pi pi-plus-circle text-2xl text-primary mb-3"></i>
-                            <h6 class="mb-2">Create New Team</h6>
-                            <p class="text-color-secondary mb-3">Start your own team and invite others to join</p>
-                            <button pButton pRipple 
-                                    label="Create Team" 
-                                    icon="pi pi-plus"
-                                    [disabled]="loading"
-                                    (click)="openCreateTeamDialog()"></button>
-                        </div>
+            <div class="options-container">
+                <div class="option-card create-team">
+                    <div class="option-icon">
+                        <i class="pi pi-plus-circle"></i>
+                    </div>
+                    <div class="option-content">
+                        <h3>Create a Team</h3>
+                        <p>Form your own team and invite others to join you on this hackathon journey.</p>
+                        <ul class="option-features">
+                            <li><i class="pi pi-check"></i> Full control over team members</li>
+                            <li><i class="pi pi-check"></i> Choose public or private visibility</li>
+                            <li><i class="pi pi-check"></i> Customize your team experience</li>
+                        </ul>
+                        <button pButton pRipple 
+                                label="Create New Team" 
+                                icon="pi pi-plus"
+                                class="p-button-raised option-button create-button"
+                                [disabled]="loading"
+                                (click)="openCreateTeamDialog()"></button>
                     </div>
                 </div>
 
-                <div class="col-12 md:col-6 mb-3">
-                    <div class="card h-full">
-                        <div class="flex flex-column align-items-center text-center">
-                            <i class="pi pi-users text-2xl text-primary mb-3"></i>
-                            <h6 class="mb-2">Join Existing Team</h6>
-                            <p class="text-color-secondary mb-3">Join a team using a team code or browse public teams</p>
-                            <button pButton pRipple 
-                                    label="Join Team" 
-                                    icon="pi pi-users"
-                                    [disabled]="loading"
-                                    (click)="openJoinTeamDialog()"></button>
-                        </div>
+                <div class="option-card join-team">
+                    <div class="option-icon">
+                        <i class="pi pi-users"></i>
+                    </div>
+                    <div class="option-content">
+                        <h3>Join a Team</h3>
+                        <p>Connect with existing teams looking for members like you.</p>
+                        <ul class="option-features">
+                            <li><i class="pi pi-check"></i> Browse available public teams</li>
+                            <li><i class="pi pi-check"></i> Use a team code to join private teams</li>
+                            <li><i class="pi pi-check"></i> Quickly find the perfect match</li>
+                        </ul>
+                        <button pButton pRipple 
+                                label="Find a Team" 
+                                icon="pi pi-search"
+                                class="p-button-raised option-button join-button"
+                                [disabled]="loading"
+                                (click)="openJoinTeamDialog()"></button>
                     </div>
                 </div>
             </div>
             
-            <div class="flex justify-content-end mt-3">
+            <div class="participate-footer">
                 <button pButton pRipple 
                         label="Cancel" 
                         icon="pi pi-times"
-                        class="p-button-outlined"
+                        class="p-button-outlined p-button-secondary"
                         [disabled]="loading"
                         (click)="setParticipateDialog(false)"></button>
             </div>
@@ -86,7 +108,7 @@
                            pInputText 
                            [(ngModel)]="team.teamName" 
                            placeholder="Enter a team name" 
-                           required autofocus/>
+                           required/>
                     <small class="p-error" *ngIf="submitted && !team.teamName">
                         Team name is required
                     </small>
@@ -398,6 +420,15 @@
                         tooltipPosition="top"
                         (click)="triggerFileUpload()">
                 </button>
+                
+                <!-- AI Assistant Button -->
+                <button pButton 
+                        class="p-button-text p-button-rounded action-button" 
+                        icon="pi pi-bolt"
+                        pTooltip="Gemini AI"
+                        tooltipPosition="top"
+                        (click)="toggleGeminiAI()">
+                </button>
             </div>
             
             <div class="input-field">
@@ -405,17 +436,10 @@
                        pInputText 
                        class="modern-input-field"
                        [(ngModel)]="newMessage" 
-                       placeholder="Type a message..."
+                       placeholder="Type a message... (Use @AI to talk to Gemini)"
                        (keydown.enter)="sendMessage()"
                        [disabled]="sendingMessage">
-                
-                <button pButton 
-                        class="p-button-text p-button-rounded emoji-button" 
-                        icon="pi pi-smile"
-                        pTooltip="Add emoji"
-                        tooltipPosition="top"
-                        (click)="toggleEmojiPicker($event)">
-                </button>
+                <small class="ai-hint">💡 Tip: Start your message with <strong>@AI</strong> to ask Gemini AI a question</small>
             </div>
             
             <div class="input-send">
@@ -428,72 +452,104 @@
                 </button>
             </div>
             
-            <p-overlayPanel #emojiPanel [showCloseIcon]="true" [style]="{width: '320px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'}" styleClass="emoji-overlay">
-                <ng-template pTemplate>
-                    <div class="emoji-picker">
-                        <div class="emoji-section">
-                            <h5>Recent</h5>
-                            <div class="emoji-grid">
-                                <span *ngFor="let emoji of recentEmojis" 
-                                      class="emoji-item" 
-                                      (click)="addEmoji(emoji)">
-                                    {{emoji}}
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="emoji-section">
-                            <h5>Smileys</h5>
-                            <div class="emoji-grid">
-                                <span class="emoji-item" (click)="addEmoji('😀')">😀</span>
-                                <span class="emoji-item" (click)="addEmoji('😃')">😃</span>
-                                <span class="emoji-item" (click)="addEmoji('😄')">😄</span>
-                                <span class="emoji-item" (click)="addEmoji('😁')">😁</span>
-                                <span class="emoji-item" (click)="addEmoji('😆')">😆</span>
-                                <span class="emoji-item" (click)="addEmoji('😅')">😅</span>
-                                <span class="emoji-item" (click)="addEmoji('🤣')">🤣</span>
-                                <span class="emoji-item" (click)="addEmoji('😂')">😂</span>
-                                <span class="emoji-item" (click)="addEmoji('🙂')">🙂</span>
-                                <span class="emoji-item" (click)="addEmoji('🙃')">🙃</span>
-                                <span class="emoji-item" (click)="addEmoji('😉')">😉</span>
-                                <span class="emoji-item" (click)="addEmoji('😊')">😊</span>
-                                <span class="emoji-item" (click)="addEmoji('😇')">😇</span>
-                                <span class="emoji-item" (click)="addEmoji('🥰')">🥰</span>
-                                <span class="emoji-item" (click)="addEmoji('😍')">😍</span>
-                                <span class="emoji-item" (click)="addEmoji('🤩')">🤩</span>
-                            </div>
-                        </div>
-                        
-                        <div class="emoji-section">
-                            <h5>Gestures</h5>
-                            <div class="emoji-grid">
-                                <span class="emoji-item" (click)="addEmoji('👍')">👍</span>
-                                <span class="emoji-item" (click)="addEmoji('👎')">👎</span>
-                                <span class="emoji-item" (click)="addEmoji('👌')">👌</span>
-                                <span class="emoji-item" (click)="addEmoji('✌️')">✌️</span>
-                                <span class="emoji-item" (click)="addEmoji('🤞')">🤞</span>
-                                <span class="emoji-item" (click)="addEmoji('🤟')">🤟</span>
-                                <span class="emoji-item" (click)="addEmoji('🤙')">🤙</span>
-                                <span class="emoji-item" (click)="addEmoji('👋')">👋</span>
-                                <span class="emoji-item" (click)="addEmoji('🖐️')">🖐️</span>
-                                <span class="emoji-item" (click)="addEmoji('✋')">✋</span>
-                                <span class="emoji-item" (click)="addEmoji('👐')">👐</span>
-                                <span class="emoji-item" (click)="addEmoji('🙌')">🙌</span>
-                                <span class="emoji-item" (click)="addEmoji('🤲')">🤲</span>
-                                <span class="emoji-item" (click)="addEmoji('👏')">👏</span>
-                                <span class="emoji-item" (click)="addEmoji('🙏')">🙏</span>
-                                <span class="emoji-item" (click)="addEmoji('🤝')">🤝</span>
-                            </div>
-                        </div>
-                    </div>
-                </ng-template>
-            </p-overlayPanel>
+
             
             <input type="file" 
                    id="file-upload" 
                    style="display: none;" 
                    (change)="onFileSelected($event)">
         </div>
+    </div>
+</div>
+
+<!-- Gemini AI Panel -->
+<div class="ai-assistant-panel" [class.open]="geminiActive">
+    <div class="ai-assistant-header">
+        <h3><i class="pi pi-bolt"></i> Gemini Chat</h3>
+        <div class="header-actions">
+            <button pButton class="p-button-rounded p-button-text" icon="pi pi-refresh" pTooltip="Clear chat history" tooltipPosition="bottom" (click)="clearGeminiChat()"></button>
+            <button pButton class="p-button-rounded p-button-text" icon="pi pi-times" (click)="toggleGeminiAI()"></button>
+        </div>
+    </div>
+    
+    <div class="ai-assistant-content" #geminiChatContainer>
+        <!-- Chat messages -->
+        <div class="gemini-chat-messages" *ngIf="geminiChatHistory.length > 0">
+            <div *ngFor="let message of geminiChatHistory" 
+                 class="chat-message" 
+                 [ngClass]="{'user-message': message.role === 'user', 'gemini-message': message.role === 'gemini'}">
+                <div class="message-avatar">
+                    <i class="pi" [ngClass]="{'pi-user': message.role === 'user', 'pi-bolt': message.role === 'gemini'}"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-sender">{{ message.role === 'user' ? 'You' : 'Gemini' }}</div>
+                    <div class="message-text" [innerHTML]="message.content | formatMessage"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Loading indicator -->
+        <div class="ai-assistant-loading" *ngIf="geminiLoading">
+            <div class="chat-message gemini-message">
+                <div class="message-avatar">
+                    <i class="pi pi-bolt"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-sender">Gemini</div>
+                    <div class="message-text thinking">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Empty state -->
+        <div class="ai-assistant-empty" *ngIf="geminiChatHistory.length === 0 && !geminiLoading">
+            <div class="empty-state">
+                <i class="pi pi-bolt"></i>
+                <h4>Gemini Chat</h4>
+                <p>Chat with Gemini about anything related to your hackathon project!</p>
+                <div class="quick-prompts">
+                    <div class="prompt-suggestion" (click)="usePromptSuggestion('Tell me about the latest web development frameworks for hackathons')">
+                        <i class="pi pi-code"></i> Tell me about the latest web development frameworks for hackathons
+                    </div>
+                    <div class="prompt-suggestion" (click)="usePromptSuggestion('Can you help me debug an Angular component?')">
+                        <i class="pi pi-exclamation-triangle"></i> Can you help me debug an Angular component?
+                    </div>
+                    <div class="prompt-suggestion" (click)="usePromptSuggestion('What are some good project ideas for this hackathon?')">
+                        <i class="pi pi-lightbulb"></i> What are some good project ideas for this hackathon?
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="ai-assistant-input">
+        <textarea pInputTextarea 
+                  [(ngModel)]="geminiPrompt" 
+                  placeholder="Ask Gemini anything..."
+                  [rows]="1"
+                  [autoResize]="true"
+                  (keydown)="onGeminiKeydown($event)"
+                  #geminiInput></textarea>
+        <div class="input-actions">
+            <button pButton 
+                    type="button"
+                    class="p-button-rounded p-button-text p-button-sm action-button" 
+                    icon="pi pi-times"
+                    *ngIf="geminiPrompt.trim()"
+                    (click)="geminiPrompt = ''; geminiInput.focus()"></button>
+            <button pButton 
+                    type="button"
+                    class="p-button-rounded send-button" 
+                    icon="pi pi-send"
+                    [disabled]="!geminiPrompt.trim() || geminiLoading"
+                    [loading]="geminiLoading"
+                    (click)="sendGeminiPrompt()"></button>
+        </div>
+        <small class="input-hint">Press Enter to send, Ctrl+Enter for new line</small>
     </div>
 </div>
 

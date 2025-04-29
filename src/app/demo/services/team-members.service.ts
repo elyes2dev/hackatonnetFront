@@ -41,7 +41,7 @@ export class TeamMembersService {
   }
   
   // Add a user to a team
-  addUserToTeam(teamId: number, userId: number, role: string = 'MEMBER'): Observable<TeamMember> {
+  addUserToTeam(teamId: number, userId: number, role = 'MEMBER'): Observable<TeamMember> {
     return this.http.post<TeamMember>(`${this.apiUrl}/add-to-team/${teamId}/${userId}`, { role }).pipe(
       tap(member => console.log('Added user to team:', member)),
       catchError(this.handleError)

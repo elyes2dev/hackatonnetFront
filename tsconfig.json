@@ -1,11 +1,6 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        
-              
-            
-          
-        // "types": ["peerjs"],
         "baseUrl": "./",
         "outDir": "./dist/out-tsc",
         "forceConsistentCasingInFileNames": true,
@@ -29,6 +24,10 @@
         "skipLibCheck": true,
         "types": []
     },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.d.ts"
+    ],
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,
         "strictInjectionParameters": true,

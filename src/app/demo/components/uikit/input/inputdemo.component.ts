@@ -63,13 +63,13 @@ export class InputDemoComponent implements OnInit {
 
     valColor = '#424242';
 
-    valRadio: string = '';
+    valRadio = '';
 
     valCheck: string[] = [];
 
-    valCheck2: boolean = false;
+    valCheck2 = false;
 
-    valSwitch: boolean = false;
+    valSwitch = false;
 
     cities: SelectItem[] = [];
 
@@ -83,9 +83,9 @@ export class InputDemoComponent implements OnInit {
 
     paymentOptions: any[] = [];
 
-    valSelect1: string = "";
+    valSelect1 = "";
 
-    valSelect2: string = "";
+    valSelect2 = "";
 
     valueKnob = 20;
 

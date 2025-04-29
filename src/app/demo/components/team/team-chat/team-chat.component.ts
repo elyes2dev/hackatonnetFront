@@ -28,7 +28,7 @@ export class TeamChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   team: Team | null = null;
   teamMembers: TeamMember[] = [];
   teamDiscussions: TeamDiscussion[] = [];
-  groupedDiscussions: Map<string, any[]> = new Map();
+  groupedDiscussions = new Map<string, any[]>();
   currentUserTeamMemberId: number | null = null;
   currentUserId: number | null = null;
   isLoading = true;

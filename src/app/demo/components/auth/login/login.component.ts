@@ -46,9 +46,9 @@ export class LoginComponent {
 
   
 
-    name: string = '';
-    password: string = '';
-    token: string = "";
+    name = '';
+    password = '';
+    token = "";
     error: string | null = null;
 
   constructor(private authService: AuthService, public layoutService: LayoutService, private router: Router,private storageService : StorageService) {}

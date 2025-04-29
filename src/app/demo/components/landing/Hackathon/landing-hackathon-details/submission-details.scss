@@ -1,0 +1,452 @@
+/* Modern Dialog Styles */
+:host ::ng-deep .p-dialog.modern-dialog {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  
+  .p-dialog-header {
+    background: linear-gradient(135deg, #6200EA 0%, #B388FF 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border-bottom: none;
+    
+    .p-dialog-title {
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+    
+    .p-dialog-header-icon {
+      color: white;
+      margin-right: 0.5rem;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+    }
+  }
+  
+  .p-dialog-content {
+    padding: 0;
+    overflow: visible;
+  }
+  
+  .p-dialog-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    
+    .dialog-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+}
+
+/* Submission Details Container */
+.submission-details-container {
+  padding: 1.5rem;
+  
+  .submission-details-header {
+    margin-bottom: 1.5rem;
+    
+    .project-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      
+      .project-badge {
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #FF9800 0%, #FFD54F 100%);
+        color: white;
+        padding: 0.5rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+        box-shadow: 0 3px 8px rgba(255, 152, 0, 0.3);
+        
+        i {
+          margin-right: 6px;
+          font-size: 0.9rem;
+        }
+      }
+      
+      .submission-date {
+        display: flex;
+        align-items: center;
+        color: #6c757d;
+        font-size: 0.9rem;
+        
+        i {
+          margin-right: 6px;
+          color: #6200EA;
+        }
+      }
+    }
+  }
+  
+  .submission-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+/* Details Sections */
+.details-section {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    
+    i {
+      font-size: 1.2rem;
+      color: #6200EA;
+      margin-right: 0.75rem;
+    }
+    
+    h3 {
+      margin: 0;
+      color: #495057;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+  }
+  
+  .section-content {
+    color: #495057;
+    
+    p {
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+  
+  &.description-section {
+    background-color: #f0f4ff;
+    border-left: 3px solid #6200EA;
+  }
+  
+  &.repo-section {
+    background-color: #f0f7ff;
+    border-left: 3px solid #0288D1;
+    
+    .repo-link {
+      display: flex;
+      align-items: center;
+      color: #0288D1;
+      text-decoration: none;
+      margin-bottom: 0.75rem;
+      word-break: break-all;
+      
+      i {
+        margin-right: 8px;
+        color: #0288D1;
+      }
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  
+  &.update-section {
+    background-color: #f0f8f7;
+    border-left: 3px solid #00897B;
+    
+    .update-actions {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+  
+  &.actions-section {
+    background-color: #f8f0ff;
+    border-left: 3px solid #7B1FA2;
+    
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      
+      @media (min-width: 576px) {
+        flex-direction: row;
+      }
+      
+      .action-button {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        padding: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        
+        i {
+          font-size: 1.2rem;
+          margin-bottom: 0.5rem;
+        }
+        
+        .action-description {
+          font-size: 0.8rem;
+          opacity: 0.8;
+          margin-top: 0.25rem;
+        }
+        
+        &:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+  }
+}
+
+/* Donation Form Styles */
+.donation-form {
+  background-color: #fff8e1;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-top: 1.25rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  border-left: 3px solid #FF9800;
+  
+  .donation-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    
+    i {
+      font-size: 1.2rem;
+      color: #FF9800;
+      margin-right: 0.75rem;
+    }
+    
+    h4 {
+      margin: 0;
+      color: #FF9800;
+      font-weight: 600;
+    }
+  }
+  
+  .donation-info {
+    color: #6c757d;
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .donation-step {
+    position: relative;
+    margin-bottom: 1.5rem;
+    display: flex;
+    
+    .step-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 1rem;
+      
+      .step-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background-color: #FF9800;
+        color: white;
+        border-radius: 50%;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .step-line {
+        flex: 1;
+        width: 2px;
+        background-color: #FFD54F;
+      }
+    }
+    
+    .step-content {
+      flex: 1;
+      
+      h5 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: #FF9800;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+    }
+  }
+  
+  .quick-amounts {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+    
+    button {
+      flex: 1;
+      min-width: 60px;
+    }
+  }
+  
+  .donation-note {
+    display: flex;
+    align-items: flex-start;
+    background-color: rgba(255, 152, 0, 0.1);
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    
+    i {
+      color: #FF9800;
+      margin-right: 0.75rem;
+      margin-top: 0.2rem;
+    }
+    
+    span {
+      font-size: 0.9rem;
+      color: #795548;
+    }
+  }
+  
+  .donation-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+    
+    button {
+      flex: 1;
+    }
+  }
+  
+  .stripe-card-element {
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: white;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+  
+  .stripe-card-errors {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+  
+  .card-hint {
+    display: flex;
+    align-items: center;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    
+    i {
+      margin-right: 0.5rem;
+      color: #4CAF50;
+    }
+  }
+  
+  .donation-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #e0e0e0;
+    
+    i {
+      color: #4CAF50;
+      margin-right: 0.5rem;
+    }
+    
+    span {
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+  }
+  
+  .donation-success {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: rgba(76, 175, 80, 0.1);
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    
+    i {
+      font-size: 2.5rem;
+      color: #4CAF50;
+      margin-bottom: 1rem;
+    }
+    
+    h3 {
+      color: #2E7D32;
+      margin-bottom: 0.5rem;
+    }
+    
+    p {
+      color: #388E3C;
+      margin: 0;
+    }
+  }
+}
+
+/* Form Fields */
+.field {
+  margin-bottom: 1.25rem;
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+  }
+  
+  .p-inputtext {
+    width: 100%;
+  }
+  
+  .p-input-icon-left {
+    width: 100%;
+    
+    i {
+      color: #6c757d;
+    }
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+  .submission-details-container {
+    padding: 1rem;
+  }
+  
+  .details-section {
+    padding: 1rem;
+  }
+  
+  .donation-form {
+    padding: 1rem;
+  }
+}

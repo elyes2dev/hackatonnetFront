@@ -20,10 +20,17 @@ import { DividerModule } from 'primeng/divider';
 import { StyleClassModule } from 'primeng/styleclass';
 import { ChartModule } from 'primeng/chart';
 import { PanelModule } from 'primeng/panel';
+import { FooterComponent } from '../demo/components/landing/footer/footer.component';
+import { NavbarComponent } from '../demo/components/landing/navbar/navbar.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
-  declarations: [],
+  declarations: [
+    NavbarComponent,
+    FooterComponent
+
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -45,12 +52,17 @@ import { PanelModule } from 'primeng/panel';
     DividerModule,
     StyleClassModule,
     ChartModule,
-    PanelModule
+    PanelModule,
+    CommonModule,
+    RouterModule
+
   ],
   exports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule ,// Export RouterModule here - this is critical!
+
     // PrimeNG modules
     ButtonModule,
     InputTextModule,
@@ -68,7 +80,10 @@ import { PanelModule } from 'primeng/panel';
     DividerModule,
     StyleClassModule,
     ChartModule,
-    PanelModule
+    PanelModule,
+    NavbarComponent,
+    FooterComponent
+
   ]
 })
 export class SharedModule { }

@@ -160,7 +160,7 @@ export class TeamListComponent implements OnInit {
   publicTeams: Team[] = [];
   filteredPublicTeams: Team[] = [];
   userTeams: Team[] = [];
-  teamsByHackathon: { [key: string]: Team[] } = {}; // Teams grouped by hackathon
+  teamsByHackathon: Record<string, Team[]> = {}; // Teams grouped by hackathon
   hackathonNames: string[] = []; // List of hackathon names for display
   isLoading = true;
   displayJoinDialog = false;
@@ -170,13 +170,13 @@ export class TeamListComponent implements OnInit {
   displayChartsSection = false; // Control visibility of charts section
   teamToEdit: Team | null = null;
   selectedTeamForStats: Team | null = null;
-  teamCode: string = '';
+  teamCode = '';
   joinCodeForm: FormGroup;
   createTeamForm: FormGroup;
   editTeamForm: FormGroup;
   selectedHackathonId: number | null = null;
   teamFilterHackathonId: number | null = null;
-  teamSearchQuery: string = '';
+  teamSearchQuery = '';
   teamViewMode: 'grid' | 'list' = 'grid';
   hackathons: any[] = []; // This would be populated from a HackathonService
 
@@ -301,7 +301,7 @@ export class TeamListComponent implements OnInit {
     };
   }
   
-  initializeCharts(teamSizes: {[key: string]: number}): void {
+  initializeCharts(teamSizes: Record<string, number>): void {
     // Team distribution chart (public vs private)
     this.teamDistributionData = {
       labels: ['Public Teams', 'Private Teams'],
@@ -472,7 +472,7 @@ export class TeamListComponent implements OnInit {
     this.teamStats.inactiveTeams = teams.length - this.teamStats.activeTeams;
     
     // Team size distribution for chart
-    const teamSizes: {[key: string]: number} = {
+    const teamSizes: Record<string, number> = {
       'Small (1-2)': 0,
       'Medium (3-5)': 0,
       'Large (6+)': 0

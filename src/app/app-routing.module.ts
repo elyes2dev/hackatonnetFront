@@ -73,6 +73,7 @@ import { TeamChatHubComponent } from './demo/components/team/team-chat-hub/team-
 
 
 
+import { SubmissionDetailsComponent } from './demo/components/landing/Hackathon/submission-details/submission-details.component';
 
 @NgModule({
     imports: [
@@ -220,6 +221,7 @@ import { TeamChatHubComponent } from './demo/components/team/team-chat-hub/team-
             
             { path: 'landing-hackathons', component: LandingHackathonListComponent},
             { path: 'landing-hackathon/:id', component: LandingHackathonDetailsComponent},
+            { path: 'submission-details/:id', component: SubmissionDetailsComponent },
             { path: 'prize-form/:hackathonId', component: PrizeFormComponent },
             { path: 'landing-live-stream/:id', component: LiveStreamComponent },
             { path: 'sponsors-leaderboard', component: SponsorLeaderboardComponent },

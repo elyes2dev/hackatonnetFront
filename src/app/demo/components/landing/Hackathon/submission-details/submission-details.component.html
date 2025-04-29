@@ -1,0 +1,307 @@
+<div class="surface-0 flex justify-content-center h-full">
+
+<div id="home" class="landing-wrapper w-full h-full">
+
+  <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
+    <a (click)="navigateToLanding()" class="flex align-items-center">
+        <img src="assets/layout/images/hackathonnetlogo.png" alt="Logo" height="50" class="mr-0 lg:mr-2">
+    </a>
+  
+    <a pRipple class="cursor-pointer block lg:hidden text-700" pStyleClass="@next" enterClass="hidden" leaveToClass="hidden" >
+        <i class="pi pi-bars text-4xl"></i>
+    </a>
+    <div class="align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2" style="top:85%">
+        <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
+           
+            <li>
+                <a (click)="router.navigate(['/workshopsf'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                    <span>Workshops</span>
+                </a>
+            </li>
+  
+             <!-- Show "Apply as a sponsor" only if user is NOT a sponsor -->
+             <li *ngIf="!isSponsor">
+                <a (click)="router.navigate(['/sponsor-application-form'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                    <span>Apply as a sponsor</span>
+                </a>
+            </li>
+  
+            <li>
+                <a (click)="router.navigate(['/sponsors-leaderboard'], {fragment: 'pricing'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                    <span>Sponsor Leaderboard</span>
+                </a>
+            </li>
+  
+            <li>
+                <a (click)="router.navigate(['/landing-hackathons'], {fragment: 'hackathons'})" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                    <span>Hackathons</span>
+                </a>
+            </li>
+            <li>
+                <a (click)="router.navigate(['/team-chat-hub'])" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                    <span>Team Chat Hub</span>
+                </a>
+            </li>
+        </ul>
+        <!-- User account section with dropdown for authenticated users -->
+        <div *ngIf="isAuthenticated" class="flex align-items-center">
+            <div class="user-dropdown flex align-items-center relative">
+                <span class="mr-2">Hello, {{username}}</span>
+                <button 
+                    pButton 
+                    pRipple 
+                    type="button" 
+                    icon="pi pi-user" 
+                    class="p-button-rounded p-button-text p-button-plain badge-icon"
+                    (click)="userMenuVisible = !userMenuVisible">
+                </button>
+                <!-- Dropdown menu with higher z-index -->
+  <div *ngIf="userMenuVisible" class="dropdown-menu absolute right-0 top-100 shadow-2 bg-white border-round-md w-12rem z-5 py-2" [ngClass]="{'visible': userMenuVisible}" style="margin-top: 0.5rem; z-index: 1000;">
+    <ul class="list-none p-0 m-0">
+        <li>
+            <a (click)="router.navigate(['/profile']); userMenuVisible = false" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
+                <i class="pi pi-user mr-2"></i>
+                <span>Profile</span>
+            </a>
+        </li>
+        <!-- Add My prizes option only for sponsors -->
+        <li *ngIf="isSponsor">
+            <a (click)="router.navigate(['/sponsor-prizes']); userMenuVisible = false" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
+               <i class="pi pi-tag mr-2"></i>
+                <span>My prizes</span>
+            </a>
+        </li>
+        <li *ngIf="isMentor">
+            <a (click)="router.navigate(['/mentor-evaluations-user'])" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                <span>My evaluations</span>
+            </a>
+        </li>
+  
+        <li>
+            <a (click)="viewOrCreateMentorApplication()" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 cursor-pointer">
+                <span>{{ isMentor ? 'My Mentor Application' : 'Apply as Mentor' }}</span>
+            </a>
+        </li>
+        <li>
+            <a (click)="logout(); userMenuVisible = false" 
+               class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
+                <i class="pi pi-sign-out mr-2"></i>
+                <span>Logout</span>
+            </a>
+        </li>
+    </ul>
+  </div>
+            </div>
+        </div>
+        <div *ngIf="!isAuthenticated" class="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
+            <button pButton pRipple label="Login" (click)="router.navigate(['/auth/login'])" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></button>
+            <button pButton pRipple label="Register" (click)="router.navigate(['/auth/register'])" class="p-button-rounded border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></button>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div class="submission-details-page">
+  <!-- Loading Overlay -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading submission details...</p>
+  </div>
+  
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    <i class="pi pi-exclamation-triangle"></i>
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- No Submission Found -->
+  <div *ngIf="!loading && !submission && !error" class="no-data-message">
+    <i class="pi pi-info-circle"></i>
+    <p>No submission found with the specified ID.</p>
+    <button pButton type="button" label="Back to Submissions" icon="pi pi-arrow-left" 
+            class="p-button-outlined" routerLink="/hackathon/submissions"></button>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="donationSuccess" class="alert alert-success">
+    <i class="pi pi-check-circle"></i>
+    <p>Your donation has been processed successfully!</p>
+  </div>
+
+  <div class="back-navigation">
+    <button pButton type="button" icon="pi pi-arrow-left" label="Back to Hackathons" 
+            class="p-button-text" (click)="goBack()"></button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-container" *ngIf="submission">
+    <!-- Hero Section -->
+    <div class="submission-hero">
+      <div class="hero-content">
+        <div class="project-badge" *ngIf="submission && isDonationPositive(submission.donationAmount)">
+          <i class="pi pi-heart-fill"></i>
+          <span>${{ submission?.donationAmount }} raised</span>
+        </div>
+        <h1 class="project-title">{{ submission?.projectName }}</h1>
+        <div class="submission-meta">
+          <div class="meta-item">
+            <i class="pi pi-user"></i>
+            <span>Submitted by {{ submission?.teamMember?.id ? 'User ' + submission?.teamMember?.id : 'Unknown User' }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="pi pi-calendar"></i>
+            <span>{{ submission?.submissionDate }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="pi pi-flag"></i>
+            <span>{{ hackathonName || 'Unknown Hackathon' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Evaluation Chart -->
+    <div class="card chart-section" *ngIf="evaluations && evaluations.length > 0">
+      <div class="card-header">
+        <i class="pi pi-chart-line"></i>
+        <h2>Evaluation Scores</h2>
+        <div class="average-score">
+          {{ getAverageScore() }}/100
+        </div>
+      </div>
+      
+      <div class="card-content">
+        <!-- Chart placeholder -->
+        <div class="chart-placeholder">
+          <p>Chart visualization is loading...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid Content -->
+    <div class="details-grid">
+      <!-- Left Column: Project Details -->
+      <div class="details-column">
+        <div class="card">
+          <div class="card-header">
+            <i class="pi pi-info-circle"></i>
+            <h2>Project Details</h2>
+          </div>
+          <div class="card-content">
+            <div class="detail-section">
+              <h3>Description</h3>
+              <p>{{ submission?.description }}</p>
+            </div>
+            
+            <div class="detail-section">
+              <h3>Technologies Used</h3>
+              <div class="tech-tags">
+                <span class="tech-tag" *ngFor="let tech of getTechnologiesArray(submission?.technologies)">
+                  {{ tech.trim() }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="detail-section">
+              <h3>Repository</h3>
+              <div class="repo-link" *ngIf="submission?.repoLink">
+                <i class="pi pi-github"></i>
+                <a [href]="submission?.repoLink" target="_blank" rel="noopener noreferrer">
+                  {{ submission?.repoLink }}
+                </a>
+              </div>
+              <p *ngIf="!submission?.repoLink" class="no-data-text">No repository link provided</p>
+            </div>
+            
+            <!-- Actions -->
+            <div class="detail-section actions-section" *ngIf="user">
+              <h3>Actions</h3>
+              <div class="action-buttons">
+                <button pButton type="button" label="Donate to Project" icon="pi pi-heart" 
+                        class="p-button-success action-button" (click)="toggleDonationForm()">
+                  <span class="action-description">Support this project financially</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column: Evaluations -->
+      <div class="evaluations-column">
+        <div class="card">
+          <div class="card-header">
+            <div class="header-content">
+              <div class="header-title">
+                <i class="pi pi-star"></i>
+                <h2>Project Evaluations</h2>
+              </div>
+              <div class="evaluation-stats" *ngIf="evaluations && evaluations.length > 0">
+                <div class="stat-item">
+                  <span class="stat-label">Total Reviews</span>
+                  <span class="stat-value">{{evaluations.length}}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Avg Score</span>
+                  <span class="stat-value" [ngClass]="getScoreClass(getAverageScore())">{{getAverageScore()}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-content">
+            <div *ngIf="evaluations && evaluations.length > 0; else noEvaluations" class="evaluations-list">
+              <div *ngFor="let evaluation of evaluations" class="evaluation-item">
+                <div class="evaluation-header">
+                  <div class="evaluator-info">
+                    <i class="pi pi-user"></i>
+                    <span>{{ getEvaluatorDisplay(evaluation.evaluator) }}</span>
+                  </div>
+                  <div class="score-badge">
+                    {{ evaluation.score }}/100
+                  </div>
+                </div>
+                
+                <div class="evaluation-date">
+                  <i class="pi pi-calendar"></i>
+                  <span>{{ evaluation.evaluationDate }}</span>
+                </div>
+                
+                <div class="evaluation-feedback">
+                  <h4>Feedback</h4>
+                  <p>{{ evaluation.feedback || 'No feedback provided' }}</p>
+                </div>
+              </div>
+            </div>
+            
+            <ng-template #noEvaluations>
+              <div class="no-data">
+                <i class="pi pi-info-circle"></i>
+                <p>No evaluations yet</p>
+                <p *ngIf="!isSubmissionOwner" class="no-data-hint">Be the first to evaluate this project!</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Evaluation Button -->
+<div class="floating-action-button" *ngIf="user && !isSubmissionOwner && submission">
+  <button pButton type="button" (click)="openEvaluationDialog()" 
+          class="p-button-rounded p-button-lg evaluate-fab" 
+          pTooltip="Evaluate this project" tooltipPosition="left">
+    <div class="fab-content">
+      <i class="pi pi-star-fill"></i>
+      <span class="fab-label">Evaluate</span>
+    </div>
+  </button>
+</div>
+
+<!-- Toast for notifications -->
+<p-toast></p-toast>
+<app-footer></app-footer>

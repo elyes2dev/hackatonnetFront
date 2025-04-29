@@ -21,9 +21,9 @@ interface HackathonWithMentors {
 export class ListMentorListComponent implements OnInit {
   listMentors: ListMentor[] = [];
   hackathonGroups: HackathonWithMentors[] = [];
-  expandedRows: { [key: string]: boolean } = {};
+  expandedRows: Record<string, boolean> = {};
   isExpanded = false;
-  exportInProgress: { [key: number]: boolean } = {};
+  exportInProgress: Record<number, boolean> = {};
 
 
   constructor(

@@ -14,9 +14,9 @@ import { Hackathon } from 'src/app/demo/models/hackathon.model';
 export class ListMentorFormAdminComponent implements OnInit {
   mentorForm: FormGroup;
   isEditMode = false;
-  mentorId: number = 0;
+  mentorId = 0;
   isSubmitting = false;
-  errorMessage: string = '';
+  errorMessage = '';
   
   constructor(
     private fb: FormBuilder,

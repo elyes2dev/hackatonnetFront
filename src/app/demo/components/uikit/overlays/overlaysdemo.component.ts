@@ -11,21 +11,21 @@ export class OverlaysDemoComponent implements OnInit {
 
     images: any[] = [];
 
-    display: boolean = false;
+    display = false;
 
     products: Product[] = [];
 
     selectedProduct: Product = {};
 
-    visibleSidebar1: boolean = false;
+    visibleSidebar1 = false;
 
-    visibleSidebar2: boolean = false;
+    visibleSidebar2 = false;
 
-    visibleSidebar3: boolean = false;
+    visibleSidebar3 = false;
 
-    visibleSidebar4: boolean = false;
+    visibleSidebar4 = false;
 
-    visibleSidebar5: boolean = false;
+    visibleSidebar5 = false;
 
     constructor(private productService: ProductService, private confirmationService: ConfirmationService, private messageService: MessageService) { }
 

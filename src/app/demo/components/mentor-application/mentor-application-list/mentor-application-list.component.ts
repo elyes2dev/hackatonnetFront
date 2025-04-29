@@ -13,7 +13,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 })
 export class MentorApplicationListComponent implements OnInit {
   applications: (MentorApplication & { formattedDate: string })[] = [];
-  loading: boolean = true;
+  loading = true;
   statuses: any[] = [];
   
   // Add this to make the enum available in the template

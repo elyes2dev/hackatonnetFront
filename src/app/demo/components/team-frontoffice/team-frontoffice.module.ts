@@ -17,10 +17,14 @@ import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ToolbarModule } from 'primeng/toolbar';
+import { SafePipe } from '../../pipes/safe.pipe';
+import { FormatMessagePipe } from '../../pipes/format-message.pipe';
 
 @NgModule({
   declarations: [
-    TeamFrontofficeComponent
+    TeamFrontofficeComponent,
+    SafePipe,
+    FormatMessagePipe
   ],
   imports: [
     CommonModule,

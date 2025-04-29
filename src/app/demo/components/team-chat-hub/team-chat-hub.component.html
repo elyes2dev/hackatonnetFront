@@ -1,35 +1,101 @@
-<div class="team-chat-hub-container messenger-style">
+<!-- Navigation Bar -->
+<div class="surface-0 flex justify-content-center h-full">
+    <div id="home" class="landing-wrapper w-full h-full">
+        <div class="py-3 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
+            <a (click)="navigateToLanding()" class="flex align-items-center">
+                <img src="assets/layout/images/hackathonnetlogo.png" alt="Logo" height="50" class="mr-0 lg:mr-2">
+            </a>
+
+            <a pRipple class="cursor-pointer block lg:hidden text-700 menu-toggle" pStyleClass="@next" enterClass="hidden" leaveToClass="hidden">
+                <i class="pi pi-bars text-3xl"></i>
+            </a>
+            <div class="align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2 navbar-menu" style="top:85%">
+                <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
+                    <li>
+                        <a (click)="navigateTo('/workshopsf', 'pricing')" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 nav-link">
+                            <span>Workshops</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a (click)="navigateTo('/sponsors-leaderboard', 'pricing')" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 nav-link">
+                            <span>Sponsor Leaderboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a (click)="navigateToHackathons()" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 nav-link">
+                            <span>Hackathons</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a (click)="navigateTo('/landing/team-submission')" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 nav-link">
+                            <span>Team Submission</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a (click)="navigateTo('/landing/project-evaluation')" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 nav-link">
+                            <span>Project Evaluation</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- User account section -->
+                <div class="flex align-items-center">
+                    <button pButton pRipple label="My Profile" icon="pi pi-user" class="p-button-rounded user-profile-btn"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="team-chat-container">
     <!-- Left Sidebar - Teams List -->
-    <div class="teams-sidebar">
-        <div class="teams-header">
+    <div class="teams-sidebar" [class.show-mobile]="showTeamsSidebar">
+        <div class="sidebar-header">
             <h2>Your Teams</h2>
+            <div class="filter-buttons">
+                <button pButton 
+                        [class.active]="!showArchived" 
+                        class="p-button-text p-button-sm" 
+                        label="Active" 
+                        (click)="showArchived = false"></button>
+                <button pButton 
+                        [class.active]="showArchived" 
+                        class="p-button-text p-button-sm" 
+                        label="Archived" 
+                        (click)="showArchived = true"></button>
+            </div>
         </div>
         
-        <div class="teams-list" *ngIf="!loadingTeams && userTeams.length > 0">
-            <div *ngFor="let team of userTeams" 
+        <div class="teams-list" *ngIf="!loadingTeams && getFilteredTeams().length > 0">
+            <div *ngFor="let team of getFilteredTeams()" 
                  class="team-item" 
                  [class.active]="selectedTeam?.id === team.id"
+                 [class.archived]="isTeamArchived(team)"
                  (click)="selectTeam(team)">
                 <div class="team-avatar">
                     <span>{{getTeamInitials(team.teamName)}}</span>
                 </div>
                 <div class="team-info">
                     <div class="team-name">{{team.teamName}}</div>
+                    <div class="hackathon-name" *ngIf="team.hackathon">
+                        <i class="pi pi-tag"></i>{{team.hackathon?.title || 'Hackathon'}}
+                        <span *ngIf="isTeamArchived(team)" class="archived-badge">Archived</span>
+                    </div>
                     <div class="team-last-message">{{getTeamLastMessage(team.id)}}</div>
                 </div>
                 <div class="team-time">{{getTeamLastMessageTime(team.id)}}</div>
             </div>
         </div>
         
-        <div *ngIf="loadingTeams" class="teams-loading">
+        <div *ngIf="loadingTeams" class="empty-state loading">
             <i class="pi pi-spin pi-spinner"></i>
             <p>Loading your teams...</p>
         </div>
         
-        <div *ngIf="!loadingTeams && userTeams.length === 0" class="teams-empty">
+        <div *ngIf="!loadingTeams && userTeams.length === 0" class="empty-state">
             <i class="pi pi-users"></i>
             <p>You're not part of any teams yet</p>
-            <button pButton label="Join a Hackathon" icon="pi pi-plus" (click)="navigateToHackathons()"></button>
+            <button pButton label="Join a Hackathon" icon="pi pi-plus" (click)="navigateToHackathons()" class="empty-action-btn"></button>
         </div>
     </div>
     
@@ -37,13 +103,23 @@
     <div class="chat-main">
         <!-- Chat Header -->
         <div class="chat-header" *ngIf="selectedTeam">
+            <button pButton 
+                    icon="pi pi-menu" 
+                    class="p-button-text p-button-rounded mobile-menu-btn"
+                    (click)="toggleTeamsSidebar()"></button>
+                    
             <div class="chat-header-info">
                 <div class="team-avatar">
                     <span>{{getTeamInitials(selectedTeam.teamName)}}</span>
                 </div>
                 <div class="team-details">
                     <h2>{{selectedTeam.teamName}}</h2>
-                    <span>{{selectedTeam.teamMembers?.length || 0}} members</span>
+                    <div class="flex align-items-center">
+                        <span class="member-count">{{selectedTeam.teamMembers?.length || 0}} members</span>
+                        <span *ngIf="selectedTeam.hackathon" class="hackathon-badge" (click)="navigateToHackathon(selectedTeam.hackathon?.id)">
+                            <i class="pi pi-tag"></i>{{selectedTeam.hackathon?.title}}
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="chat-header-actions">
@@ -53,26 +129,29 @@
                         (click)="toggleMembersSidebar()"
                         pTooltip="Team Members"
                         tooltipPosition="bottom"></button>
-                <button pButton 
-                        icon="pi pi-arrow-left" 
-                        class="p-button-rounded p-button-text"
-                        routerLink="/landing-hackathon/{{selectedTeam?.hackathon?.id}}"
-                        pTooltip="Back to Hackathon"
-                        tooltipPosition="bottom"></button>
             </div>
         </div>
         
         <!-- Empty State -->
         <div class="chat-empty" *ngIf="!selectedTeam">
             <div class="empty-content">
-                <i class="pi pi-comments"></i>
+                <div class="empty-icon">
+                    <i class="pi pi-comments"></i>
+                </div>
                 <h2>Welcome to Team Chat</h2>
-                <p>Select a team to start chatting</p>
+                <p>Select a team from the sidebar to start collaborating with your teammates</p>
+                <button pButton label="Join a Hackathon" icon="pi pi-plus" class="empty-action-btn" (click)="navigateToHackathons()"></button>
             </div>
         </div>
         
         <!-- Chat Messages -->
         <div class="chat-messages" #chatContainer *ngIf="selectedTeam">
+            <!-- Archived Banner -->
+            <div *ngIf="isTeamArchived(selectedTeam)" class="archived-banner">
+                <i class="pi pi-lock"></i>
+                <span>This conversation is archived. Messages cannot be added as the hackathon has ended.</span>
+            </div>
+            
             <!-- Loading Messages -->
             <div *ngIf="loadingMessages" class="messages-loading">
                 <i class="pi pi-spin pi-spinner"></i>
@@ -95,7 +174,10 @@
                     </div>
                     
                     <!-- Message Item -->
-                    <div class="message-item" [class.own-message]="isCurrentUserMessage(discussion.teamMember?.id)" [class.consecutive]="i > 0 && isConsecutiveMessage(discussions[selectedTeam.id][i-1], discussion)">
+                    <div class="message-item" 
+                         [class.own-message]="isCurrentUserMessage(discussion.teamMember?.id)" 
+                         [class.consecutive]="i > 0 && isConsecutiveMessage(discussions[selectedTeam.id][i-1], discussion)"
+                         [class.unread]="!isMessageRead(discussion)">
                         <!-- Avatar (only for others' messages) -->
                         <div *ngIf="!isCurrentUserMessage(discussion.teamMember?.id)" class="message-avatar">
                             <span>{{discussion.teamMember?.user?.name?.charAt(0) || '?'}}</span>
@@ -111,7 +193,7 @@
                             <!-- Message bubble -->
                             <div class="message-bubble">
                                 <!-- Text message -->
-                                <div *ngIf="discussion.messageType === 'TEXT'" class="message-text">
+                                <div *ngIf="discussion.messageType === 'TEXT'" class="message-text" [ngClass]="{'long-message': discussion.message.length > 100}">
                                     {{discussion.message}}
                                 </div>
                                 
@@ -140,36 +222,33 @@
         </div>
         
         <!-- Chat Input -->
-        <div class="chat-input modern-input" *ngIf="selectedTeam">
-            <div class="input-actions">
-                <button pButton 
-                        icon="pi pi-paperclip" 
-                        class="p-button-rounded p-button-text"
-                        (click)="triggerFileUpload()"
-                        [disabled]="sendingMessage"></button>
-                
-                <input type="file" 
-                       id="file-upload-input" 
-                       style="display: none;" 
-                       (change)="onFileSelected($event)">
-            </div>
+        <div class="chat-input" *ngIf="selectedTeam && !isTeamArchived(selectedTeam)">
+            <button pButton 
+                    icon="pi pi-paperclip" 
+                    class="p-button-rounded attachment-btn"
+                    (click)="triggerFileUpload()"
+                    [disabled]="sendingMessage"></button>
             
+            <input type="file" 
+                   id="file-upload-input" 
+                   style="display: none;" 
+                   (change)="onFileSelected($event)">
+                   
             <div class="input-field">
                 <input type="text" 
                        pInputText 
                        [(ngModel)]="newMessage" 
                        placeholder="Type a message..." 
                        (keydown.enter)="sendMessage()"
-                       [disabled]="sendingMessage"
-                       class="modern-input-field">
+                       [disabled]="sendingMessage">
                 
                 <button pButton 
                         icon="pi pi-smile" 
-                        class="p-button-rounded p-button-text emoji-button"
+                        class="p-button-rounded p-button-text emoji-btn"
                         (click)="toggleEmojiPicker($event)"
                         [disabled]="sendingMessage"></button>
                 
-                <p-overlayPanel #emojiPanel [showCloseIcon]="true" [style]="{width: '300px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'}" styleClass="emoji-overlay">
+                <p-overlayPanel #emojiPanel [showCloseIcon]="true" styleClass="emoji-overlay">
                     <ng-template pTemplate>
                         <div class="emoji-picker">
                             <div class="emoji-section">
@@ -189,19 +268,11 @@
                                     <div class="emoji-item" (click)="addEmoji('😀')">😀</div>
                                     <div class="emoji-item" (click)="addEmoji('😃')">😃</div>
                                     <div class="emoji-item" (click)="addEmoji('😄')">😄</div>
-                                    <div class="emoji-item" (click)="addEmoji('😁')">😁</div>
-                                    <div class="emoji-item" (click)="addEmoji('😆')">😆</div>
-                                    <div class="emoji-item" (click)="addEmoji('😅')">😅</div>
-                                    <div class="emoji-item" (click)="addEmoji('🤣')">🤣</div>
-                                    <div class="emoji-item" (click)="addEmoji('😂')">😂</div>
                                     <div class="emoji-item" (click)="addEmoji('🙂')">🙂</div>
-                                    <div class="emoji-item" (click)="addEmoji('🙃')">🙃</div>
-                                    <div class="emoji-item" (click)="addEmoji('😉')">😉</div>
                                     <div class="emoji-item" (click)="addEmoji('😊')">😊</div>
                                     <div class="emoji-item" (click)="addEmoji('😇')">😇</div>
                                     <div class="emoji-item" (click)="addEmoji('🥰')">🥰</div>
                                     <div class="emoji-item" (click)="addEmoji('😍')">😍</div>
-                                    <div class="emoji-item" (click)="addEmoji('🤩')">🤩</div>
                                 </div>
                             </div>
                             
@@ -216,14 +287,6 @@
                                     <div class="emoji-item" (click)="addEmoji('💜')">💜</div>
                                     <div class="emoji-item" (click)="addEmoji('🖤')">🖤</div>
                                     <div class="emoji-item" (click)="addEmoji('💯')">💯</div>
-                                    <div class="emoji-item" (click)="addEmoji('💢')">💢</div>
-                                    <div class="emoji-item" (click)="addEmoji('💥')">💥</div>
-                                    <div class="emoji-item" (click)="addEmoji('💫')">💫</div>
-                                    <div class="emoji-item" (click)="addEmoji('💦')">💦</div>
-                                    <div class="emoji-item" (click)="addEmoji('💨')">💨</div>
-                                    <div class="emoji-item" (click)="addEmoji('🕳️')">🕳️</div>
-                                    <div class="emoji-item" (click)="addEmoji('💣')">💣</div>
-                                    <div class="emoji-item" (click)="addEmoji('💬')">💬</div>
                                 </div>
                             </div>
                         </div>
@@ -231,29 +294,27 @@
                 </p-overlayPanel>
             </div>
             
-            <div class="input-send">
-                <button pButton 
-                        icon="pi pi-send" 
-                        [loading]="sendingMessage"
-                        [disabled]="!newMessage.trim()"
-                        (click)="sendMessage()"
-                        class="send-button"></button>
-            </div>
+            <button pButton 
+                    icon="pi pi-send" 
+                    [loading]="sendingMessage"
+                    [disabled]="!newMessage.trim()"
+                    (click)="sendMessage()"
+                    class="send-btn"></button>
         </div>
     </div>
     
     <!-- Right Sidebar - Team Members -->
     <div class="members-sidebar" [class.show]="showMembersSidebar">
-        <div class="members-header">
+        <div class="sidebar-header">
             <h3>Team Members</h3>
             <button pButton 
                     icon="pi pi-times" 
-                    class="p-button-rounded p-button-text"
+                    class="p-button-rounded p-button-text close-btn"
                     (click)="toggleMembersSidebar()"></button>
         </div>
         
         <ng-template [ngIf]="!selectedTeam">
-            <div class="empty-members">
+            <div class="empty-state">
                 <i class="pi pi-users"></i>
                 <p>Select a team to view members</p>
             </div>
@@ -271,7 +332,7 @@
             </div>
         </div>
         
-        <div *ngIf="!selectedTeam?.teamMembers || selectedTeam?.teamMembers?.length === 0" class="empty-members">
+        <div *ngIf="!selectedTeam?.teamMembers || selectedTeam?.teamMembers?.length === 0" class="empty-state">
             <i class="pi pi-users"></i>
             <p>No team members found</p>
         </div>

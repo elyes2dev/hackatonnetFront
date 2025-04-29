@@ -14,7 +14,7 @@ import { MentorEvaluationService } from 'src/app/demo/services/mentor-evaluation
 })
 export class MentorEvaluationListComponent implements OnInit {
   evaluations: MentorEvaluation[] = [];
-  loading: boolean = true;
+  loading = true;
 
   constructor(
     private evaluationService: MentorEvaluationService,

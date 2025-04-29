@@ -18,7 +18,7 @@ export class UserComponent implements OnInit {
   skills: Skill[] = [];
   userForm!: FormGroup;
   selectedUser: User | null = null;
-  loading: boolean = false;
+  loading = false;
 
   constructor(
     private userService: UserService,

@@ -13,15 +13,15 @@ import { ChartData } from 'chart.js/auto';
   styleUrls: ['./charts.component.scss']
 })
 export class ChartsComponent implements OnInit {
-  @Input() visible: boolean = false; // This will control visibility of the component
+  @Input() visible = false; // This will control visibility of the component
   resources: Resources[] = [];
   workshops: Workshop[] = [];
   quizzes: Quiz[] = [];
 
-  workshopThemes: { [theme: string]: number } = {};
-  resourcesByNiveau: { [niveau: string]: number } = {};
-  quizzesByStatus: { [status: string]: number } = {}; // New object to group quizzes by 'published' or 'unpublished'
-  totalQuizzes: number = 0; // Add a property for the total number of quizzes
+  workshopThemes: Record<string, number> = {};
+  resourcesByNiveau: Record<string, number> = {};
+  quizzesByStatus: Record<string, number> = {}; // New object to group quizzes by 'published' or 'unpublished'
+  totalQuizzes = 0; // Add a property for the total number of quizzes
 
   workshopThemeChartData!: ChartData<'pie'>;
   resourcesNiveauChartData!: ChartData<'bar'>;

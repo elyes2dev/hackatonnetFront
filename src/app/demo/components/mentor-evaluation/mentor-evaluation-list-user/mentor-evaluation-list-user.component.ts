@@ -14,7 +14,7 @@ import { StorageService } from 'src/app/demo/services/storage.service';
 })
 export class MentorEvaluationListUserComponent  implements OnInit {
   evaluations: MentorEvaluation[] = [];
-  loading: boolean = true;
+  loading = true;
 
   constructor(
     private evaluationService: MentorEvaluationService,

@@ -6,8 +6,9 @@ export const environment = {
   production: false,
   apiUrl: 'http://localhost:9100',
   quizGenerationEndpoint: '/quiz/generate',
-    apiBaseUrl: 'http://localhost:9100/pi/api'
-
+  apiBaseUrl: 'http://localhost:9100/pi/api',
+  // Add your OpenAI API key here
+  openAiApiKey: 'YOUR_OPENAI_API_KEY'
 };
 
 /*

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizService } from 'src/app/demo/services/quiz.service';
 import { UserQuizScoreService } from 'src/app/demo/services/user-quiz-score.service';
@@ -16,13 +16,13 @@ import { UserQuizScore } from 'src/app/demo/models/user-quiz-score.model';
   styleUrls: ['./quiz-list.component.scss'],
   providers: [DialogService]
 })
-export class QuizListComponent implements OnInit {
+export class QuizListComponent implements OnInit, OnDestroy {
   quizzes: Quiz[] = [];
   workshopId!: number;
-  loading: boolean = true;
-  error: string = '';
+  loading = true;
+  error = '';
   currentUserId: string | null = null; // Store user ID here
-  quizStatusMap: { [key: number]: boolean } = {};
+  quizStatusMap: Record<number, boolean> = {};
   showResultsDialog = false;
   showAiQuizDialog = false; // Added this property
   currentQuizResults: any = {
@@ -31,7 +31,7 @@ export class QuizListComponent implements OnInit {
     correctAnswers: 0,
     questions: []
   };
-  hasQuiz: boolean = false; // Track if the user has a quiz
+  hasQuiz = false; // Track if the user has a quiz
   private dialogRef: DynamicDialogRef | undefined;
   showScoresDialog = false;
   currentQuizScores: UserQuizScore[] = [];

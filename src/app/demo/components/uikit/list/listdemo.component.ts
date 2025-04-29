@@ -13,9 +13,9 @@ export class ListDemoComponent implements OnInit {
 
     sortOptions: SelectItem[] = [];
 
-    sortOrder: number = 0;
+    sortOrder = 0;
 
-    sortField: string = '';
+    sortField = '';
 
     sourceCities: any[] = [];
 

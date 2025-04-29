@@ -29,24 +29,24 @@ interface FeedbackResult {
 export class WorkshoplistfComponent implements OnInit {
   workshops: any[] = [];
   isLoading = true;
-  isAdmin: boolean = false;
-  isStudent: boolean = false;
-  searchName: string = '';
-  selectedTheme: string = '';
+  isAdmin = false;
+  isStudent = false;
+  searchName = '';
+  selectedTheme = '';
   uniqueThemes: string[] = [];
   favorites: string[] = [];
   recentlyViewed: string[] = [];
-  feedbackDialogVisible: boolean = false;
-  allFeedbacksDialogVisible: boolean = false;
-  feedbackText: string = '';
+  feedbackDialogVisible = false;
+  allFeedbacksDialogVisible = false;
+  feedbackText = '';
   analysisResult: any = null;
   currentWorkshopId: string | null = null;
   currentWorkshopName: string | null = null;
   dialogMode: 'submit' | 'view' = 'submit';
 
   // Feedback filtering
-  feedbackSearchQuery: string = '';
-  selectedSentimentFilter: string = '';
+  feedbackSearchQuery = '';
+  selectedSentimentFilter = '';
   selectedRatingFilter: number | null = null;
   filteredFeedbacks: FeedbackResult[] = [];
 

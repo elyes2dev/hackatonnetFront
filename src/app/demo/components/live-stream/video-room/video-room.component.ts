@@ -42,12 +42,12 @@ export class VideoRoomComponent implements OnInit, OnDestroy, AfterViewInit {
   participants: Participant[] = [];
   
   // States
-  roomId: string = '';
+  roomId = '';
   isMicMuted = false;
   isCameraOff = false;
   isSharingScreen = false;
 
-  hackathonId: string = '';
+  hackathonId = '';
   
   showChat = false;
   newMessage = '';
@@ -64,7 +64,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy, AfterViewInit {
   
   // PeerJS
   private peer!: Peer;
-  private peers: { [id: string]: MediaConnection } = {};
+  private peers: Record<string, MediaConnection> = {};
 
   async ngOnInit() {
     this.route.paramMap.subscribe(params => {

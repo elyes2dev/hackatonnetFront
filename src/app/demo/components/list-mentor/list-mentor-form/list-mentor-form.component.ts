@@ -14,14 +14,14 @@ import { StorageService } from 'src/app/demo/services/storage.service';
 export class ListMentorFormComponent implements OnInit {
   mentorForm: FormGroup;
   isEditMode = false;
-  mentorId: number = 0;
+  mentorId = 0;
   hackathonId: number;
   isSubmitting = false;
   isGoogleCalendarConnected = false;
   showGoogleCalendarButton = false;
   showAddToCalendarButton = false;
   createdMentorListingId: number | null = null;
-  errorMessage: string = '';
+  errorMessage = '';
   currentUser: any = null; // Store logged-in user details
   userEmail: string | null = null; // Store user email
 

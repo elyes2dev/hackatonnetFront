@@ -31,7 +31,9 @@ export class AppMenuComponent implements OnInit {
                     { label: 'User', icon: 'pi pi-fw pi-user', routerLink: ['/users'] },
                     { label: 'Support-Ticket', icon: 'pi pi-fw pi-id-card', routerLink: ['/support-tickets'] },
                     { label: 'Hackathons', icon: 'pi pi-fw pi-calendar', routerLink: ['/hackathons'] },
-                    { label: 'Teams', icon: 'pi pi-fw pi-users', routerLink: ['/teams'] }
+                    { label: 'Teams', icon: 'pi pi-fw pi-users', routerLink: ['/teams'] },
+                    { label: 'Team submissions ', icon: 'pi pi-fw pi-users', routerLink: ['/team-submission'] }
+
 
                 ]
             },
@@ -40,7 +42,6 @@ export class AppMenuComponent implements OnInit {
                 items: [
                     { label: 'Mentor Applications', icon: 'pi pi-fw pi-file', routerLink: ['/mentor-applications'] },
                     { label: 'List Mentors', icon: 'pi pi-fw pi-users', routerLink: ['/list-mentors'] },
-                    { label: 'mentor-form', icon: 'pi pi-fw pi-user-edit', routerLink: ['/mentor/edit', 1] },
                     { label: 'Mentor Evaluations', icon: 'pi pi-fw pi-star', routerLink: ['/mentor-evaluations'] },
 
                 ]

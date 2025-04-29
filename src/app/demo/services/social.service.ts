@@ -10,7 +10,7 @@ import { AuthService } from "./auth.service";
 )
 export class SocialService {
   private apiUrl = 'http://localhost:9100/auth'; 
-  private userRole: string = 'admin';
+  private userRole = 'admin';
 
   constructor(private http: HttpClient,private authservice: AuthService) {}
 

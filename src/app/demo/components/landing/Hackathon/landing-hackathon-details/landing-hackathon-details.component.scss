@@ -117,6 +117,555 @@
     }
   }
 }
+
+/* Team Submissions Styles */
+.submissions-section {
+  margin-top: 30px;
+  
+  .submissions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    h2 {
+      margin: 0;
+      color: #333;
+      font-size: 1.8rem;
+    }
+  }
+  
+  .submission-form-container {
+    margin-bottom: 30px;
+    
+    .submission-form {
+      background: linear-gradient(135deg, #ffffff 0%, #f5f0ff 100%);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e0e0e0;
+      
+      h3 {
+        margin-top: 0;
+        color: #6200EA;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+      
+      .field {
+        margin-bottom: 20px;
+        
+        label {
+          font-weight: 500;
+          margin-bottom: 8px;
+          display: block;
+          color: #555;
+        }
+        
+        /* Donation Form */
+        .donation-form {
+          margin-top: 15px;
+          padding: 20px;
+          background-color: #f8f9fa;
+          border-radius: 8px;
+          border: 1px solid #e9ecef;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .donation-info {
+          color: #6c757d;
+          margin-bottom: 20px;
+          font-size: 0.9rem;
+        }
+        
+        .donation-step {
+          position: relative;
+          padding: 15px;
+          margin-bottom: 20px;
+          background-color: white;
+          border-radius: 6px;
+          border: 1px solid #e9ecef;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+          
+          h5 {
+            margin-top: 5px;
+            margin-bottom: 15px;
+            color: #495057;
+          }
+        }
+        
+        .step-number {
+          position: absolute;
+          top: -10px;
+          left: 10px;
+          background-color: #6200EA;
+          color: white;
+          padding: 2px 10px;
+          border-radius: 12px;
+          font-size: 0.8rem;
+          font-weight: bold;
+        }
+        
+        .stripe-card-container {
+          margin-top: 15px;
+        }
+        
+        .stripe-card-element {
+          padding: 12px;
+          border: 1px solid #ced4da;
+          border-radius: 4px;
+          background-color: white;
+          box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+          min-height: 40px;
+        }
+        
+        .card-hint {
+          display: block;
+          margin-top: 5px;
+          color: #6c757d;
+          font-style: italic;
+        }
+        
+        .stripe-card-errors {
+          color: #dc3545;
+          margin-top: 8px;
+          font-size: 0.875rem;
+        }
+        
+        .donation-note {
+          margin-top: 15px;
+          display: flex;
+          align-items: center;
+          color: #6c757d;
+          font-size: 0.875rem;
+          background-color: #e9ecef;
+          padding: 8px 12px;
+          border-radius: 4px;
+          
+          i {
+            margin-right: 8px;
+            color: #6200EA;
+          }
+        }
+        
+        .donation-buttons {
+          margin-top: 20px;
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          
+          button {
+            min-width: 140px;
+          }
+        }
+        
+        .payment-processing {
+          margin-top: 15px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 10px;
+          background-color: rgba(98, 0, 234, 0.05);
+          border-radius: 4px;
+          
+          span {
+            color: #6200EA;
+            font-weight: 500;
+          }
+        }
+        
+        .donation-success {
+          margin-top: 15px;
+          padding: 12px;
+          background-color: #d4edda;
+          border-radius: 4px;
+          color: #155724;
+          display: flex;
+          align-items: center;
+          
+          i {
+            margin-right: 10px;
+            font-size: 1.25rem;
+          }
+        }
+      }
+    }
+  }
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    
+    p {
+      margin-top: 15px;
+      color: #666;
+    }
+  }
+  
+  .error-message {
+    background-color: #ffeeee;
+    border-left: 4px solid #ff5555;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+    
+    p {
+      margin: 0;
+      color: #cc3333;
+    }
+  }
+  
+  .no-submissions {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    margin: 20px 0;
+    
+    p {
+      color: #666;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+  }
+  
+  /* Carousel Submissions */
+  .submissions-container {
+    margin-bottom: 30px;
+    
+    ::ng-deep .p-carousel {
+      .p-carousel-indicators {
+        margin-top: 15px;
+        
+        .p-carousel-indicator button {
+          background-color: #d0d0d0;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+          
+          &.p-highlight {
+            background-color: #6200EA;
+            transform: scale(1.2);
+          }
+        }
+      }
+      
+      .p-carousel-content {
+        padding: 10px 0;
+      }
+    }
+    
+    .submission-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      padding: 25px;
+      margin: 10px;
+      border: 1px solid #eaeaea;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+      }
+      
+      .submission-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        
+        .submission-title {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          
+          .submission-icon {
+            font-size: 1.5rem;
+            color: #6200EA;
+          }
+          
+          h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 600;
+          }
+        }
+        
+        .submission-date {
+          font-size: 0.9rem;
+          color: #777;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          
+          i {
+            color: #6200EA;
+          }
+        }
+      }
+    }
+  }
+  
+  /* Grid Submissions */
+  .submissions-grid {
+    margin-top: 30px;
+    
+    .submission-card-grid {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      border: 1px solid #eaeaea;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+      
+      .submission-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        
+        .submission-title {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          
+          .submission-icon {
+            font-size: 1.2rem;
+            color: #6200EA;
+          }
+          
+          h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: 600;
+          }
+        }
+        
+        .submission-date {
+          font-size: 0.8rem;
+          color: #777;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+      }
+      
+      .submission-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        
+        .description-text {
+          margin: 0 0 15px 0;
+          line-height: 1.5;
+          color: #666;
+          flex: 1;
+        }
+        
+        .submission-actions {
+          display: flex;
+          gap: 10px;
+          margin-top: auto;
+          flex-wrap: wrap;
+          
+          .repo-link-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: #6200EA;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+            
+            &:hover {
+              background-color: #5000c9;
+            }
+            
+            i {
+              font-size: 1rem;
+            }
+          }
+          
+          .details-button {
+            flex: 1;
+            min-width: 100px;
+          }
+        }
+      }
+    }
+  }
+  
+  /* Submission Details Dialog Styles */
+  ::ng-deep .p-dialog.p-component {
+    .p-dialog-header {
+      background: linear-gradient(135deg, #6200EA 0%, #B388FF 100%);
+      color: white;
+      padding: 1.5rem;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      
+      .p-dialog-title {
+        font-weight: 600;
+        font-size: 1.3rem;
+      }
+      
+      .p-dialog-header-icon {
+        color: white;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+        }
+      }
+    }
+    
+    .p-dialog-content {
+      padding: 0;
+      
+      .submission-details-container {
+        padding: 1.5rem;
+        
+        .submission-details-header {
+          margin-bottom: 20px;
+          
+          h2 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 1.6rem;
+            font-weight: 600;
+          }
+          
+          .submission-date {
+            font-size: 0.9rem;
+            color: #777;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            
+            i {
+              color: #6200EA;
+            }
+          }
+        }
+        
+        .submission-details-content {
+          .details-section {
+            margin-bottom: 25px;
+            
+            &:last-child {
+              margin-bottom: 0;
+            }
+            
+            h3 {
+              font-size: 1.2rem;
+              color: #444;
+              margin: 0 0 15px 0;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              font-weight: 600;
+              
+              i {
+                color: #6200EA;
+              }
+            }
+            
+            p {
+              margin: 0;
+              line-height: 1.6;
+              color: #555;
+            }
+            
+            .action-buttons {
+              display: flex;
+              gap: 15px;
+              margin-bottom: 20px;
+              flex-wrap: wrap;
+              
+              button {
+                flex: 1;
+              }
+            }
+            
+            .donation-form {
+              background-color: #f8f9fa;
+              border-radius: 8px;
+              padding: 15px;
+              margin-top: 15px;
+              border: 1px solid #e9ecef;
+              
+              h4 {
+                margin: 0 0 15px 0;
+                color: #444;
+                font-size: 1.1rem;
+              }
+              
+              .donation-note {
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                margin: 15px 0;
+                padding: 10px;
+                background-color: #fff8e1;
+                border-radius: 4px;
+                
+                i {
+                  color: #ffa000;
+                  margin-top: 2px;
+                }
+                
+                span {
+                  font-size: 0.9rem;
+                  color: #555;
+                  line-height: 1.4;
+                }
+              }
+              
+              .donation-buttons {
+                display: flex;
+                gap: 10px;
+                margin-top: 15px;
+                
+                button {
+                  flex: 1;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .p-dialog-footer {
+      border-top: 1px solid #e9ecef;
+      padding: 1rem 1.5rem;
+    }
+  }
+}
   
   .hackathon-details-container {
     max-width: 1200px;
@@ -599,6 +1148,12 @@ $dark-color: #1e1e2c;
 $primary-color: #a4ade8;
 $secondary-color: #28c76f;
 $transition-normal: all 0.3s ease;
+
+/* Import submission details styles */
+@import 'submission-details.scss';
+
+/* Import modern submissions styles */
+@import 'modern-submissions.scss';
 
 // Footer Styles
 .footer {

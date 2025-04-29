@@ -13,14 +13,14 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
 })
 export class NavbarComponent implements OnInit {
   user!: User;
-  isSponsor: boolean = false;
-  isMentor: boolean = false; 
+  isSponsor = false;
+  isMentor = false; 
 
   userId: string | null = null;
   isAuthenticated: boolean = this.authService.isAuthenticated();
-  isAdmin: boolean = false;
-  isStudent: boolean = false;
-  userMenuVisible: boolean = false; // Property to control dropdown visibility
+  isAdmin = false;
+  isStudent = false;
+  userMenuVisible = false; // Property to control dropdown visibility
   
 
   constructor(
@@ -33,7 +33,7 @@ export class NavbarComponent implements OnInit {
       
   ) {}
 
-  username: string = '';
+  username = '';
 
   ngOnInit(): void {
     const userId = this.storageService.getLoggedInUserId();
@@ -59,7 +59,7 @@ export class NavbarComponent implements OnInit {
         this.router.navigate(['/team-submission']); // Navigation directe vers /team-submission
     }
   getBadgeIcon(): string {
-    const badgeIcons: { [key: string]: string } = {
+    const badgeIcons: Record<string, string> = {
       JUNIOR_COACH: 'assets/demo/images/avatar/JUNIOR_COACH.png',
       ASSISTANT_COACH: 'assets/demo/images/avatar/ASSISTANT_COACH.png',
       SENIOR_COACH: 'assets/demo/images/avatar/SENIOR_COACH.png',

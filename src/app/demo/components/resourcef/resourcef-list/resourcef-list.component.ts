@@ -14,29 +14,27 @@ import { WorkshopService } from 'src/app/demo/services/workshop.service';
   styleUrls: ['./resourcef-list.component.scss']
 })
 export class ResourcefListComponent implements OnInit {
-  workshopId: number = 0;
+  workshopId = 0;
   resources: Resources[] = [];
   loading = true;
   error: string | null = null;
-  filePreviews: { 
-    [resourceId: number]: {
+  filePreviews: Record<number, {
       images: { id: number, url: SafeUrl, path: string, type: string }[],
       pdfs: ImageModel[],
       otherFiles: ImageModel[]
-    }
-  } = {};
+    }> = {};
 
-  userIsOwner: boolean = false; // To check if the current user is the owner
+  userIsOwner = false; // To check if the current user is the owner
 
 
   userId: string | null = localStorage.getItem('loggedid'); // Get user ID from localStorage
-  workshopOwnerId: string = ''; // Initialize the workshop owner's ID
+  workshopOwnerId = ''; // Initialize the workshop owner's ID
 
   // To track the visibility of files for each resource
-  fileVisibility: Map<number, boolean> = new Map();
+  fileVisibility = new Map<number, boolean>();
   
   // Preview modal variables
-  showPreview: boolean = false;
+  showPreview = false;
   previewUrl: SafeUrl | SafeResourceUrl | null = null;
   previewType: 'image' | 'pdf' | null = null;
   currentFile: ImageModel | null = null;

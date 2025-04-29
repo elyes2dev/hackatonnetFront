@@ -1,8 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { ProjectEvaluationService } from '../../../service/project-evaluation.service';
 import { ProjectEvaluation } from '../../../api/project-evaluation';
+import { TeamSubmission } from '../../../api/team-submission';
 import { loadStripe } from '@stripe/stripe-js';
 import { HttpClient } from '@angular/common/http';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-landing-project-evaluation',
@@ -10,18 +14,28 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./landing-project-evaluation.component.scss']
 })
 export class LandingProjectEvaluationComponent implements OnInit {
-  stripePromise = loadStripe('pk_test_51R9uQOCRTCCMntpfqwwnlonVcpy4gMnwyZamhJOGx8nhBfWWCQLlAw0ejgAVgrsEn4DnRNuyahhniFbXRYGy6TTq00Y20fwrAI');
+  stripePromise = loadStripe('pk_test_51R9uQOCRTCCMntpfqwwnlonVcpy4gMnwyZamhJOGx8nhBfWWCQLlAw0ejgAVgrsEn4DnRNuyahhniFbXRYGy6TTq00Y20fwrAI', {
+    stripeAccount: undefined,
+    apiVersion: '2022-11-15' // Specify a fixed API version
+  });
   evaluations: ProjectEvaluation[] = [];
   topRatedEvaluations: ProjectEvaluation[] = [];
-  loading: boolean = false;
+  loading = false;
   error: string | null = null;
   selectedEvaluation: ProjectEvaluation | null = null;
-  minScore: number = 90;
+  minScore = 90;
   clientSecret: string | null = null;
   cardElement: any;
   donationAmount: number | null = null;
   donationEvaluationId: number | null = null;
-  donationSuccess: boolean = false;
+  donationSuccess = false;
+  
+  // Form related properties
+  evaluationForm: FormGroup;
+  teamSubmissions: TeamSubmission[] = [];
+  submissionId: number | null = null;
+  submitting = false;
+  showDonationModal = false;
 
   newEvaluation: ProjectEvaluation = {
     score: 0,
@@ -32,13 +46,82 @@ export class LandingProjectEvaluationComponent implements OnInit {
     evaluator: { id: 0 }
   };
 
+  // Popup mode properties
+  isPopup = false;
+  submissionIdFromPopup: number | null = null;
+  projectNameFromPopup: string | null = null;
+
   constructor(
     private http: HttpClient,
     private projectEvaluationService: ProjectEvaluationService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    public ref: DynamicDialogRef,
+    public config: DynamicDialogConfig,
+    private fb: FormBuilder
+  ) {
+    this.evaluationForm = this.fb.group({
+      teamSubmissionId: [null, Validators.required],
+      innovationScore: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
+      technicalScore: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
+      designScore: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
+      feedback: ['', Validators.required]
+    });
+  }
 
   ngOnInit(): void {
+    // Check if component is opened as a popup dialog
+    if (this.config && this.config.data) {
+      this.isPopup = this.config.data.isPopup || false;
+      this.submissionIdFromPopup = this.config.data.submissionId || null;
+      this.projectNameFromPopup = this.config.data.projectName || null;
+      
+      // If in popup mode with a specific submission, pre-select it for evaluation
+      if (this.submissionIdFromPopup) {
+        this.submissionId = this.submissionIdFromPopup;
+        this.projectEvaluationService.getSubmissionById(this.submissionIdFromPopup).subscribe({
+          next: (submission: TeamSubmission) => {
+            if (submission) {
+              this.newEvaluation.teamSubmission = submission;
+              this.evaluationForm.patchValue({
+                teamSubmissionId: submission.id
+              });
+              this.cdr.detectChanges();
+            }
+          },
+          error: (err: any) => {
+            console.error('Error fetching submission:', err);
+          }
+        });
+      }
+    } else {
+      // Check for query params if not in popup mode
+      this.route.queryParams.subscribe(params => {
+        const submissionId = params['submissionId'];
+        if (submissionId) {
+          this.submissionId = +submissionId;
+          this.projectEvaluationService.getSubmissionById(+submissionId).subscribe({
+            next: (submission: TeamSubmission) => {
+              if (submission) {
+                this.newEvaluation.teamSubmission = submission;
+                this.evaluationForm.patchValue({
+                  teamSubmissionId: submission.id
+                });
+                this.cdr.detectChanges();
+              }
+            },
+            error: (err: any) => {
+              console.error('Error fetching submission:', err);
+            }
+          });
+        }
+      });
+    }
+    
+    // Load team submissions for dropdown
+    this.loadTeamSubmissions();
+    
+    // Load evaluations data
     this.loadEvaluations();
     this.loadTopRatedEvaluations();
   }
@@ -47,12 +130,12 @@ export class LandingProjectEvaluationComponent implements OnInit {
     this.loading = true;
     this.error = null;
     this.projectEvaluationService.getAllEvaluations().subscribe({
-      next: (data) => {
-        this.evaluations = data || [];
+      next: (data: ProjectEvaluation[]) => {
+        this.evaluations = data;
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.error = 'Erreur lors du chargement des évaluations : ' + (err.message || 'Erreur réseau');
         this.loading = false;
       }
@@ -63,37 +146,87 @@ export class LandingProjectEvaluationComponent implements OnInit {
     this.loading = true;
     this.error = null;
     this.projectEvaluationService.getTopRatedProjects(this.minScore).subscribe({
-      next: (data) => {
-        this.topRatedEvaluations = data || [];
+      next: (data: ProjectEvaluation[]) => {
+        this.topRatedEvaluations = data;
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.error = 'Erreur lors du chargement des projets les mieux notés : ' + (err.message || 'Erreur réseau');
         this.loading = false;
       }
     });
   }
 
-  createEvaluation(): void {
-    this.loading = true;
-    this.projectEvaluationService.createEvaluation(this.newEvaluation).subscribe({
-      next: (response: string) => {
-        alert(response);
-        this.newEvaluation = {
-          score: 0,
-          feedback: '',
-          evaluationDate: new Date(),
-        //  projectName: '',
-          teamSubmission: { id: 0, projectName: '', description: '', repoLink: '' },
-          evaluator: { id: 0 }
-        };
-        this.loadEvaluations();
-        this.loading = false;
+  loadTeamSubmissions(): void {
+    this.projectEvaluationService.getAllSubmissions().subscribe({
+      next: (submissions: TeamSubmission[]) => {
+        this.teamSubmissions = submissions;
+        this.cdr.detectChanges();
       },
-      error: (err) => {
-        this.error = 'Erreur lors de la création : ' + (err.message || 'Erreur réseau');
+      error: (err: any) => {
+        console.error('Error loading team submissions:', err);
+        this.error = 'Error loading team submissions: ' + (err.message || 'Network error');
+      }
+    });
+  }
+
+  createEvaluation(): void {
+    if (this.evaluationForm.invalid) {
+      // Mark all fields as touched to trigger validation messages
+      Object.keys(this.evaluationForm.controls).forEach(key => {
+        const control = this.evaluationForm.get(key);
+        control?.markAsTouched();
+      });
+      return;
+    }
+
+    this.submitting = true;
+    this.loading = true;
+    
+    const formValues = this.evaluationForm.value;
+    
+    // Calculate total score (average of all scores, scaled to 100)
+    const totalScore = Math.round(
+      ((formValues.innovationScore + formValues.technicalScore + formValues.designScore) / 30) * 100
+    );
+    
+    // Prepare evaluation object
+    const evaluation: ProjectEvaluation = {
+      score: totalScore,
+      feedback: formValues.feedback,
+      evaluationDate: new Date(),
+      teamSubmission: { 
+        id: formValues.teamSubmissionId,
+        projectName: '', // These empty values will be populated by the backend
+        description: '',
+        repoLink: ''
+      },
+      evaluator: { id: 0 } // Current user ID will be set by backend
+    };
+    
+    this.projectEvaluationService.createEvaluation(evaluation).subscribe({
+      next: (response: string) => {
+        if (this.isPopup) {
+          // Show success message without alert in popup mode
+          this.error = null;
+          this.loading = false;
+          this.submitting = false;
+          // Close dialog with success result
+          this.ref.close({ success: true });
+        } else {
+          alert(response || 'Evaluation submitted successfully!');
+          this.resetForm();
+          this.loadEvaluations();
+          this.loadTopRatedEvaluations();
+          this.loading = false;
+          this.submitting = false;
+        }
+      },
+      error: (err: any) => {
+        this.error = 'Error creating evaluation: ' + (err.message || 'Network error');
         this.loading = false;
+        this.submitting = false;
       }
     });
   }
@@ -125,7 +258,7 @@ export class LandingProjectEvaluationComponent implements OnInit {
           this.loadEvaluations();
           this.cdr.detectChanges();
         },
-        error: (err) => {
+        error: (err: any) => {
           this.error = 'Erreur lors de la mise à jour : ' + (err.message || 'Erreur réseau');
           console.error('Erreur :', err);
           this.cdr.detectChanges();
@@ -133,6 +266,57 @@ export class LandingProjectEvaluationComponent implements OnInit {
       });
     }
   }
+  resetForm(): void {
+    this.evaluationForm.reset({
+      innovationScore: 1,
+      technicalScore: 1,
+      designScore: 1
+    });
+  }
+
+  viewEvaluationDetails(evaluation: ProjectEvaluation): void {
+    this.selectedEvaluation = { ...evaluation };
+  }
+
+  prepareDonation(evaluation: ProjectEvaluation): void {
+    this.donationEvaluationId = evaluation.id || null;
+    this.donationAmount = 5; // Default donation amount
+    this.showDonationModal = true;
+  }
+
+  processDonation(): void {
+    if (!this.donationEvaluationId || !this.donationAmount) {
+      this.error = 'Invalid donation details';
+      return;
+    }
+
+    this.loading = true;
+    // Mock payment intent creation for Stripe
+    const paymentData = {
+      amount: this.donationAmount * 100, // Convert to cents for Stripe
+      evaluationId: this.donationEvaluationId,
+      currency: 'usd'
+    };
+
+    // This would typically call your backend to create a payment intent
+    setTimeout(() => {
+      // Simulate successful donation
+      this.donationSuccess = true;
+      this.showDonationModal = false;
+      this.loading = false;
+      
+      // Reset after showing success message
+      setTimeout(() => {
+        this.donationSuccess = false;
+      }, 5000);
+    }, 1500);
+  }
+
+  onGlobalFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    // Implement filtering logic here
+  }
+
   delete(id: number): void {
     if (id == null || id === undefined) {
       this.error = 'L\'ID de l\'évaluation est invalide.';
@@ -143,7 +327,7 @@ export class LandingProjectEvaluationComponent implements OnInit {
         next: () => {
           this.loadEvaluations();
         },
-        error: (err) => {
+        error: (err: any) => {
           this.error = 'Erreur lors de la suppression : ' + (err.message || 'Erreur réseau');
         }
       });
@@ -191,7 +375,7 @@ export class LandingProjectEvaluationComponent implements OnInit {
     const payload = { amount: parseFloat(this.donationAmount.toFixed(2)) };
     console.log('Envoi au back-end :', payload);
     this.http.post<any>(`http://localhost:9100/api/payment/create-payment-intent/${evaluationId}`, payload).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Réponse du back-end :', response);
         this.clientSecret = response.clientSecret;
         if (!this.clientSecret) {
@@ -200,7 +384,7 @@ export class LandingProjectEvaluationComponent implements OnInit {
           this.cdr.detectChanges();
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erreur HTTP :', err);
         this.error = 'Erreur lors de la préparation du don : ' + (err.error?.error || err.message || 'Erreur réseau');
         this.cdr.detectChanges();

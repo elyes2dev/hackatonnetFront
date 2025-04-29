@@ -10,11 +10,11 @@ import { ProductService } from 'src/app/demo/service/product.service';
 })
 export class CrudComponent implements OnInit {
 
-    productDialog: boolean = false;
+    productDialog = false;
 
-    deleteProductDialog: boolean = false;
+    deleteProductDialog = false;
 
-    deleteProductsDialog: boolean = false;
+    deleteProductsDialog = false;
 
     products: Product[] = [];
 
@@ -22,7 +22,7 @@ export class CrudComponent implements OnInit {
 
     selectedProducts: Product[] = [];
 
-    submitted: boolean = false;
+    submitted = false;
 
     cols: any[] = [];
 

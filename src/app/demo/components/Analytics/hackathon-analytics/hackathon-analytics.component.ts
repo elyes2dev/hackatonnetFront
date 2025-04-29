@@ -24,8 +24,8 @@ export class HackathonAnalyticsComponent implements OnInit {
   lineOptions: any;
   
   // Store hackathon counts
-  onlineCount: number = 0;
-  onsiteCount: number = 0;
+  onlineCount = 0;
+  onsiteCount = 0;
   
   // Monthly data
   monthlyData: number[] = Array(12).fill(0);

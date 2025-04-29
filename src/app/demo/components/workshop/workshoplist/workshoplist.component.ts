@@ -11,13 +11,13 @@ import { AuthService } from 'src/app/demo/services/auth.service';
 })
 export class WorkshoplistComponent implements OnInit {
 
-  displayCharts: boolean = false;
+  displayCharts = false;
 
 
   workshops: any[] = [];
   isLoading = true;
-  isAdmin: boolean = false;
-  isStudent: boolean = false;
+  isAdmin = false;
+  isStudent = false;
   
   // Define columns for the table structure
   columns = [

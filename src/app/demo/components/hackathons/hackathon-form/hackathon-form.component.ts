@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnInit, SimpleChanges, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HackathonService } from 'src/app/demo/services/hackathon/hackathon.service';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { StorageService } from 'src/app/demo/services/storage.service'; // Impor
   templateUrl: './hackathon-form.component.html',
   styleUrls: ['./hackathon-form.component.scss']
 })
-export class HackathonFormComponent implements OnInit {
+export class HackathonFormComponent implements OnInit, OnChanges {
   hackathonForm: FormGroup;
   @Input() hackathon: Hackathon | null = null;  // Input for edit mode
   @Output() hideSidebar = new EventEmitter<void>();  // Event to notify parent to hide sidebar

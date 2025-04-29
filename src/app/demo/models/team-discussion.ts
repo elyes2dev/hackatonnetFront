@@ -10,6 +10,8 @@ export interface TeamDiscussion {
   isRead?: boolean;
   isPinned?: boolean;
   createdAt?: string; // ISO string date
+  isAI?: boolean; // Flag to identify AI-generated messages
+  isLoading?: boolean; // Flag to indicate if message is in loading state
 }
 
 export enum MessageType {

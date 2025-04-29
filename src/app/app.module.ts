@@ -143,6 +143,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { PasswordModule } from 'primeng/password';
 import { ChipModule } from 'primeng/chip';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 
 
@@ -300,13 +301,16 @@ import { ChipModule } from 'primeng/chip';
         DynamicDialogModule,
         PanelModule,
         PasswordModule,       // ✅ Required for <p-password>
+        InputNumberModule,    // ✅ Required for <p-inputNumber>
         CalendarModule,
         TagModule,
         TableModule,
         DropdownModule,
         ReactiveFormsModule,
-        ChipModule
+        ChipModule,
         
+        FormsModule,         // Required for [(ngModel)] binding
+        CommonModule,         // Required for ngIf, ngFor, etc.
 
     ],
     providers: [

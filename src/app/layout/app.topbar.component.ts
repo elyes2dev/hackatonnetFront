@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
 import { Router } from '@angular/router';
@@ -12,10 +12,10 @@ import { SponsorNotification } from '../demo/models/sponsor-notification';
     templateUrl: './app.topbar.component.html',
     styleUrls: ['./app.topbar.component.scss']
 })
-export class AppTopBarComponent implements OnInit {
+export class AppTopBarComponent implements OnInit, OnDestroy {
     items!: MenuItem[];
     unreadNotifications: SponsorNotification[] = [];
-    showNotifications: boolean = false;
+    showNotifications = false;
     notificationSubscription!: Subscription;
 
     @ViewChild('menubutton') menuButton!: ElementRef;

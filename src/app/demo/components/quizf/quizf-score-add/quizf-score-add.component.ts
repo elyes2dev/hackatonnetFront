@@ -17,17 +17,17 @@ export class QuizfScoreAddComponent implements OnInit, OnDestroy {
   workshopId!: number;
   quiz!: Quiz;
   currentUser: any; // Replace with your actual User type
-  userAnswers: { [questionId: number]: number } = {}; // Store the user's answers
-  score: number = 0;
+  userAnswers: Record<number, number> = {}; // Store the user's answers
+  score = 0;
   userId: string | null = null; // Store user ID here
 
   // Timer variables
-  remainingTime: number = 600; // Set the initial timer to 30 seconds
+  remainingTime = 600; // Set the initial timer to 30 seconds
   timerSubscription!: Subscription;
-  progress: number = 0; // Progress bar percentage
+  progress = 0; // Progress bar percentage
 
   // Flag to track if the quiz has been submitted
-  hasSubmitted: boolean = false;
+  hasSubmitted = false;
 
   constructor(
     private route: ActivatedRoute,
