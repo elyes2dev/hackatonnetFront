@@ -47,4 +47,9 @@ export class ProjectEvaluationService {
   getAllSubmissions(): Observable<TeamSubmission[]> {
     return this.http.get<TeamSubmission[]>('http://localhost:9100/api/team-submissions');
   }
+
+  // Get evaluations for a specific submission
+  getEvaluationsBySubmissionId(submissionId: number): Observable<ProjectEvaluation[]> {
+    return this.http.get<ProjectEvaluation[]>(`${this.apiUrl}/submission/${submissionId}`);
+  }
 }
