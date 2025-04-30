@@ -1,6 +1,6 @@
 <div class="surface-0 flex justify-content-center h-full">
     <div id="home" class="landing-wrapper w-full h-full">
-
+  
         <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
             <!-- Logo - stays in place -->
             <div class="flex-none">
@@ -8,24 +8,22 @@
                     <img src="assets/layout/images/hackathonnetlogo.png" alt="Logo" height="50" class="mr-0 lg:mr-2">
                 </a>
             </div>
-
+  
             <!-- Mobile menu toggle button -->
             <a pRipple class="cursor-pointer block lg:hidden text-700" pStyleClass="@next" enterClass="hidden" leaveToClass="hidden">
                 <i class="pi pi-bars text-4xl"></i>
             </a>
-
+  
             <!-- Navigation items - centered with more space -->
             <div class="align-items-center surface-0 flex-grow-1 justify-content-center hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2" style="top:85%">
                 <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
-
-                               
-        <li>
-            <a (click)="navigateToLanding()" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                <span>Home</span>
-            </a>
-        </li>
-        
-
+  
+                  <li>
+                    <a (click)="navigateToLanding()" pRipple class="flex m-0 md:mx-5 px-0 py-3 text-900 font-medium line-height-3">
+                        <span>Home</span>
+                    </a>
+                </li>
+  
                     <li>
                         <a (click)="router.navigate(['/landing-hackathons'], {fragment: 'hackathons'})" pRipple class="flex m-0 md:mx-5 px-0 py-3 text-900 font-medium line-height-3">
                             <span>Hackathons</span>
@@ -37,15 +35,16 @@
                             <span>Workshops</span>
                         </a>
                     </li>
-
+  
                     <li>
                         <a (click)="router.navigate(['/sponsors-leaderboard'], {fragment: 'pricing'})" pRipple class="flex m-0 md:mx-5 px-0 py-3 text-900 font-medium line-height-3">
                             <span>Top Sponsors</span>
                         </a>
                     </li>
-
-
-
+  
+  
+  
+  
                     <!-- Applications dropdown menu - only visible when authenticated -->
                     <li *ngIf="isAuthenticated" class="relative">
                         <a pRipple class="flex m-0 md:mx-5 px-0 py-3 text-900 font-medium line-height-3 cursor-pointer"
@@ -72,16 +71,16 @@
                             </ul>
                         </div>
                     </li>
-
+  
                     <li>
-                        <a (click)="router.navigate(['/about'])" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                            <span>About</span>
-                        </a>
-                    </li>
-
+                      <a (click)="router.navigate(['/about'])" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                          <span>About</span>
+                      </a>
+                  </li>
+  
                 </ul>
             </div>
-
+  
             <!-- User account section - stays in place -->
             <div class="flex-none">
                 <!-- User account section with dropdown for authenticated users -->
@@ -114,7 +113,7 @@
                                       <span>My prizes</span>
                                   </a>
                               </li> 
-
+  
                               <li *ngIf="isMentor">
                                 <a [routerLink]="['/mentor-evaluations-user']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
                                    (click)="userMenuVisible = false">
@@ -122,7 +121,7 @@
                                     <span>My evaluations</span>
                                 </a>
                               </li>
-
+  
                               <li>
                                 <a [routerLink]="['/ticket']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
                                    (click)="userMenuVisible = false">
@@ -155,4 +154,4 @@
             </div>
         </div>
     </div>
-</div>
+  </div>
