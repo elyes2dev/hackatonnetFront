@@ -17,6 +17,8 @@ import { finalize, Subject, takeUntil } from 'rxjs';
 import { TeamService } from 'src/app/demo/services/team.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { TeamFrontofficeComponent } from '../../../team-frontoffice/team-frontoffice.component';
+import { DonationDialogComponent } from '../../../donation-dialog/donation-dialog.component';
+import { DonationService } from 'src/app/demo/service/donation.service';
 import { ListMentor } from 'src/app/demo/models/list-mentor.model';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { MentorDetailsDialogComponent } from '../mentor-details-dialog/mentor-details-dialog.component';
@@ -138,11 +140,9 @@ export class LandingHackathonDetailsComponent implements OnInit {
     private listMentorService: ListMentorService,
     private messageService: MessageService,
     private teamService: TeamService,
-    private prizeService: PrizeService ,// Add the prize service
-
-
-
+    private prizeService: PrizeService,
     private teamSubmissionService: TeamSubmissionService,
+    private donationService: DonationService,
     private http: HttpClient
   ) {}
 
@@ -946,6 +946,41 @@ processDonation(): void {
 
 
 
+
+  openDonationDialog(teamSubmission: TeamSubmission) {
+    if (!teamSubmission) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No team submission selected for donation'
+      });
+      return;
+    }
+
+    const ref = this.dialogService.open(DonationDialogComponent, {
+      data: {
+        teamSubmission: teamSubmission
+      },
+      header: `Donate to ${teamSubmission.projectName}`,
+      width: '500px',
+      contentStyle: { 'max-height': '90vh', 'overflow': 'auto' }
+    });
+
+    ref.onClose.subscribe((success: boolean) => {
+      if (success) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Donation Successful',
+          detail: 'Thank you for your donation!'
+        });
+        
+        // Refresh team submissions to show updated donation amounts
+        if (this.hackathon) {
+          this.loadTeamSubmissions(this.hackathon.id);
+        }
+      }
+    });
+  }
 
   openMentorDetails(mentor: any) {
     const ref = this.dialogService.open(MentorDetailsDialogComponent, {

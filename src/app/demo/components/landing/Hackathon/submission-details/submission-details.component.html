@@ -102,7 +102,6 @@
 </div>
 </div>
 
-
 <div class="submission-details-page">
   <!-- Loading Overlay -->
   <div *ngIf="loading" class="loading-overlay">
@@ -252,6 +251,17 @@
           </div>
           
           <div class="card-content">
+            <!-- Add Evaluation Button at the top of the evaluations section -->
+            <div class="add-evaluation-section" *ngIf="isAuthenticated && !isSubmissionOwner">
+              <button pButton type="button" 
+                      label="Add Evaluation" 
+                      icon="pi pi-plus" 
+                      class="p-button-primary add-evaluation-button" 
+                      (click)="openEvaluationDialog()">
+              </button>
+              <p class="evaluation-hint">Share your feedback and rate this project</p>
+            </div>
+
             <div *ngIf="evaluations && evaluations.length > 0; else noEvaluations" class="evaluations-list">
               <div *ngFor="let evaluation of evaluations" class="evaluation-item">
                 <div class="evaluation-header">
@@ -259,14 +269,14 @@
                     <i class="pi pi-user"></i>
                     <span>{{ getEvaluatorDisplay(evaluation.evaluator) }}</span>
                   </div>
-                  <div class="score-badge">
+                  <div class="score-badge" [ngClass]="getScoreClass(evaluation.score)">
                     {{ evaluation.score }}/100
                   </div>
                 </div>
                 
                 <div class="evaluation-date">
                   <i class="pi pi-calendar"></i>
-                  <span>{{ evaluation.evaluationDate }}</span>
+                  <span>{{ evaluation.evaluationDate | date:'medium' }}</span>
                 </div>
                 
                 <div class="evaluation-feedback">
@@ -291,7 +301,7 @@
 </div>
 
 <!-- Floating Evaluation Button -->
-<div class="floating-action-button" *ngIf="user && !isSubmissionOwner && submission">
+<div class="floating-action-button" *ngIf="isAuthenticated && !isSubmissionOwner && submission">
   <button pButton type="button" (click)="openEvaluationDialog()" 
           class="p-button-rounded p-button-lg evaluate-fab" 
           pTooltip="Evaluate this project" tooltipPosition="left">

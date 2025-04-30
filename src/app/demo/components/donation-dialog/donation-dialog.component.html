@@ -1,0 +1,98 @@
+<div class="donation-dialog">
+    <div class="donation-header">
+        <h2>Support This Project</h2>
+        <p *ngIf="teamSubmission">Donate to <strong>{{ teamSubmission.projectName }}</strong></p>
+    </div>
+
+    <form [formGroup]="donationForm" (ngSubmit)="processDonation()">
+        <div class="donation-amount-section">
+            <h3>Select Donation Amount</h3>
+            <div class="donation-amounts">
+                <button 
+                    type="button" 
+                    *ngFor="let amount of donationAmounts" 
+                    [class.selected]="donationForm.get('amount')?.value === amount && !customAmount"
+                    class="p-button p-button-outlined p-button-rounded amount-button"
+                    (click)="selectAmount(amount)">
+                    ${{ amount }}
+                </button>
+                <button 
+                    type="button" 
+                    class="p-button p-button-outlined p-button-rounded amount-button"
+                    [class.selected]="customAmount"
+                    (click)="toggleCustomAmount()">
+                    Custom
+                </button>
+            </div>
+
+            <div *ngIf="customAmount" class="custom-amount-input">
+                <span class="p-input-icon-left">
+                    <i class="pi pi-dollar"></i>
+                    <input 
+                        type="number" 
+                        pInputText 
+                        formControlName="amount" 
+                        placeholder="Enter amount" 
+                        min="1" 
+                        step="1">
+                </span>
+                <small *ngIf="donationForm.get('amount')?.invalid && donationForm.get('amount')?.touched" class="p-error">
+                    Please enter a valid amount (minimum $1)
+                </small>
+            </div>
+        </div>
+
+        <div class="donor-info-section">
+            <h3>Your Information</h3>
+            <div class="p-fluid">
+                <div class="p-field mb-3">
+                    <label for="name">Name</label>
+                    <input id="name" type="text" pInputText formControlName="name">
+                    <small *ngIf="donationForm.get('name')?.invalid && donationForm.get('name')?.touched" class="p-error">
+                        Name is required
+                    </small>
+                </div>
+                
+                <div class="p-field mb-3">
+                    <label for="email">Email</label>
+                    <input id="email" type="email" pInputText formControlName="email">
+                    <small *ngIf="donationForm.get('email')?.invalid && donationForm.get('email')?.touched" class="p-error">
+                        Please enter a valid email address
+                    </small>
+                </div>
+                
+                <div class="p-field mb-3">
+                    <label for="message">Message (Optional)</label>
+                    <textarea id="message" pInputTextarea formControlName="message" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-section">
+            <h3>Payment Information</h3>
+            <div id="card-element" class="card-element mb-3">
+                <!-- Stripe Card Element will be inserted here -->
+            </div>
+            <div *ngIf="cardErrors" class="card-errors p-error mb-3">
+                {{ cardErrors }}
+            </div>
+        </div>
+
+        <div class="donation-actions">
+            <button 
+                type="button" 
+                pButton 
+                label="Cancel" 
+                class="p-button-outlined p-button-secondary" 
+                (click)="closeDialog()">
+            </button>
+            <button 
+                type="submit" 
+                pButton 
+                label="Donate Now" 
+                [disabled]="donationForm?.invalid || loading" 
+                [loading]="loading">
+            </button>
+        </div>
+    </form>
+</div>

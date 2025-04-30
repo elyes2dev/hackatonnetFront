@@ -23,6 +23,9 @@ import { ChartModule } from 'primeng/chart';
 import { PrimeIcons } from 'primeng/api';
 import { ProjectEvaluationService } from './demo/service/project-evaluation.service'; // Ajout
 import { TeamSubmissionService } from './demo/service/team-submission.service'; // Ajout
+import { DonationService } from './demo/service/donation.service'; // Added for donation functionality
+import { DonationDialogComponent } from './demo/components/donation-dialog/donation-dialog.component'; // Added donation dialog
+import { EvaluationDialogModule } from './demo/components/evaluation-dialog/evaluation-dialog.module'; // Added evaluation dialog module
 
 
 //New TODO mydasboard
@@ -215,6 +218,7 @@ import { UserSupportTicketComponent } from './demo/components/ticket-front/user-
         AccessDeniedComponent,
         FacialMetricsComponent,
         GeneralComponent,
+        DonationDialogComponent, // Added donation dialog component
 
         FooterComponent,
         SponsorPrizesComponent,
@@ -310,6 +314,7 @@ import { UserSupportTicketComponent } from './demo/components/ticket-front/user-
         DropdownModule,
         ReactiveFormsModule,
         ChipModule,
+        EvaluationDialogModule,  // Added for evaluation dialog component
         
         FormsModule,         // Required for [(ngModel)] binding
         CommonModule,         // Required for ngIf, ngFor, etc.
@@ -320,7 +325,7 @@ import { UserSupportTicketComponent } from './demo/components/ticket-front/user-
         CountryService, CustomerService, EventService, IconService, NodeService,
         PhotoService, ProductService, WorkshopService, ProductService, ConfirmationService, MessageService,
         ProjectEvaluationService, // Ajouté
-        TeamSubmissionService, FacialAnalysisService
+        TeamSubmissionService, FacialAnalysisService, DonationService // Added donation service
 
     ],
     bootstrap: [AppComponent]

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ProjectEvaluation } from '../api/project-evaluation';
 import { TeamSubmission } from '../api/team-submission';
@@ -12,28 +12,54 @@ export class ProjectEvaluationService {
 
   constructor(private http: HttpClient) {}
 
+  // Helper method to get HTTP headers with auth token
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('authToken');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
+  }
+
   getAllEvaluations(): Observable<ProjectEvaluation[]> {
-    return this.http.get<ProjectEvaluation[]>(this.apiUrl);
+    return this.http.get<ProjectEvaluation[]>(this.apiUrl, { headers: this.getHeaders() });
   }
 
   getEvaluationById(id: number): Observable<ProjectEvaluation> {
-    return this.http.get<ProjectEvaluation>(`${this.apiUrl}/${id}`);
+    return this.http.get<ProjectEvaluation>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 
   createEvaluation(evaluation: ProjectEvaluation): Observable<string> { // Changé en string
-    return this.http.post<string>(this.apiUrl, evaluation, { responseType: 'text' as 'json' });
+    // Create a very simple payload structure that matches what the backend expects
+    const simplePayload = {
+      score: evaluation.score,
+      feedback: evaluation.feedback,
+      submissionId: evaluation.teamSubmission?.id,
+      evaluatorId: evaluation.evaluator?.id
+    };
+
+    console.log('Sending simplified payload:', simplePayload);
+    
+    // Include authentication headers
+    const options = {
+      headers: this.getHeaders(),
+      responseType: 'text' as 'json'
+    };
+    
+    // Send the simplified data with auth headers
+    return this.http.post<string>(this.apiUrl, simplePayload, options);
   }
 
   updateEvaluation(id: number, evaluation: ProjectEvaluation): Observable<ProjectEvaluation> {
-    return this.http.put<ProjectEvaluation>(`${this.apiUrl}/${id}`, evaluation);
+    return this.http.put<ProjectEvaluation>(`${this.apiUrl}/${id}`, evaluation, { headers: this.getHeaders() });
   }
 
   deleteEvaluation(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 
   getTopRatedProjects(minScore: number): Observable<ProjectEvaluation[]> {
-    return this.http.get<ProjectEvaluation[]>(`${this.apiUrl}/top-rated?minScore=${minScore}`);
+    return this.http.get<ProjectEvaluation[]>(`${this.apiUrl}/top-rated?minScore=${minScore}`, { headers: this.getHeaders() });
   }
 
   donateToProject(evaluation: ProjectEvaluation): void {
@@ -41,15 +67,15 @@ export class ProjectEvaluationService {
   }
 
   getSubmissionById(id: number): Observable<TeamSubmission> {
-    return this.http.get<TeamSubmission>(`http://localhost:9100/api/team-submissions/${id}`);
+    return this.http.get<TeamSubmission>(`http://localhost:9100/api/team-submissions/${id}`, { headers: this.getHeaders() });
   }
 
   getAllSubmissions(): Observable<TeamSubmission[]> {
-    return this.http.get<TeamSubmission[]>('http://localhost:9100/api/team-submissions');
+    return this.http.get<TeamSubmission[]>('http://localhost:9100/api/team-submissions', { headers: this.getHeaders() });
   }
 
   // Get evaluations for a specific submission
   getEvaluationsBySubmissionId(submissionId: number): Observable<ProjectEvaluation[]> {
-    return this.http.get<ProjectEvaluation[]>(`${this.apiUrl}/submission/${submissionId}`);
+    return this.http.get<ProjectEvaluation[]>(`${this.apiUrl}/submission/${submissionId}`, { headers: this.getHeaders() });
   }
 }

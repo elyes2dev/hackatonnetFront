@@ -4,9 +4,9 @@ import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { ProjectEvaluationService } from '../../../service/project-evaluation.service';
 import { ProjectEvaluation } from '../../../api/project-evaluation';
 import { TeamSubmission } from '../../../api/team-submission';
-import { loadStripe } from '@stripe/stripe-js';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-landing-project-evaluation',
@@ -14,18 +14,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./landing-project-evaluation.component.scss']
 })
 export class LandingProjectEvaluationComponent implements OnInit {
-  stripePromise = loadStripe('pk_test_51R9uQOCRTCCMntpfqwwnlonVcpy4gMnwyZamhJOGx8nhBfWWCQLlAw0ejgAVgrsEn4DnRNuyahhniFbXRYGy6TTq00Y20fwrAI', {
-    stripeAccount: undefined,
-    apiVersion: '2022-11-15' // Specify a fixed API version
-  });
   evaluations: ProjectEvaluation[] = [];
   topRatedEvaluations: ProjectEvaluation[] = [];
   loading = false;
   error: string | null = null;
   selectedEvaluation: ProjectEvaluation | null = null;
   minScore = 90;
-  clientSecret: string | null = null;
-  cardElement: any;
   donationAmount: number | null = null;
   donationEvaluationId: number | null = null;
   donationSuccess = false;
@@ -41,7 +35,7 @@ export class LandingProjectEvaluationComponent implements OnInit {
     score: 0,
     feedback: '',
     evaluationDate: new Date(),
-  //  projectName: '',
+    // projectName: '',
     teamSubmission: { id: 0, projectName: '', description: '', repoLink: '' },
     evaluator: { id: 0 }
   };
@@ -50,6 +44,7 @@ export class LandingProjectEvaluationComponent implements OnInit {
   isPopup = false;
   submissionIdFromPopup: number | null = null;
   projectNameFromPopup: string | null = null;
+  submissionFromPopup: TeamSubmission | null = null;
 
   constructor(
     private http: HttpClient,
@@ -58,13 +53,13 @@ export class LandingProjectEvaluationComponent implements OnInit {
     private route: ActivatedRoute,
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private messageService: MessageService
   ) {
     this.evaluationForm = this.fb.group({
-      teamSubmissionId: [null, Validators.required],
-      innovationScore: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
-      technicalScore: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
-      designScore: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
+      submissionId: [null, [Validators.required, Validators.min(1)]],
+      evaluatorId: [null, [Validators.required, Validators.min(1)]],
+      score: [50, [Validators.required, Validators.min(1), Validators.max(100)]],
       feedback: ['', Validators.required]
     });
   }
@@ -75,24 +70,28 @@ export class LandingProjectEvaluationComponent implements OnInit {
       this.isPopup = this.config.data.isPopup || false;
       this.submissionIdFromPopup = this.config.data.submissionId || null;
       this.projectNameFromPopup = this.config.data.projectName || null;
+      this.submissionFromPopup = this.config.data.submission || null;
       
-      // If in popup mode with a specific submission, pre-select it for evaluation
-      if (this.submissionIdFromPopup) {
-        this.submissionId = this.submissionIdFromPopup;
-        this.projectEvaluationService.getSubmissionById(this.submissionIdFromPopup).subscribe({
-          next: (submission: TeamSubmission) => {
-            if (submission) {
-              this.newEvaluation.teamSubmission = submission;
-              this.evaluationForm.patchValue({
-                teamSubmissionId: submission.id
-              });
-              this.cdr.detectChanges();
-            }
-          },
-          error: (err: any) => {
-            console.error('Error fetching submission:', err);
-          }
+      console.log('Popup data received:', { 
+        isPopup: this.isPopup,
+        submissionId: this.submissionIdFromPopup,
+        projectName: this.projectNameFromPopup,
+        submission: this.submissionFromPopup ? 'Present' : 'Not present'
+      });
+      
+      // If we have the submission object directly from popup, use it
+      if (this.submissionFromPopup) {
+        console.log('Using submission from popup data:', this.submissionFromPopup);
+        this.newEvaluation.teamSubmission = this.submissionFromPopup;
+        this.submissionId = this.submissionFromPopup.id || null;
+        this.evaluationForm.patchValue({
+          submissionId: this.submissionFromPopup.id
         });
+      }
+      // If in popup mode with a specific submission ID but no submission object, load it
+      else if (this.submissionIdFromPopup !== null && this.submissionIdFromPopup !== undefined) {
+        this.submissionId = this.submissionIdFromPopup;
+        this.loadSubmissionDetails();
       }
     } else {
       // Check for query params if not in popup mode
@@ -100,12 +99,12 @@ export class LandingProjectEvaluationComponent implements OnInit {
         const submissionId = params['submissionId'];
         if (submissionId) {
           this.submissionId = +submissionId;
-          this.projectEvaluationService.getSubmissionById(+submissionId).subscribe({
+          this.projectEvaluationService.getSubmissionById(this.submissionId).subscribe({
             next: (submission: TeamSubmission) => {
               if (submission) {
                 this.newEvaluation.teamSubmission = submission;
                 this.evaluationForm.patchValue({
-                  teamSubmissionId: submission.id
+                  submissionId: submission.id
                 });
                 this.cdr.detectChanges();
               }
@@ -116,14 +115,12 @@ export class LandingProjectEvaluationComponent implements OnInit {
           });
         }
       });
+      
+      // Load evaluations and team submissions
+      this.loadEvaluations();
+      this.loadTopRatedEvaluations();
+      this.loadTeamSubmissions();
     }
-    
-    // Load team submissions for dropdown
-    this.loadTeamSubmissions();
-    
-    // Load evaluations data
-    this.loadEvaluations();
-    this.loadTopRatedEvaluations();
   }
 
   loadEvaluations(): void {
@@ -166,7 +163,7 @@ export class LandingProjectEvaluationComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Error loading team submissions:', err);
-        this.error = 'Error loading team submissions: ' + (err.message || 'Network error');
+        this.error = 'Failed to load team submissions';
       }
     });
   }
@@ -182,50 +179,86 @@ export class LandingProjectEvaluationComponent implements OnInit {
     }
 
     this.submitting = true;
-    this.loading = true;
     
+    // Get form values
     const formValues = this.evaluationForm.value;
     
-    // Calculate total score (average of all scores, scaled to 100)
-    const totalScore = Math.round(
-      ((formValues.innovationScore + formValues.technicalScore + formValues.designScore) / 30) * 100
-    );
+    // Get the direct values from the form
+    const submissionId = formValues.submissionId;
+    const evaluatorId = formValues.evaluatorId;
+    const score = formValues.score || 0;
+    const feedback = formValues.feedback || '';
+    
+    console.log('Form values:', {
+      submissionId,
+      evaluatorId,
+      score,
+      feedback
+    });
     
     // Prepare evaluation object
     const evaluation: ProjectEvaluation = {
-      score: totalScore,
-      feedback: formValues.feedback,
+      score: score,
+      feedback: feedback,
       evaluationDate: new Date(),
-      teamSubmission: { 
-        id: formValues.teamSubmissionId,
-        projectName: '', // These empty values will be populated by the backend
+      teamSubmission: {
+        id: submissionId,
+        projectName: this.projectNameFromPopup || '',
         description: '',
         repoLink: ''
       },
-      evaluator: { id: 0 } // Current user ID will be set by backend
+      evaluator: { 
+        id: evaluatorId,
+        email: 'evaluator@example.com' // Add a valid email address for the evaluator
+      }
     };
     
+    console.log('Submitting evaluation:', evaluation);
+    
+    // Submit evaluation using the simplified service
     this.projectEvaluationService.createEvaluation(evaluation).subscribe({
       next: (response: string) => {
-        if (this.isPopup) {
-          // Show success message without alert in popup mode
-          this.error = null;
-          this.loading = false;
-          this.submitting = false;
-          // Close dialog with success result
-          this.ref.close({ success: true });
+        console.log('Evaluation created successfully:', response);
+        this.submitting = false;
+        
+        // Reset form
+        this.resetForm();
+        
+        // Show success message
+        this.error = null;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Evaluation submitted successfully!'
+        });
+        
+        // If in popup mode, close dialog with success result
+        if (this.isPopup && this.ref) {
+          this.ref.close(true);
         } else {
-          alert(response || 'Evaluation submitted successfully!');
-          this.resetForm();
+          // Otherwise, reload evaluations
           this.loadEvaluations();
-          this.loadTopRatedEvaluations();
-          this.loading = false;
-          this.submitting = false;
         }
       },
       error: (err: any) => {
-        this.error = 'Error creating evaluation: ' + (err.message || 'Network error');
-        this.loading = false;
+        console.error('Error creating evaluation:', err);
+        let errorMessage = 'Failed to submit evaluation';
+        
+        if (err.error && typeof err.error === 'string') {
+          errorMessage += ': ' + err.error;
+        } else if (err.message) {
+          errorMessage += ': ' + err.message;
+        } else if (err.status) {
+          errorMessage += ` (Status: ${err.status})`;
+        }
+        
+        this.error = errorMessage;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: errorMessage
+        });
+        
         this.submitting = false;
       }
     });
@@ -268,9 +301,7 @@ export class LandingProjectEvaluationComponent implements OnInit {
   }
   resetForm(): void {
     this.evaluationForm.reset({
-      innovationScore: 1,
-      technicalScore: 1,
-      designScore: 1
+      score: 50
     });
   }
 
@@ -338,118 +369,36 @@ export class LandingProjectEvaluationComponent implements OnInit {
     console.log('Affichage du formulaire de don pour evaluationId :', evaluationId);
     this.donationEvaluationId = evaluationId;
     this.donationAmount = null;
-    this.clientSecret = null;
-    this.cardElement = null;
-    this.donationSuccess = false;
     this.cdr.detectChanges();
   }
 
-  async initiateDonation(evaluationId: number): Promise<void> {
-    console.log('Début de initiateDonation, evaluationId :', evaluationId, 'montant :', this.donationAmount);
-    if (!this.donationAmount || this.donationAmount <= 0 || isNaN(this.donationAmount)) {
-      this.error = 'Veuillez entrer un montant valide (nombre positif)';
-      console.error('Montant invalide :', this.donationAmount);
-      this.cdr.detectChanges();
+  loadSubmissionDetails(): void {
+    // Use the submissionId from popup if available, otherwise use the regular submissionId
+    const submissionIdToUse = this.submissionIdFromPopup !== null ? this.submissionIdFromPopup : this.submissionId;
+    
+    if (!submissionIdToUse) {
+      console.error('No submission ID provided');
+      this.error = 'No submission ID provided';
       return;
     }
-    if (evaluationId === undefined || evaluationId === null) {
-      this.error = 'ID invalide pour le don';
-      console.error('evaluationId invalide :', evaluationId);
-      this.cdr.detectChanges();
-      return;
-    }
-
-    const stripe = await this.stripePromise;
-    if (!stripe) {
-      this.error = "Erreur : Stripe n'est pas chargé";
-      console.error('Stripe non chargé');
-      this.cdr.detectChanges();
-      return;
-    }
-
-    const elements = stripe.elements();
-    this.cardElement = elements.create('card');
-    this.cardElement.mount(`#card-element-${evaluationId}`);
-    console.log('Card element monté pour evaluationId :', evaluationId);
-
-    const payload = { amount: parseFloat(this.donationAmount.toFixed(2)) };
-    console.log('Envoi au back-end :', payload);
-    this.http.post<any>(`http://localhost:9100/api/payment/create-payment-intent/${evaluationId}`, payload).subscribe({
-      next: (response: any) => {
-        console.log('Réponse du back-end :', response);
-        this.clientSecret = response.clientSecret;
-        if (!this.clientSecret) {
-          this.error = 'Erreur : ClientSecret non reçu';
-          console.error('ClientSecret manquant dans la réponse');
+    
+    console.log('Loading submission details for ID:', submissionIdToUse);
+    
+    this.projectEvaluationService.getSubmissionById(submissionIdToUse).subscribe({
+      next: (submission: TeamSubmission) => {
+        if (submission) {
+          console.log('Submission details loaded:', submission);
+          this.newEvaluation.teamSubmission = submission;
+          this.evaluationForm.patchValue({
+            submissionId: submission.id
+          });
           this.cdr.detectChanges();
         }
       },
       error: (err: any) => {
-        console.error('Erreur HTTP :', err);
-        this.error = 'Erreur lors de la préparation du don : ' + (err.error?.error || err.message || 'Erreur réseau');
-        this.cdr.detectChanges();
+        console.error('Error fetching submission details:', err);
+        this.error = 'Failed to load submission details';
       }
     });
-  }
-
-  async confirmDonation(evaluationId: number): Promise<void> {
-    console.log('Début de confirmDonation, evaluationId :', evaluationId, 'clientSecret :', this.clientSecret, 'cardElement :', !!this.cardElement);
-    if (!this.clientSecret || !this.cardElement) {
-      this.error = 'Erreur : Don non initialisé correctement';
-      console.error('Erreur : clientSecret ou cardElement manquant', { clientSecret: this.clientSecret, cardElement: this.cardElement });
-      this.cdr.detectChanges();
-      return;
-    }
-
-    const stripe = await this.stripePromise;
-    if (!stripe) {
-      this.error = "Erreur : Stripe n'est pas chargé";
-      console.error('Erreur : Stripe non chargé');
-      this.cdr.detectChanges();
-      return;
-    }
-
-    console.log('Lancement de stripe.confirmCardPayment...');
-    try {
-      const result = await stripe.confirmCardPayment(this.clientSecret, {
-        payment_method: {
-          card: this.cardElement,
-          billing_details: { name: 'Donateur fictif' }
-        }
-      });
-
-      console.log('Résultat complet de confirmCardPayment :', result);
-      if (result.error) {
-        this.error = 'Erreur lors du don : ' + result.error.message;
-        console.error('Erreur Stripe :', result.error);
-        this.cdr.detectChanges();
-      } else if (result.paymentIntent?.status === 'succeeded') {
-        console.log('Paiement réussi ! Montant :', this.donationAmount, '€');
-        alert('Paiement réussi ! Montant : ' + this.donationAmount + ' € '); // Temporaire
-        this.donationSuccess = true;
-        this.donationEvaluationId = null;
-        this.clientSecret = null;
-        this.cardElement = null;
-        this.cdr.detectChanges();
-        console.log('donationSuccess défini à true, devrait afficher le message visuel');
-        setTimeout(() => {
-          console.log('Cacher le message de succès après 5 secondes');
-          this.donationSuccess = false;
-          this.cdr.detectChanges();
-        }, 5000);
-      } else {
-        this.error = 'Don traité, mais statut inattendu : ' + result.paymentIntent?.status;
-        console.warn('Statut inattendu :', result.paymentIntent?.status);
-        this.cdr.detectChanges();
-      }
-    } catch (err: unknown) {
-      this.error = 'Erreur inattendue lors du paiement : ' ;
-      console.error('Erreur catchée dans confirmDonation :', err);
-      this.cdr.detectChanges();
-    }
-  }
-
-  cancelModification(): void {
-    this.selectedEvaluation = null;
   }
 }
