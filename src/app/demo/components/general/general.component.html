@@ -58,32 +58,83 @@
       <h5 class="text-left font-bold text-xl border-bottom-1 border-300 pb-2 mb-3">Mentor Analytics</h5>
       
       <div class="grid">
+        <!-- Debug Info - Remove in production -->
+        <div class="col-12" *ngIf="mentors.length === 0">
+          <div class="alert alert-info">No mentors found in the system.</div>
+        </div>
+
         <!-- Mentor Badge Distribution -->
         <div class="col-12 lg:col-6">
           <div class="card">
             <h6 class="text-left w-full">Mentor Badge Distribution</h6>
-            <p-chart type="pie" [data]="mentorPieData" [options]="mentorPieOptions" [style]="{'width': '100%', 'height': '300px'}"></p-chart>
+            <div class="flex flex-column align-items-center">
+              <p-chart type="pie" 
+                       [data]="mentorPieData" 
+                       [options]="mentorPieOptions" 
+                       [style]="{'width': '100%', 'height': '300px'}"
+                       *ngIf="mentorPieData">
+              </p-chart>
+              <div *ngIf="!mentorPieData" class="text-center p-4">
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                <div class="mt-2">Loading badge distribution...</div>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div *ngFor="let entry of badgeCounts | keyvalue" class="flex justify-content-between align-items-center p-2 border-bottom-1 border-300">
+                <span>{{formatBadgeKey(entry.key)}}</span>
+                <div class="flex align-items-center">
+                  <span class="font-bold">{{entry.value}}</span>
+                  <span class="text-500 ml-2">({{calculatePercentage(entry.value)}}%)</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Top Mentors by Points -->
+        <!-- Top Mentors Table with Enhanced Metrics -->
         <div class="col-12 lg:col-6">
           <div class="card">
-            <h6 class="text-left w-full">Top 10 Mentors by Points</h6>
-            <div class="overflow-y-auto" style="max-height: 300px">
+            <h6 class="text-left w-full">Mentor Performance ({{mentorMetrics.length}} Mentors)</h6>
+            <div class="overflow-y-auto" style="max-height: 400px">
               <table class="w-full border-collapse">
                 <thead>
                   <tr class="border-bottom-1 border-300 text-700">
                     <th class="text-left py-3 px-2">Rank</th>
                     <th class="text-left py-3 px-2">Name</th>
-                    <th class="text-right py-3 px-2">Mentor Points</th>
+                    <th class="text-center py-3 px-2">Points</th>
+                    <th class="text-center py-3 px-2">Rating</th>
+                    <th class="text-center py-3 px-2">Success Rate</th>
+                    <th class="text-center py-3 px-2">Trend</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let mentor of topMentors; let i = index" class="border-bottom-1 border-300">
+                  <tr *ngFor="let mentor of mentorMetrics; let i = index" 
+                      class="border-bottom-1 border-300">
                     <td class="text-left py-3 px-2">{{i + 1}}</td>
-                    <td class="text-left py-3 px-2">{{mentor.name}} {{mentor.lastname}}</td>
-                    <td class="text-right py-3 px-2 font-bold">{{mentor.mentorPoints || 0}}</td>
+                    <td class="text-left py-3 px-2">
+                      <div class="flex flex-column">
+                        <span>{{mentor.name}} {{mentor.lastname}}</span>
+                        <span class="text-sm text-500">{{mentor.badge.replace('_', ' ')}}</span>
+                      </div>
+                    </td>
+                    <td class="text-center py-3 px-2">{{mentor.mentorPoints}}</td>
+                    <td class="text-center py-3 px-2">
+                      <div class="flex align-items-center justify-content-center">
+                        <i class="pi pi-star-fill text-yellow-500 mr-2"></i>
+                        {{mentor.averageRating.toFixed(1)}}
+                      </div>
+                    </td>
+                    <td class="text-center py-3 px-2">
+                      <p-progressBar 
+                        [value]="mentor.successRate" 
+                        [showValue]="true"
+                        [style]="{'height': '0.5rem'}"
+                        styleClass="mt-1">
+                      </p-progressBar>
+                    </td>
+                    <td class="text-center py-3 px-2">
+                      <i [class]="'pi ' + (mentor.trendIndicator === 'up' ? 'pi-arrow-up text-green-500' : mentor.trendIndicator === 'down' ? 'pi-arrow-down text-red-500' : 'pi-minus text-gray-500')"></i>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -91,114 +142,86 @@
           </div>
         </div>
 
-        <!-- Mentor Evaluations -->
+        <!-- Rating Distribution -->
         <div class="col-12">
           <div class="card">
-            <div class="flex justify-content-between align-items-center mb-3">
-              <h6 class="text-left w-full m-0">Mentor Evaluation Ratings</h6>
-              <div class="flex">
-                <button pButton 
-                type="button" 
-                label="Best" 
-                class="p-button-outlined" 
-                [class.p-button-raised]="evaluationFilter === 'best'"
-                [class.p-button-outlined]="evaluationFilter !== 'best'"
-                (click)="evaluationFilter = 'best'">
-            </button>
-            
-            <button pButton 
-                type="button" 
-                label="Worst" 
-                class="p-button-outlined" 
-                [class.p-button-raised]="evaluationFilter === 'worst'"
-                [class.p-button-outlined]="evaluationFilter !== 'worst'"
-                (click)="evaluationFilter = 'worst'">
-            </button>
+            <h6 class="text-left w-full">Mentor Rating Distribution</h6>
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <p-chart type="bar" 
+                        [data]="ratingDistributionData" 
+                        [options]="ratingDistributionOptions"
+                        [style]="{'width': '100%', 'height': '300px'}">
+                </p-chart>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="grid">
+                  <div class="col-12 mb-3">
+                    <div class="surface-100 p-3 border-round">
+                      <div class="text-xl mb-2">Overall Statistics</div>
+                      <div class="grid">
+                        <div class="col-6">
+                          <div class="text-500">Average Rating</div>
+                          <div class="text-2xl font-bold">{{calculateOverallRating() | number:'1.1-1'}}</div>
+                        </div>
+                        <div class="col-6">
+                          <div class="text-500">Total Evaluations</div>
+                          <div class="text-2xl font-bold">{{calculateTotalEvaluations()}}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="surface-100 p-3 border-round">
+                      <div class="text-xl mb-2">Rating Breakdown</div>
+                      <div *ngFor="let count of ratingDistribution; let i = index" class="mb-2">
+                        <div class="flex justify-content-between align-items-center">
+                          <span>{{i + 1}} Stars</span>
+                          <span class="font-bold">{{calculateRatingPercentage(i)}}%</span>
+                        </div>
+                        <p-progressBar 
+                          [value]="calculateRatingPercentage(i)" 
+                          [showValue]="false"
+                          [style]="{'height': '0.5rem'}"
+                          styleClass="mt-1">
+                        </p-progressBar>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p-chart type="bar" [data]="mentorRatingData" [options]="mentorRatingOptions" [style]="{'width': '100%', 'height': '300px'}"></p-chart>
           </div>
         </div>
 
-        <!-- Most Active Mentors -->
+        <!-- Mentor Activity Trends -->
         <div class="col-12">
           <div class="card">
-            <h6 class="text-left w-full">Most Active Mentors</h6>
+            <h6 class="text-left w-full">Mentor Activity Trends</h6>
             <div class="grid">
-              <!-- Monthly Active -->
               <div class="col-12 md:col-4">
-                <div class="card">
-                  <h6 class="text-center">This Month</h6>
-                  <div class="overflow-y-auto" style="max-height: 250px">
-                    <ul class="list-none p-0 m-0">
-                      <li *ngFor="let mentor of activeTimeframes.month; let i = index" class="flex justify-content-between align-items-center p-3 border-bottom-1 border-300">
-                        <div>
-                          <span class="font-bold mr-2">{{i + 1}}.</span>
-                          <span>{{mentor.name}} {{mentor.lastname}}</span>
-                        </div>
-                        <p-badge [value]="getMentorHackathonsCount(mentor.hackathonsJoined)" severity="info"></p-badge>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                <p-chart type="line" 
+                        [data]="mentorTrends.ratings" 
+                        [options]="trendOptions"
+                        [style]="{'width': '100%', 'height': '200px'}">
+                </p-chart>
+                <div class="text-center mt-2">Average Ratings</div>
               </div>
-              
-              <!-- Half Year Active -->
               <div class="col-12 md:col-4">
-                <div class="card">
-                  <h6 class="text-center">Last 6 Months</h6>
-                  <div class="overflow-y-auto" style="max-height: 250px">
-                    <ul class="list-none p-0 m-0">
-                      <li *ngFor="let mentor of activeTimeframes.halfYear; let i = index" class="flex justify-content-between align-items-center p-3 border-bottom-1 border-300">
-                        <div>
-                          <span class="font-bold mr-2">{{i + 1}}.</span>
-                          <span>{{mentor.name}} {{mentor.lastname}}</span>
-                        </div>
-                        <p-badge [value]="(mentor.hackathonsJoined || 0).toString()" severity="info"></p-badge>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                <p-chart type="line" 
+                        [data]="mentorTrends.participation" 
+                        [options]="trendOptions"
+                        [style]="{'width': '100%', 'height': '200px'}">
+                </p-chart>
+                <div class="text-center mt-2">Participation Rate</div>
               </div>
-              
-              <!-- Yearly Active -->
               <div class="col-12 md:col-4">
-                <div class="card">
-                  <h6 class="text-center">This Year</h6>
-                  <div class="overflow-y-auto" style="max-height: 250px">
-                    <ul class="list-none p-0 m-0">
-                      <li *ngFor="let mentor of activeTimeframes.year; let i = index" class="flex justify-content-between align-items-center p-3 border-bottom-1 border-300">
-                        <div>
-                          <span class="font-bold mr-2">{{i + 1}}.</span>
-                          <span>{{mentor.name}} {{mentor.lastname}}</span>
-                        </div>
-                        <p-badge [value]="(mentor.hackathonsJoined || 0).toString()" severity="info"></p-badge>                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Mentor Activity by Timeframe -->
-        <div class="col-12">
-          <div class="card">
-            <h6 class="text-left w-full">Mentor Participation in Hackathons</h6>
-            <p-chart type="bar" [data]="mentorBarData" [options]="mentorBarOptions" [style]="{'width': '100%', 'height': '300px'}"></p-chart>
-          </div>
-        </div>
-        
-        <!-- Mentor Badge Breakdown -->
-        <div class="col-12">
-          <div class="card">
-            <h6 class="text-left w-full">Mentor Badge Breakdown</h6>
-            <div class="grid">
-              <div class="col-12 md:col-4 lg:col-2" *ngFor="let badge of ['JUNIOR_COACH', 'ASSISTANT_COACH', 'SENIOR_COACH', 'HEAD_COACH', 'MASTER_MENTOR']; let i = index">
-                <div class="card shadow-2 text-center p-4 surface-card">
-                  <div class="text-900 text-xl mb-2">{{badge.replace('_', ' ')}}</div>
-                  <div class="text-600">Count</div>
-                  <div class="text-3xl font-bold mt-2">{{badgeCounts[badge]}}</div>
-                </div>
+                <p-chart type="line" 
+                        [data]="mentorTrends.success" 
+                        [options]="trendOptions"
+                        [style]="{'width': '100%', 'height': '200px'}">
+                </p-chart>
+                <div class="text-center mt-2">Success Rate</div>
               </div>
             </div>
           </div>

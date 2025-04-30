@@ -155,53 +155,42 @@
       </div>
   </div>
 </div>
-
 <div class="fixed-header">
   <div class="back-button-container">
-    <button pButton type="button" icon="pi pi-arrow-left" label="Back to List" routerLink="/landing-hackathons"></button>
+    <button class="back-button" routerLink="/landing-hackathons">
+      <i class="pi pi-arrow-left"></i>
+      <span>Back to Hackathons</span>
+    </button>
   </div>
+  
   <div class="header-actions">
-    <button pButton 
-            type="button" 
-            icon="pi pi-video" 
-            class="p-button-rounded p-button-outlined header-button"
-            pTooltip="Join Live Stream"
-            tooltipPosition="bottom"
-            (click)="JoinLiveStream()"></button>
-            
-    <button *ngIf="isSponsor" 
-            pButton 
-            type="button" 
-            icon="pi pi-plus-circle" 
-            class="p-button-rounded p-button-outlined p-button-success header-button"
-            pTooltip="Add a Prize"
-            tooltipPosition="bottom"
-            (click)="addPrize(hackathon?.id)"></button>
-            
-    <button pButton 
-            pRipple 
-            type="button" 
-            [icon]="isAlreadyMentor ? 'pi pi-pencil' : 'pi pi-user-plus'" 
-            [class]="isAlreadyMentor ? 'p-button-rounded p-button-outlined p-button-info' : 'p-button-rounded p-button-outlined p-button-success'"
-            [pTooltip]="isAlreadyMentor ? 'Update Mentor Application' : 'Join as Mentor'"
-            tooltipPosition="bottom"
-            (click)="applyAsMentor()" 
-            *ngIf="hackathon && user"></button>
-            
-    <button pButton
-            type="button"
-            [icon]="getParticipateButtonIcon()"
-            class="p-button-rounded p-button-outlined participate-button"
-            [class.participate-join]="!userTeam"
-            [class.participate-chat]="userTeam"
-            [pTooltip]="getParticipateButtonLabel()"
-            tooltipPosition="bottom"
+    <button class="action-button livestream" (click)="JoinLiveStream()">
+      <i class="pi pi-video"></i>
+      <span>Join Livestream</span>
+    </button>
+    
+    <button *ngIf="isSponsor" class="action-button add-prize" (click)="addPrize(hackathon?.id)">
+      <i class="pi pi-plus-circle"></i>
+      <span>Add Prize</span>
+    </button>
+    
+    <button *ngIf="hackathon && user" class="action-button" 
+            [ngClass]="isAlreadyMentor ? 'mentor' : 'join-mentor'"
+            (click)="applyAsMentor()">
+      <i [class]="isAlreadyMentor ? 'pi pi-pencil' : 'pi pi-user-plus'"></i>
+      <span>{{isAlreadyMentor ? 'Update Mentor Profile' : 'Join as Mentor'}}</span>
+    </button>
+    
+    <button class="action-button" 
+            [ngClass]="userTeam ? 'participate-chat' : 'participate'"
             [disabled]="loading || loadingDialog"
             (click)="participate()">
-      <span class="button-hover-effect"></span>
+      <i [class]="getParticipateButtonIcon()"></i>
+      <span>{{getParticipateButtonLabel()}}</span>
     </button>
   </div>
 </div>
+
 <p-toast></p-toast>
 
 <div *ngIf="hackathon as h" class="hackathon-details-container">

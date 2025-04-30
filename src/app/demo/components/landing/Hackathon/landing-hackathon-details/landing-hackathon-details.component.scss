@@ -1,3 +1,158 @@
+
+
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+}
+
+.fixed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  background-color: #f0f2f5;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 8px;
+}
+
+.back-button:hover {
+  background-color: #e9ecef;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+  gap: 8px;
+}
+
+.action-button i {
+  font-size: 16px;
+}
+
+.action-button.livestream {
+  color: #2563eb;
+  border-color: #2563eb;
+}
+
+.action-button.livestream:hover {
+  background-color: #eff6ff;
+}
+
+.action-button.add-prize {
+  color: #10b981;
+  border-color: #10b981;
+}
+
+.action-button.add-prize:hover {
+  background-color: #ecfdf5;
+}
+
+.action-button.mentor {
+  color: #0ea5e9;
+  border-color: #0ea5e9;
+}
+
+.action-button.mentor:hover {
+  background-color: #f0f9ff;
+}
+
+.action-button.join-mentor {
+  color: #10b981;
+  border-color: #10b981;
+}
+
+.action-button.join-mentor:hover {
+  background-color: #ecfdf5;
+}
+
+.action-button.participate {
+  background-color: #7c3aed;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-weight: 600;
+}
+
+.action-button.participate:hover {
+  background-color: #6d28d9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+}
+
+.action-button.participate-chat {
+  background-color: #2563eb;
+}
+
+.action-button.participate-chat:hover {
+  background-color: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .fixed-header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .back-button-container {
+    width: 100%;
+  }
+  
+  .back-button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .action-button {
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+}
+
 .fixed-header {
   border-radius: 8px;
   background-color: white;

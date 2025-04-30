@@ -51,12 +51,12 @@ export class GeneralComponent implements OnInit {
   listMentors: ListMentor[] = [];
   
   // Mentor badge distribution
-  badgeCounts: any = {
-    JUNIOR_COACH: 0,
-    ASSISTANT_COACH: 0,
-    SENIOR_COACH: 0,
-    HEAD_COACH: 0,
-    MASTER_MENTOR: 0
+  badgeCounts: { [key: string]: number } = {
+    'JUNIOR_COACH': 0,
+    'ASSISTANT_COACH': 0,
+    'SENIOR_COACH': 0,
+    'HEAD_COACH': 0,
+    'MASTER_MENTOR': 0
   };
   
   // Mentor data charts
@@ -81,6 +81,25 @@ export class GeneralComponent implements OnInit {
   // Current filter value for evaluations
   evaluationFilter: string = 'best';
 
+  // Add new properties for rating distribution
+  ratingDistributionData: any;
+  ratingDistributionOptions: any;
+  trendOptions: any;
+
+  // Add new interfaces for improved analytics
+  mentorMetrics: MentorMetrics[] = [];
+  badgeMetrics: { [key: string]: BadgeMetrics } = {};
+  ratingDistribution: number[] = Array(5).fill(0);
+  mentorTrends: {
+    ratings: any;
+    participation: any;
+    success: any;
+  } = {
+    ratings: null,
+    participation: null,
+    success: null
+  };
+
   constructor(
     private hackathonService: HackathonService,
     private userService: UserService,
@@ -89,11 +108,14 @@ export class GeneralComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log('Initializing component...');
     this.loadHackathons();
     this.loadMentors();
     this.loadMentorEvaluations();
     this.loadListMentors();
     this.initChartOptions();
+
+    
   }
 
   loadHackathons() {
@@ -116,24 +138,36 @@ export class GeneralComponent implements OnInit {
       this.updateLineChartData();
     });
   }
+
+  formatBadgeKey(key: string): string {
+    return key;  // Return the badge as is from database
+  }
+  
+  // Helper method for percentage calculation
+  calculatePercentage(value: number): string {
+    return this.mentors.length > 0 ? ((value / this.mentors.length) * 100).toFixed(1) : '0';
+  }
   
   loadMentors() {
+    console.log('Loading mentors...');
     this.userService.getUsers().subscribe((users: User[]) => {
+      console.log('All users:', users);
       // Filter users with MENTOR role
       this.mentors = users.filter(user => 
         user.roles && user.roles.some(role => role.name === 'MENTOR')
       );
+      console.log('Filtered mentors:', this.mentors);
       
       // Get top mentors by mentor points
       this.topMentors = [...this.mentors]
-        .sort((a, b) => (b.mentorPoints || 0) - (a.mentorPoints || 0))
-        .slice(0, 10);
+        .sort((a, b) => (b.mentorPoints || 0) - (a.mentorPoints || 0));
+      console.log('Top mentors:', this.topMentors);
       
-      // Count mentors by badge
+      // Count mentors by badge and update pie chart
       this.countMentorsByBadge();
       
-      // Update mentor charts
-      this.updateMentorBadgeChart();
+      // Process mentor data after loading
+      this.processMentorEvaluations();
     });
   }
   
@@ -215,58 +249,233 @@ export class GeneralComponent implements OnInit {
   countMentorsByBadge() {
     // Reset badge counts
     this.badgeCounts = {
-      JUNIOR_COACH: 0,
-      ASSISTANT_COACH: 0,
-      SENIOR_COACH: 0,
-      HEAD_COACH: 0,
-      MASTER_MENTOR: 0
+      'JUNIOR_COACH': 0,
+      'ASSISTANT_COACH': 0,
+      'SENIOR_COACH': 0,
+      'HEAD_COACH': 0,
+      'MASTER_MENTOR': 0
     };
     
     // Count mentors by badge
     this.mentors.forEach(mentor => {
       if (mentor.badge && this.badgeCounts.hasOwnProperty(mentor.badge)) {
         this.badgeCounts[mentor.badge]++;
+      } else {
+        // If no badge is assigned, count as JUNIOR_COACH
+        this.badgeCounts['JUNIOR_COACH']++;
       }
     });
+
+    // Update the pie chart data
+    this.updateMentorBadgeChart();
+    console.log('Badge counts:', this.badgeCounts);
   }
   
   processMentorEvaluations() {
-    // Calculate average rating for each mentor
-    const mentorRatings = new Map<number, { total: number, count: number }>();
+    // Calculate average rating and distribution for each mentor
+    const mentorRatings = new Map<number, { 
+      total: number, 
+      count: number, 
+      distribution: number[], 
+      feedbackTexts: string[] 
+    }>();
     
     this.mentorEvaluations.forEach(evaluation => {
       const mentorId = evaluation.mentor.id;
       
-      // Add null check before accessing mentorId
       if (mentorId !== undefined) {
         if (!mentorRatings.has(mentorId)) {
-          mentorRatings.set(mentorId, { total: 0, count: 0 });
+          mentorRatings.set(mentorId, { 
+            total: 0, 
+            count: 0, 
+            distribution: Array(5).fill(0),
+            feedbackTexts: []
+          });
         }
         
         const current = mentorRatings.get(mentorId)!;
         current.total += evaluation.rating;
         current.count += 1;
+        current.distribution[Math.floor(evaluation.rating) - 1]++;
+        current.feedbackTexts.push(evaluation.feedbackText);
       }
     });
-    
-    // Create sorted arrays of mentors by average rating
-    const mentorsWithRatings = this.mentors.filter(mentor => 
-      mentor.id !== undefined && mentorRatings.has(mentor.id) && mentorRatings.get(mentor.id)!.count > 0
-    ).map(mentor => {
-      // We know mentor.id is defined from the filter above
-      const ratingData = mentorRatings.get(mentor.id!)!;
-      const averageRating = ratingData.total / ratingData.count;
-      return { ...mentor, averageRating };
-    });
-    
-    // Sort mentors by rating
-    this.bestEvaluatedMentors = [...mentorsWithRatings]
-      .sort((a, b) => (b as any).averageRating - (a as any).averageRating)
-      .slice(0, 10);
+
+    // Process mentor metrics - ensure all mentors are included even without evaluations
+    this.mentorMetrics = this.mentors.map(mentor => {
+      const ratings = mentorRatings.get(mentor.id!) || { total: 0, count: 0, distribution: Array(5).fill(0) };
+      const averageRating = ratings.count > 0 ? ratings.total / ratings.count : 0;
       
-    this.worstEvaluatedMentors = [...mentorsWithRatings]
-      .sort((a, b) => (a as any).averageRating - (b as any).averageRating)
-      .slice(0, 10);
+      // Count hackathons for this mentor
+      const hackathonsCount = this.listMentors.filter(lm => lm.mentor.id === mentor.id).length;
+      
+      // Calculate success rate
+      const successfulTeams = this.mentorEvaluations.filter(
+        ev => ev.mentor.id === mentor.id && ev.rating >= 4
+      ).length;
+      const totalTeams = ratings.count;
+      const successRate = totalTeams > 0 ? (successfulTeams / totalTeams) * 100 : 0;
+
+      return {
+        id: mentor.id!,
+        name: mentor.name,
+        lastname: mentor.lastname,
+        mentorPoints: mentor.mentorPoints || 0,
+        averageRating,
+        hackathonsCount,
+        successRate,
+        badge: mentor.badge || 'JUNIOR_COACH',
+        trendIndicator: 'stable' // Default to stable if no historical data
+      };
+    });
+
+    // Sort mentors by points for display
+    this.mentorMetrics.sort((a, b) => b.mentorPoints - a.mentorPoints);
+
+    // Update badge metrics
+    this.updateBadgeMetrics();
+    
+    // Update rating distribution
+    this.updateRatingDistribution(mentorRatings);
+    
+    // Update mentor trends
+    this.updateMentorTrends();
+
+    // Update rating distribution chart
+    this.updateRatingDistributionChart();
+
+    console.log('Processed mentor metrics:', this.mentorMetrics); // Debug log
+  }
+  
+  private calculateTrendIndicator(mentorId: number): 'up' | 'down' | 'stable' {
+    const recentEvaluations = this.mentorEvaluations
+      .filter(ev => ev.mentor.id === mentorId)
+      .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
+
+    if (recentEvaluations.length < 2) return 'stable';
+
+    const recentAvg = recentEvaluations.slice(0, 3).reduce((sum, ev) => sum + ev.rating, 0) / 3;
+    const previousAvg = recentEvaluations.slice(3, 6).reduce((sum, ev) => sum + ev.rating, 0) / 3;
+
+    if (recentAvg > previousAvg + 0.5) return 'up';
+    if (recentAvg < previousAvg - 0.5) return 'down';
+    return 'stable';
+  }
+
+  private updateBadgeMetrics() {
+    const totalMentors = this.mentors.length;
+    const badgeRequirements = {
+      JUNIOR_COACH: 'New mentors with < 3 hackathons',
+      ASSISTANT_COACH: '3+ hackathons, avg rating > 3.5',
+      SENIOR_COACH: '5+ hackathons, avg rating > 4.0',
+      HEAD_COACH: '10+ hackathons, avg rating > 4.5',
+      MASTER_MENTOR: '15+ hackathons, avg rating > 4.8'
+    };
+
+    Object.keys(this.badgeCounts).forEach(badge => {
+      const count = this.badgeCounts[badge];
+      this.badgeMetrics[badge] = {
+        count,
+        percentage: (count / totalMentors) * 100,
+        requirements: badgeRequirements[badge as keyof typeof badgeRequirements],
+        trend: this.calculateBadgeTrend(badge)
+      };
+    });
+  }
+
+  private calculateBadgeTrend(badge: string): 'up' | 'down' | 'stable' {
+    // This would ideally use historical data to calculate trends
+    // For now, return 'stable' as placeholder
+    return 'stable';
+  }
+
+  private updateRatingDistribution(mentorRatings: Map<number, any>) {
+    this.ratingDistribution = Array(5).fill(0);
+    
+    mentorRatings.forEach(ratings => {
+      ratings.distribution.forEach((count: number, index: number) => {
+        this.ratingDistribution[index] += count;
+      });
+    });
+  }
+
+  private updateMentorTrends() {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const currentDate = new Date();
+    const labels = Array.from({length: 6}, (_, i) => {
+      const d = new Date(currentDate);
+      d.setMonth(d.getMonth() - (5 - i));
+      return months[d.getMonth()];
+    });
+
+    // Calculate monthly averages
+    const monthlyData = this.calculateMonthlyMetrics();
+
+    this.mentorTrends = {
+      ratings: {
+        labels,
+        datasets: [{
+          label: 'Average Rating',
+          data: monthlyData.ratings,
+          borderColor: '#4bc0c0',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          fill: true
+        }]
+      },
+      participation: {
+        labels,
+        datasets: [{
+          label: 'Active Mentors',
+          data: monthlyData.participation,
+          borderColor: '#ff9f40',
+          backgroundColor: 'rgba(255, 159, 64, 0.2)',
+          fill: true
+        }]
+      },
+      success: {
+        labels,
+        datasets: [{
+          label: 'Success Rate',
+          data: monthlyData.success,
+          borderColor: '#36a2eb',
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          fill: true
+        }]
+      }
+    };
+  }
+
+  private calculateMonthlyMetrics() {
+    const months = Array.from({length: 6}, () => ({
+      ratings: [] as number[],
+      mentors: new Set<number>(),
+      successCount: 0,
+      totalCount: 0
+    }));
+
+    // Process evaluations for the last 6 months
+    this.mentorEvaluations.forEach(evaluation => {
+      const date = new Date(evaluation.createdAt!);
+      const monthsAgo = Math.floor((new Date().getTime() - date.getTime()) / (30 * 24 * 60 * 60 * 1000));
+      
+      if (monthsAgo >= 0 && monthsAgo < 6) {
+        const monthIndex = 5 - monthsAgo;
+        months[monthIndex].ratings.push(evaluation.rating);
+        months[monthIndex].mentors.add(evaluation.mentor.id!);
+        months[monthIndex].totalCount++;
+        if (evaluation.rating >= 4) {
+          months[monthIndex].successCount++;
+        }
+      }
+    });
+
+    return {
+      ratings: months.map(m => m.ratings.length > 0 ? 
+        m.ratings.reduce((sum, r) => sum + r, 0) / m.ratings.length : null),
+      participation: months.map(m => m.mentors.size),
+      success: months.map(m => m.totalCount > 0 ? 
+        (m.successCount / m.totalCount) * 100 : null)
+    };
   }
   
   processActiveMentorsByTimeframe() {
@@ -382,22 +591,45 @@ export class GeneralComponent implements OnInit {
   }
   
   updateMentorBadgeChart() {
+    const badges = Object.keys(this.badgeCounts);
+    
     this.mentorPieData = {
-      labels: ['Junior Coach', 'Assistant Coach', 'Senior Coach', 'Head Coach', 'Master Mentor'],
-      datasets: [
-        {
-          data: [
-            this.badgeCounts.JUNIOR_COACH,
-            this.badgeCounts.ASSISTANT_COACH,
-            this.badgeCounts.SENIOR_COACH,
-            this.badgeCounts.HEAD_COACH,
-            this.badgeCounts.MASTER_MENTOR
-          ],
-          backgroundColor: ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c'],
-          hoverBackgroundColor: ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c']
-        }
-      ]
+      labels: badges,
+      datasets: [{
+        data: badges.map(badge => this.badgeCounts[badge]),
+        backgroundColor: ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c'],
+        hoverBackgroundColor: ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c']
+      }]
     };
+
+    // Initialize pie chart options if not already done
+    if (!this.mentorPieOptions) {
+      this.mentorPieOptions = {
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#495057'
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: (context: any) => {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                return `${label}: ${value} (${percentage}%)`;
+              }
+            }
+          }
+        },
+        responsive: true,
+        maintainAspectRatio: false
+      };
+    }
+
+    console.log('Pie chart data:', this.mentorPieData);
   }
   
   updateMentorRatingChart() {
@@ -645,6 +877,90 @@ export class GeneralComponent implements OnInit {
       responsive: true,
       maintainAspectRatio: false
     };
+
+    // Rating distribution chart options
+    this.ratingDistributionOptions = {
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const value = context.raw;
+              const total = this.ratingDistribution.reduce((sum, count) => sum + count, 0);
+              const percentage = total > 0 ? (value / total * 100).toFixed(1) : '0';
+              return `${value} evaluations (${percentage}%)`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Rating'
+          },
+          ticks: {
+            color: '#495057'
+          },
+          grid: {
+            color: '#ebedef'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Number of Evaluations'
+          },
+          ticks: {
+            color: '#495057',
+            precision: 0
+          },
+          grid: {
+            color: '#ebedef'
+          },
+          beginAtZero: true
+        }
+      },
+      responsive: true,
+      maintainAspectRatio: false
+    };
+
+    // Trend chart options
+    this.trendOptions = {
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#495057'
+          },
+          grid: {
+            display: false
+          }
+        },
+        y: {
+          ticks: {
+            color: '#495057'
+          },
+          grid: {
+            color: '#ebedef'
+          },
+          beginAtZero: true
+        }
+      },
+      elements: {
+        line: {
+          tension: 0.4
+        }
+      },
+      responsive: true,
+      maintainAspectRatio: false
+    };
   }
   
   // Method to toggle between best and worst evaluated mentors
@@ -657,4 +973,52 @@ export class GeneralComponent implements OnInit {
   changeActiveTimeframe(timeframe: string) {
     this.updateMentorActivityChart();
   }
+
+  // Add calculation methods
+  calculateOverallRating(): number {
+    const totalRatings = this.mentorEvaluations.reduce((sum, evaluation) => sum + evaluation.rating, 0);
+    const totalCount = this.mentorEvaluations.length;
+    return totalCount > 0 ? totalRatings / totalCount : 0;
+  }
+
+  calculateTotalEvaluations(): number {
+    return this.mentorEvaluations.length;
+  }
+
+  calculateRatingPercentage(rating: number): number {
+    const total = this.ratingDistribution.reduce((sum, count) => sum + count, 0);
+    return total > 0 ? (this.ratingDistribution[rating] / total) * 100 : 0;
+  }
+
+  // Update the rating distribution data
+  private updateRatingDistributionChart() {
+    this.ratingDistributionData = {
+      labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+      datasets: [{
+        data: this.ratingDistribution,
+        backgroundColor: '#42A5F5',
+        borderColor: '#42A5F5',
+        borderWidth: 1
+      }]
+    };
+  }
+}
+
+interface MentorMetrics {
+  id: number;
+  name: string;
+  lastname: string;
+  mentorPoints: number;
+  averageRating: number;
+  hackathonsCount: number;
+  successRate: number;
+  badge: string;
+  trendIndicator: 'up' | 'down' | 'stable';
+}
+
+interface BadgeMetrics {
+  count: number;
+  percentage: number;
+  requirements: string;
+  trend: 'up' | 'down' | 'stable';
 }
