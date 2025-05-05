@@ -36,51 +36,51 @@
           <i class="pi pi-star-fill"></i>
           <h2>Evaluate Project</h2>
         </div>
-        <form [formGroup]="evaluationForm" (ngSubmit)="createEvaluation()">
+        <form [formGroup]="evaluationForm" (ngSubmit)="createEvaluation()" class="p-fluid">
+          <!-- Manual ID inputs -->
           <div class="field">
-            <label for="teamSubmission">Team Submission</label>
-            <p-dropdown id="teamSubmission" [options]="teamSubmissions" formControlName="teamSubmissionId"
-                        optionLabel="projectName" optionValue="id" placeholder="Select a team submission"
-                        [filter]="true" filterBy="projectName" [showClear]="true" [disabled]="isPopup && !!submissionId">
-            </p-dropdown>
-            <small *ngIf="evaluationForm.get('teamSubmissionId')?.hasError('required') && evaluationForm.get('teamSubmissionId')?.touched"
-                   class="p-error">Team submission is required</small>
+              <label for="submissionId">Submission ID</label>
+              <input type="number" pInputText id="submissionId" formControlName="submissionId" 
+                     placeholder="Enter submission ID" />
+              <small *ngIf="evaluationForm.get('submissionId')?.invalid && evaluationForm.get('submissionId')?.touched" 
+                     class="p-error">Please enter a valid submission ID</small>
           </div>
 
           <div class="field">
-            <label for="innovationScore">Innovation Score (1-10)</label>
-            <p-inputNumber id="innovationScore" formControlName="innovationScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
-            <small *ngIf="evaluationForm.get('innovationScore')?.hasError('required') && evaluationForm.get('innovationScore')?.touched"
-                   class="p-error">Innovation score is required</small>
+              <label for="evaluatorId">Evaluator ID</label>
+              <input type="number" pInputText id="evaluatorId" formControlName="evaluatorId" 
+                     placeholder="Enter evaluator ID" />
+              <small *ngIf="evaluationForm.get('evaluatorId')?.invalid && evaluationForm.get('evaluatorId')?.touched" 
+                     class="p-error">Please enter a valid evaluator ID</small>
           </div>
 
+          <!-- Score -->
           <div class="field">
-            <label for="technicalScore">Technical Complexity Score (1-10)</label>
-            <p-inputNumber id="technicalScore" formControlName="technicalScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
-            <small *ngIf="evaluationForm.get('technicalScore')?.hasError('required') && evaluationForm.get('technicalScore')?.touched"
-                   class="p-error">Technical score is required</small>
+              <label for="score">Score (1-100)</label>
+              <p-inputNumber id="score" formControlName="score" [min]="1" [max]="100" [showButtons]="true"></p-inputNumber>
+              <small *ngIf="evaluationForm.get('score')?.invalid && evaluationForm.get('score')?.touched" 
+                     class="p-error">Please enter a valid score (1-100)</small>
           </div>
 
+          <!-- Feedback -->
           <div class="field">
-            <label for="designScore">Design & UX Score (1-10)</label>
-            <p-inputNumber id="designScore" formControlName="designScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
-            <small *ngIf="evaluationForm.get('designScore')?.hasError('required') && evaluationForm.get('designScore')?.touched"
-                   class="p-error">Design score is required</small>
+              <label for="feedback">Feedback</label>
+              <textarea pInputTextarea id="feedback" formControlName="feedback" 
+                  placeholder="Provide detailed feedback about the project" rows="5"></textarea>
+              <small *ngIf="evaluationForm.get('feedback')?.invalid && evaluationForm.get('feedback')?.touched" 
+                  class="p-error">Please provide feedback</small>
           </div>
 
+          <!-- Error Message -->
+          <div *ngIf="error" class="p-message p-message-error">
+              <span class="p-message-text">{{ error }}</span>
+          </div>
+
+          <!-- Submit Button -->
           <div class="field">
-            <label for="feedback">Feedback</label>
-            <textarea id="feedback" pInputTextarea formControlName="feedback" rows="5" 
-                      placeholder="Provide detailed feedback about the project..."></textarea>
-            <small *ngIf="evaluationForm.get('feedback')?.hasError('required') && evaluationForm.get('feedback')?.touched"
-                   class="p-error">Feedback is required</small>
-          </div>
-
-          <div class="form-actions">
-            <button pButton type="submit" label="Submit Evaluation" icon="pi pi-check" 
-                    class="p-button-success" [disabled]="evaluationForm.invalid || submitting"></button>
-            <button pButton type="button" label="Cancel" icon="pi pi-times" 
-                    class="p-button-outlined p-button-secondary" (click)="resetForm()"></button>
+              <button pButton type="submit" label="Submit Evaluation" 
+                  [disabled]="evaluationForm.invalid || submitting" 
+                  [loading]="submitting"></button>
           </div>
         </form>
       </div>
@@ -94,51 +94,51 @@
               <i class="pi pi-plus-circle"></i>
               <h2>Add New Evaluation</h2>
             </div>
-            <form [formGroup]="evaluationForm" (ngSubmit)="createEvaluation()">
+            <form [formGroup]="evaluationForm" (ngSubmit)="createEvaluation()" class="p-fluid">
+              <!-- Manual ID inputs -->
               <div class="field">
-                <label for="teamSubmission">Team Submission</label>
-                <p-dropdown id="teamSubmission" [options]="teamSubmissions" formControlName="teamSubmissionId"
-                            optionLabel="projectName" optionValue="id" placeholder="Select a team submission"
-                            [filter]="true" filterBy="projectName" [showClear]="true">
-                </p-dropdown>
-                <small *ngIf="evaluationForm.get('teamSubmissionId')?.hasError('required') && evaluationForm.get('teamSubmissionId')?.touched"
-                       class="p-error">Team submission is required</small>
+                  <label for="submissionId">Submission ID</label>
+                  <input type="number" pInputText id="submissionId" formControlName="submissionId" 
+                         placeholder="Enter submission ID" />
+                  <small *ngIf="evaluationForm.get('submissionId')?.invalid && evaluationForm.get('submissionId')?.touched" 
+                         class="p-error">Please enter a valid submission ID</small>
               </div>
 
               <div class="field">
-                <label for="innovationScore">Innovation Score (1-10)</label>
-                <p-inputNumber id="innovationScore" formControlName="innovationScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
-                <small *ngIf="evaluationForm.get('innovationScore')?.hasError('required') && evaluationForm.get('innovationScore')?.touched"
-                       class="p-error">Innovation score is required</small>
+                  <label for="evaluatorId">Evaluator ID</label>
+                  <input type="number" pInputText id="evaluatorId" formControlName="evaluatorId" 
+                         placeholder="Enter evaluator ID" />
+                  <small *ngIf="evaluationForm.get('evaluatorId')?.invalid && evaluationForm.get('evaluatorId')?.touched" 
+                         class="p-error">Please enter a valid evaluator ID</small>
               </div>
 
+              <!-- Score -->
               <div class="field">
-                <label for="technicalScore">Technical Complexity Score (1-10)</label>
-                <p-inputNumber id="technicalScore" formControlName="technicalScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
-                <small *ngIf="evaluationForm.get('technicalScore')?.hasError('required') && evaluationForm.get('technicalScore')?.touched"
-                       class="p-error">Technical score is required</small>
+                  <label for="score">Score (1-100)</label>
+                  <p-inputNumber id="score" formControlName="score" [min]="1" [max]="100" [showButtons]="true"></p-inputNumber>
+                  <small *ngIf="evaluationForm.get('score')?.invalid && evaluationForm.get('score')?.touched" 
+                         class="p-error">Please enter a valid score (1-100)</small>
               </div>
 
+              <!-- Feedback -->
               <div class="field">
-                <label for="designScore">Design & UX Score (1-10)</label>
-                <p-inputNumber id="designScore" formControlName="designScore" [min]="1" [max]="10" [showButtons]="true"></p-inputNumber>
-                <small *ngIf="evaluationForm.get('designScore')?.hasError('required') && evaluationForm.get('designScore')?.touched"
-                       class="p-error">Design score is required</small>
+                  <label for="feedback">Feedback</label>
+                  <textarea pInputTextarea id="feedback" formControlName="feedback" 
+                      placeholder="Provide detailed feedback about the project" rows="5"></textarea>
+                  <small *ngIf="evaluationForm.get('feedback')?.invalid && evaluationForm.get('feedback')?.touched" 
+                      class="p-error">Please provide feedback</small>
               </div>
 
+              <!-- Error Message -->
+              <div *ngIf="error" class="p-message p-message-error">
+                  <span class="p-message-text">{{ error }}</span>
+              </div>
+
+              <!-- Submit Button -->
               <div class="field">
-                <label for="feedback">Feedback</label>
-                <textarea id="feedback" pInputTextarea formControlName="feedback" rows="5" 
-                          placeholder="Provide detailed feedback about the project..."></textarea>
-                <small *ngIf="evaluationForm.get('feedback')?.hasError('required') && evaluationForm.get('feedback')?.touched"
-                       class="p-error">Feedback is required</small>
-              </div>
-
-              <div class="form-actions">
-                <button pButton type="submit" label="Submit Evaluation" icon="pi pi-check" 
-                        class="p-button-success" [disabled]="evaluationForm.invalid || submitting"></button>
-                <button pButton type="button" label="Reset" icon="pi pi-refresh" 
-                        class="p-button-outlined p-button-secondary" (click)="resetForm()"></button>
+                  <button pButton type="submit" label="Submit Evaluation" 
+                      [disabled]="evaluationForm.invalid || submitting" 
+                      [loading]="submitting"></button>
               </div>
             </form>
           </div>

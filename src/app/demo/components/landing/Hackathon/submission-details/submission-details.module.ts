@@ -15,6 +15,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RatingModule } from 'primeng/rating';
 import { SliderModule } from 'primeng/slider';
 import { MessageService } from 'primeng/api';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 import { SubmissionDetailsComponent } from './submission-details.component';
 import { RouterModule } from '@angular/router';
@@ -22,11 +23,12 @@ import { NavbarComponent } from '../../navbar/navbar.component';
 import { ProjectEvaluationComponent } from '../../../project-evaluation/project-evaluation.component';
 import { FooterComponent } from '../../footer/footer.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { EvaluationDialogModule } from '../../../../components/evaluation-dialog/evaluation-dialog.module';
+import { LandingModule } from '../../landing.module';
 
 @NgModule({
   declarations: [
     SubmissionDetailsComponent,
-
     ProjectEvaluationComponent
   ],
   imports: [
@@ -47,8 +49,10 @@ import { SharedModule } from 'src/app/shared/shared.module';
     ProgressSpinnerModule,
     RatingModule,
     SliderModule,   
-     SharedModule // Import SharedModule here
-
+    InputNumberModule,
+    SharedModule, // Import SharedModule here
+    EvaluationDialogModule, // Import EvaluationDialogModule
+    LandingModule // Import LandingModule which contains LandingProjectEvaluationComponent
   ],
   providers: [
     MessageService

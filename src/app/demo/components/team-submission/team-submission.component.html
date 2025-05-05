@@ -1,91 +1,307 @@
-<!-- team-submission.component.html -->
-<div class="main-container">
-  <!-- En-tête -->
-  <div class="header">
-    <h3>Ajouter une soumission</h3>
-  </div>
-
-  <!-- Formulaire de création -->
-  <div class="section creation-section">
-    <form (ngSubmit)="createSubmission()" #submissionForm="ngForm" class="form-container">
-      <div class="form-group">
-        <label for="projectName">Nom du projet</label>
-        <input type="text" id="projectName" name="projectName" [(ngModel)]="newSubmission.projectName" required class="form-input" />
+<div class="grid">
+  <div class="col-12">
+    <div class="card">
+      <h5>Submissions Dashboard</h5>
+      <p-toast></p-toast>
+      
+      <!-- Loading indicator -->
+      <div *ngIf="loading" class="loading-overlay">
+        <p-progressSpinner></p-progressSpinner>
+        <p>Loading submissions...</p>
       </div>
 
-      <div class="form-group">
+      <!-- Error message -->
+      <div *ngIf="error" class="alert alert-error">
+        <i class="pi pi-exclamation-triangle"></i>
+        <p>{{ error }}</p>
+        <button class="close-btn" (click)="error = null"><i class="pi pi-times"></i></button>
+      </div>
+      
+      <!-- Statistics Cards -->
+      <div class="grid mb-4" style="align-items: stretch;">
+        <div class="col-12 md:col-6 lg:col-3">
+          <div class="card mb-0 stats-card bg-blue-50">
+            <div class="flex justify-content-between mb-3">
+              <div>
+                <span class="block text-500 font-medium mb-3">Total Submissions</span>
+                <div class="text-900 font-medium text-xl">{{ submissions.length }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-file-export text-blue-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-12 md:col-6 lg:col-3">
+          <div class="card mb-0 stats-card bg-green-50">
+            <div class="flex justify-content-between mb-3">
+              <div>
+                <span class="block text-500 font-medium mb-3">Average Score</span>
+                <div class="text-900 font-medium text-xl" [ngClass]="getScoreClass(getAverageScore())">{{ getAverageScore() | number:'1.0-1' }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-chart-bar text-green-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-12 md:col-6 lg:col-3">
+          <div class="card mb-0 stats-card bg-yellow-50">
+            <div class="flex justify-content-between mb-3">
+              <div>
+                <span class="block text-500 font-medium mb-3">Highest Score</span>
+                <div class="text-900 font-medium text-xl high-score">{{ getHighestScore() }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-yellow-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-star text-yellow-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-12 md:col-6 lg:col-3">
+          <div class="card mb-0 stats-card bg-purple-50">
+            <div class="flex justify-content-between mb-3">
+              <div>
+                <span class="block text-500 font-medium mb-3">Evaluations</span>
+                <div class="text-900 font-medium text-xl">{{ getEvaluationsCount() }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-check-circle text-purple-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Header with create button -->
+      <div class="flex justify-content-between align-items-center mb-4">
+        <h5 class="m-0">Submissions List</h5>
+        <button pButton pRipple label="New Submission" icon="pi pi-plus" class="p-button-success" (click)="displayCreateDialog = true"></button>
+      </div>
+
+      <!-- Submissions grid -->
+      <div class="grid">
+        <div *ngFor="let submission of submissions" class="col-12 md:col-6 lg:col-4 xl:col-4">
+          <div class="card submission-card h-full">
+            <div class="card-header bg-primary">
+              <h3>{{ submission.projectName }}</h3>
+            </div>
+            <div class="card-body">
+              <p class="description">{{ submission.description | slice:0:150 }}{{ submission.description.length > 150 ? '...' : '' }}</p>
+              <div class="project-link">
+                <i class="pi pi-github"></i>
+                <a href="{{ submission.repoLink }}" target="_blank">Voir le code source</a>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button pButton pRipple label="Modifier" icon="pi pi-pencil" class="p-button-outlined p-button-primary mr-2" (click)="edit(submission.id || 0)"></button>
+              <button pButton pRipple label="Évaluations" icon="pi pi-eye" class="p-button-outlined p-button-info" (click)="viewEvaluation(submission.id || 0)"></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state when no submissions -->
+        <div *ngIf="submissions.length === 0 && !loading" class="col-12">
+          <div class="card empty-state">
+            <i class="pi pi-file-export empty-icon"></i>
+            <h3>No submissions found</h3>
+            <p>Create your first project submission by clicking the "New Submission" button</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Submission Dialog -->
+  <p-dialog header="New Submission" [(visible)]="displayCreateDialog" [modal]="true" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+    <form (ngSubmit)="createSubmission()" #submissionForm="ngForm" class="p-fluid">
+      <div class="p-field mb-3">
+        <label for="projectName">Project Name</label>
+        <input pInputText id="projectName" name="projectName" [(ngModel)]="newSubmission.projectName" required />
+      </div>
+
+      <div class="p-field mb-3">
         <label for="description">Description</label>
-        <textarea id="description" name="description" [(ngModel)]="newSubmission.description" required class="form-input"></textarea>
+        <textarea pInputTextarea id="description" name="description" [(ngModel)]="newSubmission.description" required rows="5"></textarea>
       </div>
 
-      <div class="form-group">
-        <label for="repoLink">Lien GitHub</label>
-        <input type="url" id="repoLink" name="repoLink" [(ngModel)]="newSubmission.repoLink" required class="form-input" />
+      <div class="p-field mb-3">
+        <label for="repoLink">Repository Link</label>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon"><i class="pi pi-github"></i></span>
+          <input pInputText id="repoLink" name="repoLink" [(ngModel)]="newSubmission.repoLink" required placeholder="https://github.com/username/repo" />
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="teamMemberId">ID du membre de l'équipe</label>
-        <input type="number" id="teamMemberId" name="teamMemberId" [(ngModel)]="newSubmission.teamMember.id" required class="form-input" />
+      <div class="p-field mb-3">
+        <label for="teamMember">Team Member</label>
+        <p-dropdown id="teamMember" [options]="teamMembers" [(ngModel)]="selectedTeamMember" name="teamMember" optionLabel="user.name" placeholder="Select a team member" [required]="true" [style]="{'width':'100%'}" [showClear]="true">
+          <ng-template pTemplate="selectedItem">
+            <div class="flex align-items-center gap-2" *ngIf="selectedTeamMember">
+              <img *ngIf="selectedTeamMember.user.picture" [src]="selectedTeamMember.user.picture" style="width: 18px; height: 18px; border-radius: 50%" />
+              <div>{{ getTeamMemberFullName(selectedTeamMember) }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-teamMember pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <img *ngIf="teamMember.user.picture" [src]="teamMember.user.picture" style="width: 18px; height: 18px; border-radius: 50%" />
+              <div>{{ getTeamMemberFullName(teamMember) }}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
       </div>
 
-      <button type="submit" class="btn btn-create">Créer</button>
+      <div class="dialog-footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="displayCreateDialog = false"></button>
+        <button pButton pRipple type="submit" label="Submit" icon="pi pi-check" class="p-button-success" [disabled]="!submissionForm.valid"></button>
+      </div>
     </form>
-  </div>
+  </p-dialog>
 
-  <hr>
+  <!-- Edit Submission Dialog -->
+  <p-dialog *ngIf="editSubmission" header="Edit Submission" [(visible)]="displayEditDialog" [modal]="true" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+    <form (ngSubmit)="updateSubmission()" #editForm="ngForm" class="p-fluid">
+      <div class="p-field mb-3">
+        <label for="editProjectName">Project Name</label>
+        <input pInputText id="editProjectName" name="projectName" [(ngModel)]="editSubmission.projectName" required />
+      </div>
 
-  <!-- Affichage des soumissions -->
-  <div class="section submissions-section">
-    <div *ngIf="loading" class="loading-overlay">
-      <div class="spinner"></div>
-      <p>Chargement des soumissions...</p>
-    </div>
-    <div *ngIf="error" class="error-message">{{ error }}</div>
+      <div class="p-field mb-3">
+        <label for="editDescription">Description</label>
+        <textarea pInputTextarea id="editDescription" name="description" [(ngModel)]="editSubmission.description" required rows="5"></textarea>
+      </div>
 
-    <!-- Conteneur de cartes -->
-    <div class="card-container">
-      <div *ngFor="let submission of submissions" class="card">
-        <h4>ID: {{ submission.id }}</h4>
-        <h3>{{ submission.projectName }}</h3>
-        <p>{{ submission.description }}</p>
-        <p><a href="{{ submission.repoLink }}" target="_blank" class="project-link">Voir le projet</a></p>
-        <div class="actions">
-          <!-- Bouton Modifier -->
-          <button *ngIf="submission.id !== undefined" class="btn btn-edit" (click)="edit(submission.id)">
-            Modifier
-          </button>
-          <!-- Bouton Supprimer -->
-          <button *ngIf="submission.id !== undefined" class="btn btn-delete" (click)="delete(submission.id)">
-            Supprimer
-          </button>
+      <div class="p-field mb-3">
+        <label for="editRepoLink">Repository Link</label>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon"><i class="pi pi-github"></i></span>
+          <input pInputText id="editRepoLink" name="repoLink" [(ngModel)]="editSubmission.repoLink" required />
         </div>
-        <!-- Formulaire de modification sous la carte correspondante -->
-        <div class="modification-section" *ngIf="editSubmission && editSubmission.id === submission.id">
-          <h3>Modifier la soumission</h3>
-          <form (ngSubmit)="updateSubmission()" #editForm="ngForm" class="form-container">
-            <div class="form-group">
-              <label for="editProjectName-{{ submission.id }}">Nom du projet</label>
-              <input type="text" id="editProjectName-{{ submission.id }}" name="projectName" [(ngModel)]="editSubmission.projectName" required class="form-input" />
+      </div>
+
+      <div class="p-field mb-3">
+        <label for="editTeamMemberId">Team Member ID</label>
+        <p-inputNumber id="editTeamMemberId" name="teamMemberId" [(ngModel)]="editSubmission.teamMember.id" [required]="true"></p-inputNumber>
+      </div>
+
+      <div class="dialog-footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="displayEditDialog = false"></button>
+        <button pButton pRipple type="submit" label="Save" icon="pi pi-check" class="p-button-success" [disabled]="!editForm.valid"></button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <!-- Confirmation dialog for delete -->
+  <p-confirmDialog [style]="{width: '450px'}" header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+  <!-- Evaluation Dialog -->
+  <p-dialog *ngIf="selectedSubmissionId" header="Submission Evaluations" [(visible)]="displayEvaluationDialog" [modal]="true" [style]="{width: '70vw', maxHeight: '90vh'}" [draggable]="false" [resizable]="false">
+    <!-- Loading indicator for evaluations -->
+    <div *ngIf="loadingEvaluations" class="loading-overlay">
+      <p-progressSpinner></p-progressSpinner>
+      <p>Loading evaluations...</p>
+    </div>
+
+    <!-- Evaluations content -->
+    <div *ngIf="!loadingEvaluations" class="evaluation-content">
+      <!-- Statistics section -->
+      <div *ngIf="currentSubmissionEvaluations && currentSubmissionEvaluations.length > 0" class="statistics-section">
+        <div class="card">
+          <h3 class="section-title"><i class="pi pi-chart-bar"></i> Evaluation Statistics</h3>
+          <h3 class="section-title"><i class="pi pi-chart-bar"></i> Statistiques d'évaluation</h3>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-title">Nombre d'évaluations</div>
+              <div class="stat-value">{{ currentSubmissionEvaluations.length }}</div>
             </div>
-            <div class="form-group">
-              <label for="editDescription-{{ submission.id }}">Description</label>
-              <textarea id="editDescription-{{ submission.id }}" name="description" [(ngModel)]="editSubmission.description" required class="form-input"></textarea>
+            <div class="stat-card">
+              <div class="stat-title">Average Score</div>
+              <div class="stat-value" [ngClass]="getScoreClass(getAverageScore())">{{ getAverageScore() | number:'1.0-1' }}</div>
             </div>
-            <div class="form-group">
-              <label for="editRepoLink-{{ submission.id }}">Lien GitHub</label>
-              <input type="url" id="editRepoLink-{{ submission.id }}" name="repoLink" [(ngModel)]="editSubmission.repoLink" required class="form-input" />
+            <div class="stat-card">
+              <div class="stat-title">Highest Score</div>
+              <div class="stat-value high-score">{{ getHighestScore() }}</div>
             </div>
-            <div class="form-group">
-              <label for="editTeamMemberId-{{ submission.id }}">ID du membre de l'équipe</label>
-              <input type="number" id="editTeamMemberId-{{ submission.id }}" name="teamMemberId" [(ngModel)]="editSubmission.teamMember.id" required class="form-input" />
+            <div class="stat-card">
+              <div class="stat-title">Lowest Score</div>
+              <div class="stat-value" [ngClass]="getScoreClass(getLowestScore())">{{ getLowestScore() }}</div>
             </div>
-            <div class="form-actions">
-              <button type="submit" class="btn btn-update">Mettre à jour</button>
-              <button type="button" class="btn btn-cancel" (click)="editSubmission = null">Annuler</button>
+          </div>
+          
+          <!-- Distribution des scores -->
+          <div class="score-distribution">
+            <h4 class="section-title"><i class="pi pi-percentage"></i> Score Distribution</h4>
+            
+            <!-- Barre pour scores élevés (90-100) -->
+            <div class="score-bar-container">
+              <div class="score-label">Excellent (90-100)</div>
+              <div class="score-bar">
+                <div class="score-fill" [style.width.%]="getScoreDistributionPercentage(90, 100)" [style.background-color]="'#27ae60'"></div>
+              </div>
+              <div class="score-percentage">{{ getScoreDistributionPercentage(90, 100) }}%</div>
             </div>
-          </form>
+            
+            <!-- Barre pour scores moyens (70-89) -->
+            <div class="score-bar-container">
+              <div class="score-label">Good (70-89)</div>
+              <div class="score-bar">
+                <div class="score-fill" [style.width.%]="getScoreDistributionPercentage(70, 89)" [style.background-color]="'#f39c12'"></div>
+              </div>
+              <div class="score-percentage">{{ getScoreDistributionPercentage(70, 89) }}%</div>
+            </div>
+            
+            <!-- Barre pour scores bas (0-69) -->
+            <div class="score-bar-container">
+              <div class="score-label">Needs Improvement (0-69)</div>
+              <div class="score-bar">
+                <div class="score-fill" [style.width.%]="getScoreDistributionPercentage(0, 69)" [style.background-color]="'#e74c3c'"></div>
+              </div>
+              <div class="score-percentage">{{ getScoreDistributionPercentage(0, 69) }}%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Section des évaluations -->
+      <div *ngIf="currentSubmissionEvaluations && currentSubmissionEvaluations.length > 0" class="evaluations-section">
+        <h3 class="section-title"><i class="pi pi-list"></i> Evaluations List</h3>
+        <div class="evaluations-list">
+          <div *ngFor="let evaluation of currentSubmissionEvaluations" class="evaluation-item">
+            <div class="evaluation-header">
+              <div class="score-badge" [ngClass]="getScoreClass(evaluation.score)">{{ evaluation.score }}</div>
+              <div class="evaluation-info">
+                <h4>Evaluation from {{ evaluation.evaluationDate | date:'MM/dd/yyyy' }}</h4>
+                <div class="evaluator">By: {{ evaluation.evaluator }}</div>
+              </div>
+            </div>
+            
+            <div class="feedback-section">
+              <h5><i class="pi pi-comment"></i> Feedback</h5>
+              <p>{{ evaluation.feedback }}</p>
+            </div>
+            
+            <div class="evaluation-footer">
+              <button pButton type="button" label="Delete" icon="pi pi-trash" class="p-button-danger p-button-outlined" (click)="deleteEvaluation(evaluation.id || 0)"></button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+    
+    <div *ngIf="!loadingEvaluations && (!currentSubmissionEvaluations || currentSubmissionEvaluations.length === 0)" class="empty-evaluations">
+      <i class="pi pi-info-circle empty-icon"></i>
+      <h3>No evaluations available</h3>
+      <p>This submission has not been evaluated yet.</p>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <button pButton type="button" label="Close" icon="pi pi-times" class="p-button-outlined" (click)="displayEvaluationDialog = false"></button>
+      </div>
+    </ng-template>
+  </p-dialog>
 </div>

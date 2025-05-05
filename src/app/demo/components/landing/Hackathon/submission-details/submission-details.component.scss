@@ -730,6 +730,47 @@ $radius-round: 50%;
   }
 }
 
+/* Add Evaluation Section */
+.add-evaluation-section {
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: rgba($blue-100, 0.5);
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1px dashed $blue-300;
+  transition: $transition-normal;
+  
+  &:hover {
+    background-color: rgba($blue-100, 0.8);
+  }
+  
+  .add-evaluation-button {
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    font-weight: 600;
+    box-shadow: $shadow-sm;
+    transition: $transition-normal;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-md;
+    }
+    
+    i {
+      margin-right: 8px;
+    }
+  }
+  
+  .evaluation-hint {
+    color: $gray-600;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
+
 /* Evaluations List */
 .evaluations-list {
   padding: 0 25px 25px;
@@ -744,6 +785,7 @@ $radius-round: 50%;
   background-color: $blue-50;
   transition: $transition-normal;
   box-shadow: $shadow-sm;
+  border-left: 4px solid $blue-400;
   
   &:hover {
     transform: translateY(-3px);
@@ -790,6 +832,19 @@ $radius-round: 50%;
     }
   }
   
+  .evaluation-date {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    color: $gray-600;
+    font-size: 0.9rem;
+    
+    i {
+      margin-right: 8px;
+      color: $blue-400;
+    }
+  }
+  
   .evaluation-details {
     .detail-item {
       display: flex;
@@ -815,10 +870,30 @@ $radius-round: 50%;
       }
     }
   }
+  
+  .evaluation-feedback {
+    h4 {
+      color: $blue-700;
+      font-size: 1rem;
+      margin: 0 0 10px 0;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0;
+      color: $gray-700;
+      line-height: 1.5;
+      background-color: white;
+      padding: 12px;
+      border-radius: $radius-md;
+      border: 1px solid $gray-200;
+      font-style: italic;
+    }
+  }
 }
 
 /* No Evaluations Message */
-.no-evaluations {
+.no-data {
   padding: 30px 25px;
   text-align: center;
   color: $gray-600;
@@ -837,6 +912,11 @@ $radius-round: 50%;
   .no-data-hint {
     font-size: 0.9rem;
     color: $gray-500;
+    margin-top: 10px;
+    background-color: rgba($blue-100, 0.5);
+    padding: 8px 15px;
+    border-radius: $radius-md;
+    display: inline-block;
   }
 }
 

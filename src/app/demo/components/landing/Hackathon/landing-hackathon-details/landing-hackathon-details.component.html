@@ -426,7 +426,7 @@
                         (click)="$event.stopPropagation(); navigateToSubmissionDetails(submission)"></button>
                 <button pButton type="button" icon="pi pi-heart" label="Donate" 
                         class="p-button-sm p-button-danger donate-button" 
-                        (click)="$event.stopPropagation(); showSubmissionDetails(submission); toggleDonationForm()"></button>
+                        (click)="$event.stopPropagation(); openDonationDialog(submission)"></button>
               </div>
             </div>
           </div>

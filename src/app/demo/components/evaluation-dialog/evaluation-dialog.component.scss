@@ -1,0 +1,216 @@
+/* Color variables */
+$blue-50: #F5F9FF;
+$blue-100: #E3F2FD;
+$blue-200: #BBDEFB;
+$blue-300: #64B5F6;
+$blue-400: #42A5F5;
+$blue-500: #2196F3;
+$blue-600: #1E88E5;
+$blue-700: #1976D2;
+$blue-800: #1565C0;
+$blue-900: #0D47A1;
+
+$green-500: #4CAF50;
+$green-600: #43A047;
+$red-500: #F44336;
+$red-600: #E53935;
+$orange-500: #FF9800;
+$orange-600: #FB8C00;
+$gray-100: #F5F5F5;
+$gray-200: #EEEEEE;
+$gray-300: #E0E0E0;
+$gray-400: #BDBDBD;
+$gray-500: #9E9E9E;
+$gray-600: #757575;
+$gray-700: #616161;
+$gray-800: #424242;
+
+/* Shadows */
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+/* Border Radius */
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+
+.evaluation-dialog {
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+  .dialog-header {
+    background: linear-gradient(135deg, $blue-700 0%, $blue-500 100%);
+    color: white;
+    padding: 20px 25px;
+    border-radius: $radius-md $radius-md 0 0;
+    margin: -1rem -1rem 1rem -1rem;
+    
+    h2 {
+      margin: 0 0 5px 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .dialog-subtitle {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+  }
+  
+  .form-section {
+    margin-bottom: 20px;
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: $gray-800;
+    }
+    
+    .score-input-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      
+      .p-slider {
+        flex: 1;
+      }
+      
+      .score-display {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: white;
+        box-shadow: $shadow-sm;
+        
+        &.high-score {
+          background-color: $green-500;
+        }
+        
+        &.medium-score {
+          background-color: $orange-500;
+        }
+        
+        &.low-score {
+          background-color: $red-500;
+        }
+      }
+    }
+    
+    .score-hint {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+      font-size: 0.8rem;
+      color: $gray-600;
+      
+      .score-hint-low {
+        color: $red-600;
+      }
+      
+      .score-hint-medium {
+        color: $orange-600;
+      }
+      
+      .score-hint-high {
+        color: $green-600;
+      }
+    }
+    
+    .char-count {
+      text-align: right;
+      font-size: 0.8rem;
+      color: $gray-600;
+      margin-top: 5px;
+      
+      &.char-count-error {
+        color: $red-600;
+        font-weight: 600;
+      }
+    }
+  }
+  
+  .evaluation-note {
+    display: flex;
+    align-items: flex-start;
+    background-color: rgba($blue-500, 0.1);
+    padding: 12px 15px;
+    border-radius: $radius-md;
+    margin: 20px 0;
+    
+    i {
+      color: $blue-600;
+      margin-right: 10px;
+      margin-top: 3px;
+      font-size: 1rem;
+    }
+    
+    span {
+      font-size: 0.9rem;
+      color: $blue-800;
+      line-height: 1.4;
+    }
+  }
+  
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid $gray-200;
+  }
+}
+
+/* Helper classes for score colors */
+.high-score {
+  color: $green-600;
+}
+
+.medium-score {
+  color: $orange-600;
+}
+
+.low-score {
+  color: $red-600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .evaluation-dialog {
+    .dialog-header {
+      padding: 15px 20px;
+      
+      h2 {
+        font-size: 1.3rem;
+      }
+    }
+    
+    .form-section {
+      .score-input-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        
+        .p-slider {
+          width: 100%;
+        }
+      }
+    }
+    
+    .dialog-footer {
+      flex-direction: column-reverse;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

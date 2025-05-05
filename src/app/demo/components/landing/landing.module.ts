@@ -8,7 +8,7 @@ import { ChartModule } from 'primeng/chart';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
@@ -19,6 +19,8 @@ import { RouterModule } from '@angular/router';
 import { LandingHackathonModule } from './Hackathon/landing-hackathon.module';
 import { LandingProjectEvaluationComponent } from './landing-project-evaluation/landing-project-evaluation.component'; // Nouveau
 import { LandingTeamSubmissionComponent } from './landing-team-submission/landing-team-submission.component'; // Nouveau
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 @NgModule({
@@ -34,13 +36,16 @@ import { LandingTeamSubmissionComponent } from './landing-team-submission/landin
         ButtonModule,
         AvatarModule,
         FormsModule,
+        ReactiveFormsModule,
         DropdownModule,
         InputTextModule,
         RippleModule,
         InputTextareaModule,
         ToastModule,
         DialogModule,
-        LandingHackathonModule
+        LandingHackathonModule,
+        InputNumberModule,
+        ProgressSpinnerModule
     ],
     declarations: [LandingComponent, LandingProjectEvaluationComponent, LandingTeamSubmissionComponent]
 })

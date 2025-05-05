@@ -1,0 +1,55 @@
+<div class="evaluation-dialog">
+  <div class="dialog-header">
+    <h2>Evaluate Project</h2>
+    <p class="dialog-subtitle">Share your feedback and rating for this project submission</p>
+  </div>
+
+  <form [formGroup]="evaluationForm" (ngSubmit)="submitEvaluation()">
+    <div class="form-section">
+      <label for="score" class="form-label">Score (0-100)</label>
+      <div class="score-input-container">
+        <p-slider formControlName="score" [min]="0" [max]="100" [step]="1" class="w-full"></p-slider>
+        <div class="score-display" [class.high-score]="evaluationForm.get('score')?.value >= 75" 
+                                  [class.medium-score]="evaluationForm.get('score')?.value >= 50 && evaluationForm.get('score')?.value < 75"
+                                  [class.low-score]="evaluationForm.get('score')?.value < 50">
+          {{ evaluationForm.get('score')?.value }}
+        </div>
+      </div>
+      <div class="score-hint">
+        <span class="score-hint-low">Poor</span>
+        <span class="score-hint-medium">Average</span>
+        <span class="score-hint-high">Excellent</span>
+      </div>
+      <small *ngIf="evaluationForm.get('score')?.invalid && evaluationForm.get('score')?.touched" class="p-error">
+        Score must be between 0 and 100
+      </small>
+    </div>
+
+    <div class="form-section">
+      <label for="feedback" class="form-label">Feedback</label>
+      <textarea pInputTextarea formControlName="feedback" rows="5" 
+                placeholder="Share your thoughts about this project (min 10 characters)" 
+                class="w-full"></textarea>
+      <div class="char-count" [class.char-count-error]="feedbackLength > feedbackMaxLength">
+        {{ feedbackLength }}/{{ feedbackMaxLength }}
+      </div>
+      <small *ngIf="evaluationForm.get('feedback')?.invalid && evaluationForm.get('feedback')?.touched" class="p-error">
+        <span *ngIf="evaluationForm.get('feedback')?.errors?.['required']">Feedback is required</span>
+        <span *ngIf="evaluationForm.get('feedback')?.errors?.['minlength']">Feedback must be at least 10 characters</span>
+        <span *ngIf="evaluationForm.get('feedback')?.errors?.['maxlength']">Feedback cannot exceed 500 characters</span>
+      </small>
+    </div>
+
+    <div class="evaluation-note">
+      <i class="pi pi-info-circle"></i>
+      <span>Your evaluation helps teams improve and provides valuable feedback to the hackathon organizers.</span>
+    </div>
+
+    <div class="dialog-footer">
+      <button pButton type="button" label="Cancel" icon="pi pi-times" 
+              class="p-button-outlined" (click)="cancel()"></button>
+      <button pButton type="submit" [label]="submitting ? 'Submitting...' : 'Submit Evaluation'" icon="pi pi-check" 
+              [disabled]="evaluationForm.invalid || submitting"></button>
+    </div>
+  </form>
+</div>

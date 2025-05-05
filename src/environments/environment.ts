@@ -8,7 +8,9 @@ export const environment = {
   quizGenerationEndpoint: '/quiz/generate',
   apiBaseUrl: 'http://localhost:9100/pi/api',
   // Add your OpenAI API key here
-  openAiApiKey: 'YOUR_OPENAI_API_KEY'
+  openAiApiKey: 'YOUR_OPENAI_API_KEY',
+  // Stripe publishable key for payment processing
+  stripePublishableKey: 'pk_test_51R9uQOCRTCCMntpfqwwnlonVcpy4gMnwyZamhJOGx8nhBfWWCQLlAw0ejgAVgrsEn4DnRNuyahhniFbXRYGy6TTq00Y20fwrAI'
 };
 
 /*
